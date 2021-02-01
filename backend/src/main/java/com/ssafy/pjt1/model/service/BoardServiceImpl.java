@@ -103,4 +103,34 @@ public class BoardServiceImpl implements BoardService {
 		sqlSession.getMapper(BoardMapper.class).updateSubscribe(map);
 	}
 
+	@Override
+	public void deleteBoardAll(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteBoardAll(board_id);
+	}
+
+	@Override
+	public void deleteSubscription(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteSubscription(board_id);
+	}
+
+	@Override
+	public void deletePostAll(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deletePostAll(board_id);
+	}
+
+	@Override
+	public void deleteCalendar(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteCalendar(board_id);
+	}
+
+	@Override
+	public void deleteCheckList(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteCheckList(board_id);
+	}
+
+	@Override
+	public void deleteVote(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteVote(board_id);
+	}
+
 }

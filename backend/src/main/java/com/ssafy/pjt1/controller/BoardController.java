@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.service.BoardService;
+import com.ssafy.pjt1.model.service.post.PostService;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
@@ -304,6 +305,15 @@ public class BoardController {
         logger.info("board/delete 호출성공");
         try {
             if (boardService.deleteBoard(board_id) == 1) {
+                // 추가기능 is_used 0으로 변경
+                boardService.deleteBoardAll(board_id);
+                boardService.deleteCalendar(board_id);
+                boardService.deleteCheckList(board_id);
+                boardService.deleteVote(board_id);
+                // 구독 is_used 0으로 변경
+                boardService.deleteSubscription(board_id);
+                // 포스트 is_used 0으로 변경
+                boardService.deletePostAll(board_id);
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {

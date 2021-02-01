@@ -43,4 +43,16 @@ public interface BoardMapper {
 
 	public void updateSubscribe(Map<String, Object> map);
 
+	public void deleteBoardAll(int board_id);
+
+	public void deleteSubscription(int board_id);
+
+	public void deletePostAll(int board_id);
+
+	public void deleteCalendar(int board_id);
+
+	public void deleteCheckList(int board_id);
+
+	public void deleteVote(int board_id);
+
 }
