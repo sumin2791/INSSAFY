@@ -151,6 +151,9 @@ public class PostController {
         logger.info("post/delete 호출성공");
         try {
             if (postService.postDelete(post_id) == 1) {
+                postService.deleteScrapAll(post_id);
+                postService.deleteLikeAll(post_id);
+                postService.deleteCommentAll(post_id);
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
@@ -185,8 +188,14 @@ public class PostController {
                 logger.info("스크랩 추가");
                 postService.scrap(map);
             } else {
-                logger.info("스크랩 삭제");
-                postService.deleteScrap(map);
+                int count2 = postService.isUnScrapped(map);
+                if(count2 == 0){
+                    // 전에 스크랩한 이력이 있지만 현재는 아닌 경우
+                    postService.updateScrap(map);
+                }else{
+                    logger.info("스크랩 삭제");
+                    postService.deleteScrap(map);
+                }
             }
 
             resultMap.put("message", SUCCESS);
@@ -217,16 +226,23 @@ public class PostController {
             int post_id = (int) param.get("post_id"); 
             map.put("user_id", user_id);
             map.put("post_id",post_id);
-            logger.info("map: "+map);
+            
             int count = postService.isLiked(map);
             if (count == 0) {
                 logger.info("좋아요 클릭");
                 postService.like(map);
                 postService.plusCount(post_id);
             } else {
-                logger.info("좋아요 삭제");
-                postService.unlike(map);
-                postService.minusCount(post_id);
+                int count2 = postService.isUnLiked(map);
+                if(count2 == 0){
+                    // 전에 좋아요한 이력이 있지만 현재는 아닌 경우
+                    postService.updateLike(map);
+                    postService.plusCount(post_id);
+                }else{
+                    logger.info("좋아요 삭제");
+                    postService.unlike(map);
+                    postService.minusCount(post_id);
+                }
             }
 
             resultMap.put("message", SUCCESS);
