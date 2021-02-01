@@ -75,6 +75,7 @@ public class BoardController {
             map2.put("vote_flag", (int) param.get("vote_flag"));
             boardService.addFunction(map2);
 
+            resultMap.put("board_id", boardDto.getBoard_id());
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
@@ -100,7 +101,7 @@ public class BoardController {
         try {
             Map<String, Object> map = new HashMap<>();
             map.put("user_id", (String) param.get("user_id"));
-            map.put("board_id", (String) param.get("board_id"));
+            map.put("board_id", (int) param.get("board_id"));
             map.put("user_role", (int) param.get("user_role"));
             logger.info("map:" + map);
             int count = boardService.isSubscribed(map);
@@ -165,7 +166,7 @@ public class BoardController {
         try {
             Map<String, Object> map = new HashMap<>();
             map.put("user_id", (String) param.get("user_id"));
-            map.put("board_id", (String) param.get("board_id"));
+            map.put("board_id", (int) param.get("board_id"));
             int count = boardService.isSubscribed(map);
             if (count == 0) {
                 logger.info("구독 설정 + 관리자 추가");
@@ -292,12 +293,12 @@ public class BoardController {
      * @return : message
      */
     @DeleteMapping("/delete/{board_id}")
-    public ResponseEntity<Map<String, Object>> boardDelete(@PathVariable("board_id") int board_id) {
+    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("board_id") int board_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/delete 호출성공");
         try {
-            if (boardService.boardDelete(board_id) == 1) {
+            if (boardService.deleteBoard(board_id) == 1) {
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
@@ -308,4 +309,29 @@ public class BoardController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    /*
+     * 기능: 보드 디테일
+     * 
+     * developer: 윤수민
+     * 
+     * @param : board_id
+     * 
+     * @return : message
+     */
+    @GetMapping("/detail")
+    public ResponseEntity<Map<String, Object>> detailBoard(@RequestParam(value = "board_id") int board_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("board/searchUser 호출성공");
+        try {
+            resultMap.put("message", SUCCESS);
+            BoardDto boardDto = boardService.detailBoard(board_id);
+            resultMap.put("boardDto", boardDto);
+
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
 }

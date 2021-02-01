@@ -35,6 +35,8 @@ public interface BoardMapper {
 
 	public List<BoardDto> searchBoardPopular(String keyword);
 
-	public int boardDelete(int board_id);
+	public int deleteBoard(int board_id);
+
+	public BoardDto detailBoard(int board_id);
 
 }

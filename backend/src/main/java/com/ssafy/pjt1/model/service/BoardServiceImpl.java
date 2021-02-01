@@ -84,8 +84,13 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public int boardDelete(int board_id) {
-		return sqlSession.getMapper(BoardMapper.class).boardDelete(board_id);
+	public int deleteBoard(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).deleteBoard(board_id);
+	}
+
+	@Override
+	public BoardDto detailBoard(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).detailBoard(board_id);
 	}
 
 }

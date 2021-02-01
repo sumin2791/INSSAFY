@@ -82,10 +82,15 @@
 		order by c.board_count desc;
 	</select>
 
-	<delete id="boardDelete" parameterType="int">
+	<delete id="deleteBoard" parameterType="int">
 		delete
 		from board
 		where board_id=#{board_id}
 	</delete>
 
+	<select id="detailBoard" parameterType="int" resultType="BoardDto">
+		select *
+		from board 
+		where board_id = #{board_id}
+	</select>
 </mapper>
