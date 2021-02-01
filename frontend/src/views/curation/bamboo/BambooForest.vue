@@ -13,6 +13,10 @@
           내 마음을 편하게 이야기하는 공간입니다
         </p>
       </div>
+      
+      <Post 
+        class="bamboo-post"
+      />
       <BambooPost 
         class="bamboo-post"
       />
@@ -46,11 +50,13 @@
 
 <script>
 import BambooPost from '@/views/curation/bamboo/BambooPost.vue'
+import Post from '@/components/board/Post.vue'
 
 export default {
   name: "BambooForest",
   components: {
     BambooPost,
+    Post,
   }
 }
 </script>

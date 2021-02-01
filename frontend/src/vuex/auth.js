@@ -65,9 +65,9 @@ export default {
           // context.commit('setNickname', response.data.user.user_nickname);
           context.commit('setUser', {
             token: response.data.auth_token,
-            userId: response.data.user_id,
-            email: response.data.user_email,
-            nickname: response.data.user_nickname,
+            userId: response.data.user.user_id,
+            email: response.data.user.user_email,
+            nickname: response.data.user.user_nickname,
           });
 
           //이메일 인증을 완료하지 않은 유저의 경우 email 활용하여 링크생성

@@ -9,6 +9,7 @@ import mutations from './mutations';
 //api 작업 구현부
 import auth from './auth';
 import error from './error';
+import board from './board';
 
 Vue.use(Vuex);
 
@@ -78,5 +79,6 @@ export default new Vuex.Store({
   modules: {
     auth,
     error,
+    board,
   },
 });

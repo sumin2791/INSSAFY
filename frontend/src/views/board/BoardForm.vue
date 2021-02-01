@@ -12,15 +12,20 @@
               id="board-title"
               placeholder=""
               type="text"
+              v-model="title"
             />
             <div class="error-text">에러메시지</div>
           </div>
           <div class="input-with-label">
             <label for="board-description">게시판 설명</label>
-            <textarea id="board-description" cols="30" rows="10"></textarea>
+            <textarea id="board-description" cols="30" rows="10"  v-model="description"></textarea>
             <div class="error-text">에러메시지</div>
           </div>
-          
+          <b-form-file
+            v-model="file1"
+            placeholder="Choose a file or drop it here..."
+            drop-placeholder="Drop file here..."
+          ></b-form-file>
         </b-col>
         
         <b-col sm="4" class="board-section">
@@ -36,7 +41,8 @@
               <li 
                 v-for="(hashtag,idx) in hashtags"
                 :key="idx"
-              ><p class="hashtag">{{hashtag}}</p></li>
+              > <div class="hashtag">{{hashtag}}  <button class="delete" @click="deleteHashtag(idx)">x</button></div>
+              </li>
             </ul>
           </div>
           <div class="check-select">
@@ -45,7 +51,7 @@
               <b v-if="options.ikmyeong">익명</b>
             </b-form-checkbox>
             <div class="input-with-label">
-              <select ref="select1" class="join-style" name="location" id="location">
+              <select ref="select1" class="join-style" name="location" id="location" v-model="location">
                 <option value="" disabled selected>지역을 선택하세요.</option>
                 <option v-for="location in options.location" :key="location" :value="location">
                   {{ location }}
@@ -75,12 +81,18 @@
 </template>
 
 <script>
+import * as boardApi from '@/api/board';
+
 export default {
   name:"BoardForm",
   data() {
     return {
+      title:'',
+      description:'',
+      file1:[],
       hashtag:'',
       hashtags:[],
+      location:'',
       selected: [],
       options: {
         f:[
@@ -91,7 +103,6 @@ export default {
           {text:'투표',value:'vate',disabled:true},
         ],
         location: ['전체','서울', '대전', '구미', '광주'],
-        generation: [5, 4, 3, 2, 1],
         ikmyeong:false,
       },
     }
@@ -105,9 +116,30 @@ export default {
       this.hashtags.push(`#${this.hashtag}`)
       this.hashtag=''
     },
+    deleteHashtag(e){
+      this.hashtags.splice(e,1)
+    },
     onCreate(){
-      this.$router.push({name:'Board'})
-      alert('게시판 보드 생성')
+      //@param : user_id, board_name, board_description, board_location, board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag
+      let board={
+        user_id: localStorage.getItem('userId'),
+        board_name: this.title,
+        board_description: this.description,
+        board_location: '전체',
+        board_igmyeong: 0,
+        board_hash:this.hashtags.join('|'),
+        checklist_flag:0,
+        calendar_flag:0,
+        vote_flag:0
+      };
+      boardApi.board_create(board).then(response => {
+        console.log(response.data);
+        alert('게시판 보드 생성')
+        this.$router.push({name:'Board'})
+      }).catch(error => {
+        console.log(error);
+        alert("보드 생성에 실패하였습니다.");
+      })
     }
   }
 }
@@ -209,6 +241,10 @@ label{
 }
 
 @media screen and (min-width:576px) {
+  li {
+    display: flex;
+    align-items: center;
+  }
   li .hashtag{
   display:inline;
   background-color: #0B2945;
@@ -218,8 +254,14 @@ label{
   padding-right:0.2rem;
   margin: 0.3rem;
   }
+  li .hashtag .delete{
+    margin:0%;
+    padding:0.1rem;
+    /* display: inline-block; */
+    height: 10px;
+  }
   .hashtag-list {
-  height: 150px;
+  height: 200px;
   margin: 1rem 0;
 }
 }
