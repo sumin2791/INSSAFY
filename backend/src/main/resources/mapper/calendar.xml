@@ -12,19 +12,20 @@
     <select id="readCalendar" parameterType="string" resultType="CalendarItemDto">
         select *
         from calendar_item
-        where board_id = #{board_id}
+        where board_id = #{board_id} and is_used=0;
     </select>
 
+    <!-- 한개만 수정 -->
     <update id="updateCalendar" parameterType="CalendarItemDto">
         update calendar_item
         set calendar_item_title = #{calendar_item_title}, calendar_item_description = #{calendar_item_description}, 
         calendar_item_datetime_start = #{calendar_item_datetime_start}, calendar_item_datetime_end = #{calendar_item_datetime_end}
-        where calendar_item_id = #{calendar_item_id}
+        where calendar_item_id = #{calendar_item_id}  and is_used = 0;
     </update>
 
-    <delete id="deleteCalendar" parameterType="string">
-        delete
-        from calendar_item
-        where calendar_item_id=#{calendar_item_id}
-    </delete>
+    <update id="deleteCalendar" parameterType="string">
+        update calendar_item
+        set is_useed = 1;
+        where calendar_item_id=#{calendar_item_id} and is_used = 0;
+    </update>
 </mapper>
