@@ -8,7 +8,13 @@
       <div class="board-detail">보드디테일보드디테일보드디테일보드디테일보드디테일보드디테일보드디테일</div>
     </div>
     <div class="board-hash-people">
-      <div class="board-hashtag">#태그#태그#태그#태그#태그</div>
+      <div class="hashtaglist">
+        <div class="board-hashtag">#태그</div>
+        <div class="board-hashtag">#태그</div>
+        <div class="board-hashtag">#태그</div>
+        <div class="board-hashtag">#태그</div>
+        <div class="board-hashtag">#태그</div>
+      </div>
       <div class="board-people"><b-icon icon="person-fill" aria-hidden="true"></b-icon> 50</div>
     </div>
   </div>
@@ -42,6 +48,12 @@ export default {
   grid-template-columns: 70% 30%
 }
 .board-hashtag{
-  /* grid:8; */
+  display:inline;
+  background-color: #0B2945;
+  border-radius: 0.5rem;
+  color:#f9f9f9;
+  padding-left:0.2rem;
+  padding-right:0.2rem;
+  margin: 0.3rem;
 }
 </style>
