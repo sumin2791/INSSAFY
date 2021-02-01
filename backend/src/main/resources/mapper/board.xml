@@ -5,9 +5,9 @@
 
 	<insert id="createBoard" parameterType="BoardDto" useGeneratedKeys="true" keyProperty="board_id">
 		insert into board (board_name, board_description, board_image, board_igmyeong,
-		board_location,board_hash,board_date,user_id)
+		board_location,board_hash,board_date,user_id,is_used)
 		values ( #{board_name}, #{board_description}, #{board_image}, #{board_igmyeong} ,
-		#{board_location}, #{board_hash}, now(), #{user_id})
+		#{board_location}, #{board_hash}, now(), #{user_id},1)
 	</insert>
 	
 	<insert id="subscribe" parameterType="map">
@@ -82,11 +82,11 @@
 		order by c.board_count desc;
 	</select>
 
-	<delete id="deleteBoard" parameterType="int">
-		delete
-		from board
+	<update id="deleteBoard" parameterType="int">
+		update board
+		set is_used = 0
 		where board_id=#{board_id}
-	</delete>
+	</update>
 
 	<select id="detailBoard" parameterType="int" resultType="BoardDto">
 		select *
