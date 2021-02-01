@@ -144,6 +144,35 @@ public class UserController {
     }
 
     /*
+     * 기능: 퀴즈 정답 체크
+     * 
+     * developer: 문진환
+     * 
+     * @param String
+     * 
+     * @return time:
+     */
+    @ApiOperation(value = "퀴즈 체크", notes = "")
+    @GetMapping("/confirm/quiz/{answer}")
+    public ResponseEntity<Map<String, Object>> quizCheck(@PathVariable("answer") String answer) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("comfirm/emailcheck 호출 성공");
+        logger.info("answer : {}", answer);
+        try {
+            if (userService.quizCheck(answer)) {
+                resultMap.put("message", SUCCESS);
+            } else {
+                resultMap.put("message", FAIL);
+            }
+        } catch (Exception e) {
+            logger.error("msg", e);
+            resultMap.put("message", FAIL);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
      * 기능: 이메일 중복체크
      * 
      * developer: 윤수민
