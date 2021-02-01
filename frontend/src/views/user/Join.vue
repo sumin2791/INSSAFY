@@ -15,6 +15,7 @@
               @focus="waitDuplicate"
               autocapitalize="off"
             />
+            <Delete-btn class="delete-btn" :state="email" @clickDel="deleteEmail" />
             <label for="email">이메일*</label>
             <div class="error-text" v-if="error.email && email.length !== 0">{{ error.email }}</div>
             <div class="error-text" v-if="error.emailDuplicate">{{ error.emailDuplicate }}</div>
@@ -28,6 +29,7 @@
               placeholder="비밀번호를 입력하세요."
               :class="{ error: error.password && password.length !== 0, complete: !error.password && password.length !== 0 }"
             />
+            <Delete-btn class="delete-btn" :state="password" @clickDel="deletePassword" />
             <label for="password">비밀번호*</label>
             <div class="error-text" v-if="error.password && password.length !== 0">{{ error.password }}</div>
           </div>
@@ -36,15 +38,33 @@
               v-model="passwordConfirm"
               :type="passwordConfirmType"
               id="password-confirm"
-              placeholder="비밀번호를 다시한번 입력하세요."
+              placeholder="비밀번호를 재입력하세요."
               :class="{ error: error.passwordConfirm && passwordConfirm.length !== 0, complete: !error.password && passwordConfirm.length !== 0 }"
             />
+            <Delete-btn class="delete-btn" :state="passwordConfirm" @clickDel="deletePasswordConfirm" />
             <label for="password-confirm">비밀번호 확인*</label>
             <div class="error-text" v-if="error.passwordConfirm && passwordConfirm.length !== 0">{{ error.passwordConfirm }}</div>
           </div>
+          <div id="problem-container" class="input-with-label">
+            <p class="problem b-desc">다음은 학사규정 중 일부이다.</p>
+            <p class="problem r-desc">{{ getRandomProblem }}</p>
+          </div>
           <div class="input-with-label">
-            <label for="email">닉네임</label>
-            <input id="email" placeholder="닉네임을 입력하세요." type="text" v-model="nickname" />
+            <label for="solution">인증문제 답</label>
+            <input
+              id="solution"
+              placeholder="빈 칸에 들어갈 알맞은 단어는?"
+              type="text"
+              v-model="solution"
+              @blur="confirmSolution"
+              @focus="waitSolution"
+            />
+            <Delete-btn class="delete-btn" :state="solution" @clickDel="deleteSolution" />
+          </div>
+          <div class="input-with-label">
+            <label for="nickname">닉네임</label>
+            <input id="nickname" placeholder="닉네임을 입력하세요." type="text" v-model="nickname" />
+            <Delete-btn class="delete-btn" :state="nickname" @clickDel="deleteNickname" />
           </div>
           <div class="input-with-label">
             <label for="location">지역*</label>
@@ -54,6 +74,7 @@
                 {{ location }}
               </option>
             </select>
+            <b-icon class="down-arrow" icon="arrow-down-short" />
           </div>
           <div class="input-with-label">
             <label for="location">기수*</label>
@@ -63,6 +84,7 @@
                 {{ generation }}
               </option>
             </select>
+            <b-icon class="down-arrow" icon="arrow-down-short" />
           </div>
         </div>
         <!-- <button class="btn-join">로그인</button> -->
@@ -77,8 +99,13 @@ import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
 import * as authApi from '@/api/auth';
 
+import DeleteBtn from '@/components/etc/DeleteBtn.vue';
+import { mapGetters } from 'vuex';
 export default {
   name: 'Join',
+  components: {
+    DeleteBtn,
+  },
   data() {
     return {
       options: {
@@ -89,6 +116,7 @@ export default {
       password: '',
       passwordSchema: new PV(),
       passwordConfirm: '',
+      solution: '',
       nickname: '',
       location: '',
       generation: '',
@@ -98,6 +126,7 @@ export default {
         emailDuplicate: false,
         password: false,
         passwordConfirm: false,
+        solution: false,
         nickname: true,
         location: true,
         generation: true,
@@ -119,6 +148,7 @@ export default {
       .has()
       .letters();
   },
+  computed: { ...mapGetters(['getRandomProblem']) },
   watch: {
     email: function() {
       this.checkForm();
@@ -213,6 +243,30 @@ export default {
     waitDuplicate: function() {
       this.emailDuplicate = false;
     },
+
+    //인증문제 처리
+    confirmSolution: function() {},
+    waitSolution: function() {
+      this.solution = '';
+      this.error.solution = false;
+    },
+
+    //입력 문자 모두 지우는 버튼
+    deleteEmail: function() {
+      this.email = '';
+    },
+    deletePassword: function() {
+      this.password = '';
+    },
+    deletePasswordConfirm: function() {
+      this.passwordConfirm = '';
+    },
+    deleteNickname: function() {
+      this.nickname = '';
+    },
+    deleteSolution: function() {
+      this.solution = '';
+    },
   },
 };
 </script>
@@ -225,14 +279,32 @@ export default {
   /* align-items: center; */
   max-width: 580px;
   width: 100%;
-  margin: 0 auto;
-  padding: 0 15px;
+  margin: 50px auto;
+  background-color: var(--basic-color-bg2);
+  box-shadow: var(--basic-shadow-s);
+  border-radius: 10px;
+  padding: 30px 30px;
+}
+@media (max-width: 426px) {
+  .join {
+    margin: 10px auto;
+  }
 }
 
 h2 {
   margin-bottom: 30px;
 }
 
+.delete-btn {
+  position: absolute;
+  right: 30px;
+}
+
+.down-arrow {
+  position: absolute;
+  right: 15px;
+  margin-top: 15px;
+}
 .join-form {
   display: flex;
   flex-direction: column;
@@ -247,6 +319,13 @@ h2 {
   position: relative;
   margin-bottom: 10px;
 }
+#problem-container {
+  margin: 10px 10px 0;
+}
+.problem {
+  margin: 0 0;
+}
+
 input,
 select {
   background: transparent;
@@ -254,12 +333,12 @@ select {
   width: 100%;
   height: 50px;
   line-height: 1em;
-  border: 1px solid #cccccc;
   padding: 0 20px;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-transition: 0.2s;
   transition: 0.2s;
+  border-radius: 0;
   outline: none;
 }
 .error-text {
@@ -272,7 +351,6 @@ select {
   height: 50px;
   margin-top: 30px;
   font-size: 24px;
-  margin-bottom: 20px;
   border: solid 1px #000;
   text-align: center;
 }
@@ -305,21 +383,20 @@ select {
   float: left;
   height: 50px;
   line-height: 1;
-  padding: 2px 15px 0 105px;
+  padding: 2px 35px 0 120px;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   color: #000;
-  border: 1px solid #000;
-  border-radius: 3px;
+  border-bottom: 1px solid var(--basic-color-bg);
 }
 
-.input-with-label input[type='text']:hover,
-.input-with-label input[type='text']:focus,
+.input-with-label input:hover,
+.input-with-label input:focus,
 .input-with-label select:hover,
 .input-with-label select:focus,
-.input-with-label input[type='password']:hover,
-.input-with-label input[type='password']:focus {
-  border: 2px solid #000;
+.input-with-label input:hover,
+.input-with-label input:focus {
+  border-bottom: 1px solid #000;
 }
 
 .input-with-label input[type='text'].error,
@@ -353,7 +430,7 @@ select {
 .input-with-label label {
   position: absolute;
   left: 15px;
-  top: 19px;
+  top: 16px;
   color: #000;
   font-weight: 600;
   font-size: 0.857em;

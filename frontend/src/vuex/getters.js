@@ -29,4 +29,10 @@ export default {
   getToastType: function(state) {
     return state.toastType;
   },
+
+  //problem, 랜덤으로 얻음
+  getRandomProblem: function(state) {
+    const randomValue = Math.floor(Math.random() * 5);
+    return state.problems[randomValue];
+  },
 };
