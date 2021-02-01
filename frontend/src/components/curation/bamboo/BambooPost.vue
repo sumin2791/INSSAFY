@@ -2,13 +2,13 @@
   <div class="post">
     <div class="post-header">
       <div class="user-profile-img">
-        <b-avatar src="https://placekitten.com/300/300" size="4rem">유저프로필</b-avatar>
+        <b-avatar src="https://placekitten.com/300/300" size="4rem">익명</b-avatar>
       </div>
       <div class="user-name-date">
         <div>
           <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              {{post.user}}
+              익명
             </template>
             <b-dropdown-item href="#">Profile</b-dropdown-item>
             <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
@@ -18,11 +18,11 @@
         <div class="post-date">{{post.post_date}}</div>
       </div>
     </div>
-    <div class="post-body" @click="goToDetail">
+    <div class="">
       <div class="title f-text b-desc">{{post.post_title}}</div>
       <div class="description r-desc">{{post.post_description}}</div>
     </div>
-    <div class="post-footer">
+    <!-- <div class="post-footer">
       <div v-if="post.post_like>=10">
         <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:37.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
       </div>
@@ -34,7 +34,7 @@
       <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{post.comment_count}}</div>
       <div class="post-bookmark" @click="postBookmark" v-if="flagBookmark"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
       <div class="post-bookmark" @click="postBookmark" v-if="!flagBookmark"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -52,11 +52,6 @@ export default {
   },
   
   methods:{
-    goToDetail() {
-      console.log(this.post)
-      // params를 이용해서 데이터를 넘겨줄 수 있다.
-      this.$router.push({ name: 'Post', params: {post:this.post} });
-    },
     postLike(e){
       this.flagLike = !this.flagLike
       console.log(this.flagLike)
@@ -78,11 +73,14 @@ export default {
 
 <style scoped>
 .post{
+  display: inline-block;
   margin:1rem 0;
   background-color: #fff;
   padding: 1rem;
   border:1px #949590 solid;
   border-radius:10px;
+  height:auto;
+  width:100%;
 }
 .post .post-header{
   margin-bottom: 0.5rem;
@@ -90,7 +88,7 @@ export default {
   flex-direction: row;
 }
 .post .post-body{
-  min-height: 150px;
+  /* height:auto; */
 }
 .post .post-footer{
   display:flex;
@@ -128,5 +126,10 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+@media screen and (max-width: 576px) {
+  .post{
+  width:100%;
+}
 }
 </style>

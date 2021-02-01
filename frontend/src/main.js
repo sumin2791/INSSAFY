@@ -29,6 +29,11 @@ import 'vue-toast-notification/dist/theme-sugar.css';
 // vuetify
 import vuetify from './plugins/vuetify';
 
+// masonry
+import VueMasonry from 'vue-masonry-css'
+ 
+Vue.use(VueMasonry);
+
 Vue.use(VueToast, {
   position: 'bottom-right',
   duration: 1000,
