@@ -26,5 +26,7 @@ public interface VoteService {
 	public VoteDto getVoteById(int vote_id);
 
 	public List<Map<String, Object>> getVoteItem(int vote_id);
+
+	public void voteDeleteAll(int vote_id);
     
 }

@@ -32,5 +32,25 @@ public interface BoardService {
 
 	public List<BoardDto> searchBoardPopular(String keyword);
 
-	public int boardDelete(int board_id);
+	public int deleteBoard(int board_id);
+
+	public BoardDto detailBoard(int board_id);
+
+	public int isUnSubscribed(Map<String, Object> map);
+
+	public void updateSubscribe(Map<String, Object> map);
+
+	public void deleteBoardAll(int board_id);
+
+	public void deleteSubscription(int board_id);
+
+	public void deletePostAll(int board_id);
+
+	public void deleteCalendar(int board_id);
+
+	public void deleteCheckList(int board_id);
+
+	public void deleteVote(int board_id);
+
+	public List<Integer> getVoteList(int board_id);
 }
