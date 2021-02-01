@@ -4,6 +4,6 @@
 <mapper namespace="com.ssafy.pjt1.model.mapper.MainMapper">
 
   <select id="selectFavorite" parameterType="String" resultType="SubscriptionDto">
-    select * from subscription where favorite_flag = 1 and user_id = #{user_id} and is_used=0;
+    select * from subscription where favorite_flag = 1 and user_id = #{user_id};
   </select>
 </mapper>

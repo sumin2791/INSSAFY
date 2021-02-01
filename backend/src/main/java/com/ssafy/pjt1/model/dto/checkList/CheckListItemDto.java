@@ -5,15 +5,6 @@ public class CheckListItemDto {
     private int board_id;
     private boolean check_list_item_done;
     private String check_list_item_description;
-    private int is_used;
-
-    public int getIs_used() {
-        return this.is_used;
-    }
-
-    public void setIs_used(int is_used) {
-        this.is_used = is_used;
-    }
 
     public int getCheck_list_item_id() {
         return this.check_list_item_id;

@@ -6,15 +6,6 @@ public class SubscriptionDto {
     private int favorite_flag;
     private int write_post_count;
     private int user_role;
-    private int is_used;
-
-    public int getIs_used() {
-        return this.is_used;
-    }
-
-    public void setIs_used(int is_used) {
-        this.is_used = is_used;
-    }
 
     public int getBoard_id() {
         return this.board_id;

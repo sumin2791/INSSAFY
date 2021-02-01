@@ -7,15 +7,6 @@ public class CalendarItemDto {
     private String calendar_item_description;
     private String calendar_item_datetime_start;
     private String calendar_item_datetime_end;
-    private int is_used;
-
-    public int getIs_used() {
-        return this.is_used;
-    }
-
-    public void setIs_used(int is_used) {
-        this.is_used = is_used;
-    }
 
     public int getCalendar_item_id() {
         return this.calendar_item_id;
