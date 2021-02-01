@@ -239,7 +239,7 @@ input {
   height: 40px;
   margin-top: 100px;
   margin-bottom: 20px;
-
+  border: solid 1px #000;
   font-size: 24px;
   transition: color 0.3s, background-color 0.3s ease;
 }
