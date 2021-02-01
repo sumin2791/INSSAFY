@@ -47,8 +47,8 @@
 	</update>
 
 	<insert id="selectVote" parameterType="VoteSelectDto">
-		insert into vote_select (user_id, vote_item_id) values (
-		#{user_id}, #{vote_item_id})
+		insert into vote_select (user_id, vote_item_id, is_used) values (
+		#{user_id}, #{vote_item_id},1)
 	</insert>
 
 	<select id="getVoteById" parameterType="int" resultType="VoteDto">
@@ -59,7 +59,8 @@
 
 	<select id="getVoteItem" parameterType="int" resultType="map">
 		select i.vote_item_name, i.vote_item_id, count(s.vote_item_id) as vote_item_count
-		from vote_item as i join vote_select as s on (i.vote_item_id = s.vote_item_id)
+		from vote_item as i left outer join vote_select as s on (i.vote_item_id = s.vote_item_id)
+		where i.is_used = 1 and i.vote_id = #{vote_id}
 		group by (i.vote_item_id)
 		order by i.vote_item_id;
 	</select>

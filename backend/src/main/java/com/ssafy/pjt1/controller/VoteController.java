@@ -245,7 +245,9 @@ public class VoteController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("vote/getVoteById 호출성공");
         try {
+            //투표 내용
             VoteDto voteDto = voteService.getVoteById(vote_id);
+            // 투표 항목 내용 + 투표수
             List<Map<String, Object>> voteItemList = voteService.getVoteItem(vote_id);
             
             resultMap.put("voteDto", voteDto); 
