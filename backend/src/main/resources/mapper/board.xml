@@ -149,4 +149,16 @@
 		where board_id = #{board_id};
 	</select>
 
+	<select id="getPostList" parameterType="int" resultType="int">
+		select post_id
+		from post
+		where board_id = #{board_id};
+	</select>
+
+	<select id="getBoardCount" resultType="int">
+		select count(*)
+		from subscription
+		where board_id = #{board_id} and is_used = 1;
+	</select>
+
 </mapper>

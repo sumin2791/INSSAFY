@@ -317,12 +317,12 @@ public class BoardController {
                 List<Integer> voteList = boardService.getVoteList(board_id);
                 for (Integer vote_id : voteList) {
                     voteService.voteDeleteAll(vote_id);
-                }
-                
+                }               
                 // 구독 is_used 0으로 변경
                 boardService.deleteSubscription(board_id);
                 // 포스트 is_used 0으로 변경
                 boardService.deletePostAll(board_id);
+                List<Integer> postList = boardService.getPostList(board_id);
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
@@ -350,7 +350,9 @@ public class BoardController {
         try {
             resultMap.put("message", SUCCESS);
             BoardDto boardDto = boardService.detailBoard(board_id);
+            int board_count = boardService.getBoardCount(board_id);
             resultMap.put("boardDto", boardDto);
+            resultMap.put("board_count", board_count);
 
         } catch (Exception e) {
             resultMap.put("message", FAIL);
