@@ -41,6 +41,9 @@ public class BoardController {
     @Autowired
     private VoteService voteService;
 
+    @Autowired
+    private PostService postService;
+
     /*
      * 기능: 보드 생성
      * 
@@ -323,7 +326,12 @@ public class BoardController {
                 // 포스트 is_used 0으로 변경
                 List<Integer> postList = boardService.getPostList(board_id);
                 for (Integer post_id : postList) {
-                    
+                    if (postService.postDelete(post_id) == 1) {
+                        postService.deleteScrapAll(post_id);
+                        postService.deleteLikeAll(post_id);
+                        postService.deleteCommentAll(post_id);
+                        resultMap.put("message", SUCCESS);
+                    }
                 }
                 boardService.deletePostAll(board_id);
 
