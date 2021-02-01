@@ -1,7 +1,7 @@
 package com.ssafy.pjt1.model.dto.board;
 
 public class BoardDto {
-	private String board_id;
+	private int board_id;
     private String board_name;
     private String board_description;
     private String board_image;
@@ -11,10 +11,10 @@ public class BoardDto {
     private String board_date;
     private String user_id;
     
-	public String getBoard_id() {
+	public int getBoard_id() {
 		return board_id;
 	}
-	public void setBoard_id(String board_id) {
+	public void setBoard_id(int board_id) {
 		this.board_id = board_id;
 	}
 	public String getBoard_name() {
@@ -65,19 +65,7 @@ public class BoardDto {
 	public void setUser_id(String user_id) {
 		this.user_id = user_id;
 	}
-	public BoardDto(String board_id, String board_name, String board_description, String board_image,
-			int board_igmyeong, String board_location, String board_hash, String board_date, String user_id) {
-		super();
-		this.board_id = board_id;
-		this.board_name = board_name;
-		this.board_description = board_description;
-		this.board_image = board_image;
-		this.board_igmyeong = board_igmyeong;
-		this.board_location = board_location;
-		this.board_hash = board_hash;
-		this.board_date = board_date;
-		this.user_id = user_id;
-	}
+	
 	public BoardDto() {
 		super();
 	}

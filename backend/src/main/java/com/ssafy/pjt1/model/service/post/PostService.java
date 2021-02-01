@@ -46,4 +46,18 @@ public interface PostService {
 
 	public List<PostDto> boardPostPopular(Map<String, Object> map);
 
+	public int isUnLiked(Map<String, Object> map);
+
+	public void updateLike(Map<String, Object> map);
+
+	public int isUnScrapped(Map<String, Object> map);
+
+	public void updateScrap(Map<String, Object> map);
+
+	public void deleteScrapAll(int post_id);
+
+	public void deleteLikeAll(int post_id);
+
+	public void deleteCommentAll(int post_id);
+
 }

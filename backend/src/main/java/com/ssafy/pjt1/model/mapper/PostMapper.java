@@ -25,9 +25,17 @@ public interface PostMapper {
 
 	public void deleteScrap(Map<String, Object> map);
 
+	public int isUnScrapped(Map<String, Object> map);
+
+	public void updateScrap(Map<String, Object> map);
+
 	public int isLiked(Map<String, Object> map);
 
 	public void like(Map<String, Object> map);
+	
+	public int isUnLiked(Map<String, Object> map);
+
+	public void updateLike(Map<String, Object> map);
 
 	public void plusCount(int post_id);
 
@@ -48,5 +56,11 @@ public interface PostMapper {
 	public List<PostDto> boardPostNew(Map<String, Object> map);
 
 	public List<PostDto> boardPostPopular(Map<String, Object> map);
+
+	public void deleteScrapAll(int post_id);
+
+	public void deleteLikeAll(int post_id);
+
+	public void deleteCommentAll(int post_id);
 
 }

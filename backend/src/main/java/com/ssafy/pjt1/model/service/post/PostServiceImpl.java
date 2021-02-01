@@ -57,6 +57,16 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public int isUnScrapped(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).isUnScrapped(map);
+	}
+
+	@Override
+	public void updateScrap(Map<String, Object> map) {
+		sqlSession.getMapper(PostMapper.class).updateScrap(map);
+	}
+
+	@Override
 	public int isLiked(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).isLiked(map);
 	}
@@ -64,6 +74,17 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void like(Map<String, Object> map) {
 		sqlSession.getMapper(PostMapper.class).like(map);
+	}
+
+	@Override
+	public int isUnLiked(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).isUnLiked(map);
+	}
+
+	@Override
+	public void updateLike(Map<String, Object> map) {
+		sqlSession.getMapper(PostMapper.class).updateLike(map);
+
 	}
 
 	@Override
@@ -115,4 +136,20 @@ public class PostServiceImpl implements PostService {
 	public List<PostDto> boardPostPopular(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).boardPostPopular(map);
 	}
+
+	@Override
+	public void deleteScrapAll(int post_id) {
+		sqlSession.getMapper(PostMapper.class).deleteScrapAll(post_id);
+	}
+
+	@Override
+	public void deleteLikeAll(int post_id) {
+		sqlSession.getMapper(PostMapper.class).deleteLikeAll(post_id);
+	}
+
+	@Override
+	public void deleteCommentAll(int post_id) {
+		sqlSession.getMapper(PostMapper.class).deleteCommentAll(post_id);
+	}
+
 }

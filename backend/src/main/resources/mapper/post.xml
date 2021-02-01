@@ -5,15 +5,15 @@
 
 	<insert id="createPost" parameterType="PostDto" useGeneratedKeys="true" keyProperty="post_id">
 		insert into post (user_id, board_id, post_title, post_description,
-		post_image,post_iframe,post_header,post_state,post_date,post_like)
+		post_image,post_iframe,post_header,post_state,post_date,post_like, is_used)
 		values ( #{user_id}, #{board_id}, #{post_title}, #{post_description} ,
-		#{post_image}, #{post_iframe}, #{post_header}, #{post_state},now(),0)
+		#{post_image}, #{post_iframe}, #{post_header}, #{post_state},now(),0,1)
 	</insert>
 
 	<select id="getPostById" parameterType="int" resultType="PostDto">
 		select * 
 		from post
-		where post_id = #{post_id};
+		where post_id = #{post_id} and is_used = 1;
 	</select>
 
 	<update id="postModify" parameterType="PostDto">
@@ -23,11 +23,11 @@
 		where post_id = #{post_id}
 	</update>
 	
-	<delete id="postDelete" parameterType="int">
-		delete
-		from post
+	<update id="postDelete" parameterType="int">
+		update post
+		set is_used = 0
 		where post_id=#{post_id}
-	</delete>
+	</update>
 	
 	<select id="isScrapped" parameterType="map" resultType="int">
 		select count(*)
@@ -37,14 +37,27 @@
 
 	<insert id="scrap" parameterType="map">
 		insert into scrap values (
-		#{post_id}, #{user_id}
+		#{post_id}, #{user_id}, 1
 		)
 	</insert>
-		
-	<delete id="deleteScrap" parameterType="map"> 
-		delete from scrap 
+
+	<select id="isUnScrapped" parameterType="map" resultType="int">
+		select count(*)
+		from scrap
+		where post_id = #{post_id} and user_id = #{user_id} and is_used = 1;	
+	</select>
+
+	<update id="updateScrap" parameterType="map">
+		update scrap
+		set is_used = 1 
 		where post_id = #{post_id} and user_id = #{user_id};
-	</delete>
+	</update>
+		
+	<update id="deleteScrap" parameterType="map"> 
+		update scrap
+		set is_used = 0 
+		where post_id = #{post_id} and user_id = #{user_id};
+	</update>
 
 	<select id="isLiked" parameterType="map" resultType="int">
 		select count(*)
@@ -54,9 +67,21 @@
 
 	<insert id="like" parameterType="map" >
 		insert into postLike values (
-		#{post_id}, #{user_id}
+		#{post_id}, #{user_id}, 1
 		)
 	</insert>
+
+	<select id="isUnLiked" parameterType="map" resultType="int">
+		select count(*)
+		from postLike
+		where post_id = #{post_id} and user_id = #{user_id} and is_used = 1;	
+	</select>
+
+	<update id="updateLike" parameterType="map" >
+		update postLike
+		set is_used = 1
+		where post_id = #{post_id} and user_id = #{user_id};
+	</update>
 
 	<update id="plusCount" parameterType="map" >
 		update post 
@@ -64,10 +89,11 @@
 		where post_id = #{post_id};
 	</update>
 		
-	<delete id="unlike" parameterType="map"> 
-		delete from postLike 
+	<update id="unlike" parameterType="map"> 
+		update postLike 
+		set is_used = 0
 		where post_id = #{post_id} and user_id = #{user_id};
-	</delete>
+	</update>
 
 	<update id="minusCount" parameterType="map" >
 		update post 
@@ -78,13 +104,13 @@
 	<select id="getPostLikeCount" parameterType="int" resultType="int">
 		select count(*)
 		from postLike
-		where post_id = #{post_id};	
+		where post_id = #{post_id} and is_used = 1;	
 	</select>
 
 	<select id="getComment" parameterType="int" resultType="CommentDto">
 		select *
 		from comment
-		where post_id = #{post_id}
+		where post_id = #{post_id} and is_used = 1
 		order by comment_date desc;	
 	</select>
 
@@ -100,13 +126,13 @@
 			  from comment
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
-		where p.board_id = #{board_id};
+		where p.board_id = #{board_id} and p.is_used = 1;
 	</select>
 
 	<select id="searchPostNew" parameterType="string" resultType="PostDto">
 		select *
 		from post
-		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%')
+		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') and is_used = 1
 		order by post_date desc;
 	</select>
 
@@ -114,25 +140,43 @@
 		select *
 		from post as p join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 		on p.post_id = c.post_id
-		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%')
+		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') and is_used = 1
 		order by c.like_count desc;
 	</select>
 
 	<select id="boardPostNew" parameterType="string" resultType="PostDto">
 		select *
 		from post
-		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%')
-		and board_id = #{board_id}
+		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') 
+		and board_id = #{board_id} and is_used = 1
 		order by post_date desc;
 	</select>
 
 	<select id="boardPostPopular" parameterType="string" resultType="PostDto">
 		select *
-		from post as p join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
+		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 		on p.post_id = c.post_id
-		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%')
-		and p.board_id = #{board_id}
+		where p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%')
+		and p.board_id = #{board_id} and p.is_used = 1
 		order by c.like_count desc;
 	</select>
+
+	<update id="deleteScrapAll" parameterType="int"> 
+		update scrap
+		set is_used = 0 
+		where post_id = #{post_id};
+	</update>
+
+	<update id="deleteLikeAll" parameterType="int"> 
+		update postLike
+		set is_used = 0 
+		where post_id = #{post_id};
+	</update>
+
+	<update id="deleteCommentAll" parameterType="int"> 
+		update comment
+		set is_used = 0 
+		where post_id = #{post_id};
+	</update>
 
 </mapper>
