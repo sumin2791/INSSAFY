@@ -41,7 +41,13 @@
       </div>
     </div>
     <div id="popular-container" class="m-top">
-      <p class="main-title">POPULAR</p>
+      <div id="p-header">
+        <p class="main-title">POPULAR</p>
+        <div class="container-m-r">
+          <button class="p-button r-desc" @click="clickPBtn1">보드 리스트</button>
+          <button class="p-button r-desc" @click="clickPBtn2">게시글 리스트</button>
+        </div>
+      </div>
       <div id="p-item-container">
         <p class="p-desc l-desc">팔로워 수</p>
         <Item class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
@@ -188,6 +194,12 @@ export default {
     },
     clickCBtn5: function() {
       this.$router.push({ name: 'BambooForest' });
+    },
+    clickPBtn1: function() {
+      this.$router.push({ name: 'SearchBoard' });
+    },
+    clickPBtn2: function() {
+      this.$router.push({ name: 'SearchPost' });
     },
   },
 };
@@ -436,6 +448,28 @@ c-btn:active {
   height: 600px;
   margin: 0 5%;
 }
+#p-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.container-m-r {
+  margin-right: 1.65%;
+}
+.p-button {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button:hover,
+.p-button:active {
+  color: #fff;
+  background-color: #000 !important;
+}
 
 .p-item-container {
   display: flex;
@@ -456,6 +490,18 @@ c-btn:active {
   }
   .p-item {
     width: 100% !important;
+  }
+  .container-m-r {
+    margin-right: 0;
+  }
+  .p-button {
+    margin-left: 5px;
+    margin-top: 5px;
+    font-size: 13px;
+    padding: 3px 7px;
+    border: 1px solid #000;
+    border-radius: 30px;
+    transition: background-color 0.3s, color 0.3s ease;
   }
 }
 .p-desc {
