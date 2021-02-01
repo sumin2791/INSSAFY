@@ -321,8 +321,12 @@ public class BoardController {
                 // 구독 is_used 0으로 변경
                 boardService.deleteSubscription(board_id);
                 // 포스트 is_used 0으로 변경
-                boardService.deletePostAll(board_id);
                 List<Integer> postList = boardService.getPostList(board_id);
+                for (Integer post_id : postList) {
+                    
+                }
+                boardService.deletePostAll(board_id);
+
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
