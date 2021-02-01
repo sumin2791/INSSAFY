@@ -114,4 +114,9 @@ public class UserServiceImpl implements UserService {
 		return sqlSession.getMapper(UserMapper.class).deleteSubscribe(map);
 	}
 
+	@Override
+	public boolean quizCheck(String answer) {
+		return sqlSession.getMapper(UserMapper.class).quizCheck(answer) == 1;
+	}
+
 }
