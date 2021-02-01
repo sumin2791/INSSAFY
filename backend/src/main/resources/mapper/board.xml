@@ -143,4 +143,10 @@
 		where board_id=#{board_id}
 	</update>
 
+	<select id="getVoteList" parameterType="int" resultType="int">
+		select vote_id
+		from vote
+		where board_id = #{board_id};
+	</select>
+
 </mapper>

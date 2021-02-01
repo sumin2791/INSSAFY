@@ -46,11 +46,11 @@ public interface BoardService {
 
 	public void deletePostAll(int board_id);
 
-	public void deletePostAll(int board_id);
-
 	public void deleteCalendar(int board_id);
 
 	public void deleteCheckList(int board_id);
 
 	public void deleteVote(int board_id);
+
+	public List<Integer> getVoteList(int board_id);
 }

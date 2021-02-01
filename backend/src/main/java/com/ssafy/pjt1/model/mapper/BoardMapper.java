@@ -55,4 +55,6 @@ public interface BoardMapper {
 
 	public void deleteVote(int board_id);
 
+	public List<Integer> getVoteList(int board_id);
+
 }

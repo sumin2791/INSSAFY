@@ -24,6 +24,7 @@ import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.post.PostService;
+import com.ssafy.pjt1.model.service.vote.VoteService;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
@@ -36,6 +37,9 @@ public class BoardController {
 
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private VoteService voteService;
 
     /*
      * 기능: 보드 생성
@@ -310,6 +314,11 @@ public class BoardController {
                 boardService.deleteCalendar(board_id);
                 boardService.deleteCheckList(board_id);
                 boardService.deleteVote(board_id);
+                List<Integer> voteList = boardService.getVoteList(board_id);
+                for (Integer vote_id : voteList) {
+                    voteService.voteDeleteAll(vote_id);
+                }
+                
                 // 구독 is_used 0으로 변경
                 boardService.deleteSubscription(board_id);
                 // 포스트 is_used 0으로 변경

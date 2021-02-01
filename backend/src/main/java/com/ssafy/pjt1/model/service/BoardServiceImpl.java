@@ -133,4 +133,9 @@ public class BoardServiceImpl implements BoardService {
 		sqlSession.getMapper(BoardMapper.class).deleteVote(board_id);
 	}
 
+	@Override
+	public List<Integer> getVoteList(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).getVoteList(board_id);
+	}
+
 }
