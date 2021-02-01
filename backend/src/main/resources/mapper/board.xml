@@ -12,13 +12,13 @@
 	
 	<insert id="subscribe" parameterType="map">
 		insert into subscription values (
-		#{board_id}, #{user_id}, 0, 0, #{user_role}
+		#{board_id}, #{user_id}, 0, 0, #{user_role}, 1
 		)
 	</insert>
 	
 	<insert id="addFunction" parameterType="map">
 		insert into add_function values (
-		#{board_id}, #{checklist_flag}, #{calendar_flag}, #{vote_flag}
+		#{board_id}, #{checklist_flag}, #{calendar_flag}, #{vote_flag}, 0
 		)
 	</insert>
 	
@@ -28,10 +28,23 @@
 		where board_id = #{board_id} and user_id = #{user_id};	
 	</select>
 	
-	<delete id="unsubscribe"> 
-		delete from subscription 
+	<select id="isUnSubscribed" parameterType="map" resultType="int">
+		select count(*)
+		from subscription 
+		where board_id = #{board_id} and user_id = #{user_id} and is_used = 1;	
+	</select>
+
+	<update id="updateSubscribe"> 
+		update subscription 
+		set is_used = 1
+		where board_id = #{board_id} and user_id = #{user_id};
+	</update>
+
+	<update id="unsubscribe"> 
+		update subscription 
+		set is_used = 0
 		where board_id = #{board_id} and user_id = #{user_id} and user_role != 1;
-	</delete>
+	</update>
 
 	<select id="searchUser" parameterType="string" resultType="UserDto">
 		select *

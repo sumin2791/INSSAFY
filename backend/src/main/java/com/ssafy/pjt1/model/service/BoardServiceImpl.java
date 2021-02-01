@@ -93,4 +93,14 @@ public class BoardServiceImpl implements BoardService {
 		return sqlSession.getMapper(BoardMapper.class).detailBoard(board_id);
 	}
 
+	@Override
+	public int isUnSubscribed(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).isUnSubscribed(map);
+	}
+
+	@Override
+	public void updateSubscribe(Map<String, Object> map) {
+		sqlSession.getMapper(BoardMapper.class).updateSubscribe(map);
+	}
+
 }

@@ -44,7 +44,7 @@ public class BoardController {
      * @param : user_id, board_name, board_description, board_location,
      * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag
      * 
-     * @return : ResultMap
+     * @return : message, board_id
      */
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> boardCreate(@RequestBody Map<String, Object> param) {
@@ -91,7 +91,7 @@ public class BoardController {
      * 
      * @param : user_id, board_id, user_role
      * 
-     * @return : ResultMap
+     * @return : message
      */
     @PostMapping("/subscribe")
     public ResponseEntity<Map<String, Object>> subscribe(@RequestBody Map<String, Object> param) {
@@ -103,16 +103,21 @@ public class BoardController {
             map.put("user_id", (String) param.get("user_id"));
             map.put("board_id", (int) param.get("board_id"));
             map.put("user_role", (int) param.get("user_role"));
-            logger.info("map:" + map);
+
             int count = boardService.isSubscribed(map);
-            logger.info("count:" + count);
             if (count == 0) {
                 logger.info("구독 설정");
                 boardService.subscribe(map);
             } else {
-                logger.info("구독 해지");
+                int count2 = boardService.isUnSubscribed(map);
+                if(count2 == 0){
+                    // 전에 구독한 이력이 있지만 현재는 아닌 경우
+                    boardService.updateSubscribe(map);
+                }else{
+                    logger.info("구독 해지");
                 // 관리자 아닐 경우 구독 해지
                 boardService.unsubscribe(map);
+                }
             }
 
             resultMap.put("message", SUCCESS);
