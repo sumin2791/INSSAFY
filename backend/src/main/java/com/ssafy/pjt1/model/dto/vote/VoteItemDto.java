@@ -4,6 +4,7 @@ public class VoteItemDto {
     private int vote_item_id;
     private int vote_id;
     private String vote_item_name;
+    private int is_used;
 
     public int getVote_item_id() {
         return this.vote_item_id;
@@ -28,6 +29,14 @@ public class VoteItemDto {
     public void setVote_item_name(String vote_item_name) {
         this.vote_item_name = vote_item_name;
     }
+
+    public int getIs_used() {
+		return this.is_used;
+	}
+
+	public void setIs_used(int is_used) {
+		this.is_used = is_used;
+	}
     
     public VoteItemDto(){
         super();

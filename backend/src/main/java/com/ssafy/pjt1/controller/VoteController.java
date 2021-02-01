@@ -111,6 +111,7 @@ public class VoteController {
         logger.info("vote/delete 호출성공");
         try {
             if (voteService.voteDelete(vote_id) == 1) {
+                voteService.voteDeleteAll(vote_id);
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
