@@ -1,126 +1,70 @@
 <template>
-  <div class="container-box">
-    <div id="left-sidebar" class="column">
-      <!-- 사용자 정보 보여주는 부분 -->
-      <div class="user-profile">
-        <div class="hd">
-          <h2 class="info">내 정보</h2>
-          <button class="my-info-edit">edit</button>
-        </div>
-        <div class="img">
-          <img src="@/assets/images/slide.jpg" alt="" class="avatar">
-          <div>
-            <button class="img-edit">edit</button>
-          </div>
-        </div>
-        <div class="my-info">
-          <h3 style="margin: 0 0 0 0;">사용자 닉네임</h3>
-          <!-- <input type="text" placeholder="닉네임"> -->
-          <p style="margin: 0;">사용자 이메일</p>
-          <!-- <input type="text" placeholder="이메일"> -->
-          <p style="margin: 0;">사용자 지역 기수</p>
-          <!-- <input type="text" placeholder="지역"> -->
-        </div>
-      </div>
-      <div class="password-change">
-        <hr color="black" width="100%">
-        <p>비밀번호 변경</p>
-      </div>
-    </div>
-    <!-- 모바일 화면에서 보여줄 이동탭(구독/내글/내댓글/스크랩) -->
-    <div class="mobile-tap">
-      <!-- 구독보드 탭 -->
-      <div 
-        @click="clickMyBoard"
+  <v-app>
+    <v-navigation-drawer app>
+      <!-- 왼쪽 내 정보 부분 -->
+      <v-card
+        height="400"
+        width="256"
+        class="mx-auto"
       >
-        <font-awesome-icon 
-          icon="folder" 
-          :class="{focustap : mobileTap[0]}"
-        />
-      </div>
-      <!-- 내 작성글 -->
-      <div
-        @click="clickMyPost"
-      >
-        <font-awesome-icon 
-          icon="th-list"
-          :class="{focustap : mobileTap[1]}"
-        />
-      </div>
-      <!-- 내 작성댓글 -->
-      <div
-        @click="clickMyComment"
-      >
-        <font-awesome-icon 
-          icon="comment-alt"
-          :class="{focustap : mobileTap[2]}"
-        />
-      </div>
-      <!-- 내 스크랩 게시글 -->
-      <div
-        @click="clickMyScrap"
-      >
-        <font-awesome-icon 
-          icon="bookmark"
-          :class="{focustap : mobileTap[3]}"
-        />
-      </div>
-    </div>
-    <div 
-      class="my-board column z-index-forward" 
-      :class="{focuslist : mobileTap[0]}"
-    >
-      <Subscription />
-      <Subscription />
-      <Subscription />
-    </div>
-    <div 
-      class="my-post column z-index-back"
-      :class="{focuslist : mobileTap[1]}"
-    >
-      <!-- 내가 작성한 글 컴포넌트 -->
-      <h2>내 작성글</h2>
-      <MyPost />
-      <MyPost />
-      <MyPost />
-      <MyPost />
-    </div>
-    <div 
-      class="my-comment column z-index-back"
-      :class="{focuslist : mobileTap[2]}"
-    >
-      <!-- 내가 작성한 댓글 컴포넌트 -->
-      <h2>내 댓글</h2>
-      <MyPost />
-      <MyPost />
-      <MyPost />
-    </div>
-    <div 
-      class="my-scrap column z-index-back"
-      :class="{focuslist : mobileTap[3]}"
-    >
-      <!-- 내가 스크랩한 글 컴포넌트 -->
-      <h2 style="margin: 0;">스크랩</h2>
-      <ScrapPost />
-      <ScrapPost />
-      <ScrapPost />
-      <ScrapPost />
-      <ScrapPost />
-    </div> 
-  </div>
+      <v-navigation-drawer permanent>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="title">
+              Application
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              subtext
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-divider></v-divider>
+
+        <v-list
+          dense
+          nav
+        >
+          <v-list-item
+            v-for="item in items"
+            :key="item.title"
+            link
+          >
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </v-card>
+    </v-navigation-drawer>
+
+    <!-- Sizes your content based upon application components -->
+    <v-main>
+
+      <!-- Provides the application the proper gutter -->
+      <v-container fluid>
+
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import Subscription from "@/components/mypage/Subscription.vue"
-import MyPost from "@/components/mypage/MyPost.vue"
-import ScrapPost from "@/components/mypage/ScrapPost.vue"
+// import Subscription from "@/components/mypage/Subscription.vue"
+// import MyPost from "@/components/mypage/MyPost.vue"
+// import ScrapPost from "@/components/mypage/ScrapPost.vue"
 
 export default {
   name: "mypage",
   components: {
-    Subscription,
-    MyPost,
-    ScrapPost,
+    // Subscription,
+    // MyPost,
+    // ScrapPost,
   },
   data() {
     return {

@@ -21,9 +21,13 @@ Vue.use(IconsPlugin);
 //toast
 //https://www.npmjs.com/package/vue-toast-notification
 import VueToast from 'vue-toast-notification';
+
 // Import one of the available themes
 //import 'vue-toast-notification/dist/theme-default.css';
 import 'vue-toast-notification/dist/theme-sugar.css';
+
+// vuetify
+import vuetify from './plugins/vuetify';
 
 Vue.use(VueToast, {
   position: 'bottom-right',
@@ -59,5 +63,6 @@ const router = new VueRouter({
 new Vue({
   router,
   store,
-  render: (h) => h(App),
+  vuetify,
+  render: (h) => h(App)
 }).$mount('#app');
