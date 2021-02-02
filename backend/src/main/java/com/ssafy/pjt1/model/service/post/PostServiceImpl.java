@@ -157,4 +157,14 @@ public class PostServiceImpl implements PostService {
 		return sqlSession.getMapper(PostMapper.class).getSalesList(board_id);
 	}
 
+	@Override
+	public List<PostDto> marketPostNew(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).marketPostNew(map);
+	}
+
+	@Override
+	public List<PostDto> marketPostPopular(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).marketPostPopular(map);
+	}
+
 }

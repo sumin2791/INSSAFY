@@ -126,13 +126,14 @@
 			  from comment
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
-		where p.board_id = #{board_id} and p.is_used = 1;
+		where p.board_id = #{board_id} and p.is_used = 1
+		order by p.post_date desc;
 	</select>
 
 	<select id="searchPostNew" parameterType="string" resultType="PostDto">
 		select *
 		from post
-		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') and is_used = 1
+		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') ) and is_used = 1
 		order by post_date desc;
 	</select>
 
@@ -140,14 +141,14 @@
 		select *
 		from post as p join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 		on p.post_id = c.post_id
-		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') and is_used = 1
+		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') ) and is_used = 1
 		order by c.like_count desc;
 	</select>
 
 	<select id="boardPostNew" parameterType="string" resultType="PostDto">
 		select *
 		from post
-		where post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') 
+		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') )
 		and board_id = #{board_id} and is_used = 1
 		order by post_date desc;
 	</select>
@@ -156,7 +157,7 @@
 		select *
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 		on p.post_id = c.post_id
-		where p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%')
+		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') )
 		and p.board_id = #{board_id} and p.is_used = 1
 		order by c.like_count desc;
 	</select>
@@ -191,7 +192,25 @@
 			  from comment
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
-		where p.board_id = #{board_id} and p.is_used = 1 and p.post_state != 0;
+		where p.board_id = #{board_id} and p.is_used = 1 and p.post_state != 0
+		order by p.post_date desc;
+	</select>
+
+	<select id="marketPostNew" parameterType="string" resultType="PostDto">
+		select *
+		from post
+		where (post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') )
+		and board_id = #{board_id} and is_used = 1 and post_state != 0
+		order by post_date desc;
+	</select>
+
+	<select id="marketPostPopular" parameterType="string" resultType="PostDto">
+		select *
+		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
+		on p.post_id = c.post_id
+		where (p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%'))
+		and p.board_id = #{board_id} and p.is_used = 1 and p.post_state != 0
+		order by c.like_count desc;
 	</select>
 
 </mapper>

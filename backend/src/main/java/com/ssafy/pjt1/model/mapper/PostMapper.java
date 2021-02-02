@@ -65,4 +65,8 @@ public interface PostMapper {
 
 	public List<Map<String, Object>> getSalesList(int board_id);
 
+	public List<PostDto> marketPostNew(Map<String, Object> map);
+
+	public List<PostDto> marketPostPopular(Map<String, Object> map);
+
 }

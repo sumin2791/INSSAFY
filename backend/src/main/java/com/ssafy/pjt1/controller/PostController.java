@@ -288,6 +288,34 @@ public class PostController {
     }
 
     /*
+     * 기능: 중고장터 포스트 리스트 (판매완료 제외)
+     * 
+     * developer: 윤수민
+     * 
+     * @param : board_id
+     * 
+     * @return : message, postList(post_id,user_id,post_date,post_title,post_description,
+     * post_image,post_iframe,post_header,post_state,like_count, comment_count)
+     */
+    @GetMapping("/getSalesList")
+    public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id")int board_id){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("board/getSalesList 호출성공");
+        try {
+            List<Map<String, Object>> postList = postService.getSalesList(board_id); 
+            logger.info("postList: "+postList);
+            resultMap.put("postList", postList);          
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
      * 기능: 전체 보드 포스트 검색 (최신순, 인기순)
      * 
      * developer: 윤수민
@@ -336,7 +364,7 @@ public class PostController {
     @RequestParam(value = "keyword")String keyword, @RequestParam(value = "board_id")String board_id){
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        logger.info("/post/board/searchBoard 호출 성공");
+        logger.info("/post/board/searchPost 호출 성공");
         try {
             List<PostDto> postList;
             Map<String, Object> map = new HashMap<>();
@@ -348,6 +376,44 @@ public class PostController {
             }else{
                 logger.info("좋아요순 포스트 검색");
                 postList = postService.boardPostPopular(map);
+            }
+            resultMap.put("postList",postList);
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("검색 호출 실패", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 중고장터 내 판매중인 포스트만 검색 (최신순, 인기순)
+     * 
+     * developer: 윤수민
+     * 
+     * @param : sort, keyword, board_id
+     * 
+     * @return : postList, message
+     */
+    @GetMapping("/board/searchMarketPost")
+    public ResponseEntity<Map<String, Object>> searchMarketPost(@RequestParam(value = "sort")String sort, 
+    @RequestParam(value = "keyword")String keyword, @RequestParam(value = "board_id")String board_id){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("/post/board/searchMarketPost 호출 성공");
+        try {
+            List<PostDto> postList;
+            Map<String, Object> map = new HashMap<>();
+            map.put("keyword", keyword);
+            map.put("board_id", board_id);
+            if(sort.equals("new")){
+                logger.info("최신순 포스트 검색");
+                postList = postService.marketPostNew(map);
+            }else{
+                logger.info("좋아요순 포스트 검색");
+                postList = postService.marketPostPopular(map);
             }
             resultMap.put("postList",postList);
             resultMap.put("message", SUCCESS);
