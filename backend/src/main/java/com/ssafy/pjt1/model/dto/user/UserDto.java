@@ -1,7 +1,7 @@
 package com.ssafy.pjt1.model.dto.user;
 
 public class UserDto {
-	private String user_id;
+    private String user_id;
     private String user_email;
     private String user_password;
     private String user_nickname;
@@ -10,16 +10,25 @@ public class UserDto {
     private String user_image;
     private int user_auth;
     private String user_authKey;
+    private int is_used;
+
+    public int getIs_used() {
+        return this.is_used;
+    }
+
+    public void setIs_used(int is_used) {
+        this.is_used = is_used;
+    }
 
     public String getUser_id() {
-		return user_id;
-	}
+        return user_id;
+    }
 
-	public void setUser_id(String user_id) {
-		this.user_id = user_id;
-	}
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
 
-	public String getUser_email() {
+    public String getUser_email() {
         return this.user_email;
     }
 
@@ -75,12 +84,12 @@ public class UserDto {
         this.user_auth = user_auth;
     }
 
-	public String getUser_authKey() {
-		return user_authKey;
-	}
+    public String getUser_authKey() {
+        return user_authKey;
+    }
 
-	public void setUser_authKey(String user_authKey) {
-		this.user_authKey = user_authKey;
-	}
-  
+    public void setUser_authKey(String user_authKey) {
+        this.user_authKey = user_authKey;
+    }
+
 }
