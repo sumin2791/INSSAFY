@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<script>
+<script scoped>
 import Post from "@/components/board/Post.vue"
 // import {mapState} from 'vuex'
 

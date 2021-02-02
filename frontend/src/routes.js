@@ -122,7 +122,7 @@ export default [
 
   // board
   {
-    path: '/board',
+    path: '/board/:board_id',
     name: 'Board',
     component: Board,
   },

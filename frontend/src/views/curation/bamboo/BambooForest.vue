@@ -1,102 +1,59 @@
 <template>
-  <div class="container-box">
+  <div class="board">
     <!-- 대나무숲 해더 -->
     <div class="bamboo-hd">
       <div class="bamboo-title">Curation</div>
-      <input type="text">
+      <PostWrite class="bamboo-write"/>
     </div>
-    <!-- 대나무숲 설명과 게시글 나오는 부분 -->
-    <div class="bamboo-post-list">
-      <div class="bamboo-description">
-        <h3>대나무숲</h3>
-        <p>마음 터놓고 이야기 해요.<br>
-          내 마음을 편하게 이야기하는 공간입니다
-        </p>
-      </div>
-      <BambooPost 
-        class="bamboo-post"
-      />
-      <BambooPost 
-        class="bamboo-post"
-      />
-      <BambooPost 
-        class="bamboo-post"
-      />
-      <BambooPost 
-        class="bamboo-post"
-      />
-      <BambooPost 
-        class="bamboo-post"
-      />
-      <BambooPost 
-        class="bamboo-post"
-      />
-      <BambooPost 
-        class="bamboo-post"
-      />
-      <BambooPost 
-        class="bamboo-post"
-      />
-      <BambooPost 
-        class="bamboo-post"
-      />
-    </div>
+    
+    <BambooList/>
   </div>
 </template>
 
 <script>
-import BambooPost from '@/views/curation/bamboo/BambooPost.vue'
+// import BambooPost from '@/views/curation/bamboo/BambooPost.vue'
+import PostWrite from '@/components/curation/bamboo/PostWrite.vue'
+import BambooList from '@/components/curation/bamboo/BambooList.vue'
 
 export default {
   name: "BambooForest",
   components: {
-    BambooPost,
+    // BambooPost,
+    PostWrite,
+    BambooList,
   }
 }
 </script>
 
 <style scoped>
-.container-box {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin: 2% 5% 1% 5%;
-  border: 4px solid;
+.board{
+  max-width: 1200px !important;
+  margin: 0 auto;
+  margin-top:30px;
+  /* width:80%;
+  margin-left:10%;
+  margin-right:10%; */
 }
+
 
 /* 해더부분 */
 .bamboo-hd {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  border: 2px dotted;
+  border: 1px solid;
 }
 
 .bamboo-title {
-  font-size: 2rem;
+  font-size: 1.5rem;
   border: 1px solid;
-  background-color: bisque;
-  flex-basis: 33.3%;
+  background-color: #0B2945;
+  flex-basis: 20%;
+  color:#f9f9f9;
+  padding-left:1rem;
 }
-
-/* 게시글 리스트 부분 */
-.bamboo-post-list {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-basis: 32.3%;
-  flex-flow: wrap;
-}
-.bamboo-post-list .bamboo-description {
-  border: 2px outset;
-  background-color: azure;
-  margin: 0.5%;
-  flex-basis: 32.3%;
-}
-.bamboo-post-list .bamboo-post {
-  border: 2px inset #000000;
-  margin: 0.5%;
-  flex-basis: 32.3%;
+.bamboo-write{
+  flex-basis: 50%;
 }
 
 /* 모바일 웹화면 */

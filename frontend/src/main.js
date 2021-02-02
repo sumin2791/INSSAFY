@@ -27,6 +27,15 @@ import VueToast from 'vue-toast-notification';
 // Import one of the available themes
 //import 'vue-toast-notification/dist/theme-default.css';
 import 'vue-toast-notification/dist/theme-sugar.css';
+
+// vuetify
+import vuetify from './plugins/vuetify';
+
+// masonry
+import VueMasonry from 'vue-masonry-css'
+ 
+Vue.use(VueMasonry);
+
 Vue.use(VueToast, {
   position: 'bottom-right',
   duration: 1000,

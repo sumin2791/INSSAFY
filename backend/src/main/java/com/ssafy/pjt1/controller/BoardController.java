@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.service.BoardService;
+import com.ssafy.pjt1.model.service.post.PostService;
+import com.ssafy.pjt1.model.service.vote.VoteService;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
@@ -36,6 +38,9 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private VoteService voteService;
+
     /*
      * 기능: 보드 생성
      * 
@@ -44,7 +49,7 @@ public class BoardController {
      * @param : user_id, board_name, board_description, board_location,
      * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag
      * 
-     * @return : ResultMap
+     * @return : message, board_id
      */
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> boardCreate(@RequestBody Map<String, Object> param) {
@@ -75,6 +80,7 @@ public class BoardController {
             map2.put("vote_flag", (int) param.get("vote_flag"));
             boardService.addFunction(map2);
 
+            resultMap.put("board_id", boardDto.getBoard_id());
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
@@ -90,7 +96,7 @@ public class BoardController {
      * 
      * @param : user_id, board_id, user_role
      * 
-     * @return : ResultMap
+     * @return : message
      */
     @PostMapping("/subscribe")
     public ResponseEntity<Map<String, Object>> subscribe(@RequestBody Map<String, Object> param) {
@@ -100,18 +106,23 @@ public class BoardController {
         try {
             Map<String, Object> map = new HashMap<>();
             map.put("user_id", (String) param.get("user_id"));
-            map.put("board_id", (String) param.get("board_id"));
+            map.put("board_id", (int) param.get("board_id"));
             map.put("user_role", (int) param.get("user_role"));
-            logger.info("map:" + map);
+
             int count = boardService.isSubscribed(map);
-            logger.info("count:" + count);
             if (count == 0) {
                 logger.info("구독 설정");
                 boardService.subscribe(map);
             } else {
-                logger.info("구독 해지");
+                int count2 = boardService.isUnSubscribed(map);
+                if(count2 == 0){
+                    // 전에 구독한 이력이 있지만 현재는 아닌 경우
+                    boardService.updateSubscribe(map);
+                }else{
+                    logger.info("구독 해지");
                 // 관리자 아닐 경우 구독 해지
                 boardService.unsubscribe(map);
+                }
             }
 
             resultMap.put("message", SUCCESS);
@@ -165,7 +176,7 @@ public class BoardController {
         try {
             Map<String, Object> map = new HashMap<>();
             map.put("user_id", (String) param.get("user_id"));
-            map.put("board_id", (String) param.get("board_id"));
+            map.put("board_id", (int) param.get("board_id"));
             int count = boardService.isSubscribed(map);
             if (count == 0) {
                 logger.info("구독 설정 + 관리자 추가");
@@ -292,12 +303,26 @@ public class BoardController {
      * @return : message
      */
     @DeleteMapping("/delete/{board_id}")
-    public ResponseEntity<Map<String, Object>> boardDelete(@PathVariable("board_id") int board_id) {
+    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("board_id") int board_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/delete 호출성공");
         try {
-            if (boardService.boardDelete(board_id) == 1) {
+            if (boardService.deleteBoard(board_id) == 1) {
+                // 추가기능 is_used 0으로 변경
+                boardService.deleteBoardAll(board_id);
+                boardService.deleteCalendar(board_id);
+                boardService.deleteCheckList(board_id);
+                boardService.deleteVote(board_id);
+                List<Integer> voteList = boardService.getVoteList(board_id);
+                for (Integer vote_id : voteList) {
+                    voteService.voteDeleteAll(vote_id);
+                }
+                
+                // 구독 is_used 0으로 변경
+                boardService.deleteSubscription(board_id);
+                // 포스트 is_used 0으로 변경
+                boardService.deletePostAll(board_id);
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
@@ -308,4 +333,29 @@ public class BoardController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    /*
+     * 기능: 보드 디테일
+     * 
+     * developer: 윤수민
+     * 
+     * @param : board_id
+     * 
+     * @return : message
+     */
+    @GetMapping("/detail")
+    public ResponseEntity<Map<String, Object>> detailBoard(@RequestParam(value = "board_id") int board_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("board/searchUser 호출성공");
+        try {
+            resultMap.put("message", SUCCESS);
+            BoardDto boardDto = boardService.detailBoard(board_id);
+            resultMap.put("boardDto", boardDto);
+
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
 }
