@@ -87,20 +87,26 @@ public class PostController {
         logger.info("post/getPostById 호출성공");
         try {
             PostDto postDto = postService.getPostById(post_id);
-            Map<String, Object> map = new HashMap<>();
-            map.put("user_id", login_id);
-            map.put("post_id", post_id);
-            int isScrapped = postService.isScrapped(map);
-            int isLiked = postService.isLiked(map);
-            int like_count = postService.getPostLikeCount(post_id);
-            List<CommentDto> commentList = postService.getComment(post_id);
+            if(postDto != null){
+                Map<String, Object> map = new HashMap<>();
+                map.put("user_id", login_id);
+                map.put("post_id", post_id);
+                int isScrapped = postService.isScrapped(map);
+                int isLiked = postService.isLiked(map);
+                int like_count = postService.getPostLikeCount(post_id);
+                List<CommentDto> commentList = postService.getComment(post_id);
+                
+                resultMap.put("postDto", postDto);
+                resultMap.put("isScrapped", isScrapped);
+                resultMap.put("isLiked", isLiked);   
+                resultMap.put("like_count", like_count);   
+                resultMap.put("commentList", commentList);          
+                resultMap.put("message", SUCCESS);
+            }else{
+                // id에 맞는 게시글 존재하지 않으면 NULL 리턴
+                resultMap.put("message", "NULL");
+            }
             
-            resultMap.put("postDto", postDto);
-            resultMap.put("isScrapped", isScrapped);
-            resultMap.put("isLiked", isLiked);   
-            resultMap.put("like_count", like_count);   
-            resultMap.put("commentList", commentList);          
-            resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
