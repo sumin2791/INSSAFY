@@ -39,7 +39,7 @@ export default {
     this.fetchData()
   },
   watch:{
-    '$route':'featchData'
+    '$route':'fetchData'
   },
   methods: {
     fetchData(){

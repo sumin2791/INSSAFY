@@ -55,7 +55,7 @@ export default {
     goToDetail() {
       console.log(this.post)
       // params를 이용해서 데이터를 넘겨줄 수 있다.
-      this.$router.push({ name: 'Post', params: {post:this.post} });
+      // this.$router.push({ name: 'Post', params: {post:this.post} });
     },
     postLike(e){
       this.flagLike = !this.flagLike

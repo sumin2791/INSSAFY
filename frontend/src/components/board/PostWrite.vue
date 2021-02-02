@@ -1,15 +1,6 @@
 <template>
   <div>
     <b-button v-b-modal.modal-post variant="light" class="btn-write">글쓰기</b-button>
-
-    <!-- <div class="mt-3">
-      Submitted Names:
-      <div v-if="submittedNames.length === 0">--</div>
-      <ul v-else class="mb-0 pl-3">
-        <li v-for="(name,idx) in submittedNames" :key="idx">{{ name }}</li>
-      </ul>
-    </div> -->
-
     <b-modal
       id="modal-post"
       ref="modal"
@@ -76,78 +67,114 @@
         </b-button>
       </template>
     </b-modal>
+    <!-- <b-modal
+      id="modal-post"
+      ref="modal"
+      size="xl"
+      title="Post"
+      no-close-on-backdrop
+      ok-only
+      @show="resetModal"
+      @hidden="resetModal"
+      @ok="handleOk"
+    >
+      <form ref="form" @submit.stop.prevent="handleSubmit">
+        여기?
+      </form>
+      <template #modal-footer="{ok}">
+        <b-button variant="submit" @click="ok()">
+          게시
+        </b-button>
+      </template>
+    </b-modal> -->
   </div>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        title: '',
-        description:'',
-        images:[],
-        titleState: null,
-        descriptionState: null,
-      }
-    },
-    methods: {
-      titleCheckFormValidity() {
-        const valid = this.$refs.form.checkValidity()
-        this.titleState = valid
-        return valid
-      },
-      descriptionCheckFormValidity() {
-        const valid = this.$refs.form.checkValidity()
-        this.descriptionState = valid
-        return valid
-      },
-      resetModal() {
-        this.title = ''
-        this.description = ''
-        this.titleState = null
-        this.descriptionState = null
-        this.images=[]
-      },
-      handleOk(bvModalEvt) {
-        // Prevent modal from closing
-        bvModalEvt.preventDefault()
-        // Trigger submit handler
-        this.handleSubmit()
-      },
-      handleSubmit() {
-        // Exit when the form isn't valid
-        if (!this.titleCheckFormValidity() ) {
-          return
-        }
-        if (!this.descriptionCheckFormValidity()) {
-          return
-        }
-        // Push the name to submitted names
-        // this.submittedNames.push(this.name)
-        // Hide the modal manually
-        let today= new Date()
-        const posts = this.$store.state.posts
-        let idx= posts.length
-        const postItem ={
-          post_id:idx+1,
-          user:'testttttt', 
-          post_title:this.title, 
-          post_description:this.description,
-          post_like:0,
-          comment_count:0,
-          post_date:`${today.getFullYear()}-${today.getMonth()+1}-${today.getDay()}/${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`,
-          img:this.images
-        }
-        this.$store.dispatch('createPost',postItem)
-        
+import * as postApi from '@/api/post';
 
-        console.log(this.images)
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-post')
-        })
+export default {
+  data() {
+    return {
+      title: '',
+      description:'',
+      images:[],
+      titleState: null,
+      descriptionState: null,
+    }
+  },
+  methods: {
+    titleCheckFormValidity() {
+      const valid = this.$refs.form.checkValidity()
+      this.titleState = valid
+      return valid
+    },
+    descriptionCheckFormValidity() {
+      const valid = this.$refs.form.checkValidity()
+      this.descriptionState = valid
+      return valid
+    },
+    resetModal() {
+      this.title = ''
+      this.description = ''
+      this.titleState = null
+      this.descriptionState = null
+      this.images=[]
+    },
+    handleOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault()
+      // Trigger submit handler
+      this.handleSubmit()
+    },
+    handleSubmit() {
+      // Exit when the form isn't valid
+      if (!this.titleCheckFormValidity() ) {
+        return
       }
+      if (!this.descriptionCheckFormValidity()) {
+        return
+      }
+      // Push the name to submitted names
+      // this.submittedNames.push(this.name)
+      // Hide the modal manually
+      let today= new Date()
+      const posts = this.$store.state.posts
+      let idx= posts.length
+      const BOARD_ID = Number(this.$route.params.board_id)
+
+      const postItem ={
+        user_id:String(localStorage.getItem('userId')),
+        board_id:BOARD_ID,
+        post_title:this.title, 
+        post_description:this.description,
+        post_image:JSON.stringify(this.images),
+        post_iframe:'',
+        post_header:'',
+        post_state:0
+      }
+      console.log(postItem)
+      
+      postApi.create(postItem)
+        .then(res=>{
+          console.log(`post 생성 완료`)
+          console.log(res)
+          this.$store.dispatch('board/isWriteFlag')
+        })
+        .catch(err=>{
+          console.log(`post 생성 실패 ${err}`)
+        })
+
+      // this.$store.dispatch('createPost',postItem)
+      
+
+      console.log(this.images)
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-post')
+      })
     }
   }
+}
 </script>
 
 <style scoped>
