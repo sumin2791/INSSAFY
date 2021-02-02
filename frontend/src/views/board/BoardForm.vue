@@ -135,7 +135,7 @@ export default {
       boardApi.board_create(board).then(response => {
         console.log(response.data);
         alert('게시판 보드 생성')
-        this.$router.push({name:'Board'})
+        this.$router.push({name:'Board',params:{board_id:response.data.board_id}})
       }).catch(error => {
         console.log(error);
         alert("보드 생성에 실패하였습니다.");

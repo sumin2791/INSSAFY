@@ -29,4 +29,10 @@ export default {
   getToastType: function(state) {
     return state.toastType;
   },
+
+  //board
+  // getSubBoardIDs: function(state) {
+  //   return JSON.parse(localStorage.subBoard)
+  // }
+  
 };

@@ -7,7 +7,13 @@
           <button
             class="btn-subscribe b-title"
             @click="onSubscribe"
+            v-if="!inBoard"
           >Subscribe</button>
+          <button
+            class="btn-subscribing b-title"
+            @click="onSubscribe"
+            v-if="inBoard"
+          >Subscribing</button>
           <hr>
           <div class="board-function">보드특수기능들</div>
           <div class="add-board-function">보드기능 추가</div>
@@ -33,6 +39,9 @@ import BoardDescription from '@/components/board/BoardDescription.vue'
 import PostWrite from '@/components/board/PostWrite.vue'
 import PostList from '@/components/board/PostList.vue'
 
+//board api
+import * as boardApi from '@/api/board';
+
 export default {
   name:'Board',
   components: {
@@ -40,8 +49,66 @@ export default {
     PostList,
     PostWrite,
   },
+  data() {
+    return {
+      inBoard:''
+    }
+  },
+  created() {
+    const boards = JSON.parse(localStorage.subBoard)
+    const boardIds = boards.map(e => {
+      return e.board_id
+    });
+
+    this.inBoard = boardIds.includes(Number(this.$route.params.board_id))
+  },
+  computed: {
+    
+  },
   methods:{
     onSubscribe(){
+      const BOARD_ID = Number(this.$route.params.board_id)
+
+      const boards = JSON.parse(localStorage.subBoard)
+      console.log('boards 구조확인해야함')
+      console.log(boards)
+      const board = boards.filter(board => board.board_id===Number(this.$route.params.board_id))
+      
+      const params = {
+        user_id:String(localStorage.userId),
+        board_id:BOARD_ID,
+        user_role:0,
+      }
+      boardApi.subscribe(params)
+        .then(res => {
+          console.log('들어왔나?')
+          console.log(res)
+          if (res.data.message==='fail'){
+            return
+          }else{
+            this.inBoard = !this.inBoard
+            // localStorage 수정해주는 부분
+            if(board.length>0){
+              // 보드가 있네? 그럼 구독 해지!
+              const idx = boards.findIndex(board => board.board_id===Number(this.$route.params.board_id))
+              boards.splice(idx,1)
+            }else{
+              // 보드가 없었어. 그러면 바로 구독하면 돼!
+              boards.push({
+                board_id:Number(this.$route.params.board_id),
+                favorite_flag:0,
+                is_used:0,
+                user_id: localStorage.userId,
+                write_post_count: 0,
+                user_role: 0
+              })
+            }
+            localStorage.subBoard = JSON.stringify(boards)
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        })
       return
     }
   }
@@ -75,11 +142,28 @@ export default {
   margin-top: 10px; 
   margin-bottom: 10px;
   text-align: center;
+  background-color: #000 !important;
+  color: #fff;
 }
 .btn-subscribe:hover,
 .btn-subscribe:active {
-  background-color: #000 !important;
-  color: #fff;
+  background-color: #fff !important;
+  color: #000;
+}
+.btn-subscribing{
+  height: 50px;
+  width:100%;
+  font-size: 24px;
+  margin-top: 10px; 
+  margin-bottom: 10px;
+  text-align: center;
+  /* background-color: #000 !important; */
+  color: #000 ;
+}
+.btn-subscribing:hover,
+.btn-subscribing:active {
+  /* background-color: #fff !important; */
+  color: #000;
 }
 
 @media screen and (max-width:576px){
@@ -87,6 +171,11 @@ export default {
     width: 100%;
     background-color: #000 !important;
     color: #fff;
+  }
+  .btn-subscribing{
+    width: 100%;
+    /* background-color: #000 !important; */
+    color: #000;
   }
   .post-search{
     display:none;
