@@ -35,6 +35,11 @@ public class PostServiceImpl implements PostService {
 	public int postModify(PostDto postDto) {
 		return sqlSession.getMapper(PostMapper.class).postModify(postDto);
 	}
+	
+	@Override
+	public int stateModify(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).stateModify(map);
+	}
 
 	@Override
 	public int postDelete(int post_id) {

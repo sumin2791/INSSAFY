@@ -17,6 +17,8 @@ public interface PostMapper {
 
 	public int postModify(PostDto postDto);
 
+	public int stateModify(Map<String, Object> map);
+
 	public int postDelete(int post_id);
 
 	public int isScrapped(Map<String, Object> map);

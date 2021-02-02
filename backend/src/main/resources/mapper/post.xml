@@ -22,6 +22,12 @@
 		post_image=#{post_image}, post_iframe=#{post_iframe}, post_header=#{post_header}, post_state=#{post_state}
 		where post_id = #{post_id}
 	</update>
+
+	<update id="stateModify" parameterType="map">
+		update post
+		set  post_state = #{post_state}
+		where post_id = #{post_id}
+	</update>
 	
 	<update id="postDelete" parameterType="int">
 		update post

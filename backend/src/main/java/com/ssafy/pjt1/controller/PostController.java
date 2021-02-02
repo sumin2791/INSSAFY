@@ -142,6 +142,36 @@ public class PostController {
     }
 
     /*
+     * 기능: 중고장터 거래 진행 변경
+     * 
+     * developer: 윤수민
+     * 
+     * @param : PostDto
+     * 
+     * @return : message
+     */
+    @PutMapping("/modifyState")
+    public ResponseEntity<Map<String, Object>> stateModify(@RequestParam(value = "post_id")int post_id,
+    @RequestParam(value = "post_state")int post_state) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("post/modifyState 호출 성공");
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("post_id",post_id);
+            map.put("post_state",post_state);
+            if (postService.stateModify(map) == 1) {
+                resultMap.put("message", SUCCESS);
+            }
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("error", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
      * 기능: 포스트 삭제
      * 
      * developer: 윤수민
