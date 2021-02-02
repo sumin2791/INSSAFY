@@ -5,6 +5,7 @@
       <div class="join-form">
         <div class="join-input">
           <div class="input-with-label">
+            <div class="indicator" :class="{ pass: indicator.email }" />
             <input
               v-model="email"
               id="email"
@@ -47,12 +48,21 @@
           </div>
           <div id="problem-container" class="input-with-label">
             <p class="problem b-desc">다음은 학사규정 중 일부이다.</p>
-            <p class="problem r-desc">{{ getRandomProblem }}</p>
+            <b-icon
+              id="new-problem"
+              icon="arrow-clockwise"
+              style="width:24px; height:24px;"
+              @click="clickNewProblem"
+              :class="{ rotate: state.rotate }"
+            />
+            <p class="problem r-desc">{{ problem }}</p>
           </div>
           <div class="input-with-label">
-            <label for="solution">인증문제 답</label>
+            <div class="indicator" :class="{ pass: indicator.solution }" />
+            <label for="solution">인증문제 답*</label>
             <input
               id="solution"
+              :class="{ error: error.solution && solution.length !== 0, complete: !error.solution && solution.length !== 0 }"
               placeholder="빈 칸에 들어갈 알맞은 단어는?"
               type="text"
               v-model="solution"
@@ -60,9 +70,10 @@
               @focus="waitSolution"
             />
             <Delete-btn class="delete-btn" :state="solution" @clickDel="deleteSolution" />
+            <div class="error-text" v-if="error.solution && solution.length !== 0">{{ error.solution }}</div>
           </div>
           <div class="input-with-label">
-            <label for="nickname">닉네임</label>
+            <label for="nickname">닉네임*</label>
             <input id="nickname" placeholder="닉네임을 입력하세요." type="text" v-model="nickname" />
             <Delete-btn class="delete-btn" :state="nickname" @clickDel="deleteNickname" />
           </div>
@@ -98,9 +109,9 @@
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
 import * as authApi from '@/api/auth';
+import * as join from '@/api/join';
 
 import DeleteBtn from '@/components/etc/DeleteBtn.vue';
-import { mapGetters } from 'vuex';
 export default {
   name: 'Join',
   components: {
@@ -116,6 +127,7 @@ export default {
       password: '',
       passwordSchema: new PV(),
       passwordConfirm: '',
+      problem: '',
       solution: '',
       nickname: '',
       location: '',
@@ -131,10 +143,17 @@ export default {
         location: true,
         generation: true,
       },
+      indicator: {
+        email: false,
+        solution: false,
+      },
       isSubmit: false,
       passwordType: 'password',
       passwordConfirmType: 'password',
       termPopup: false,
+      state: {
+        rotate: false,
+      },
     };
   },
   created() {
@@ -148,7 +167,10 @@ export default {
       .has()
       .letters();
   },
-  computed: { ...mapGetters(['getRandomProblem']) },
+  mounted() {
+    //화면 적재되면 문제 랜덤으로 가져오기
+    this.problem = this.$store.getters.getRandomProblem;
+  },
   watch: {
     email: function() {
       this.checkForm();
@@ -168,9 +190,9 @@ export default {
     generation: function() {
       this.checkForm();
     },
-    // isTerm: function(){
-    //   this.checkForm();
-    // }
+    solution: function() {
+      this.checkForm();
+    },
   },
   methods: {
     checkForm() {
@@ -193,16 +215,18 @@ export default {
       if (this.generation.length == 0) this.error.generation = true;
       else this.error.generation = false;
 
-      // if(!this.isTerm) this.error.term = true;
-      // else this.error.term = false;
-
       let isSubmit = true;
       Object.values(this.error).map((v) => {
         if (v) isSubmit = false;
       });
+      Object.values(this.indicator).map((v) => {
+        if (!v) isSubmit = false;
+      });
       this.isSubmit = isSubmit;
     },
     onJoin: function() {
+      //spinner 동작
+      this.$store.commit('setSpinnerTogle');
       var member = {
         user_email: this.email,
         user_password: this.password,
@@ -213,15 +237,24 @@ export default {
       authApi
         .join(member)
         .then((response) => {
+          //spinner 해제
+          this.$store.commit('setSpinnerTogle');
           console.log(response.data);
-          alert(this.nickname + '님 환영합니다!\n이메일 인증을 완료해주세요.');
+          //상단 이메일 인증 알림
+          this.$store.commit('auth/setEmail', this.email);
+          this.$store.commit('setToastTogle');
+          this.$store.commit('setToastType', 'email');
+          alert(this.nickname + '님 환영합니다!');
           // this.$router.push({name: 'JoinSuccess', params:{email:this.email}});
           this.$router.push({ name: 'Main' });
         })
         .catch((error) => {
+          //spinner 해제
+          this.$store.commit('setSpinnerTogle');
           console.log(error);
           alert('가입에 실패하였습니다.');
           this.password = '';
+          this.passwordConfirm = '';
         });
     },
     onDuplicate: function() {
@@ -230,14 +263,20 @@ export default {
         .duplicate(this.email)
         .then((response) => {
           console.log(response);
-          if (response.data.message === 'success') {
+          if (response.data.message === 'SUCCESS') {
             this.error.emailDuplicate = false;
+            this.indicator.email = true;
           } else {
             this.error.email = '이미 가입되어 있는 이메일입니다.';
+            this.indicator.email = false;
           }
+          this.checkForm();
         })
         .catch((error) => {
+          this.error.email = '이미 가입되어 있는 이메일입니다.';
+          this.indicator.email = false;
           console.log(error);
+          this.checkForm();
         });
     },
     waitDuplicate: function() {
@@ -245,9 +284,33 @@ export default {
     },
 
     //인증문제 처리
-    confirmSolution: function() {},
+    clickNewProblem: function() {
+      this.state.rotate = true;
+      setTimeout(() => {
+        this.state.rotate = false;
+      }, 600);
+      this.problem = this.$store.getters.getRandomProblem2(this.getRandomProblem);
+    },
+    confirmSolution: function() {
+      join
+        .confirmSolution(this.solution)
+        .then((response) => {
+          console.log(response);
+          if (response.data.message == 'SUCCESS') {
+            this.error.solution = false;
+            this.indicator.solution = true;
+          } else {
+            this.error.solution = '인증 문제 답을 잘못 입력하셨습니다.';
+            this.indicator.solution = false;
+          }
+          this.checkForm();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
     waitSolution: function() {
-      this.solution = '';
+      // this.solution = '';
       this.error.solution = false;
     },
 
@@ -295,6 +358,19 @@ h2 {
   margin-bottom: 30px;
 }
 
+.indicator {
+  position: absolute;
+  margin-top: 23px;
+  width: 6px;
+  height: 6px;
+  background-color: red;
+  border-radius: 6px;
+  transition: background-color 0.5s ease;
+}
+.pass {
+  background-color: rgb(0, 223, 67);
+}
+
 .delete-btn {
   position: absolute;
   right: 30px;
@@ -322,6 +398,13 @@ h2 {
 #problem-container {
   margin: 10px 10px 0;
 }
+#new-problem {
+  position: absolute;
+  right: 25px;
+  margin-top: -20px;
+  cursor: pointer;
+}
+
 .problem {
   margin: 0 0;
 }
@@ -349,7 +432,7 @@ select {
 .btn-join {
   /* position: inherit;  */
   height: 50px;
-  margin-top: 30px;
+  margin-top: 10px;
   font-size: 24px;
   border: solid 1px #000;
   text-align: center;
@@ -369,6 +452,11 @@ select {
 }
 
 /* 스켈레톤에서 가져온거 */
+.disabled {
+  color: var(--basic-color-bg);
+  border: solid 1px var(--basic-color-bg) !important;
+}
+
 .input-with-label {
   width: 100%;
   float: left;

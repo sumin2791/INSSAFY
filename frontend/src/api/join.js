@@ -1,5 +1,5 @@
 import http from '@/api/http';
 
 export function confirmSolution(solution) {
-  return http.post();
+  return http.get(`/account/confirm/quiz/${solution}`);
 }
