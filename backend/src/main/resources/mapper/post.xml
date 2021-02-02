@@ -28,13 +28,13 @@
 		set  post_state = #{post_state}
 		where post_id = #{post_id}
 	</update>
-	
+
 	<update id="postDelete" parameterType="int">
 		update post
 		set is_used = 0
 		where post_id=#{post_id}
 	</update>
-	
+
 	<select id="isScrapped" parameterType="map" resultType="int">
 		select count(*)
 		from scrap
@@ -58,7 +58,7 @@
 		set is_used = 1 
 		where post_id = #{post_id} and user_id = #{user_id};
 	</update>
-		
+
 	<update id="deleteScrap" parameterType="map"> 
 		update scrap
 		set is_used = 0 
@@ -71,7 +71,7 @@
 		where post_id = #{post_id} and user_id = #{user_id};	
 	</select>
 
-	<insert id="like" parameterType="map" >
+	<insert id="like" parameterType="map">
 		insert into postLike values (
 		#{post_id}, #{user_id}, 1
 		)
@@ -83,25 +83,25 @@
 		where post_id = #{post_id} and user_id = #{user_id} and is_used = 1;	
 	</select>
 
-	<update id="updateLike" parameterType="map" >
+	<update id="updateLike" parameterType="map">
 		update postLike
 		set is_used = 1
 		where post_id = #{post_id} and user_id = #{user_id};
 	</update>
 
-	<update id="plusCount" parameterType="map" >
+	<update id="plusCount" parameterType="map">
 		update post 
 		set post_like = post_like + 1
 		where post_id = #{post_id};
 	</update>
-		
+
 	<update id="unlike" parameterType="map"> 
 		update postLike 
 		set is_used = 0
 		where post_id = #{post_id} and user_id = #{user_id};
 	</update>
 
-	<update id="minusCount" parameterType="map" >
+	<update id="minusCount" parameterType="map">
 		update post 
 		set post_like = post_like - 1
 		where post_id = #{post_id};
