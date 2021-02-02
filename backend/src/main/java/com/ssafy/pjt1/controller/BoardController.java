@@ -360,11 +360,14 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/searchUser 호출성공");
         try {
-            resultMap.put("message", SUCCESS);
             BoardDto boardDto = boardService.detailBoard(board_id);
-            int board_count = boardService.getBoardCount(board_id);
-            resultMap.put("boardDto", boardDto);
-            resultMap.put("board_count", board_count);
+            if(boardDto != null){
+                int board_count = boardService.getBoardCount(board_id);
+                resultMap.put("boardDto", boardDto);
+                resultMap.put("board_count", board_count);
+                resultMap.put("message", SUCCESS);
+            }
+            resultMap.put("message", "NULL");
 
         } catch (Exception e) {
             resultMap.put("message", FAIL);
