@@ -40,4 +40,6 @@ public interface UserService {
     public int favorite(Map<String, String> map);
 
     public int deleteSubscribe(Map<String, String> map);
+
+    public boolean quizCheck(String answer);
 }

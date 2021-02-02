@@ -10,8 +10,8 @@
 	</select>
 
 	<insert id="join" parameterType="UserDto">
-		insert into user values (
-		#{user_id}, #{user_email}, #{user_password}, #{user_nickname}, #{user_location} ,
+		insert into user (user_id, user_email, user_password, user_nickname, user_location, user_generation, user_image, user_auth, user_authKey)
+		values (#{user_id}, #{user_email}, #{user_password}, #{user_nickname}, #{user_location} ,
 		#{user_generation}, #{user_image}, #{user_auth}, #{user_authKey}
 		)
 	</insert>
@@ -99,4 +99,11 @@
 		set is_used = 1 
 		where user_id = #{user_id} and board_id = #{board_id} and is_used = 0;;
 	</update>
+
+	<!-- 퀴즈 정답 확인-->
+	<select id="quizCheck" parameterType="string" resultType="Integer">
+		select count(*)
+		from quiz
+		where quiz_answer like #{answer}
+	</select>
 </mapper>

@@ -197,6 +197,7 @@ svg {
   height: 40px;
   margin: 5px 10px;
   font-size: 24px;
+  border: solid 1px #000;
   transition: color 0.3s, background-color 0.3s ease;
 }
 #login-btn:hover,

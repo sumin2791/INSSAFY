@@ -30,6 +30,8 @@ const PROBLEMS = () => [
 const POPULAR = () => {};
 
 const state = {
+  //spinner(로디용)
+  spinnerActive: false,
   //toast
   toastActive: false,
   toastType: {
@@ -40,11 +42,9 @@ const state = {
   searchState: SEARCH_STATE(),
 
   // comment : user_id, post_id // comment_description, comment_date
-  comments:[
-    {comment_id:1,user:'이름',comment:'댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글',date:"2021-01-28"}
-  ],
+  comments: [{ comment_id: 1, user: '이름', comment: '댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글', date: '2021-01-28' }],
   // post : user_id, board_id // post_date, post_title, post_description, post_like, post_image, post_iframe, post_header, post_state
-  posts:[
+  posts: [
     {
       post_id:1,
       user:'이름', 
