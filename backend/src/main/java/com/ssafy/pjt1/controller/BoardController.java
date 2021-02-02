@@ -327,9 +327,9 @@ public class BoardController {
                 List<Integer> postList = boardService.getPostList(board_id);
                 for (Integer post_id : postList) {
                     if (postService.postDelete(post_id) == 1) {
-                        postService.deleteScrapAll(post_id);
-                        postService.deleteLikeAll(post_id);
-                        postService.deleteCommentAll(post_id);
+                        // postService.deleteScrapAll(post_id);
+                        // postService.deleteLikeAll(post_id);
+                        // postService.deleteCommentAll(post_id);
                         resultMap.put("message", SUCCESS);
                     }
                 }

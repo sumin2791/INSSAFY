@@ -151,9 +151,9 @@ public class PostController {
         logger.info("post/delete 호출성공");
         try {
             if (postService.postDelete(post_id) == 1) {
-                postService.deleteScrapAll(post_id);
-                postService.deleteLikeAll(post_id);
-                postService.deleteCommentAll(post_id);
+                // postService.deleteScrapAll(post_id);
+                // postService.deleteLikeAll(post_id);
+                // postService.deleteCommentAll(post_id);
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
