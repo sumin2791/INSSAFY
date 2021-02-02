@@ -63,4 +63,6 @@ public interface PostMapper {
 
 	public void deleteCommentAll(int post_id);
 
+	public List<Map<String, Object>> getSalesList(int board_id);
+
 }

@@ -152,4 +152,9 @@ public class PostServiceImpl implements PostService {
 		sqlSession.getMapper(PostMapper.class).deleteCommentAll(post_id);
 	}
 
+	@Override
+	public List<Map<String, Object>> getSalesList(int board_id) {
+		return sqlSession.getMapper(PostMapper.class).getSalesList(board_id);
+	}
+
 }
