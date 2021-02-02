@@ -35,6 +35,11 @@ public class PostServiceImpl implements PostService {
 	public int postModify(PostDto postDto) {
 		return sqlSession.getMapper(PostMapper.class).postModify(postDto);
 	}
+	
+	@Override
+	public int stateModify(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).stateModify(map);
+	}
 
 	@Override
 	public int postDelete(int post_id) {
@@ -150,6 +155,21 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void deleteCommentAll(int post_id) {
 		sqlSession.getMapper(PostMapper.class).deleteCommentAll(post_id);
+	}
+
+	@Override
+	public List<Map<String, Object>> getSalesList(int board_id) {
+		return sqlSession.getMapper(PostMapper.class).getSalesList(board_id);
+	}
+
+	@Override
+	public List<PostDto> marketPostNew(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).marketPostNew(map);
+	}
+
+	@Override
+	public List<PostDto> marketPostPopular(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).marketPostPopular(map);
 	}
 
 }

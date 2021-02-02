@@ -17,6 +17,8 @@ public interface PostMapper {
 
 	public int postModify(PostDto postDto);
 
+	public int stateModify(Map<String, Object> map);
+
 	public int postDelete(int post_id);
 
 	public int isScrapped(Map<String, Object> map);
@@ -62,5 +64,11 @@ public interface PostMapper {
 	public void deleteLikeAll(int post_id);
 
 	public void deleteCommentAll(int post_id);
+
+	public List<Map<String, Object>> getSalesList(int board_id);
+
+	public List<PostDto> marketPostNew(Map<String, Object> map);
+
+	public List<PostDto> marketPostPopular(Map<String, Object> map);
 
 }
