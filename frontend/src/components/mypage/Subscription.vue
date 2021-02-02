@@ -1,79 +1,121 @@
 <template>
-  <!-- 배경화면 어둡게 하기 위해 넣은 div -->
-  <div>
-    <div class="scrap">
-      <!-- 보드 아이콘 - 즐겨찾기 -->
-      <div class="favorite">
-        <font-awesome-icon icon="star"/>
+  <v-container
+    class="my-1    
+    mx-0
+    px-1"
+  >
+    <div 
+      class="img-wrap
+      d-flex"
+    >
+      <!-- 보드 이미지 위로 나오는 부분 -->
+      <div 
+        class="text"
+      >
+        <!-- 즐겨찾기 항목에 추가 -->
+        <v-btn
+            icon
+            x-large
+            fab
+            :color="isFavorite"
+            @click="addInFavoriteBoard"
+          >
+            <v-icon   
+              dark
+            >
+              mdi-star
+            </v-icon>
+          </v-btn>
+        <!-- board title -->
+        <v-card-title
+          class="text-button
+          title
+          flex-grow-1"
+          @click="moveToBoard()"
+        >
+          💻밤새 코딩 lover🤜🤛
+        </v-card-title>
+        <!-- 삭제 버튼 -->
+        <div class="align-self-start">
+          <v-btn
+            icon
+            color="#fff"
+            @click="removeBoard()"
+          >
+            <v-icon
+              dark
+            >
+              mdi-close-thick
+            </v-icon>
+          </v-btn>
+        </div>
       </div>
-      <!-- 보드 이름 -->
-      <div class="board-title">
-        💻밤새 코딩 lover🤜🤛
-      </div>
-      <!-- 보드 목록에서 삭제 버튼 -->
-      <div class="board-end">
-        <button class="delete-btn">
-          <font-awesome-icon icon="times"
-          class="delete"
-          />
-        </button>
-      </div>
+      <!-- 보드 이미지 부분 -->
+      <v-img
+        height="100px"
+        src="@/assets/images/slide.jpg"
+        class="blur"
+      >
+      </v-img>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
 export default {
   name: "Subscription",
+  components: {
+
+  },
+  data() {
+    return {
+      isFavorite: '#ffc83d',
+    };
+  },
+  methods: {
+    // 즐겨찾는 보드에 추가
+    addInFavoriteBoard() {
+      if (this.isFavorite === '#ffc83d') {
+        this.isFavorite = '#fff'
+      } else {this.isFavorite = '#ffc83d'}
+    },
+    // 해당 보드로 이동(상세 주소 넘겨주기)
+    moveToBoard() {
+      this.$router.push({ name: 'Board' });
+    },
+    // 보드 구독목록에서 삭제
+    removeBoard() {
+      console.log('삭제')
+    },
+  },
 }
 </script>
 
 <style scoped>
-.scrap {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-content: center;
-  margin: 3% 1%;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url('../../assets/images/slide.jpg');
-  background-position: center center;
-  background-size: cover;
+/* board image 부분 */
+.img-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
-.scrap .favorite {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 5%;
+/* 이미지 흐리게 하기 */
+.blur {
+  filter: brightness(50%);
+  z-index: 1;
 }
-/* 내 보드 아이콘 */
-.favorite :nth-child(1) {
-  font-size: 35px;
-  color: #AA2610;
-}
-.scrap :nth-child(2) {
-  color: #EBEBE9;
+.text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: #FFFFFF;
   display: flex;
-  font-size: 1.2rem;
-  font-weight: 600;
+  text-align: center;
   align-items: center;
-  width: 60%;
+  justify-content: space-around;
+  z-index: 2;
 }
-.board-end {
-  width: 20%;
-  display: flex;
-  justify-content: flex-end;
-}
-/* 삭제버튼 */
-.delete-btn {
-  display: flex;
-  justify-self: flex-end;
-  margin: 10%;
-  height: 25%;
-}
-.delete {
-  font-size: 25px;
-  color: #fff;
+.title {
+  flex-grow: 100%;
+  cursor: pointer;
 }
 </style>

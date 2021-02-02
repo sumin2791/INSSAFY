@@ -1,305 +1,386 @@
 <template>
-  <v-app>
-    <v-navigation-drawer app>
-      <!-- 왼쪽 내 정보 부분 -->
-      <v-card
-        height="400"
-        width="256"
-        class="mx-auto"
+  <v-app id="inspire">
+    <v-main 
+      class="grey 
+      lighten-3"
+    >
+      <v-container
+        class="pt-8"
       >
-      <v-navigation-drawer permanent>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title class="title">
-              Application
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              subtext
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-
-        <v-divider></v-divider>
-
-        <v-list
-          dense
-          nav
-        >
-          <v-list-item
-            v-for="item in items"
-            :key="item.title"
-            link
+        <v-row>
+          <!-- 모바일 화면 -->
+          <!-- 좌측 내 정보 부분 -->
+          <v-col 
+            cols="12"
+            v-if="ResponsiveSize.isMobile"
           >
-            <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-icon>
+            <v-sheet rounded="lg">
+              <v-list color="transparent">
+                <!-- 내 정보 부분 -->
+                <v-list-item
+                  color="grey 
+                  lighten-4"
+                  class="d-flex
+                  flex-row
+                  justify-space-between
+                  pa-4"
+                >
+                  <!-- 프로필 사진 연결하기 -->
+                  <v-avatar
+                    :size="ResponsiveSize.viewSize * 0.3"
+                    class="flex-shrink-1"
+                  >
+                    <img
+                      alt="Avatar"
+                      :src="myInfo.profileImg"
+                    >
+                  </v-avatar>
+                  <!-- 회원이 입력한 정보 -->
+                  <div 
+                    class="ma-4
+                    d-flex
+                    flex-column
+                    align-start"
+                  >
+                    <!-- 닉네임 -->
+                    <div
+                      class="text-h4"
+                    >
+                      {{ myInfo.nickName }}
+                    </div>
+                    <!-- 이메일 -->
+                    <div>
+                      {{ myInfo.email }}
+                    </div>
+                    <!-- 지역 & 기수 -->
+                    <div>
+                      {{ myInfo.location }} {{ myInfo.generation }}기
+                    </div>
+                  </div>
+                  <!-- edit 버튼('나'일 때만 보여주기) -->
+                  <div 
+                    class="align-self-start"
+                  >
+                    <v-btn
+                      icon
+                      outlined
+                      x-small
+                      fab
+                      color="#0B2945"
+                    >
+                      <v-icon dark>
+                        mdi-pencil
+                      </v-icon>
+                    </v-btn>
+                  </div>
+                </v-list-item>
+                <v-divider class="my-2"></v-divider>
+                <!-- 비밀번호 변경 버튼 -->
+                <v-btn
+                  block
+                  depressed>
+                  비밀번호 변경
+                </v-btn>
+                <!-- 이동 탭 부분 -->
+                <v-list-item-group
+                  class="d-flex
+                  flex-row"
+                  v-model="ResponsiveSize.whichTapPoint"
+                  mandatory
+                  >
+                  <v-list-item
+                    v-for="[icon, text, index] in links"
+                    :key="text"
+                    link
+                    class="pa-1
+                    ma-1"
+                    @click="clickMobileTap(index)"
+                  > 
+                    <!-- 모바일 탭 전환 -->
+                    <v-list-item-content
+                      class="d-flex
+                      flex-row
+                      justify-center
+                      ma-1
+                      px-1
+                      py-0"
+                    >
+                      <v-icon
+                        class="pa-2
+                        ma-1">
+                        {{ icon }}
+                      </v-icon>
+                      <div 
+                        style="font-size: 12px;"
+                        class="text-center"
+                      >
+                        {{ text }}
+                      </div>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-sheet>
+          </v-col>
+          
+          <!-- PC화면 -->
+          <!-- 좌측 내 정보 부분 -->
+          <v-col sm="3" v-else>
+            <v-sheet rounded="lg">
+              <v-list color="transparent">
+                <div
+                  color="grey 
+                  lighten-4"
+                  class="d-flex
+                  flex-column
+                  justify-space-between
+                  pa-4"
+                >
+                  <!-- 내 정보 부분 -->
+                  <div
+                    class="d-flex
+                    flex-row
+                    justify-space-between"
+                  >
+                    <!-- 내 정보 타이틀 -->
+                    <div class="text-h5">내 정보</div>
+                    <!-- 내 정보 수정버튼 -->
+                    <div>
+                      <v-btn
+                        icon
+                        outlined
+                        x-small
+                        fab
+                        color="#0B2945"
+                      >
+                        <v-icon dark>
+                          mdi-pencil
+                        </v-icon>
+                      </v-btn>
+                    </div>
+                  </div>
+                  <!-- 프로필 이미지 -->
+                  <v-avatar
+                    :size="ResponsiveSize.viewSize * 0.1"
+                    class="align-self-center"
+                  >
+                    <img
+                      alt="Avatar"
+                      :src="myInfo.profileImg"
+                    >
+                  </v-avatar>
+                  
+                  <!-- 사용자 입력한 값 보여주기 -->
+                  <div
+                    class="mt-4
+                    text-h5 
+                    font-weight-black">
+                    {{ myInfo.nickName }}
+                  </div>
+                  <div>
+                    {{ myInfo.email }}
+                  </div>
+                  <div>
+                    {{ myInfo.location }} {{ myInfo.generation }}기
+                  </div>
+                </div>
+                <v-btn
+                  block
+                  depressed
+                  @click="changePassword()"
+                >
+                  비밀번호 변경
+                </v-btn>
+                  <!-- 비밀번호 변경탭(내 프로필 들어왔을 때만) -->
 
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-navigation-drawer>
-    </v-card>
-    </v-navigation-drawer>
+                <v-divider class="my-2"></v-divider>
 
-    <!-- Sizes your content based upon application components -->
-    <v-main>
+                <!-- 이동 탭 부분 -->
+                <v-list-item-group
+                  v-model="ResponsiveSize.whichTapPoint"
+                  mandatory
+                >
+                  <v-list-item
+                    v-for="[icon, text, index] in links"
+                    :key="text"
+                    link
+                    @click="clickMobileTap(index)"
+                  > 
+                    <!-- 모바일 탭 전환 -->
+                    <v-list-item-icon>
+                      <v-icon>{{ icon }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>{{ text }}</v-list-item-title>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-sheet>
+          </v-col>
 
-      <!-- Provides the application the proper gutter -->
-      <v-container fluid>
+          <v-col sm="9">
+            <v-sheet
+              min-height="85vh"
+              rounded="lg"
+              class="pa-2"
+            >
+              <!-- 내 구독보드 -->
+              <div
+                v-if="mobileTap[0]"
+              >
+                <v-card-title
+                  class="text-h6
+                  font-weight-black
+                  pb-0"
+                >구독중인 보드</v-card-title>
+                <v-divider></v-divider>
+                <Subscription />
+                <Subscription />
+                <Subscription />
+              </div>
+              
+              <!-- 내 작성글 -->
+              <div
+                v-if="mobileTap[1]"
+              >
+                <v-card-title
+                  class="text-h6
+                  font-weight-black
+                  pb-0"
+                >내 작성글</v-card-title>
+                <v-divider></v-divider>
+                <MyPost />
+                <MyPostTest />
+                <br>
+                <MyPostTest2 />
+              </div>
+              <!-- 내 댓글 -->
+              <div
+                v-if="mobileTap[2]"
+              >
+                <v-card-title
+                  class="text-h6
+                  font-weight-black
+                  pb-0"
+                >내 작성댓글</v-card-title>
+                <v-divider></v-divider>
+                <MyPost />
+              </div>
 
+              <!-- 내가 스크랩한 글 -->
+              <div
+                v-if="mobileTap[3]"
+              >
+                <v-card-title
+                  class="text-h6
+                  font-weight-black
+                  pb-0"
+                >스크랩한 글</v-card-title>
+                <v-divider></v-divider>
+                <ScrapPost />
+              </div>
+            </v-sheet>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-// import Subscription from "@/components/mypage/Subscription.vue"
-// import MyPost from "@/components/mypage/MyPost.vue"
-// import ScrapPost from "@/components/mypage/ScrapPost.vue"
+import Subscription from "@/components/mypage/Subscription.vue"
+import MyPost from "@/components/mypage/MyPost.vue"
+import ScrapPost from "@/components/mypage/ScrapPost.vue"
+// test
+import MyPostTest from "@/components/mypage/MyPostTest.vue"
+import MyPostTest2 from "@/components/mypage/MyPostTest2.vue"
 
 export default {
   name: "mypage",
   components: {
-    // Subscription,
-    // MyPost,
-    // ScrapPost,
+    Subscription,
+    MyPost,
+    ScrapPost,
+    // test용
+    MyPostTest,
+    MyPostTest2,
+  },
+  // 뷰 인스턴스 제거될 때 resize 호출
+  beforeDestroy () {
+      if (typeof window === 'undefined') return
+
+      window.removeEventListener('resize', this.onResize, { passive: true })
+  },
+  // resize 실시해서 현재 화면 크기 확인
+  mounted () {
+    this.onResize()
+
+    window.addEventListener('resize', this.onResize, { passive: true })
   },
   data() {
     return {
+      // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
+      ResponsiveSize: {
+        isMobile: false, 
+        viewSize: 0,
+        whichTapPoint: 0,
+      },
+      // 모바일 화면 전환 플래그
       mobileTap: [true, false, false, false],
+      // 모바일 화면 전환 탭
+      links: [
+        ['mdi-view-list', '내 구독보드', 0],
+        ['mdi-newspaper-variant-multiple-outline', '내 작성글', 1],
+        ['mdi-comment-text-multiple', '내 작성댓글', 2],
+        ['mdi-bookmark-multiple', '내 스크랩', 3],
+      ],
+      // 내 정보 부분
+      myInfo: {
+        nickName: "김싸피",
+        email: "ssafy@ssafy.com",
+        location: "광주",
+        generation: 4,
+        profileImg: "https://avatars0.githubusercontent.com/u/9064066?v=4&s=460",
+      },
+      // 구독 중 보드
+      list() {
+        var list = [];
+        for (let index = 1; index <= 10; index++) {
+          var item = {
+            id: index,
+            type: 'curation',
+            title: '보드명',
+            description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
+            hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
+            count: 100,
+          };
+          list.push(item);
+        }
+        return list;
+      },
     }
   },
   methods: {
-    clickMyBoard: function() {
-      // 전체 false로 초기화
-      this.mobileTap = this.mobileTap.map(function (el) {
-        return false
-      })
-      // 클릭하게 되면 index를 가장 높게 만들겠다
-      this.mobileTap[0] = true;
+    // 현재 활성화된 기기에 따라 flag 변경
+    onResize() {
+      this.ResponsiveSize.isMobile = window.innerWidth < 426;
+      this.ResponsiveSize.viewSize = window.innerWidth;
     },
-    clickMyPost: function() {
+
+    clickMobileTap: function(point) {
       // 전체 false로 초기화
       this.mobileTap = this.mobileTap.map(function (el) {
         return false
       })
-      // 클릭하게 되면 index를 가장 높게 만들겠다
-      this.mobileTap[1] = true;
+      // 클릭하게 되면 pointing된 부분을 true로 변경
+      this.mobileTap[point] = true;
+      // 현재 가르키고 있는 탭 부분 변경
+      this.ResponsiveSize.whichTapPoint = point
     },
-    clickMyComment: function() {
-      // 전체 false로 초기화
-      this.mobileTap = this.mobileTap.map(function (el) {
-        return false
-      })
-      // 클릭하게 되면 index를 가장 높게 만들겠다
-      this.mobileTap[2] = true;
-    },
-    clickMyScrap: function() {
-      // 전체 false로 초기화
-      this.mobileTap = this.mobileTap.map(function (el) {
-        return false
-      })
-      // 클릭하게 되면 index를 가장 높게 만들겠다
-      this.mobileTap[3] = true;
+    changePassword() {
+      alert('비밀번호변경')
     },
   },
 }
 </script>
 <style scoped>
-/* 마이페이지 전체 컨테이너 속성 */
-.container-box {
-  font-family: sans-serif;
-  display: grid;
-  grid-template-rows: 1fr 2fr;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-areas: 
-    "info mypost mycomment scrap"
-    "myboard mypost mycomment scrap";
-  margin: 0 5% 0 5%;
-  height: 100vh;
-  }
-/* 전체 페이지의 컬럼 */
-.container-box .column {
-  flex-basis: 24%;
-}
-/* 각 컬럼들 - 내정보&구독 / 작성글 / 작성 댓글/ 스크랩한 글 */
-div > div {
-  padding-top: 0;
-}
-/* 내 정보 보여줄 부분 */
-#left-sidebar {
-  grid-area: info;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.my-board {
-  grid-area: myboard;
-}
-.my-post {
-  grid-area: mypost;
-}
-.my-comment {
-  grid-area: mycomment;
-}
-.my-scrap {
-  grid-area: scrap;
-}
-
-/* 사용자 정보관련 */
-.user-profile {
-  display: grid;
-  grid-template-rows: 1fr 2fr 1.2fr;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-areas: 
-    "hd hd hd"
-    ". img ."
-    "myinfo myinfo myinfo";
-  
-  /* place-content: center; */
-}
-/* 내 정보의 header */
-.hd {
-  grid-area: hd;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  align-self: flex-start;
-  margin: 5%;
-}
-.hd .info {
-  margin: 0;
-}
-/* 프로필 이미지 부분 */
-.img {
-  grid-area: img;
-}
-.avatar {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-}
-/* 프로필 이미지 편집 버튼 */
-.img div {
-  z-index: 1;
-  position: relative;
-  display: table-cell;
-  left: 100px;
-  top: -40px;
-  background-color: antiquewhite;
-  text-align: center;
-}
-/* 사용자 입력값 보여줄 부분 */
-.my-info {
-  grid-area: myinfo;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-/* 비밀번호 변경 */
-.password-change {
-  text-align: end; 
-  margin: 0;
-}
-/* 모바일 이동 탭 */
-.mobile-tap {
-  grid-area: tap;
-  display: none;
-}
-
-/* 모바일 웹 반응형 사이즈 */
-@media (max-width: 425px) {
-  /* 마이페이지 전체 컨테이너 속성 */
-  .container-box {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: column;
-    margin: 0.5rem 0.5rem;
-  }
-  /* 사용자 정보관련 */
-  .user-profile {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    box-sizing: border-box;
-  }
-  .hd {
-    display: flex;
-    order: 1;
-    box-sizing: border-box;
-    margin: 0;
-    padding-top: 2%;
-  }
-  .info {
-    display: none;
-  }
-  .img {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 20%;
-    height: 60%;
-    margin: 0 2%;
-    padding: 2%;
-  }
-  .avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  }
-  .my-info {
-    flex-basis: 67%;
-  }
-  .img div {
-    position: relative;
-    left: 20px;
-    top: -30px;
-  }
-  .password-change > p {
-    margin: 0;
-  }
-  /* 모바일 이동 탭 */
-  .mobile-tap {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    background-color: #695C4C;
-  }
-  .mobile-tap div {
-    margin: 4% auto;
-    color: #ffffff;
-    font-size: 30px;
-  }
-  /* 첫 모바일 화면에서 진입시 */
-  .z-index-forward {
-    background-color: #ebebe9;
-    position: absolute;
-    width: 96%;
-    height: 70%;
-    top: 37.5%;
-    z-index: 1;
-  }
-  .z-index-back {
-    background-color: #ebebe9;
-    position: absolute;
-    width: 96%;
-    height: 70%;
-    z-index: 0;
-    top: 37.5%;
-  }
-  /* 화면 탭 클릭시 탭 강조 */
-  .focustap {
-    color:#0B2945;
-  }
-  /* 화면 탭 클릭시 보여줄 리스트 옵션 - 최상위로 */
-  .focuslist {
-    z-index: 10;
-  }
-}
-
 </style>

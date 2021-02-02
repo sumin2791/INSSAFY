@@ -1,24 +1,72 @@
 <template>
-  <div class="post">
-    <div class="name">소속보드</div>
-    <div class="title">
-      <div class="first-line">
-        <p>작성한 게시글 제목</p>
-        <button>X</button>
-      </div>
-      <div class="first-line">
-        <div>
-          <p>2021-01-25</p>
-        </div>
-        <div style="flex-wrap: no-wrap;">10 5</div>
-      </div>
-    </div>
+  <div>
+    <v-list 
+      three-line
+      class="d-flex
+      my-4
+      mx-2"
+    >
+      <v-list-item 
+        class="px-0
+        "
+      >
+        <v-list-item-avatar
+          tile
+        >
+          <v-img
+            :src="post.boardImg"
+          ></v-img>
+        </v-list-item-avatar>
+
+        <v-list-item-content 
+          class="pa-1 mx-3"
+        >
+          <!-- 포스트 제목 -->
+          <v-list-item-title>
+            {{ post.title }}
+            <span style="float:right;">
+              <v-btn
+                icon
+                color="#AA2610"       
+              >
+              <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </span>
+          </v-list-item-title>
+          <!-- 포스트 날짜 -->
+          <v-list-item-subtitle>
+            {{ post.date }} 
+            <!-- 포스트 좋아요 / 댓글 수 -->
+            <span style="float:right;">
+              <v-icon x-small> mdi-thumb-up </v-icon>
+              {{ post.likeCount }}
+              <v-icon x-small> mdi-comment-processing </v-icon>
+              {{ post.commentCount }}
+            </span>
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+    <v-divider class="mt-0"></v-divider>
   </div>
 </template>
 
 <script>
 export default {
   name: "MyPost",
+  data() {
+    return {
+      post:
+        {
+          boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
+          title: '저희팀원들 짱이랍니다',
+          contents: "다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)",
+          date: `2021-02-02`,
+          likeCount: 4,
+          commentCount: 4,
+        },
+    }
+  },
 }
 </script>
 
