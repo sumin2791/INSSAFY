@@ -56,10 +56,14 @@
       <div class="p-item-container">
         <BoardItem class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
       </div>
-      <div class="line" />
-      <p class="p-desc l-desc">좋아요 수</p>
+      <div id="sub-title-container">
+        <p class="p-desc l-desc">좋아요 수</p>
+        <p class="p-desc l-desc" style="margin-left: 2%">댓글 수</p>
+      </div>
       <div id="p-item-container2">
+        <p class="p-desc l-desc mobile">좋아요 수</p>
         <PostItem class="p-item2" :items="popular2.like" />
+        <p class="p-desc l-desc mobile">댓글 수</p>
         <PostItem class="p-item2" :items="popular2.comment" />
       </div>
     </div>
@@ -555,8 +559,17 @@ c-btn:active {
     transition: background-color 0.3s, color 0.3s ease;
   }
 }
+#sub-title-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 .p-desc {
   margin: 0;
+  width: 50%;
+}
+.mobile {
+  display: none;
 }
 
 /* pupular 내 인기 게시물 */
@@ -574,12 +587,19 @@ c-btn:active {
   width: 49.2%;
   margin-bottom: 10px;
 }
+
 @media (max-width: 768px) {
+  #sub-title-container {
+    display: none;
+  }
   #p-item-container2 {
     flex-direction: column;
   }
   .p-item2 {
     width: 100% !important;
+  }
+  .mobile {
+    display: inherit;
   }
 }
 </style>

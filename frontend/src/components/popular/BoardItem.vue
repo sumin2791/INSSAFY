@@ -243,11 +243,11 @@ export default {
 }
 
 .p-slide {
-  font-size: 34px;
+  font-size: 30px;
 }
 @media (max-width: 2000px) {
   .p-slide {
-    font-size: 12px;
+    font-size: 16px;
   }
   #type {
     font-size: 12px;
@@ -257,6 +257,16 @@ export default {
     font-size: 18px;
   }
   #follower {
+    font-size: 12px;
+  }
+}
+@media (max-width: 1440px) {
+  .p-slide {
+    font-size: 16px;
+  }
+}
+@media (max-width: 1100px) {
+  .p-slide {
     font-size: 12px;
   }
 }

@@ -20,9 +20,9 @@
     </div>
     <div id="title">
       <div id="pi-p-container">
-        <p class="pi-p l-desc" :class="{ atitle: active == 0 }">{{ items[0].postTitle }}</p>
-        <p class="pi-p l-desc" :class="{ atitle: active == 1 }">{{ items[1].postTitle }}</p>
-        <p class="pi-p l-desc" :class="{ atitle: active == 2 }">{{ items[2].postTitle }}</p>
+        <p class="pi-p l-desc" :class="{ atitle: active == 0 }" @click="clickTitle0">{{ items[0].postTitle }}</p>
+        <p class="pi-p l-desc" :class="{ atitle: active == 1 }" @click="clickTitle1">{{ items[1].postTitle }}</p>
+        <p class="pi-p l-desc" :class="{ atitle: active == 2 }" @click="clickTitle2">{{ items[2].postTitle }}</p>
       </div>
     </div>
   </div>
@@ -44,6 +44,17 @@ export default {
     setInterval(() => {
       this.active = (this.active + 1) % 3;
     }, 2000);
+  },
+  methods: {
+    clickTitle0: function() {
+      this.$router.push({ name: 'Post' });
+    },
+    clickTitle1: function() {
+      this.$router.push({ name: 'Post' });
+    },
+    clickTitle2: function() {
+      this.$router.push({ name: 'Post' });
+    },
   },
 };
 </script>
@@ -142,6 +153,7 @@ export default {
 .pi-p {
   margin-right: 20px;
   margin-bottom: 0;
+  cursor: pointer;
   transition: transform 1s ease;
 }
 
