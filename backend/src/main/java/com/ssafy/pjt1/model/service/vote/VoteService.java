@@ -30,3 +30,4 @@ public interface VoteService {
 	public void voteDeleteAll(int vote_id);
     
 }
+

@@ -41,6 +41,9 @@ public class BoardController {
     @Autowired
     private VoteService voteService;
 
+    @Autowired
+    private PostService postService;
+
     /*
      * 기능: 보드 생성
      * 
@@ -317,12 +320,21 @@ public class BoardController {
                 List<Integer> voteList = boardService.getVoteList(board_id);
                 for (Integer vote_id : voteList) {
                     voteService.voteDeleteAll(vote_id);
-                }
-                
+                }               
                 // 구독 is_used 0으로 변경
                 boardService.deleteSubscription(board_id);
                 // 포스트 is_used 0으로 변경
+                List<Integer> postList = boardService.getPostList(board_id);
+                for (Integer post_id : postList) {
+                    if (postService.postDelete(post_id) == 1) {
+                        // postService.deleteScrapAll(post_id);
+                        // postService.deleteLikeAll(post_id);
+                        // postService.deleteCommentAll(post_id);
+                        resultMap.put("message", SUCCESS);
+                    }
+                }
                 boardService.deletePostAll(board_id);
+
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
@@ -348,9 +360,14 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/searchUser 호출성공");
         try {
-            resultMap.put("message", SUCCESS);
             BoardDto boardDto = boardService.detailBoard(board_id);
-            resultMap.put("boardDto", boardDto);
+            if(boardDto != null){
+                int board_count = boardService.getBoardCount(board_id);
+                resultMap.put("boardDto", boardDto);
+                resultMap.put("board_count", board_count);
+                resultMap.put("message", SUCCESS);
+            }
+            resultMap.put("message", "NULL");
 
         } catch (Exception e) {
             resultMap.put("message", FAIL);

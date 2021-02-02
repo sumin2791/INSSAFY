@@ -10,7 +10,6 @@ public class VoteDto {
     private String vote_end_datetime;
     private int vote_duplication;
     private int vote_igmyeong;
-    private int is_used;
 
     public int getVote_id() {
         return this.vote_id;
@@ -75,14 +74,6 @@ public class VoteDto {
     public void setVote_igmyeong(int vote_igmyeong) {
         this.vote_igmyeong = vote_igmyeong;
     }
-    
-    public int getIs_used() {
-		return this.is_used;
-	}
-
-	public void setIs_used(int is_used) {
-		this.is_used = is_used;
-	}
 
     public VoteDto(){
         super();
