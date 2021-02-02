@@ -29,15 +29,8 @@
           <div id="p-bottom"></div>
         </div>
         <div id="follow-togle">
-          <b-icon icon="heart" aria-hidden="true" style="width: 28px; height: 28px; color: #aa2610;" />
-          <b-icon
-            id="f-icon"
-            :class="{ clear: !followState }"
-            icon="heart-fill"
-            @click="clickFollow"
-            aria-hidden="true"
-            style="width: 28px; height: 28px; color: #aa2610;"
-          />
+          <b-icon id="f-icon" icon="heart-fill" aria-hidden="true" />
+          <b-icon id="f-icon-active" :class="{ clear: !followState }" icon="heart-fill" @click="clickFollow" aria-hidden="true" />
         </div>
       </div>
     </div>
@@ -221,11 +214,33 @@ export default {
   top: 10px;
   right: 10px;
 }
+
 #f-icon {
+  width: 28px;
+  height: 28px;
+  color: #aa2610;
+  fill: #695c4c44;
+}
+#f-icon-active {
   position: absolute;
   left: 0;
+  width: 28px;
+  height: 28px;
+  color: #aa2610;
   transition: opacity 0.3s ease-in-out;
 }
+@media (min-width: 769px) and (max-width: 1024px) {
+  #f-icon {
+    width: 20px;
+    height: 20px;
+  }
+  #f-icon-active {
+    left: 0;
+    width: 20px;
+    height: 20px;
+  }
+}
+
 .p-slide {
   font-size: 34px;
 }
