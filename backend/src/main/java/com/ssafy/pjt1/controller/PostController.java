@@ -41,7 +41,8 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : user_id, board_id, post_title, post_description, post_image, post_iframe, post_header, post_state
+     * @param : user_id, board_id, post_title, post_description, post_image,
+     * post_iframe, post_header, post_state
      * 
      * @return : message
      */
@@ -80,14 +81,14 @@ public class PostController {
      * @return : message, PostDto, isScrapped, isLiked, like_count, commentList
      */
     @GetMapping("/getPostById")
-    public ResponseEntity<Map<String, Object>> getPostById(@RequestParam(value = "post_id")int post_id, 
-    @RequestParam(value = "login_id")String login_id){
+    public ResponseEntity<Map<String, Object>> getPostById(@RequestParam(value = "post_id") int post_id,
+            @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostById 호출성공");
         try {
             PostDto postDto = postService.getPostById(post_id);
-            if(postDto != null){
+            if (postDto != null) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("user_id", login_id);
                 map.put("post_id", post_id);
@@ -95,18 +96,18 @@ public class PostController {
                 int isLiked = postService.isLiked(map);
                 int like_count = postService.getPostLikeCount(post_id);
                 List<CommentDto> commentList = postService.getComment(post_id);
-                
+
                 resultMap.put("postDto", postDto);
                 resultMap.put("isScrapped", isScrapped);
-                resultMap.put("isLiked", isLiked);   
-                resultMap.put("like_count", like_count);   
-                resultMap.put("commentList", commentList);          
+                resultMap.put("isLiked", isLiked);
+                resultMap.put("like_count", like_count);
+                resultMap.put("commentList", commentList);
                 resultMap.put("message", SUCCESS);
-            }else{
+            } else {
                 // id에 맞는 게시글 존재하지 않으면 NULL 리턴
                 resultMap.put("message", "NULL");
             }
-            
+
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -151,15 +152,15 @@ public class PostController {
      * @return : message
      */
     @PutMapping("/modifyState")
-    public ResponseEntity<Map<String, Object>> stateModify(@RequestParam(value = "post_id")int post_id,
-    @RequestParam(value = "post_state")int post_state) {
+    public ResponseEntity<Map<String, Object>> stateModify(@RequestParam(value = "post_id") int post_id,
+            @RequestParam(value = "post_state") int post_state) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/modifyState 호출 성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("post_id",post_id);
-            map.put("post_state",post_state);
+            map.put("post_id", post_id);
+            map.put("post_state", post_state);
             if (postService.stateModify(map) == 1) {
                 resultMap.put("message", SUCCESS);
             }
@@ -225,10 +226,10 @@ public class PostController {
                 postService.scrap(map);
             } else {
                 int count2 = postService.isUnScrapped(map);
-                if(count2 == 0){
+                if (count2 == 0) {
                     // 전에 스크랩한 이력이 있지만 현재는 아닌 경우
                     postService.updateScrap(map);
-                }else{
+                } else {
                     logger.info("스크랩 삭제");
                     postService.deleteScrap(map);
                 }
@@ -259,22 +260,23 @@ public class PostController {
         try {
             Map<String, Object> map = new HashMap<>();
             String user_id = (String) param.get("user_id");
-            int post_id = (int) param.get("post_id"); 
+            int post_id = (int) param.get("post_id");
             map.put("user_id", user_id);
-            map.put("post_id",post_id);
-            
+            map.put("post_id", post_id);
+
             int count = postService.isLiked(map);
             if (count == 0) {
                 logger.info("좋아요 클릭");
                 postService.like(map);
                 postService.plusCount(post_id);
+
             } else {
                 int count2 = postService.isUnLiked(map);
-                if(count2 == 0){
+                if (count2 == 0) {
                     // 전에 좋아요한 이력이 있지만 현재는 아닌 경우
                     postService.updateLike(map);
                     postService.plusCount(post_id);
-                }else{
+                } else {
                     logger.info("좋아요 삭제");
                     postService.unlike(map);
                     postService.minusCount(post_id);
@@ -296,18 +298,19 @@ public class PostController {
      * 
      * @param : board_id
      * 
-     * @return : message, postList(post_id,user_id,post_date,post_title,post_description,
+     * @return : message,
+     * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getPostList")
-    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id")int board_id){
+    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
-            List<Map<String, Object>> postList = postService.getPostList(board_id); 
-            logger.info("postList: "+postList);
-            resultMap.put("postList", postList);          
+            List<Map<String, Object>> postList = postService.getPostList(board_id);
+            logger.info("postList: " + postList);
+            resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
@@ -324,18 +327,19 @@ public class PostController {
      * 
      * @param : board_id
      * 
-     * @return : message, postList(post_id,user_id,post_date,post_title,post_description,
+     * @return : message,
+     * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getSalesList")
-    public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id")int board_id){
+    public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id") int board_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/getSalesList 호출성공");
         try {
-            List<Map<String, Object>> postList = postService.getSalesList(board_id); 
-            logger.info("postList: "+postList);
-            resultMap.put("postList", postList);          
+            List<Map<String, Object>> postList = postService.getSalesList(board_id);
+            logger.info("postList: " + postList);
+            resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
@@ -355,21 +359,21 @@ public class PostController {
      * @return : postList, message
      */
     @GetMapping("/searchPost")
-    public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "sort")String sort, 
-    @RequestParam(value = "keyword")String keyword){
+    public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "sort") String sort,
+            @RequestParam(value = "keyword") String keyword) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/searchBoard 호출 성공");
         try {
             List<PostDto> postList;
-            if(sort.equals("new")){
+            if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.searchPostNew(keyword);
-            }else{
+            } else {
                 logger.info("좋아요순 포스트 검색");
                 postList = postService.searchPostPopular(keyword);
             }
-            resultMap.put("postList",postList);
+            resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             resultMap.put("message", FAIL);
@@ -390,8 +394,8 @@ public class PostController {
      * @return : postList, message
      */
     @GetMapping("/board/searchPost")
-    public ResponseEntity<Map<String, Object>> searchBoardPost(@RequestParam(value = "sort")String sort, 
-    @RequestParam(value = "keyword")String keyword, @RequestParam(value = "board_id")String board_id){
+    public ResponseEntity<Map<String, Object>> searchBoardPost(@RequestParam(value = "sort") String sort,
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/board/searchPost 호출 성공");
@@ -400,14 +404,14 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("board_id", board_id);
-            if(sort.equals("new")){
+            if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.boardPostNew(map);
-            }else{
+            } else {
                 logger.info("좋아요순 포스트 검색");
                 postList = postService.boardPostPopular(map);
             }
-            resultMap.put("postList",postList);
+            resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             resultMap.put("message", FAIL);
@@ -428,8 +432,8 @@ public class PostController {
      * @return : postList, message
      */
     @GetMapping("/board/searchMarketPost")
-    public ResponseEntity<Map<String, Object>> searchMarketPost(@RequestParam(value = "sort")String sort, 
-    @RequestParam(value = "keyword")String keyword, @RequestParam(value = "board_id")String board_id){
+    public ResponseEntity<Map<String, Object>> searchMarketPost(@RequestParam(value = "sort") String sort,
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/board/searchMarketPost 호출 성공");
@@ -438,14 +442,14 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("board_id", board_id);
-            if(sort.equals("new")){
+            if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.marketPostNew(map);
-            }else{
+            } else {
                 logger.info("좋아요순 포스트 검색");
                 postList = postService.marketPostPopular(map);
             }
-            resultMap.put("postList",postList);
+            resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             resultMap.put("message", FAIL);
