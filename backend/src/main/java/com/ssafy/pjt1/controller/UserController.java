@@ -12,7 +12,6 @@ import com.ssafy.pjt1.model.service.JwtService;
 import com.ssafy.pjt1.model.service.MailSendService;
 import com.ssafy.pjt1.model.service.UserService;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -141,6 +139,35 @@ public class UserController {
             resultMap.put("message", FAIL);
             logger.error("error", e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 퀴즈 정답 체크
+     * 
+     * developer: 문진환
+     * 
+     * @param String
+     * 
+     * @return time:
+     */
+    @ApiOperation(value = "퀴즈 체크", notes = "")
+    @GetMapping("/confirm/quiz/{answer}")
+    public ResponseEntity<Map<String, Object>> quizCheck(@PathVariable("answer") String answer) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("comfirm/emailcheck 호출 성공");
+        logger.info("answer : {}", answer);
+        try {
+            if (userService.quizCheck(answer)) {
+                resultMap.put("message", SUCCESS);
+            } else {
+                resultMap.put("message", FAIL);
+            }
+        } catch (Exception e) {
+            logger.error("msg", e);
+            resultMap.put("message", FAIL);
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
@@ -354,9 +381,9 @@ public class UserController {
      * 
      * @return : SUCCESS
      */
-    @ApiOperation(value = "회원탈퇴", notes = "")
-    @DeleteMapping("/user/{user_id}")
-    public ResponseEntity<Map<String, Object>> userDelete(@PathVariable("user_id") String user_id) {
+    @ApiOperation(value = "회원탈퇴", notes = "is_used -> 1 업데이트")
+    @PutMapping("/user/delete")
+    public ResponseEntity<Map<String, Object>> userDelete(@RequestParam("user_id") String user_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("@delte /user 호출성공");
@@ -364,6 +391,8 @@ public class UserController {
         try {
             if (userService.userDelete(user_id) == 1) {
                 resultMap.put("message", SUCCESS);
+            } else {
+                resultMap.put("message", FAIL);
             }
         } catch (Exception e) {
             resultMap.put("message", FAIL);
@@ -431,8 +460,8 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
-    @ApiOperation(value = "구독 취소", notes = "")
-    @DeleteMapping("/user/deleteSub")
+    @ApiOperation(value = "구독 취소", notes = "is_used -> 1 업데이트")
+    @PutMapping("/user/deleteSub")
     public ResponseEntity<Map<String, Object>> deleteSubscribe(@RequestParam("user_id") String user_id,
             @RequestParam("board_id") String board_id) {
         Map<String, Object> resultMap = new HashMap<>();

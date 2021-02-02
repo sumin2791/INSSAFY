@@ -19,7 +19,7 @@ export function join(member) {
 // }
 
 export function duplicate(email) {
-  return http.post(`/account/confirm/emailCheck/${email}`);
+  return http.get(`/account/confirm/emailCheck/${email}`);
 }
 
 export function modify(email, password) {

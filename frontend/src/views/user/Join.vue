@@ -5,6 +5,7 @@
       <div class="join-form">
         <div class="join-input">
           <div class="input-with-label">
+            <div class="indicator" :class="{ pass: indicator.email }" />
             <input
               v-model="email"
               id="email"
@@ -15,6 +16,7 @@
               @focus="waitDuplicate"
               autocapitalize="off"
             />
+            <Delete-btn class="delete-btn" :state="email" @clickDel="deleteEmail" />
             <label for="email">이메일*</label>
             <div class="error-text" v-if="error.email && email.length !== 0">{{ error.email }}</div>
             <div class="error-text" v-if="error.emailDuplicate">{{ error.emailDuplicate }}</div>
@@ -28,6 +30,7 @@
               placeholder="비밀번호를 입력하세요."
               :class="{ error: error.password && password.length !== 0, complete: !error.password && password.length !== 0 }"
             />
+            <Delete-btn class="delete-btn" :state="password" @clickDel="deletePassword" />
             <label for="password">비밀번호*</label>
             <div class="error-text" v-if="error.password && password.length !== 0">{{ error.password }}</div>
           </div>
@@ -36,15 +39,43 @@
               v-model="passwordConfirm"
               :type="passwordConfirmType"
               id="password-confirm"
-              placeholder="비밀번호를 다시한번 입력하세요."
+              placeholder="비밀번호를 재입력하세요."
               :class="{ error: error.passwordConfirm && passwordConfirm.length !== 0, complete: !error.password && passwordConfirm.length !== 0 }"
             />
+            <Delete-btn class="delete-btn" :state="passwordConfirm" @clickDel="deletePasswordConfirm" />
             <label for="password-confirm">비밀번호 확인*</label>
             <div class="error-text" v-if="error.passwordConfirm && passwordConfirm.length !== 0">{{ error.passwordConfirm }}</div>
           </div>
+          <div id="problem-container" class="input-with-label">
+            <p class="problem b-desc">다음은 학사규정 중 일부이다.</p>
+            <b-icon
+              id="new-problem"
+              icon="arrow-clockwise"
+              style="width:24px; height:24px;"
+              @click="clickNewProblem"
+              :class="{ rotate: state.rotate }"
+            />
+            <p class="problem r-desc">{{ problem }}</p>
+          </div>
           <div class="input-with-label">
-            <label for="email">닉네임</label>
-            <input id="email" placeholder="닉네임을 입력하세요." type="text" v-model="nickname" />
+            <div class="indicator" :class="{ pass: indicator.solution }" />
+            <label for="solution">인증문제 답*</label>
+            <input
+              id="solution"
+              :class="{ error: error.solution && solution.length !== 0, complete: !error.solution && solution.length !== 0 }"
+              placeholder="빈 칸에 들어갈 알맞은 단어는?"
+              type="text"
+              v-model="solution"
+              @blur="confirmSolution"
+              @focus="waitSolution"
+            />
+            <Delete-btn class="delete-btn" :state="solution" @clickDel="deleteSolution" />
+            <div class="error-text" v-if="error.solution && solution.length !== 0">{{ error.solution }}</div>
+          </div>
+          <div class="input-with-label">
+            <label for="nickname">닉네임*</label>
+            <input id="nickname" placeholder="닉네임을 입력하세요." type="text" v-model="nickname" />
+            <Delete-btn class="delete-btn" :state="nickname" @clickDel="deleteNickname" />
           </div>
           <div class="input-with-label">
             <label for="location">지역*</label>
@@ -54,6 +85,7 @@
                 {{ location }}
               </option>
             </select>
+            <b-icon class="down-arrow" icon="arrow-down-short" />
           </div>
           <div class="input-with-label">
             <label for="location">기수*</label>
@@ -63,6 +95,7 @@
                 {{ generation }}
               </option>
             </select>
+            <b-icon class="down-arrow" icon="arrow-down-short" />
           </div>
         </div>
         <!-- <button class="btn-join">로그인</button> -->
@@ -76,9 +109,14 @@
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
 import * as authApi from '@/api/auth';
+import * as join from '@/api/join';
 
+import DeleteBtn from '@/components/etc/DeleteBtn.vue';
 export default {
   name: 'Join',
+  components: {
+    DeleteBtn,
+  },
   data() {
     return {
       options: {
@@ -89,6 +127,8 @@ export default {
       password: '',
       passwordSchema: new PV(),
       passwordConfirm: '',
+      problem: '',
+      solution: '',
       nickname: '',
       location: '',
       generation: '',
@@ -98,14 +138,22 @@ export default {
         emailDuplicate: false,
         password: false,
         passwordConfirm: false,
+        solution: false,
         nickname: true,
         location: true,
         generation: true,
+      },
+      indicator: {
+        email: false,
+        solution: false,
       },
       isSubmit: false,
       passwordType: 'password',
       passwordConfirmType: 'password',
       termPopup: false,
+      state: {
+        rotate: false,
+      },
     };
   },
   created() {
@@ -118,6 +166,10 @@ export default {
       .digits()
       .has()
       .letters();
+  },
+  mounted() {
+    //화면 적재되면 문제 랜덤으로 가져오기
+    this.problem = this.$store.getters.getRandomProblem;
   },
   watch: {
     email: function() {
@@ -138,9 +190,9 @@ export default {
     generation: function() {
       this.checkForm();
     },
-    // isTerm: function(){
-    //   this.checkForm();
-    // }
+    solution: function() {
+      this.checkForm();
+    },
   },
   methods: {
     checkForm() {
@@ -163,16 +215,18 @@ export default {
       if (this.generation.length == 0) this.error.generation = true;
       else this.error.generation = false;
 
-      // if(!this.isTerm) this.error.term = true;
-      // else this.error.term = false;
-
       let isSubmit = true;
       Object.values(this.error).map((v) => {
         if (v) isSubmit = false;
       });
+      Object.values(this.indicator).map((v) => {
+        if (!v) isSubmit = false;
+      });
       this.isSubmit = isSubmit;
     },
     onJoin: function() {
+      //spinner 동작
+      this.$store.commit('setSpinnerTogle');
       var member = {
         user_email: this.email,
         user_password: this.password,
@@ -183,15 +237,24 @@ export default {
       authApi
         .join(member)
         .then((response) => {
+          //spinner 해제
+          this.$store.commit('setSpinnerTogle');
           console.log(response.data);
-          alert(this.nickname + '님 환영합니다!\n이메일 인증을 완료해주세요.');
+          //상단 이메일 인증 알림
+          this.$store.commit('auth/setEmail', this.email);
+          this.$store.commit('setToastTogle');
+          this.$store.commit('setToastType', 'email');
+          alert(this.nickname + '님 환영합니다!');
           // this.$router.push({name: 'JoinSuccess', params:{email:this.email}});
           this.$router.push({ name: 'Main' });
         })
         .catch((error) => {
+          //spinner 해제
+          this.$store.commit('setSpinnerTogle');
           console.log(error);
           alert('가입에 실패하였습니다.');
           this.password = '';
+          this.passwordConfirm = '';
         });
     },
     onDuplicate: function() {
@@ -200,18 +263,72 @@ export default {
         .duplicate(this.email)
         .then((response) => {
           console.log(response);
-          if (response.data.message === 'success') {
+          if (response.data.message === 'SUCCESS') {
             this.error.emailDuplicate = false;
+            this.indicator.email = true;
           } else {
             this.error.email = '이미 가입되어 있는 이메일입니다.';
+            this.indicator.email = false;
           }
+          this.checkForm();
         })
         .catch((error) => {
+          this.error.email = '이미 가입되어 있는 이메일입니다.';
+          this.indicator.email = false;
           console.log(error);
+          this.checkForm();
         });
     },
     waitDuplicate: function() {
       this.emailDuplicate = false;
+    },
+
+    //인증문제 처리
+    clickNewProblem: function() {
+      this.state.rotate = true;
+      setTimeout(() => {
+        this.state.rotate = false;
+      }, 600);
+      this.problem = this.$store.getters.getRandomProblem2(this.getRandomProblem);
+    },
+    confirmSolution: function() {
+      join
+        .confirmSolution(this.solution)
+        .then((response) => {
+          console.log(response);
+          if (response.data.message == 'SUCCESS') {
+            this.error.solution = false;
+            this.indicator.solution = true;
+          } else {
+            this.error.solution = '인증 문제 답을 잘못 입력하셨습니다.';
+            this.indicator.solution = false;
+          }
+          this.checkForm();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    waitSolution: function() {
+      // this.solution = '';
+      this.error.solution = false;
+    },
+
+    //입력 문자 모두 지우는 버튼
+    deleteEmail: function() {
+      this.email = '';
+    },
+    deletePassword: function() {
+      this.password = '';
+    },
+    deletePasswordConfirm: function() {
+      this.passwordConfirm = '';
+    },
+    deleteNickname: function() {
+      this.nickname = '';
+    },
+    deleteSolution: function() {
+      this.solution = '';
     },
   },
 };
@@ -225,14 +342,45 @@ export default {
   /* align-items: center; */
   max-width: 580px;
   width: 100%;
-  margin: 0 auto;
-  padding: 0 15px;
+  margin: 50px auto;
+  background-color: var(--basic-color-bg2);
+  box-shadow: var(--basic-shadow-s);
+  border-radius: 10px;
+  padding: 30px 30px;
+}
+@media (max-width: 426px) {
+  .join {
+    margin: 10px auto;
+  }
 }
 
 h2 {
   margin-bottom: 30px;
 }
 
+.indicator {
+  position: absolute;
+  margin-top: 23px;
+  width: 6px;
+  height: 6px;
+  background-color: red;
+  border-radius: 6px;
+  transition: background-color 0.5s ease;
+}
+.pass {
+  background-color: rgb(0, 223, 67);
+}
+
+.delete-btn {
+  position: absolute;
+  right: 30px;
+}
+
+.down-arrow {
+  position: absolute;
+  right: 15px;
+  margin-top: 15px;
+}
 .join-form {
   display: flex;
   flex-direction: column;
@@ -247,6 +395,20 @@ h2 {
   position: relative;
   margin-bottom: 10px;
 }
+#problem-container {
+  margin: 10px 10px 0;
+}
+#new-problem {
+  position: absolute;
+  right: 25px;
+  margin-top: -20px;
+  cursor: pointer;
+}
+
+.problem {
+  margin: 0 0;
+}
+
 input,
 select {
   background: transparent;
@@ -254,12 +416,12 @@ select {
   width: 100%;
   height: 50px;
   line-height: 1em;
-  border: 1px solid #cccccc;
   padding: 0 20px;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-transition: 0.2s;
   transition: 0.2s;
+  border-radius: 0;
   outline: none;
 }
 .error-text {
@@ -270,9 +432,8 @@ select {
 .btn-join {
   /* position: inherit;  */
   height: 50px;
-  margin-top: 30px;
+  margin-top: 10px;
   font-size: 24px;
-  margin-bottom: 20px;
   border: solid 1px #000;
   text-align: center;
 }
@@ -291,6 +452,11 @@ select {
 }
 
 /* 스켈레톤에서 가져온거 */
+.disabled {
+  color: var(--basic-color-bg);
+  border: solid 1px var(--basic-color-bg) !important;
+}
+
 .input-with-label {
   width: 100%;
   float: left;
@@ -305,21 +471,20 @@ select {
   float: left;
   height: 50px;
   line-height: 1;
-  padding: 2px 15px 0 105px;
+  padding: 2px 35px 0 120px;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   color: #000;
-  border: 1px solid #000;
-  border-radius: 3px;
+  border-bottom: 1px solid var(--basic-color-bg);
 }
 
-.input-with-label input[type='text']:hover,
-.input-with-label input[type='text']:focus,
+.input-with-label input:hover,
+.input-with-label input:focus,
 .input-with-label select:hover,
 .input-with-label select:focus,
-.input-with-label input[type='password']:hover,
-.input-with-label input[type='password']:focus {
-  border: 2px solid #000;
+.input-with-label input:hover,
+.input-with-label input:focus {
+  border-bottom: 1px solid #000;
 }
 
 .input-with-label input[type='text'].error,
@@ -353,7 +518,7 @@ select {
 .input-with-label label {
   position: absolute;
   left: 15px;
-  top: 19px;
+  top: 16px;
   color: #000;
   font-weight: 600;
   font-size: 0.857em;
