@@ -2,7 +2,8 @@
   <div id="wrap">
     <div id="popular-item">
       <div id="header">
-        <div id="h-bg"></div>
+        <!-- <div id="h-bg" :style="{ backgroundImage: `url(${item.image})` }" /> -->
+        <div id="h-bg" />
         <div id="h-inner" @click="clickHeader">
           <p id="type" class="l-desc-e">{{ item.type }}</p>
           <p id="board-name" class="b-desc">{{ item.boardName }}</p>
@@ -42,7 +43,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 import 'swiper/css/swiper.css';
 
 export default {
-  name: '',
+  name: 'BoardItem',
   props: {
     item: Object,
   },
@@ -66,7 +67,7 @@ export default {
         freeMode: true,
         // threshold: 20,
         autoplay: {
-          delay: 3000,
+          delay: 600,
         },
         on: {
           init: this.init,
@@ -125,7 +126,8 @@ export default {
   height: 100%;
   position: absolute;
   z-index: 1;
-  background-image: url(../../../assets/images/slide.jpg);
+  background-image: url(../../assets/images/slide.jpg);
+  background-position: center;
   background-size: cover;
 }
 #h-inner {
@@ -137,7 +139,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 2;
-  box-shadow: var(--basic-shadow-b);
   background-color: #00000055;
 }
 #h-inner svg {
