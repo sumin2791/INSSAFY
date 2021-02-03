@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.ssafy.pjt1.model.dto.comment.CommentDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
+import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.post.PostService;
 
 import org.slf4j.Logger;
@@ -36,6 +37,9 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private BoardService boardService;
+
     /*
      * 기능: 보드 내 포스트 작성
      * 
@@ -52,18 +56,27 @@ public class PostController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/create 호출성공");
         try {
-            PostDto postDto = new PostDto();
-            postDto.setUser_id((String) param.get("user_id"));
-            postDto.setBoard_id((int) param.get("board_id"));
-            postDto.setPost_title((String) param.get("post_title"));
-            postDto.setPost_description((String) param.get("post_description"));
-            postDto.setPost_image((String) param.get("post_image"));
-            postDto.setPost_iframe((String) param.get("post_iframe"));
-            postDto.setPost_header((String) param.get("post_header"));
-            postDto.setPost_state((int) param.get("post_state"));
-            postService.createPost(postDto);
+            Map<String, Object> map = new HashMap<>();
+            String user_id = (String) param.get("user_id");
+            int board_id = (int) param.get("board_id");
+            map.put("user_id", user_id);
+            map.put("board_id", board_id);
+            if(boardService.isUnSubscribed(map)!=0){
+                PostDto postDto = new PostDto();
+                postDto.setUser_id(user_id);
+                postDto.setBoard_id(board_id);
+                postDto.setPost_title((String) param.get("post_title"));
+                postDto.setPost_description((String) param.get("post_description"));
+                postDto.setPost_image((String) param.get("post_image"));
+                postDto.setPost_iframe((String) param.get("post_iframe"));
+                postDto.setPost_header((String) param.get("post_header"));
+                postDto.setPost_state((int) param.get("post_state"));
+                postService.createPost(postDto);
 
-            resultMap.put("message", SUCCESS);
+                resultMap.put("message", SUCCESS);
+            }else{
+                resultMap.put("message", "No Permission");
+            }
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -302,7 +315,9 @@ public class PostController {
      * 
      * @return : message,
      * postList(post_id,user_id,post_date,post_title,post_description,
-     * post_image,post_iframe,post_header,post_state,like_count, comment_count)
+     * post_image,post_iframe,post_header,post_state,like_count, comment_count,writer_nickname,
+     * isLiked(1:좋아요누른 상태 0:좋아요 취소상태 리턴값 없는 경우:좋아요 안누른 상태),
+     * isScrapped(isLiked와 마찬가지))
      */
     @GetMapping("/getPostList")
     public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id, 
