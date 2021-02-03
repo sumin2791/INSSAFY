@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -99,13 +100,14 @@ public class CommentController {
      * 
      * @return : message
      */
-    @DeleteMapping("/delete/{comment_id}")
-    public ResponseEntity<Map<String, Object>> commentDelete(@PathVariable("comment_id") int comment_id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Map<String, Object>> commentDelete(@RequestParam(value = "comment_id") int comment_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("comment/delete 호출성공");
         try {
             if (commentService.commentDelete(comment_id) == 1) {
+                commentService.notificationDelete(comment_id);
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
