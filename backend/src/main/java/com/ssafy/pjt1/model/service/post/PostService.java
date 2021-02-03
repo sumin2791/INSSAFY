@@ -14,6 +14,8 @@ public interface PostService {
 
 	public int postModify(PostDto postDto);
 
+	public int stateModify(Map<String, Object> map);
+
 	public int postDelete(int post_id);
 
 	public int isScrapped(Map<String, Object> map);
@@ -45,5 +47,25 @@ public interface PostService {
 	public List<PostDto> boardPostNew(Map<String, Object> map);
 
 	public List<PostDto> boardPostPopular(Map<String, Object> map);
+
+	public int isUnLiked(Map<String, Object> map);
+
+	public void updateLike(Map<String, Object> map);
+
+	public int isUnScrapped(Map<String, Object> map);
+
+	public void updateScrap(Map<String, Object> map);
+
+	public void deleteScrapAll(int post_id);
+
+	public void deleteLikeAll(int post_id);
+
+	public void deleteCommentAll(int post_id);
+
+	public List<Map<String, Object>> getSalesList(int board_id);
+
+	public List<PostDto> marketPostNew(Map<String, Object> map);
+
+	public List<PostDto> marketPostPopular(Map<String, Object> map);
 
 }

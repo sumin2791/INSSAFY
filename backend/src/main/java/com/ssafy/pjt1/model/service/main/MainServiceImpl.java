@@ -2,7 +2,7 @@ package com.ssafy.pjt1.model.service.main;
 
 import java.util.List;
 
-import com.ssafy.pjt1.controller.SubscriptionDto;
+import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.mapper.MainMapper;
 
 import org.apache.ibatis.session.SqlSession;

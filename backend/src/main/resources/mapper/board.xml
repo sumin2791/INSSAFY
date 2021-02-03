@@ -49,7 +49,7 @@
 	<select id="searchUser" parameterType="string" resultType="UserDto">
 		select *
 		from user
-		where user_email like concat('%',#{user_name} ,'%');
+		where user_email like concat('%',#{user_name} ,'%') and is_used = 1;
 	</select>
 	
 	<update id="updateManager" parameterType="map">
@@ -68,21 +68,23 @@
 	<select id="getBoardsNew" resultType="BoardDto">
 		select *
 		from board
+		where is_used = 1
 		order by board_date desc;
 	</select>
 
 	<select id="getBoardsPopular" resultType="BoardDto">
 		select *
-		from board as b join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
+		from board as b left outer join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
 		on b.board_id = c.board_id
+		where b.is_used = 1
 		order by c.board_count desc;
 	</select>
 
 	<select id="searchBoardNew" parameterType="string" resultType="BoardDto">
 		select *
 		from board
-		where board_name like concat('%',#{keyword} ,'%') or board_description like concat('%',#{keyword} ,'%')
-		or board_hash like concat('%',#{keyword} ,'%')
+		where ( board_name like concat('%',#{keyword} ,'%') or board_description like concat('%',#{keyword} ,'%')
+		or board_hash like concat('%',#{keyword} ,'%') ) and is_used = 1
 		order by board_date desc;
 	</select>
 
@@ -90,8 +92,8 @@
 		select *
 		from board as b join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
 		on b.board_id = c.board_id
-		where b.board_name like concat('%',#{keyword} ,'%') or b.board_description like concat('%',#{keyword} ,'%')
-		or b.board_hash like concat('%',#{keyword} ,'%')
+		where ( b.board_name like concat('%',#{keyword} ,'%') or b.board_description like concat('%',#{keyword} ,'%')
+		or b.board_hash like concat('%',#{keyword} ,'%') ) and b.is_used = 1
 		order by c.board_count desc;
 	</select>
 
@@ -104,7 +106,7 @@
 	<select id="detailBoard" parameterType="int" resultType="BoardDto">
 		select *
 		from board 
-		where board_id = #{board_id}
+		where board_id = #{board_id} and is_used = 1
 	</select>
 
 	<update id="deleteBoardAll" parameterType="int">
@@ -146,7 +148,19 @@
 	<select id="getVoteList" parameterType="int" resultType="int">
 		select vote_id
 		from vote
-		where board_id = #{board_id};
+		where board_id = #{board_id} and is_used = 1;
+	</select>
+
+	<select id="getPostList" parameterType="int" resultType="int">
+		select post_id
+		from post
+		where board_id = #{board_id} and is_used = 1;
+	</select>
+
+	<select id="getBoardCount" resultType="int">
+		select count(*)
+		from subscription
+		where board_id = #{board_id} and is_used = 1;
 	</select>
 
 </mapper>

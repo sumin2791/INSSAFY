@@ -87,20 +87,26 @@ public class PostController {
         logger.info("post/getPostById 호출성공");
         try {
             PostDto postDto = postService.getPostById(post_id);
-            Map<String, Object> map = new HashMap<>();
-            map.put("user_id", login_id);
-            map.put("post_id", post_id);
-            int isScrapped = postService.isScrapped(map);
-            int isLiked = postService.isLiked(map);
-            int like_count = postService.getPostLikeCount(post_id);
-            List<CommentDto> commentList = postService.getComment(post_id);
+            if(postDto != null){
+                Map<String, Object> map = new HashMap<>();
+                map.put("user_id", login_id);
+                map.put("post_id", post_id);
+                int isScrapped = postService.isScrapped(map);
+                int isLiked = postService.isLiked(map);
+                int like_count = postService.getPostLikeCount(post_id);
+                List<CommentDto> commentList = postService.getComment(post_id);
+                
+                resultMap.put("postDto", postDto);
+                resultMap.put("isScrapped", isScrapped);
+                resultMap.put("isLiked", isLiked);   
+                resultMap.put("like_count", like_count);   
+                resultMap.put("commentList", commentList);          
+                resultMap.put("message", SUCCESS);
+            }else{
+                // id에 맞는 게시글 존재하지 않으면 NULL 리턴
+                resultMap.put("message", "NULL");
+            }
             
-            resultMap.put("postDto", postDto);
-            resultMap.put("isScrapped", isScrapped);
-            resultMap.put("isLiked", isLiked);   
-            resultMap.put("like_count", like_count);   
-            resultMap.put("commentList", commentList);          
-            resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -136,6 +142,36 @@ public class PostController {
     }
 
     /*
+     * 기능: 중고장터 거래 진행 변경
+     * 
+     * developer: 윤수민
+     * 
+     * @param : PostDto
+     * 
+     * @return : message
+     */
+    @PutMapping("/modifyState")
+    public ResponseEntity<Map<String, Object>> stateModify(@RequestParam(value = "post_id")int post_id,
+    @RequestParam(value = "post_state")int post_state) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("post/modifyState 호출 성공");
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("post_id",post_id);
+            map.put("post_state",post_state);
+            if (postService.stateModify(map) == 1) {
+                resultMap.put("message", SUCCESS);
+            }
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("error", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
      * 기능: 포스트 삭제
      * 
      * developer: 윤수민
@@ -151,6 +187,9 @@ public class PostController {
         logger.info("post/delete 호출성공");
         try {
             if (postService.postDelete(post_id) == 1) {
+                // postService.deleteScrapAll(post_id);
+                // postService.deleteLikeAll(post_id);
+                // postService.deleteCommentAll(post_id);
                 resultMap.put("message", SUCCESS);
             }
         } catch (Exception e) {
@@ -185,8 +224,14 @@ public class PostController {
                 logger.info("스크랩 추가");
                 postService.scrap(map);
             } else {
-                logger.info("스크랩 삭제");
-                postService.deleteScrap(map);
+                int count2 = postService.isUnScrapped(map);
+                if(count2 == 0){
+                    // 전에 스크랩한 이력이 있지만 현재는 아닌 경우
+                    postService.updateScrap(map);
+                }else{
+                    logger.info("스크랩 삭제");
+                    postService.deleteScrap(map);
+                }
             }
 
             resultMap.put("message", SUCCESS);
@@ -217,16 +262,23 @@ public class PostController {
             int post_id = (int) param.get("post_id"); 
             map.put("user_id", user_id);
             map.put("post_id",post_id);
-            logger.info("map: "+map);
+            
             int count = postService.isLiked(map);
             if (count == 0) {
                 logger.info("좋아요 클릭");
                 postService.like(map);
                 postService.plusCount(post_id);
             } else {
-                logger.info("좋아요 삭제");
-                postService.unlike(map);
-                postService.minusCount(post_id);
+                int count2 = postService.isUnLiked(map);
+                if(count2 == 0){
+                    // 전에 좋아요한 이력이 있지만 현재는 아닌 경우
+                    postService.updateLike(map);
+                    postService.plusCount(post_id);
+                }else{
+                    logger.info("좋아요 삭제");
+                    postService.unlike(map);
+                    postService.minusCount(post_id);
+                }
             }
 
             resultMap.put("message", SUCCESS);
@@ -254,6 +306,34 @@ public class PostController {
         logger.info("post/getPostList 호출성공");
         try {
             List<Map<String, Object>> postList = postService.getPostList(board_id); 
+            logger.info("postList: "+postList);
+            resultMap.put("postList", postList);          
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 중고장터 포스트 리스트 (판매완료 제외)
+     * 
+     * developer: 윤수민
+     * 
+     * @param : board_id
+     * 
+     * @return : message, postList(post_id,user_id,post_date,post_title,post_description,
+     * post_image,post_iframe,post_header,post_state,like_count, comment_count)
+     */
+    @GetMapping("/getSalesList")
+    public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id")int board_id){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("board/getSalesList 호출성공");
+        try {
+            List<Map<String, Object>> postList = postService.getSalesList(board_id); 
             logger.info("postList: "+postList);
             resultMap.put("postList", postList);          
             resultMap.put("message", SUCCESS);
@@ -314,7 +394,7 @@ public class PostController {
     @RequestParam(value = "keyword")String keyword, @RequestParam(value = "board_id")String board_id){
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        logger.info("/post/board/searchBoard 호출 성공");
+        logger.info("/post/board/searchPost 호출 성공");
         try {
             List<PostDto> postList;
             Map<String, Object> map = new HashMap<>();
@@ -326,6 +406,44 @@ public class PostController {
             }else{
                 logger.info("좋아요순 포스트 검색");
                 postList = postService.boardPostPopular(map);
+            }
+            resultMap.put("postList",postList);
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("검색 호출 실패", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 중고장터 내 판매중인 포스트만 검색 (최신순, 인기순)
+     * 
+     * developer: 윤수민
+     * 
+     * @param : sort, keyword, board_id
+     * 
+     * @return : postList, message
+     */
+    @GetMapping("/board/searchMarketPost")
+    public ResponseEntity<Map<String, Object>> searchMarketPost(@RequestParam(value = "sort")String sort, 
+    @RequestParam(value = "keyword")String keyword, @RequestParam(value = "board_id")String board_id){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("/post/board/searchMarketPost 호출 성공");
+        try {
+            List<PostDto> postList;
+            Map<String, Object> map = new HashMap<>();
+            map.put("keyword", keyword);
+            map.put("board_id", board_id);
+            if(sort.equals("new")){
+                logger.info("최신순 포스트 검색");
+                postList = postService.marketPostNew(map);
+            }else{
+                logger.info("좋아요순 포스트 검색");
+                postList = postService.marketPostPopular(map);
             }
             resultMap.put("postList",postList);
             resultMap.put("message", SUCCESS);

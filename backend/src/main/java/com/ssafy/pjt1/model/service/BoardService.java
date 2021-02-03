@@ -53,4 +53,8 @@ public interface BoardService {
 	public void deleteVote(int board_id);
 
 	public List<Integer> getVoteList(int board_id);
+
+	public List<Integer> getPostList(int board_id);
+
+	public int getBoardCount(int board_id);
 }
