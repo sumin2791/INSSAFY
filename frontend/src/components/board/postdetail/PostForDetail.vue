@@ -8,32 +8,26 @@
         <div>
           <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              {{post.post.user}}
+              {{post.user_id}}
             </template>
             <b-dropdown-item href="#">Profile</b-dropdown-item>
             <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
             <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
           </b-dropdown>
         </div>
-        <div class="post-date">{{post.post.post_date}}</div>
+        <div class="post-date">{{post.post_date}}</div>
       </div>
     </div>
     <div class="post-body">
-      <div class="title f-text b-desc">{{post.post.post_title}}</div>
-      <div class="description r-desc">{{post.post.post_description}}</div>
+      <div class="title f-text b-desc">{{post.post_title}}</div>
+      <div class="description r-desc">{{post.post_description}}</div>
 
       <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
     </div>
     <div class="post-footer">
-      <div v-if="post.post.post_like>=10">
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:37.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post.post_like}}</div>
-      </div>
-      <div v-else>
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:28.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post.post_like}}</div>
-      </div>
-      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{post.post.post_like}}</div>
-      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post.post_like}}</div>
-      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{post.post.comment_count}}</div>
+      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> 좋아여</div>
+      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> 좋아여</div>
+      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon>댓글</div>
       <div class="post-bookmark" @click="postBookmark" v-if="flagBookmark"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
       <div class="post-bookmark" @click="postBookmark" v-if="!flagBookmark"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
     </div>
@@ -41,20 +35,29 @@
 </template>
 
 <script>
+import * as postApi from '@/api/post'
+
 export default {
   name:"PostForDetail",
   props:{
-    post:Object
+    // post:Object
   },
   data() {
     return {
       flagLike:false,
       flagBookmark:false,
-      viewImage:null
+      viewImage:null,
+      post:{}
     }
   },
+  watch:{
+    '$route':'fetchData'
+  },
   created() {
-    var input = this.post.post.img
+    this.fetchData()
+
+    // 이미지 하나만 추출했어요.
+    var input = this.post.post_image
 
     if (input && input[0]) {
       var reader = new FileReader();
@@ -67,6 +70,24 @@ export default {
     }
   },
   methods:{
+    fetchData(){
+      this.loading=true
+      postApi.getPost({
+        login_id:String(localStorage.getItem('userId')),
+        post_id:Number(this.$route.params.post_id)
+      })
+      .then(res=>{
+        console.log(res.data)
+        console.log(res.data.postDto)
+        this.post = res.data.postDto
+        
+        
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+      // boardApi.board_detail(this.$route.params.board_id)
+    },
     postLike(e){
       this.flagLike = !this.flagLike
       console.log(this.flagLike)

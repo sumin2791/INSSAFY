@@ -53,8 +53,9 @@ export default {
   
   methods:{
     goToDetail() {
-      console.log(this.post)
+      console.log(this.post.post_id)
       // params를 이용해서 데이터를 넘겨줄 수 있다.
+      this.$router.push({ name: 'Post', params: { board_id:this.$route.params.board_id, post_id: this.post.post_id }})
       // this.$router.push({ name: 'Post', params: {post:this.post} });
     },
     postLike(e){
