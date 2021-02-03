@@ -78,7 +78,7 @@ public class PostController {
      * 
      * @param : login_id, post_id
      * 
-     * @return : message, PostDto, isScrapped, isLiked, like_count, commentList
+     * @return : message, PostDto, isScrapped, isLiked, like_count, commentList, writer_nickname
      */
     @GetMapping("/getPostById")
     public ResponseEntity<Map<String, Object>> getPostById(@RequestParam(value = "post_id") int post_id,
@@ -96,12 +96,14 @@ public class PostController {
                 int isLiked = postService.isLiked(map);
                 int like_count = postService.getPostLikeCount(post_id);
                 List<CommentDto> commentList = postService.getComment(post_id);
-
+                String writer_nickname = postService.getWriterName(postDto.getUser_id());
+                
                 resultMap.put("postDto", postDto);
                 resultMap.put("isScrapped", isScrapped);
                 resultMap.put("isLiked", isLiked);
                 resultMap.put("like_count", like_count);
                 resultMap.put("commentList", commentList);
+                resultMap.put("writer_nickname", writer_nickname);
                 resultMap.put("message", SUCCESS);
             } else {
                 // id에 맞는 게시글 존재하지 않으면 NULL 리턴
@@ -296,14 +298,15 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : board_id
+     * @param : board_id, user_id
      * 
      * @return : message,
      * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getPostList")
-    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id) {
+    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id, 
+    @RequestParam(value = "user_id") int user_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
