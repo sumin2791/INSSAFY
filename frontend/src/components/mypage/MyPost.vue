@@ -1,115 +1,135 @@
 <template>
-  <div>
-    <v-list 
-      three-line
-      class="d-flex
+  <v-card
+    class="mx-auto
       my-4
-      mx-2"
+      d-flex
+      flex-column"
+    color="F9F9F9"
+  >
+    <div 
+      class="img-wrap
+      d-flex
+      flex-column"
     >
-      <v-list-item 
-        class="px-0
-        "
+      <!-- 보드 이미지 위로 나오는 부분 -->
+      <div 
+        class="text"
       >
-        <v-list-item-avatar
-          tile
-        >
-          <v-img
-            :src="post.boardImg"
-          ></v-img>
-        </v-list-item-avatar>
+        <!-- 삭제 버튼 -->
+        <div class="align-self-end">
+          <v-btn
+            icon
+            color="#AA2610"
+            @click="removeBoard()"
+          >
+            <v-icon
+              dark
+            >
+              mdi-close-thick
+            </v-icon>
+          </v-btn>
+        </div>
+        <div>
+          {{ post.inBoard }}
+        </div>
+      </div>
+      <v-img 
+        src="@/assets/images/slide.jpg"
+        height="100px"
+        class="blur"
+      >
+      </v-img>
+    </div>
+    <!-- 포스트 제목 -->
+    <v-card-title 
+      class="font-weight-black
+        d-flex
+        flex-row"
+    >
+      {{ post.title }}
+    </v-card-title>
 
-        <v-list-item-content 
-          class="pa-1 mx-3"
-        >
-          <!-- 포스트 제목 -->
+    <!-- 포스트 글 내용 -->
+    <v-card-text 
+      class="font-weight-bold
+        py-0 pl-auto"
+    >
+      {{ post.contents }}
+    </v-card-text>
+    <v-card-actions>
+      <v-list-item class="grow">
+        <v-list-item-content>
           <v-list-item-title>
-            {{ post.title }}
-            <span style="float:right;">
-              <v-btn
-                icon
-                color="#AA2610"       
-              >
-              <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </span>
+            <v-icon>
+              mdi-account-group
+            </v-icon>
+              {{ post.boardCount }}
           </v-list-item-title>
-          <!-- 포스트 날짜 -->
-          <v-list-item-subtitle>
-            {{ post.date }} 
-            <!-- 포스트 좋아요 / 댓글 수 -->
-            <span style="float:right;">
-              <v-icon x-small> mdi-thumb-up </v-icon>
-              {{ post.likeCount }}
-              <v-icon x-small> mdi-comment-processing </v-icon>
-              {{ post.commentCount }}
-            </span>
-          </v-list-item-subtitle>
         </v-list-item-content>
+
+        <!-- 포스트 좋아요/댓글 수 -->
+        <v-row
+          align="center"
+          justify="end"
+        >
+          <span style="float:right;">
+            <v-icon small> mdi-thumb-up </v-icon>
+            {{ post.likeCount }}
+            <v-icon small> mdi-comment-processing </v-icon>
+            {{ post.commentCount }}
+          </span>
+        </v-row>
       </v-list-item>
-    </v-list>
-    <v-divider class="mt-0"></v-divider>
-  </div>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
 export default {
-  name: "MyPost",
+  name: 'MyPostTest',
   data() {
     return {
       post:
         {
+          inBoard: '(보드 이름)모르고리즘이 알고리즘이 될 때까지',
           boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
-          title: '저희팀원들 짱이랍니다',
-          contents: "다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)",
+          title: '(게시물제목)저희팀원들 짱이랍니다',
+          contents: "(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)",
           date: `2021-02-02`,
           likeCount: 4,
           commentCount: 4,
+          boardCount: 241,
         },
     }
+  },
+  methods: {
+    // 작성글 삭제
+    removeBoard() {
+      console.log('작성글 삭제')
+    },
+    // 해당 보드로 이동(상세 주소 넘겨주기)
+    moveToBoard() {
+      this.$router.push({ name: 'Board' });
+    },
   },
 }
 </script>
 
 <style scoped>
-div,
-p {
-  font-size: 1rem;
+/* 이미지 흐리게 하기 */
+.blur {
+  filter: brightness(50%);
+  z-index: 1;
 }
-.post {
+.text {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  color: #FFFFFF;
   display: flex;
-  flex-direction: row;
-  border: 4px dotted #797979;
-  height: 80px;
-}
-.post .name {
-  border: 2px solid;
-  width: 1fr;
-  height: 1fr;
-  text-align: center;
-  padding-top: 5%;
-  background-color: #797979;
-  box-sizing: border-box;
-}
-.post .title {
-  display: flex; 
   flex-direction: column;
-  justify-content: space-between;
-  box-sizing: border-box;
-  width: 100%;
+  text-align: center;
+  justify-content: flex-start;
+  z-index: 2;
 }
-.post .title *{
-  box-sizing: border-box;
-  margin: 0%;
-}
-.title .first-line {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-  border: 1px solid black;
-}
-.title h4 {
-  align-self: flex-end;
-}
-
 </style>

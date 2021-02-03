@@ -33,6 +33,7 @@ import JoinSuccess from './views/redirect/JoinSuccess';
 
 import Modify from './views/user/Modify';
 
+
 //토큰 없이(비회원) About 외 페이지 접근 시 리다이렉트
 // https://router.vuejs.org/kr/guide/advanced/navigation-guards.html
 import store from './vuex/store';

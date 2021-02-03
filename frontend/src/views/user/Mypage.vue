@@ -74,13 +74,63 @@
                     </v-btn>
                   </div>
                 </v-list-item>
-                <v-divider class="my-2"></v-divider>
                 <!-- 비밀번호 변경 버튼 -->
-                <v-btn
-                  block
-                  depressed>
-                  비밀번호 변경
-                </v-btn>
+                <!-- 비밀번호 변경 부분 -->
+                <v-dialog
+                  v-model="dialog"
+                  persistent
+                  max-width="400px"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      block
+                      depressed
+                      v-bind="attrs"
+                      v-on="on"
+                      class="pa-0"
+                    >
+                    비밀번호 변경
+                    </v-btn>  
+                  </template>
+                  <v-card>
+                    <v-card-title>
+                      <span class="headline">비밀번호 확인</span>
+                    </v-card-title>
+                    <v-card-text>
+                      <v-container>
+                        <v-row>
+                          <v-text-field
+                            label="비밀번호 확인"
+                            hint="비밀번호 변경을 위해 비밀번호를 입력해주세요"
+                            :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
+                            :type="passwordShow ? 'text' : 'password'"
+                            required
+                            @click:append="passwordShow = !passwordShow"
+                          ></v-text-field>
+                        </v-row>
+                      </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="dialog = false"
+                      >
+                        Close
+                      </v-btn>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="dialog = false"
+                      >
+                        다음
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+
+                <v-divider class="my-2"></v-divider>
                 <!-- 이동 탭 부분 -->
                 <v-list-item-group
                   class="d-flex
@@ -184,14 +234,60 @@
                     {{ myInfo.location }} {{ myInfo.generation }}기
                   </div>
                 </div>
-                <v-btn
-                  block
-                  depressed
-                  @click="changePassword()"
+                <!-- 비밀번호 변경 부분 -->
+                <v-dialog
+                  v-model="dialog"
+                  persistent
+                  max-width="400px"
                 >
-                  비밀번호 변경
-                </v-btn>
-                  <!-- 비밀번호 변경탭(내 프로필 들어왔을 때만) -->
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      block
+                      depressed
+                      v-bind="attrs"
+                      v-on="on"
+                      class="pa-0"
+                    >
+                    비밀번호 변경
+                    </v-btn>  
+                  </template>
+                  <v-card>
+                    <v-card-title>
+                      <span class="headline">비밀번호 확인</span>
+                    </v-card-title>
+                    <v-card-text>
+                      <v-container>
+                        <v-row>
+                          <v-text-field
+                            label="비밀번호 확인"
+                            hint="비밀번호 변경을 위해 비밀번호를 입력해주세요"
+                            :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
+                            :type="passwordShow ? 'text' : 'password'"
+                            required
+                            @click:append="passwordShow = !passwordShow"
+                          ></v-text-field>
+                        </v-row>
+                      </v-container>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="dialog = false"
+                      >
+                        Close
+                      </v-btn>
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="dialog = false"
+                      >
+                        다음
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
 
                 <v-divider class="my-2"></v-divider>
 
@@ -249,9 +345,8 @@
                 >내 작성글</v-card-title>
                 <v-divider></v-divider>
                 <MyPost />
-                <MyPostTest />
-                <br>
-                <MyPostTest2 />
+                <MyPost />
+                <MyPost />
               </div>
               <!-- 내 댓글 -->
               <div
@@ -290,9 +385,7 @@
 import Subscription from "@/components/mypage/Subscription.vue"
 import MyPost from "@/components/mypage/MyPost.vue"
 import ScrapPost from "@/components/mypage/ScrapPost.vue"
-// test
-import MyPostTest from "@/components/mypage/MyPostTest.vue"
-import MyPostTest2 from "@/components/mypage/MyPostTest2.vue"
+
 
 export default {
   name: "mypage",
@@ -300,9 +393,6 @@ export default {
     Subscription,
     MyPost,
     ScrapPost,
-    // test용
-    MyPostTest,
-    MyPostTest2,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -341,6 +431,10 @@ export default {
         generation: 4,
         profileImg: "https://avatars0.githubusercontent.com/u/9064066?v=4&s=460",
       },
+      // 비밀번호 변경 버튼
+      dialog: false,
+      // 비밀번호 텍스트 보여주기
+      passwordShow: false,
       // 구독 중 보드
       list() {
         var list = [];
@@ -375,9 +469,6 @@ export default {
       this.mobileTap[point] = true;
       // 현재 가르키고 있는 탭 부분 변경
       this.ResponsiveSize.whichTapPoint = point
-    },
-    changePassword() {
-      alert('비밀번호변경')
     },
   },
 }
