@@ -12,7 +12,7 @@
 	<insert id="join" parameterType="UserDto">
 		insert into user values (
 		#{user_id}, #{user_email}, #{user_password}, #{user_nickname}, #{user_location} ,
-		#{user_generation}, #{user_image}, #{user_auth}, #{user_authKey}
+		#{user_generation}, #{user_image}, #{user_auth}, #{user_authKey}, #{is_used}
 		)
 	</insert>
 

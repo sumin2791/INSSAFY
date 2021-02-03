@@ -117,7 +117,7 @@ public class UserController {
         logger.info("/confirm/join 호출 성공");
         try {
             String id = userService.getId();
-            logger.info(id);
+            logger.info("id: {}", userDto.toString());
             userDto.setUser_id(id);
 
             // 패스워드 암호화해서 저장
@@ -132,7 +132,6 @@ public class UserController {
             Map<String, String> map = new HashMap<String, String>();
             map.put("user_email", userDto.getUser_email());
             map.put("user_authKey", userDto.getUser_authKey());
-            System.out.println(map);
 
             // DB에 authKey 업데이트
             userService.updateAuthKey(map);
