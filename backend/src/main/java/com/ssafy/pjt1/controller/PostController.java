@@ -306,7 +306,7 @@ public class PostController {
      */
     @GetMapping("/getPostList")
     public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id, 
-    @RequestParam(value = "user_id") int user_id) {
+    @RequestParam(value = "user_id") String user_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
