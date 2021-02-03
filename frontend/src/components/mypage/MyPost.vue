@@ -1,5 +1,6 @@
 <template>
   <v-card
+    id="post-box"
     class="mx-auto
       my-4
       d-flex
@@ -29,7 +30,10 @@
             </v-icon>
           </v-btn>
         </div>
-        <div>
+        <div 
+          class="board-title"
+          @click="moveToBoard()"
+        >
           {{ post.inBoard }}
         </div>
       </div>
@@ -42,15 +46,30 @@
     </div>
     <!-- 포스트 제목 -->
     <v-card-title 
-      class="font-weight-black
+      class="
         d-flex
-        flex-row"
+        flex-row
+        space-between
+        pa-0"
     >
-      {{ post.title }}
+
+        <v-col
+          cols="9"
+          id="post-title"
+          class="font-weight-black"
+        >{{ post.title }}</v-col>
+        <v-col 
+          cols="3"
+          id="post-date" 
+          class="text-overline 
+          text-end"
+        >{{ post.date }}</v-col>
+
     </v-card-title>
 
     <!-- 포스트 글 내용 -->
     <v-card-text 
+      id="post-contents"
       class="font-weight-bold
         py-0 pl-auto"
     >
@@ -86,16 +105,16 @@
 
 <script>
 export default {
-  name: 'MyPostTest',
+  name: 'MyPost',
   data() {
     return {
       post:
         {
           inBoard: '(보드 이름)모르고리즘이 알고리즘이 될 때까지',
           boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
-          title: '(게시물제목)저희팀원들 짱이랍니다',
-          contents: "(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)",
-          date: `2021-02-02`,
+          title: '(게시물제목)저희팀원들 짱이랍니다(게시물제목)저희팀원들 짱이랍니다',
+          contents: "(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)",
+          date: `21.02.02`,
           likeCount: 4,
           commentCount: 4,
           boardCount: 241,
@@ -116,6 +135,10 @@ export default {
 </script>
 
 <style scoped>
+/* 하나의 게시글 전체 부분 */
+#post-box {
+  border: 0.5px solid #0B2945;
+}
 /* 이미지 흐리게 하기 */
 .blur {
   filter: brightness(50%);
@@ -130,6 +153,39 @@ export default {
   flex-direction: column;
   text-align: center;
   justify-content: flex-start;
+  align-items: center;
   z-index: 2;
+}
+/* 보드로 이동 */
+.board-title {
+  flex-grow: 100%;
+  cursor: pointer;
+}
+/* 게시글 제목 넘치는 부분 처리 */
+#post-title {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}
+/* 날짜 넘치는 부분 처리 */
+#post-date {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}
+/* 게시글 내용 넘치는 부분 처리 */
+#post-contents {
+  font-size: 14px;
+  line-height: 20px;
+  max-height: 60px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 </style>

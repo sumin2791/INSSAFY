@@ -1,8 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-main 
-      class="grey 
-      lighten-3"
+      class="main-bg-color"
     >
       <v-container
         class="pt-8"
@@ -74,7 +73,6 @@
                     </v-btn>
                   </div>
                 </v-list-item>
-                <!-- 비밀번호 변경 버튼 -->
                 <!-- 비밀번호 변경 부분 -->
                 <v-dialog
                   v-model="dialog"
@@ -358,7 +356,9 @@
                   pb-0"
                 >내 작성댓글</v-card-title>
                 <v-divider></v-divider>
-                <MyPost />
+                <MyComment />
+                <MyComment />
+                <MyComment />
               </div>
 
               <!-- 내가 스크랩한 글 -->
@@ -384,6 +384,7 @@
 <script>
 import Subscription from "@/components/mypage/Subscription.vue"
 import MyPost from "@/components/mypage/MyPost.vue"
+import MyComment from "@/components/mypage/MyComment.vue"
 import ScrapPost from "@/components/mypage/ScrapPost.vue"
 
 
@@ -392,6 +393,7 @@ export default {
   components: {
     Subscription,
     MyPost,
+    MyComment,
     ScrapPost,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
@@ -474,4 +476,8 @@ export default {
 }
 </script>
 <style scoped>
+/* 전체 메인 배경색 */
+.main-bg-color {
+  background-color: #ebebe9;
+}
 </style>

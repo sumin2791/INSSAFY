@@ -7,43 +7,18 @@
       flex-column"
     color="F9F9F9"
   >
-    <div 
-      class="img-wrap
-      d-flex
-      flex-column"
-    >
-      <!-- 보드 이미지 위로 나오는 부분 -->
-      <div 
-        class="text"
-      >
-        <!-- 삭제 버튼 -->
-        <div class="align-self-end">
-          <v-btn
-            icon
-            color="#AA2610"
-            @click="removeBoard()"
-          >
-            <v-icon
-              dark
-            >
-              mdi-close-thick
-            </v-icon>
-          </v-btn>
-        </div>
-        <div 
-          class="board-title"
-          @click="moveToBoard()"
-        >
+    <!-- 보드이름 -->
+    <v-list>
+      <v-list-item>
+        <v-icon class="mr-2">
+          mdi-account-group
+        </v-icon>
+        <v-list-item-subtitle 
+          class="board-title">
           {{ post.inBoard }}
-        </div>
-      </div>
-      <v-img 
-        src="@/assets/images/slide.jpg"
-        height="100px"
-        class="blur"
-      >
-      </v-img>
-    </div>
+        </v-list-item-subtitle>
+      </v-list-item>
+    </v-list>
     <!-- 포스트 제목 -->
     <v-card-title 
       class="
@@ -55,13 +30,15 @@
       <v-col
         cols="9"
         id="post-title"
-        class="font-weight-black"
+        class="font-weight-black
+          pt-0"
       >{{ post.title }}</v-col>
       <v-col 
         cols="3"
         id="post-date" 
         class="text-overline 
-        text-end"
+          text-end
+          pt-0"
       >{{ post.date }}</v-col>
     </v-card-title>
 
@@ -74,16 +51,7 @@
       {{ post.comment }}
     </v-card-text>
     <v-card-actions>
-      <v-list-item class="grow">
-        <v-list-item-avatar class="rounded-circle">
-          <v-img
-            class="elevation-6"
-            alt=""
-            :src="post.boardImg"
-          ></v-img>
-        </v-list-item-avatar>
-        <div>{{ post.writer }}</div>
-
+      <v-list-item>
         <!-- 포스트 좋아요/댓글 수 -->
         <v-row
           align="center"
@@ -103,12 +71,11 @@
 
 <script>
 export default {
-  name: 'ScrapPost',
+  name: 'MyComment',
   data() {
     return {
       post:
         {
-          writer: 'hahawhoa',
           inBoard: '(보드 이름)모르고리즘이 알고리즘이 될 때까지',
           boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
           title: '(게시물제목)저희팀원들 짱이랍니다(게시물제목)저희팀원들 짱이랍니다',
@@ -157,8 +124,12 @@ export default {
 }
 /* 보드로 이동 */
 .board-title {
-  flex-grow: 100%;
+  font-size: 14px;
   cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
 }
 /* 게시글 제목 넘치는 부분 처리 */
 #post-title {
