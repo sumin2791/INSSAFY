@@ -9,9 +9,6 @@ export default {
   createPost({commit},postItem){
     commit('CREATE_POST',postItem)
   },
-  postLike({commit},flagLikeItem){
-    commit('POST_LIKE',flagLikeItem)
-  },
 
 
 }

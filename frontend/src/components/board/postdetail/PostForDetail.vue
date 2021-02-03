@@ -28,8 +28,8 @@
       <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> 좋아여</div>
       <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> 좋아여</div>
       <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon>댓글</div>
-      <div class="post-bookmark" @click="postBookmark" v-if="flagBookmark"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
-      <div class="post-bookmark" @click="postBookmark" v-if="!flagBookmark"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
+      <div class="post-bookmark" @click="postBookmark" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
+      <div class="post-bookmark" @click="postBookmark" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
     </div>
   </div>
 </template>
@@ -44,14 +44,12 @@ export default {
   },
   data() {
     return {
-      flagBookmark:false,
       viewImage:null,
       post:{}
     }
   },
   computed:{
     flagLike(){
-      console.log(this.$store.state.post.flagLike)
       return this.$store.state.post.flagLike
     },
     flagScrap(){
@@ -100,21 +98,16 @@ export default {
       .catch(err=>{
         console.log(err)
       })
-      // boardApi.board_detail(this.$route.params.board_id)
     },
+
+    // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화
     postLike(e){
-      this.flagLike = !this.flagLike
-      console.log(this.flagLike)
-      // 포스트좋아하는거 카운트 바꾸기 위한 지금 이 방식은 bug가 존재합니다. (유저와 연동이 안되어 있기 때문) 
-      const flagLikeItem={
-        flagLike:this.flagLike,
-        post_id:this.post.post.post_id
-      }
-      this.$store.dispatch('postLike',flagLikeItem)
+      this.$store.dispatch('post/postLike') 
     },
+
+    // user가 스크랩 버튼 클릭 시 vuex에서 flag 변화
     postBookmark(e){
-      this.flagBookmark = !this.flagBookmark
-      console.log(this.flagBookmark)
+      this.$store.dispatch('post/postScrap') 
     }
   }
 }
