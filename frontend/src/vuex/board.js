@@ -8,16 +8,13 @@ export default {
   },
   mutations: {
     IS_WRITE_FLAG(state){
-      console.log('mutations 까지 오나요?')
-      console.log(state.writeFlag)
+      console.log('post 작성후 플래그 변화')
       state.writeFlag = !state.writeFlag
-      console.log(state.writeFlag)
     }
   },
   actions: {
     isWriteFlag({commit}){
       commit('IS_WRITE_FLAG')
-      console.log('액션까지 오나요?')
     }
   },
 };

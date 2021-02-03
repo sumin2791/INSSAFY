@@ -44,10 +44,18 @@ export default {
   },
   data() {
     return {
-      flagLike:false,
       flagBookmark:false,
       viewImage:null,
       post:{}
+    }
+  },
+  computed:{
+    flagLike(){
+      console.log(this.$store.state.post.flagLike)
+      return this.$store.state.post.flagLike
+    },
+    flagScrap(){
+      return this.$store.state.post.flagScrap
     }
   },
   watch:{
@@ -81,6 +89,12 @@ export default {
         console.log(res.data.postDto)
         this.post = res.data.postDto
         
+        //좋아요와 스크립트 여부는 vuex에 저장해놔야함...
+        this.$store.dispatch('post/isLiked',res.data.isLiked)
+        this.$store.dispatch('post/isScrapped',res.data.isScrapped)
+        //그리고 댓글 리스트를 여기서 가져오니까 이것도 vuex에 저장해야 할 듯?
+
+        // 포스트 라이크 카운트, 댓글 카운트 도 vuex에!
         
       })
       .catch(err=>{
