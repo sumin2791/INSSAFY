@@ -178,7 +178,7 @@ public class PostController {
      */
     @PutMapping("/modifyState")
     public ResponseEntity<Map<String, Object>> stateModify(@RequestParam(value = "post_id") int post_id,
-            @RequestParam(value = "post_state") int post_state, @RequestParam(value = "login_id") String login_id)) {
+            @RequestParam(value = "post_state") int post_state, @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/modifyState 호출 성공");
@@ -258,26 +258,38 @@ public class PostController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/scrap 호출성공");
         try {
+            String user_id = (String) param.get("user_id");
+            int post_id = (int) param.get("post_id");
+            int board_id = boardService.getIdbyPostId(post_id);
             Map<String, Object> map = new HashMap<>();
-            map.put("user_id", (String) param.get("user_id"));
-            map.put("post_id", (int) param.get("post_id"));
+            
+            map.put("user_id", user_id);
+            map.put("board_id", board_id);
+            if(boardService.isUnSubscribed(map)!=0){
+                Map<String, Object> map2 = new HashMap<>();
+                map2.put("user_id", user_id);
+                map2.put("post_id", post_id);
 
-            int count = postService.isScrapped(map);
-            if (count == 0) {
-                logger.info("스크랩 추가");
-                postService.scrap(map);
-            } else {
-                int count2 = postService.isUnScrapped(map);
-                if (count2 == 0) {
-                    // 전에 스크랩한 이력이 있지만 현재는 아닌 경우
-                    postService.updateScrap(map);
+                int count = postService.isScrapped(map2);
+                if (count == 0) {
+                    logger.info("스크랩 추가");
+                    postService.scrap(map2);
                 } else {
-                    logger.info("스크랩 삭제");
-                    postService.deleteScrap(map);
+                    int count2 = postService.isUnScrapped(map2);
+                    if (count2 == 0) {
+                        // 전에 스크랩한 이력이 있지만 현재는 아닌 경우
+                        postService.updateScrap(map2);
+                    } else {
+                        logger.info("스크랩 삭제");
+                        postService.deleteScrap(map2);
+                    }
                 }
-            }
+                resultMap.put("message", SUCCESS);
+            }else{
+                resultMap.put("message", "No Subscription");
+            } 
 
-            resultMap.put("message", SUCCESS);
+            
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -300,32 +312,42 @@ public class PostController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/like 호출성공");
         try {
-            Map<String, Object> map = new HashMap<>();
             String user_id = (String) param.get("user_id");
             int post_id = (int) param.get("post_id");
+            int board_id = boardService.getIdbyPostId(post_id);
+            Map<String, Object> map = new HashMap<>();
+            
             map.put("user_id", user_id);
-            map.put("post_id", post_id);
+            map.put("board_id", board_id);
 
-            int count = postService.isLiked(map);
-            if (count == 0) {
-                logger.info("좋아요 클릭");
-                postService.like(map);
-                postService.plusCount(post_id);
+            if(boardService.isUnSubscribed(map)!=0){
+                Map<String, Object> map2 = new HashMap<>();
+                map2.put("user_id", user_id);
+                map2.put("post_id", post_id);
 
-            } else {
-                int count2 = postService.isUnLiked(map);
-                if (count2 == 0) {
-                    // 전에 좋아요한 이력이 있지만 현재는 아닌 경우
-                    postService.updateLike(map);
+                int count = postService.isLiked(map2);
+                if (count == 0) {
+                    logger.info("좋아요 클릭");
+                    postService.like(map2);
                     postService.plusCount(post_id);
-                } else {
-                    logger.info("좋아요 삭제");
-                    postService.unlike(map);
-                    postService.minusCount(post_id);
-                }
-            }
 
-            resultMap.put("message", SUCCESS);
+                } else {
+                    int count2 = postService.isUnLiked(map2);
+                    if (count2 == 0) {
+                        // 전에 좋아요한 이력이 있지만 현재는 아닌 경우
+                        postService.updateLike(map2);
+                        postService.plusCount(post_id);
+                    } else {
+                        logger.info("좋아요 삭제");
+                        postService.unlike(map2);
+                        postService.minusCount(post_id);
+                    }
+                }
+                resultMap.put("message", SUCCESS);
+            }else{
+                resultMap.put("message", "No Subscription");
+            }         
+            
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
