@@ -177,4 +177,9 @@ public class PostServiceImpl implements PostService {
 		return sqlSession.getMapper(PostMapper.class).getWriterName(user_id);
 	}
 
+	@Override
+	public int isWriter(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).isWriter(map);
+	}
+
 }

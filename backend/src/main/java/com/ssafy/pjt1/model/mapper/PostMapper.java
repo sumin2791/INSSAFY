@@ -73,4 +73,6 @@ public interface PostMapper {
 
 	public String getWriterName(String user_id);
 
+	public int isWriter(Map<String, Object> map);
+
 }

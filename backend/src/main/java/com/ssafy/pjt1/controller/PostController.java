@@ -33,6 +33,7 @@ public class PostController {
     public static final Logger logger = LoggerFactory.getLogger(PostController.class);
     private static final String SUCCESS = "success";
     private static final String FAIL = "fail";
+    private static final String PERMISSION = "No Permission";
 
     @Autowired
     private PostService postService;
@@ -75,7 +76,7 @@ public class PostController {
 
                 resultMap.put("message", SUCCESS);
             }else{
-                resultMap.put("message", "No Permission");
+                resultMap.put("message", PERMISSION);
             }
         } catch (Exception e) {
             logger.error("실패", e);
@@ -136,19 +137,28 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : PostDto
+     * @param : PostDto, login_id
      * 
      * @return : message
      */
     @PutMapping("/modify")
-    public ResponseEntity<Map<String, Object>> postModify(@RequestBody PostDto postDto) {
+    public ResponseEntity<Map<String, Object>> postModify(@RequestBody PostDto postDto, 
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/modify 호출 성공");
         try {
-            if (postService.postModify(postDto) == 1) {
-                resultMap.put("message", SUCCESS);
+            Map<String, Object> map = new HashMap<>();
+            map.put("post_id",postDto.getPost_id());
+            map.put("login_id", login_id);
+            if(postService.isWriter(map)!=0){
+                if (postService.postModify(postDto) == 1) {
+                    resultMap.put("message", SUCCESS);
+                }
+            }else{
+                resultMap.put("message", PERMISSION);
             }
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -162,23 +172,31 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : PostDto
+     * @param : post_id, post_state, login_id
      * 
      * @return : message
      */
     @PutMapping("/modifyState")
     public ResponseEntity<Map<String, Object>> stateModify(@RequestParam(value = "post_id") int post_id,
-            @RequestParam(value = "post_state") int post_state) {
+            @RequestParam(value = "post_state") int post_state, @RequestParam(value = "login_id") String login_id)) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/modifyState 호출 성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("post_id", post_id);
-            map.put("post_state", post_state);
-            if (postService.stateModify(map) == 1) {
-                resultMap.put("message", SUCCESS);
+            map.put("post_id",post_id);
+            map.put("login_id", login_id);
+            if(postService.isWriter(map)!=0){
+                Map<String, Object> map2 = new HashMap<>();
+                map2.put("post_id", post_id);
+                map2.put("post_state", post_state);
+                if (postService.stateModify(map2) == 1) {
+                    resultMap.put("message", SUCCESS);
+                }
+            }else{
+                resultMap.put("message", PERMISSION);
             }
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -192,22 +210,31 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : post_id
+     * @param : post_id, login_id
      * 
      * @return : message
      */
     @DeleteMapping("/delete/{post_id}")
-    public ResponseEntity<Map<String, Object>> postDelete(@PathVariable("post_id") int post_id) {
+    public ResponseEntity<Map<String, Object>> postDelete(@PathVariable("post_id") int post_id,
+    @PathVariable("login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/delete 호출성공");
         try {
-            if (postService.postDelete(post_id) == 1) {
-                // postService.deleteScrapAll(post_id);
-                // postService.deleteLikeAll(post_id);
-                // postService.deleteCommentAll(post_id);
-                resultMap.put("message", SUCCESS);
+            Map<String, Object> map = new HashMap<>();
+            map.put("post_id",post_id);
+            map.put("login_id", login_id);
+            if(postService.isWriter(map)!=0){
+                if (postService.postDelete(post_id) == 1) {
+                    // postService.deleteScrapAll(post_id);
+                    // postService.deleteLikeAll(post_id);
+                    // postService.deleteCommentAll(post_id);
+                    resultMap.put("message", SUCCESS);
+                }
+            }else{
+                resultMap.put("message", PERMISSION);
             }
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);

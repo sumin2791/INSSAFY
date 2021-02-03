@@ -70,4 +70,6 @@ public interface PostService {
 
 	public String getWriterName(String user_id);
 
+	public int isWriter(Map<String, Object> map);
+
 }
