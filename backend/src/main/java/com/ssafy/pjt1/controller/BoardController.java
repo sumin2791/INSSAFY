@@ -381,9 +381,10 @@ public class BoardController {
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
                 resultMap.put("message", SUCCESS);
+            }else{
+                resultMap.put("message", "NULL");
             }
-            resultMap.put("message", "NULL");
-
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
