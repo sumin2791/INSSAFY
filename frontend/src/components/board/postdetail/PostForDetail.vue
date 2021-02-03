@@ -25,11 +25,11 @@
       <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
     </div>
     <div class="post-footer">
-      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> 좋아여</div>
-      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> 좋아여</div>
+      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{countLike}}</div>
+      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{countLike}}</div>
       <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon>댓글</div>
-      <div class="post-bookmark" @click="postBookmark" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
-      <div class="post-bookmark" @click="postBookmark" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
+      <div class="post-bookmark" @click="postScrap" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
+      <div class="post-bookmark" @click="postScrap" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
     </div>
   </div>
 </template>
@@ -54,10 +54,13 @@ export default {
     },
     flagScrap(){
       return this.$store.state.post.flagScrap
-    }
+    },
+    countLike(){
+      return this.$store.state.post.countLike
+    },
   },
   watch:{
-    '$route':'fetchData'
+    // '$route':'fetchData'
   },
   created() {
     this.fetchData()
@@ -93,6 +96,7 @@ export default {
         //그리고 댓글 리스트를 여기서 가져오니까 이것도 vuex에 저장해야 할 듯?
 
         // 포스트 라이크 카운트, 댓글 카운트 도 vuex에!
+        this.$store.dispatch('post/isLikeCount',res.data.like_count)
         
       })
       .catch(err=>{
@@ -100,14 +104,29 @@ export default {
       })
     },
 
-    // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화
+    // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postLike(e){
-      this.$store.dispatch('post/postLike') 
+      this.$store.dispatch('post/postLike',this.flagLike)
+      postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
+        .then((res)=>{
+          // console.log(res)
+        })
+        .catch(err=>{
+          console.error(err)
+        })
+      
     },
 
-    // user가 스크랩 버튼 클릭 시 vuex에서 flag 변화
-    postBookmark(e){
+    // user가 스크랩 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
+    postScrap(e){
       this.$store.dispatch('post/postScrap') 
+      postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
+        .then((res)=>{
+            // console.log(res)
+          })
+          .catch(err=>{
+            console.error(err)
+          })
     }
   }
 }
