@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@EnableScheduling
 @SpringBootApplication
 @EnableCaching
 public class Pjt1Application implements WebMvcConfigurer {
@@ -27,7 +29,7 @@ public class Pjt1Application implements WebMvcConfigurer {
 	// JWTInterceptor를 설치한다. 경로 조건을 설정한다.
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(jwtInterceptor).addPathPatterns("") // 기본 적용 경로
+		registry.addInterceptor(jwtInterceptor).addPathPatterns("/**") // 기본 적용 경로
 				.excludePathPatterns(Arrays.asList("/account/confirm/**"))// 회원은 인터셉터 제외
 				// 스웨거도 인터셉터 제외
 				.excludePathPatterns("/swagger-resources/**").excludePathPatterns("/swagger-ui.html")
