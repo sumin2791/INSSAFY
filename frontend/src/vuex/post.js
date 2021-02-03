@@ -6,7 +6,8 @@ export default {
     flagLike:false,
     flagScrap:false,
 
-    countLike:0
+    countLike:0,
+    commnetList:[]
   },
 
   mutations: {
@@ -20,6 +21,9 @@ export default {
     },
     IS_LIKE_COUNT(state,likeCount){
       state.countLike = likeCount
+    },
+    GET_COMMENTLIST(state,commentList){
+      state.commentList = commentList
     },
 
 
@@ -51,6 +55,10 @@ export default {
     },
     isLikeCount({commit},likeCount){
       commit('IS_LIKE_COUNT',likeCount)
+    },
+    getCommentList({commit},commentList){
+      commit('GET_COMMENTLIST',commentList)
+
     },
 
     //component에서 유저에게 받아오면 처리할 부분

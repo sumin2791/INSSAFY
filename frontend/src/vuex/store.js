@@ -11,6 +11,7 @@ import auth from './auth';
 import error from './error';
 import board from './board';
 import post from './post';
+import comment from './comment'
 
 Vue.use(Vuex);
 
@@ -42,10 +43,7 @@ const state = {
   },
   searchState: SEARCH_STATE(),
 
-  // comment : user_id, post_id // comment_description, comment_date
-  comments: [{ comment_id: 1, user: '이름', comment: '댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글댓글', date: '2021-01-28' }],
-  // post : user_id, board_id // post_date, post_title, post_description, post_like, post_image, post_iframe, post_header, post_state
-  
+
 
   //가입하기 인증 문제
   problems: PROBLEMS(),
@@ -60,6 +58,7 @@ export default new Vuex.Store({
     auth,
     error,
     board,
-    post
+    post,
+    comment
   },
 });
