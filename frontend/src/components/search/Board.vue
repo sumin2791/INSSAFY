@@ -12,16 +12,16 @@
       >
         <v-icon color="#fff">mdi-heart</v-icon>
       </v-btn>
-      <v-card-title>{{ board.title }}</v-card-title>
+      <v-card-title>{{ board.board_name }}</v-card-title>
       <v-card-subtitle 
         class="pb-0
           text-white 
           text-start">
-        {{ board.description }}
+        {{ board.board_description }}
       </v-card-subtitle>
 
       <v-card-text class="text-white text-start">
-        <div>{{ board.hashtag }}</div>
+        <div>{{ board.board_hash }}</div>
       </v-card-text>
     </div>
 
@@ -40,18 +40,23 @@
 <script>
 export default {
   name: 'Board',
+  props:{
+    board:Object
+  },
   data() {
     return {
-      board: {
-        id: 1,
-        type: 'curation',
-        title: '보드명',
-        description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
-        hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
-        count: 100,
-      },
+      // board: {
+      //   id: 1,
+      //   type: 'curation',
+      //   title: '보드명',
+      //   description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
+      //   hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
+      //   count: 100,
+      // },
     }
   },
+  created() {
+  }
 }
 </script>
 

@@ -1,82 +1,80 @@
 <template>
-  <v-app>
-
-    <v-main class="main-bg-color">
-      <v-container>
-        <!-- 검색어 결과 노출 부분 -->
-        <v-row>          
-          <v-col 
-            class="mb-4
-            text-center
-              text-body-1">
-              보드 중 "{{ search.searchKeyword }}"에 대한 검색 결과 &nbsp; '{{ search.searchCount }}건'
-          </v-col>
-        </v-row>
-        <!-- 검색 건수 / 정렬 / 보드 생성 -->
-        <div 
-          class="d-flex 
-            flex-row
-            justify-space-between"
-        >
-          <!-- 검색 건수 / 정렬 -->
-          <div>
-            <v-select
-              v-model="search.currentSort"
-              :items="sortResult"
-              label="정렬기준"
-              solo
-              color="##fff"
-              class="sort-dropdown"
-              block
-            ></v-select>
-          </div>
-          
-          <!-- 보드 생성 버튼 -->
-          <div>
-            <v-btn
-              color="brown darken-1"
-              @click="goToCreateBoard()"
-            >
-              <v-icon
-                color="#fff"
-              >
-                mdi-plus
-              </v-icon>
-              <div class="text-white">보드 만들기</div>
-            </v-btn>
-          </div>
-        </div>
-      <!-- 보드 보여주는 부분 -->
-      <v-row >
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
+  <v-main class="main-bg-color">
+    <v-container>
+      <!-- 검색어 결과 노출 부분 -->
+      <v-row>          
+        <v-col 
+          class="mb-4
+          text-center
+            text-body-1">
+            보드 중 "{{ search.searchKeyword }}"에 대한 검색 결과 &nbsp; '{{ search.searchCount }}건'
         </v-col>
       </v-row>
-      </v-container>
-    </v-main>
-  </v-app>
+      <!-- 검색 건수 / 정렬 / 보드 생성 -->
+      <div 
+        class="d-flex 
+          flex-row
+          justify-space-between"
+      >
+        <!-- 검색 건수 / 정렬 -->
+        <div>
+          <v-select
+            v-model="search.currentSort"
+            :items="sortResult"
+            label="정렬기준"
+            solo
+            color="##fff"
+            class="sort-dropdown"
+            block
+          ></v-select>
+        </div>
+        
+        <!-- 보드 생성 버튼 -->
+        <div>
+          <v-btn
+            color="brown darken-1"
+            @click="goToCreateBoard()"
+          >
+            <v-icon
+              color="#fff"
+            >
+              mdi-plus
+            </v-icon>
+            <div class="text-white">보드 만들기</div>
+          </v-btn>
+        </div>
+      </div>
+    <!-- 보드 보여주는 부분 -->
+      <v-row >
+        <v-col class="col-6 col-sm-3" v-for="(board,idx) in boardList" :key="idx">
+          <Board :board="board"/>
+        </v-col>
+        <!-- <v-col class="col-6 col-sm-3">
+          <Board />
+        </v-col>
+        <v-col class="col-6 col-sm-3">
+          <Board />
+        </v-col>
+        <v-col class="col-6 col-sm-3">
+          <Board />
+        </v-col>
+        <v-col class="col-6 col-sm-3">
+          <Board />
+        </v-col>
+        <v-col class="col-6 col-sm-3">
+          <Board />
+        </v-col>
+        <v-col class="col-6 col-sm-3">
+          <Board />
+        </v-col> -->
+      </v-row>
+    </v-container>
+  </v-main>
 </template>
 
 <script>
-import Board from './Board.vue'
+import Board from '@/components/search/Board.vue'
+import * as boardApi from '@/api/board'
 
 export default {
   name: 'SearchBoard',
@@ -94,9 +92,29 @@ export default {
       sortResult: ['최신순', '인기순'],
     }
   },
+  computed:{
+    boardList(){
+      return this.$store.state.board.boardList
+    }
+  },
+  created() {
+    this.fetchData()
+  },
   methods: {
     goToCreateBoard() {
       return this.$router.push({ name: 'BoardForm' });
+    },
+    fetchData() {
+      boardApi.get_boards('sort')
+        .then(res=>{
+          this.$store.dispatch('board/getBoardList',res.data.boardList)
+          // this.boardList = res.data.boardList
+          console.log(res)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+
     }
   }
 }
