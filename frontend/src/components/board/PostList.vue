@@ -19,7 +19,8 @@ export default {
   name:"PostList",
   data() {
     return {
-      posts:[]
+      posts:[],
+      user_input_posts:[],
     }
   },
   components:{
@@ -45,6 +46,7 @@ export default {
           this.posts = res.data.postList
         })
         .catch(err=>{
+          console.log('에러!')
           console.log(err)
         })
       }

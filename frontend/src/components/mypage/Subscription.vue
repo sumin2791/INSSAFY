@@ -32,7 +32,7 @@
           title"
           @click="moveToBoard()"
         >
-          밤새 코딩 lover밤새 코딩 lover밤새 코딩 lover밤새 코딩 lover
+          {{board_name}}
         </v-card-title>
         <!-- 삭제 버튼 -->
         <div class="align-self-start">
@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import * as boardApi from '@/api/board'
 export default {
   name: "Subscription",
   components: {
@@ -69,9 +70,25 @@ export default {
   data() {
     return {
       isFavorite: '#ffc83d',
+      board_name:'',
     };
   },
+  props:{
+    board:Object
+  },
+  mounted(){
+    this.getBoardDetail()
+  },
   methods: {
+    getBoardDetail(){
+      boardApi.board_detail(this.board.board_id)
+      .then(res=>{
+        this.board_name = res.data.boardDto.board_name
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    },
     // 즐겨찾는 보드에 추가
     addInFavoriteBoard() {
       if (this.isFavorite === '#ffc83d') {
@@ -80,7 +97,7 @@ export default {
     },
     // 해당 보드로 이동(상세 주소 넘겨주기)
     moveToBoard() {
-      this.$router.push({ name: 'Board' });
+      this.$router.push({ name: 'Board', params: { board_id:this.board.board_id} });
     },
     // 보드 구독목록에서 삭제
     removeBoard() {
