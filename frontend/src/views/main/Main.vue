@@ -234,6 +234,9 @@ export default {
       },
     };
   },
+  created() {
+    // if(!this.$store.state.auth.user.token && this.$store.state.auth.)
+  },
   methods: {
     clickFavorite: function(index) {
       alert(index + ' slide clicked!');
