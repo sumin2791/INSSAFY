@@ -38,7 +38,7 @@
 	<select id="isScrapped" parameterType="map" resultType="int">
 		select count(*)
 		from scrap
-		where post_id = #{post_id} and user_id = #{user_id};	
+		where post_id = #{post_id} and user_id = #{user_id} and is_used = 1;	
 	</select>
 
 	<insert id="scrap" parameterType="map">
@@ -68,7 +68,7 @@
 	<select id="isLiked" parameterType="map" resultType="int">
 		select count(*)
 		from postLike
-		where post_id = #{post_id} and user_id = #{user_id};	
+		where post_id = #{post_id} and user_id = #{user_id} and is_used = 1;	
 	</select>
 
 	<insert id="like" parameterType="map">
