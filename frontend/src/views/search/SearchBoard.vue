@@ -35,6 +35,7 @@
           <div>
             <v-btn
               color="brown darken-1"
+              @click="goToCreateBoard()"
             >
               <v-icon
                 color="#fff"
@@ -94,7 +95,7 @@ export default {
     }
   },
   methods: {
-    goToCreateBoard(){
+    goToCreateBoard() {
       return this.$router.push({ name: 'BoardForm' });
     }
   }
