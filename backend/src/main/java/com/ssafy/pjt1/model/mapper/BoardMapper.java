@@ -37,8 +37,6 @@ public interface BoardMapper {
 
 	public int deleteBoard(int board_id);
 
-	public BoardDto detailBoard(int board_id);
-
 	public int isUnSubscribed(Map<String, Object> map);
 
 	public void updateSubscribe(Map<String, Object> map);
@@ -57,4 +55,10 @@ public interface BoardMapper {
 
 	public List<Integer> getVoteList(int board_id);
 
+	public List<Integer> getPostList(int board_id);
+
+	public int getBoardCount(int board_id);
+
+	public BoardDto detailBoard(int board_id);
+	
 }

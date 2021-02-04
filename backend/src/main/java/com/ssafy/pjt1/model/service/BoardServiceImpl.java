@@ -138,4 +138,14 @@ public class BoardServiceImpl implements BoardService {
 		return sqlSession.getMapper(BoardMapper.class).getVoteList(board_id);
 	}
 
+	@Override
+	public List<Integer> getPostList(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).getPostList(board_id);
+	}
+
+	@Override
+	public int getBoardCount(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).getBoardCount(board_id);
+	}
+
 }

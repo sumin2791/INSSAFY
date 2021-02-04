@@ -28,18 +28,17 @@
           </v-btn>
         <!-- board title -->
         <v-card-title
-          class="text-button
-          title
-          flex-grow-1"
+          class="flex-grow-1
+          title"
           @click="moveToBoard()"
         >
-          💻밤새 코딩 lover🤜🤛
+          밤새 코딩 lover밤새 코딩 lover밤새 코딩 lover밤새 코딩 lover
         </v-card-title>
         <!-- 삭제 버튼 -->
         <div class="align-self-start">
           <v-btn
             icon
-            color="#fff"
+            color="#AA2610"
             @click="removeBoard()"
           >
             <v-icon
@@ -115,7 +114,10 @@ export default {
   z-index: 2;
 }
 .title {
-  flex-grow: 100%;
   cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
 }
 </style>

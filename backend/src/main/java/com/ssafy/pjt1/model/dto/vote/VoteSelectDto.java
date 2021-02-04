@@ -4,7 +4,6 @@ public class VoteSelectDto {
 
     private String user_id;
     private int vote_item_id;
-    private int is_used;
 
     public String getUser_id() {
         return this.user_id;
@@ -22,14 +21,6 @@ public class VoteSelectDto {
         this.vote_item_id = vote_item_id;
     }
 
-    public int getIs_used() {
-		return this.is_used;
-	}
-
-	public void setIs_used(int is_used) {
-		this.is_used = is_used;
-    }
-    
     public VoteSelectDto(){
         super();
     }

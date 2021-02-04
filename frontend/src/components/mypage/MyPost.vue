@@ -1,115 +1,191 @@
 <template>
-  <div>
-    <v-list 
-      three-line
-      class="d-flex
+  <v-card
+    id="post-box"
+    class="mx-auto
       my-4
-      mx-2"
+      d-flex
+      flex-column"
+    color="F9F9F9"
+  >
+    <div 
+      class="img-wrap
+      d-flex
+      flex-column"
     >
-      <v-list-item 
-        class="px-0
-        "
+      <!-- 보드 이미지 위로 나오는 부분 -->
+      <div 
+        class="text"
       >
-        <v-list-item-avatar
-          tile
+        <!-- 삭제 버튼 -->
+        <div class="align-self-end">
+          <v-btn
+            icon
+            color="#AA2610"
+            @click="removeBoard()"
+          >
+            <v-icon
+              dark
+            >
+              mdi-close-thick
+            </v-icon>
+          </v-btn>
+        </div>
+        <div 
+          class="board-title"
+          @click="moveToBoard()"
         >
-          <v-img
-            :src="post.boardImg"
-          ></v-img>
-        </v-list-item-avatar>
+          {{ post.inBoard }}
+        </div>
+      </div>
+      <v-img 
+        src="@/assets/images/slide.jpg"
+        height="100px"
+        class="blur"
+      >
+      </v-img>
+    </div>
+    <!-- 포스트 제목 -->
+    <v-card-title 
+      class="
+        d-flex
+        flex-row
+        space-between
+        pa-0"
+    >
 
-        <v-list-item-content 
-          class="pa-1 mx-3"
-        >
-          <!-- 포스트 제목 -->
+        <v-col
+          cols="9"
+          id="post-title"
+          class="font-weight-black"
+        >{{ post.title }}</v-col>
+        <v-col 
+          cols="3"
+          id="post-date" 
+          class="text-overline 
+          text-end"
+        >{{ post.date }}</v-col>
+
+    </v-card-title>
+
+    <!-- 포스트 글 내용 -->
+    <v-card-text 
+      id="post-contents"
+      class="font-weight-bold
+        py-0 pl-auto"
+    >
+      {{ post.contents }}
+    </v-card-text>
+    <v-card-actions>
+      <v-list-item class="grow">
+        <v-list-item-content>
           <v-list-item-title>
-            {{ post.title }}
-            <span style="float:right;">
-              <v-btn
-                icon
-                color="#AA2610"       
-              >
-              <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </span>
+            <v-icon>
+              mdi-account-group
+            </v-icon>
+              {{ post.boardCount }}
           </v-list-item-title>
-          <!-- 포스트 날짜 -->
-          <v-list-item-subtitle>
-            {{ post.date }} 
-            <!-- 포스트 좋아요 / 댓글 수 -->
-            <span style="float:right;">
-              <v-icon x-small> mdi-thumb-up </v-icon>
-              {{ post.likeCount }}
-              <v-icon x-small> mdi-comment-processing </v-icon>
-              {{ post.commentCount }}
-            </span>
-          </v-list-item-subtitle>
         </v-list-item-content>
+
+        <!-- 포스트 좋아요/댓글 수 -->
+        <v-row
+          align="center"
+          justify="end"
+        >
+          <span style="float:right;">
+            <v-icon small> mdi-thumb-up </v-icon>
+            {{ post.likeCount }}
+            <v-icon small> mdi-comment-processing </v-icon>
+            {{ post.commentCount }}
+          </span>
+        </v-row>
       </v-list-item>
-    </v-list>
-    <v-divider class="mt-0"></v-divider>
-  </div>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
 export default {
-  name: "MyPost",
+  name: 'MyPost',
   data() {
     return {
       post:
         {
+          inBoard: '(보드 이름)모르고리즘이 알고리즘이 될 때까지',
           boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
-          title: '저희팀원들 짱이랍니다',
-          contents: "다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)",
-          date: `2021-02-02`,
+          title: '(게시물제목)저희팀원들 짱이랍니다(게시물제목)저희팀원들 짱이랍니다',
+          contents: "(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)",
+          date: `21.02.02`,
           likeCount: 4,
           commentCount: 4,
+          boardCount: 241,
         },
     }
+  },
+  methods: {
+    // 작성글 삭제
+    removeBoard() {
+      console.log('작성글 삭제')
+    },
+    // 해당 보드로 이동(상세 주소 넘겨주기)
+    moveToBoard() {
+      this.$router.push({ name: 'Board' });
+    },
   },
 }
 </script>
 
 <style scoped>
-div,
-p {
-  font-size: 1rem;
+/* 하나의 게시글 전체 부분 */
+#post-box {
+  border: 0.5px solid #0B2945;
 }
-.post {
+/* 이미지 흐리게 하기 */
+.blur {
+  filter: brightness(50%);
+  z-index: 1;
+}
+.text {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  color: #FFFFFF;
   display: flex;
-  flex-direction: row;
-  border: 4px dotted #797979;
-  height: 80px;
-}
-.post .name {
-  border: 2px solid;
-  width: 1fr;
-  height: 1fr;
-  text-align: center;
-  padding-top: 5%;
-  background-color: #797979;
-  box-sizing: border-box;
-}
-.post .title {
-  display: flex; 
   flex-direction: column;
-  justify-content: space-between;
-  box-sizing: border-box;
+  text-align: center;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 2;
+}
+/* 보드로 이동 */
+.board-title {
+  flex-grow: 100%;
+  cursor: pointer;
+}
+/* 게시글 제목 넘치는 부분 처리 */
+#post-title {
   width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
 }
-.post .title *{
-  box-sizing: border-box;
-  margin: 0%;
-}
-.title .first-line {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+/* 날짜 넘치는 부분 처리 */
+#post-date {
   width: 100%;
-  border: 1px solid black;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
 }
-.title h4 {
-  align-self: flex-end;
+/* 게시글 내용 넘치는 부분 처리 */
+#post-contents {
+  font-size: 14px;
+  line-height: 20px;
+  max-height: 60px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
-
 </style>
