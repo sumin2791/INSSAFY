@@ -106,16 +106,14 @@ public class PostController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("user_id", login_id);
                 map.put("post_id", post_id);
-                int isScrapped = postService.isScrapped(map);
-                int isLiked = postService.isLiked(map);
-                int like_count = postService.getPostLikeCount(post_id);
+                int isScrapped = postService.isUnScrapped(map);
+                int isLiked = postService.isUnLiked(map);
                 List<CommentDto> commentList = postService.getComment(post_id);
                 String writer_nickname = postService.getWriterName(postDto.getUser_id());
                 
                 resultMap.put("postDto", postDto);
                 resultMap.put("isScrapped", isScrapped);
                 resultMap.put("isLiked", isLiked);
-                resultMap.put("like_count", like_count);
                 resultMap.put("commentList", commentList);
                 resultMap.put("writer_nickname", writer_nickname);
                 resultMap.put("message", SUCCESS);
@@ -375,7 +373,10 @@ public class PostController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
-            List<Map<String, Object>> postList = postService.getPostList(board_id);
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id",board_id);
+            map.put("user_id",user_id);
+            List<Map<String, Object>> postList = postService.getPostList(map);
             logger.info("postList: " + postList);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
