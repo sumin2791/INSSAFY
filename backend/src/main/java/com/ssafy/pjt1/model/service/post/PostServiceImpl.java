@@ -113,13 +113,13 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<CommentDto> getComment(int post_id) {
+	public List<Map<String, Object>> getComment(int post_id) {
 		return sqlSession.getMapper(PostMapper.class).getComment(post_id);
 	}
 
 	@Override
-	public List<Map<String, Object>> getPostList(int board_id) {
-		return sqlSession.getMapper(PostMapper.class).getPostList(board_id);
+	public List<Map<String, Object>> getPostList(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).getPostList(map);
 	}
 
 	@Override
@@ -158,8 +158,8 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalesList(int board_id) {
-		return sqlSession.getMapper(PostMapper.class).getSalesList(board_id);
+	public List<Map<String, Object>> getSalesList(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).getSalesList(map);
 	}
 
 	@Override

@@ -28,16 +28,15 @@ public class JwtInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         final String token = request.getHeader(HEADER_AUTH);
-
         Enumeration<String> headerNames = request.getHeaderNames();
+
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
-                String name = headerNames.nextElement();
-                System.out.println(">>>>" + name);
-                System.out.println("Header: " + request.getHeader(name));
+                String names = headerNames.nextElement();
+                System.out.println(">>>>" + names);
+                System.out.println("Header: " + request.getHeader(names));
             }
         }
-
         if (token != null && jwtService.isUsable(token)) {
             logger.info("토큰 사용 가능 : {}", token);
             return true;

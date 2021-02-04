@@ -18,12 +18,12 @@
               <div id="f-title" class="f-text b-desc">제목 없음</div>
               <p id="f-desc" class="f-text r-desc">설명없음</p>
               <p id="f-hashtag" class="f-text hashtag l-desc">
-                {{ item.write_post_count }}
+                해시태그 없음
               </p>
             </div>
             <div id="f-option" class="t-desc-e">
               <p>new</p>
-              <p>{{ item.count }}</p>
+              <p>{{ item.write_post_count }}</p>
             </div>
           </div>
         </swiper-slide>
@@ -239,14 +239,16 @@ export default {
     if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
       this.$store.dispatch('auth/getSubBoard');
       this.$store.dispatch('main/getFavorites', { userId: this.$store.state.auth.user.userId });
-      console.log(this.$store.getters['auth/getSubBoardFavoriteList']);
     }
   },
   computed: {
-    ...mapGetters(['auth/getSubBoardFavoriteList', 'main/getFavorites']),
+    ...mapGetters('main', ['getFavorites']),
+    ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
   },
   mounted() {
-    console.log(this.'main/getFavorites');
+    console.log(this.getFavorites);
+    // console.log(this.getSubBoardFavoriteList);
+    // console.log(this.getSubBoardList);
   },
   methods: {
     clickFavorite: function(index) {

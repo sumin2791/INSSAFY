@@ -26,8 +26,8 @@ export default {
       try {
         const res = await mainApi.getFavorites(userId);
         // console.log(res);
-        const favorites = res.data.favorite;
-        context.commit('setFavorites', { favorites });
+        const arr = res.data.favorite;
+        context.commit('setFavorites', { arr });
       } catch (e) {
         console.log(e);
       }
@@ -35,7 +35,7 @@ export default {
   },
   mutations: {
     setFavorites(state, payload) {
-      state.favorites = payload;
+      state.favorites = payload.arr;
     },
   },
 };

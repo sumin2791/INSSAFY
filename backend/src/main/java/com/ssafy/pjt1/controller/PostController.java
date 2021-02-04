@@ -106,16 +106,14 @@ public class PostController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("user_id", login_id);
                 map.put("post_id", post_id);
-                int isScrapped = postService.isScrapped(map);
-                int isLiked = postService.isLiked(map);
-                int like_count = postService.getPostLikeCount(post_id);
-                List<CommentDto> commentList = postService.getComment(post_id);
+                int isScrapped = postService.isUnScrapped(map);
+                int isLiked = postService.isUnLiked(map);
+                List<Map<String, Object>> commentList = postService.getComment(post_id);
                 String writer_nickname = postService.getWriterName(postDto.getUser_id());
                 
                 resultMap.put("postDto", postDto);
                 resultMap.put("isScrapped", isScrapped);
                 resultMap.put("isLiked", isLiked);
-                resultMap.put("like_count", like_count);
                 resultMap.put("commentList", commentList);
                 resultMap.put("writer_nickname", writer_nickname);
                 resultMap.put("message", SUCCESS);
@@ -375,7 +373,10 @@ public class PostController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
-            List<Map<String, Object>> postList = postService.getPostList(board_id);
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id",board_id);
+            map.put("user_id",user_id);
+            List<Map<String, Object>> postList = postService.getPostList(map);
             logger.info("postList: " + postList);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
@@ -392,20 +393,23 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : board_id
+     * @param : board_id, login_id
      * 
      * @return : message,
      * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getSalesList")
-    public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id") int board_id) {
+    public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id") int board_id,
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/getSalesList 호출성공");
         try {
-            List<Map<String, Object>> postList = postService.getSalesList(board_id);
-            logger.info("postList: " + postList);
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id",board_id);
+            map.put("login_id",login_id);
+            List<Map<String, Object>> postList = postService.getSalesList(map);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {

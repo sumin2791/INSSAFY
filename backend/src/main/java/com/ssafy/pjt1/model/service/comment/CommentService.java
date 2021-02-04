@@ -1,5 +1,7 @@
 package com.ssafy.pjt1.model.service.comment;
 
+import java.util.Map;
+
 import com.ssafy.pjt1.model.dto.comment.CommentDto;
 
 public interface CommentService {
@@ -13,5 +15,7 @@ public interface CommentService {
 	public void createNotification(int comment_id);
 
 	public void notificationDelete(int comment_id);
+
+	public int isCommentWriter(Map<String, Object> map);
 
 }

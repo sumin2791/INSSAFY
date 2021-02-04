@@ -9,7 +9,6 @@ const instance = axios.create({
 
 //request 요청 전에 header에 토큰값을 넣기 위한 interceptor
 instance.interceptors.request.use(function(config) {
-  // console.log(config);
   if (store.state.auth.user.token !== null) {
     config['headers'] = {
       // Authorization: `Bearer ${store.state.auth.user.token}`,
@@ -18,6 +17,7 @@ instance.interceptors.request.use(function(config) {
     };
     // config.headers.Authorization = store.state.token;
   }
+  // console.log(config);
   return config;
 });
 
