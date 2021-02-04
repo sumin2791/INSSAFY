@@ -39,13 +39,15 @@ export default {
     this.fetchData()
   },
   watch:{
-    '$route':'featchData'
+    '$route':'fetchData'
   },
   methods: {
     fetchData(){
       this.loading=true
       boardApi.board_detail(this.$route.params.board_id)
         .then(res=>{
+          console.log('보드 디테일 시작?')
+          console.log(res)
           this.board.name=res.data.boardDto.board_name
           this.board.description=res.data.boardDto.board_description
           this.board.hashtags=res.data.boardDto.board_hash.split('|')

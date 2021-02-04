@@ -4,11 +4,11 @@
     <b-container class="board">
       <b-row>
         <header>
-          <router-link to="/board"><b-icon icon="chevron-compact-left" aria-hidden="true"></b-icon>Board</router-link>
+          <router-link :to="{ name:'Board', params: {board_id:$route.params.board_id}}"><b-icon icon="chevron-compact-left" aria-hidden="true"></b-icon>Board</router-link>
           
         </header>
         <section>
-          <Post :post="$attrs"/>
+          <Post/>
           <hr>
           <input 
             type="text" 

@@ -1,8 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-main 
-      class="grey 
-      lighten-3"
+      class="main-bg-color"
     >
       <v-container
         class="pt-8"
@@ -44,17 +43,63 @@
                   >
                     <!-- 닉네임 -->
                     <div
-                      class="text-h4"
+                      class="text-h5"
+                      v-if="!myInfo.myInfoEdit"
                     >
-                      {{ myInfo.nickName }}
+                      {{ myInfo.nickName }}    
+                    </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                      <v-text-field
+                        dense
+                        label="nickname"
+                        v-model="myInfo.nickName"
+                        class="text-h5"
+                        color="grey-darken-4"
+                      ></v-text-field>
                     </div>
                     <!-- 이메일 -->
-                    <div>
+                    <div
+                      v-if="!myInfo.myInfoEdit"
+                    >
                       {{ myInfo.email }}
                     </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                      <v-text-field
+                        dense
+                        label="email"
+                        v-model="myInfo.email"
+                        color="grey-darken-4"
+                      ></v-text-field>
+                    </div>
                     <!-- 지역 & 기수 -->
-                    <div>
+                    <div
+                      v-if="!myInfo.myInfoEdit"
+                    >
                       {{ myInfo.location }} {{ myInfo.generation }}기
+                    </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                    <v-row>
+                      <v-col>
+                        <v-select
+                          v-model="myInfo.location"
+                          :items="myInfo.options.location"
+                          label="지역"
+                        ></v-select>
+                      </v-col>
+                      <v-col>
+                        <v-select
+                          v-model="myInfo.generation"
+                          :items="myInfo.options.generation"
+                          label="기수"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
                     </div>
                   </div>
                   <!-- edit 버튼('나'일 때만 보여주기) -->
@@ -66,7 +111,8 @@
                       outlined
                       x-small
                       fab
-                      color="#0B2945"
+                      :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'"
+                      @click="editMyInfo()"
                     >
                       <v-icon dark>
                         mdi-pencil
@@ -74,13 +120,10 @@
                     </v-btn>
                   </div>
                 </v-list-item>
+                <!-- 비밀번호 변경 부분 -->
+                <PasswordChange />
+
                 <v-divider class="my-2"></v-divider>
-                <!-- 비밀번호 변경 버튼 -->
-                <v-btn
-                  block
-                  depressed>
-                  비밀번호 변경
-                </v-btn>
                 <!-- 이동 탭 부분 -->
                 <v-list-item-group
                   class="d-flex
@@ -151,9 +194,10 @@
                         outlined
                         x-small
                         fab
-                        color="#0B2945"
+                        :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'"
+                        @click="editMyInfo()"
                       >
-                        <v-icon dark>
+                        <v-icon>
                           mdi-pencil
                         </v-icon>
                       </v-btn>
@@ -170,28 +214,70 @@
                     >
                   </v-avatar>
                   
-                  <!-- 사용자 입력한 값 보여주기 -->
+                  <!-- 닉네임 -->
                   <div
+                    v-if="!myInfo.myInfoEdit"
                     class="mt-4
                     text-h5 
                     font-weight-black">
                     {{ myInfo.nickName }}
                   </div>
-                  <div>
-                    {{ myInfo.email }}
+                  <div
+                    v-if="myInfo.myInfoEdit"
+                  >
+                    <v-text-field
+                      dense
+                      label="nickname"
+                      v-model="myInfo.nickName"
+                      class="text-h5"
+                      color="grey-darken-4"
+                    ></v-text-field>
                   </div>
-                  <div>
-                    {{ myInfo.location }} {{ myInfo.generation }}기
+                  <!-- 이메일 부분 -->
+                  <div
+                      v-if="!myInfo.myInfoEdit"
+                    >
+                      {{ myInfo.email }}
+                    </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                      <v-text-field
+                        dense
+                        label="email"
+                        v-model="myInfo.email"
+                        color="grey-darken-4"
+                      ></v-text-field>
+                    </div>
+                    <!-- 지역 & 기수 -->
+                    <div
+                      v-if="!myInfo.myInfoEdit"
+                    >
+                      {{ myInfo.location }} {{ myInfo.generation }}기
+                    </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                    <v-row>
+                      <v-col>
+                        <v-select
+                          v-model="myInfo.location"
+                          :items="myInfo.options.location"
+                          label="지역"
+                        ></v-select>
+                      </v-col>
+                      <v-col>
+                        <v-select
+                          v-model="myInfo.generation"
+                          :items="myInfo.options.generation"
+                          label="기수"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
                   </div>
                 </div>
-                <v-btn
-                  block
-                  depressed
-                  @click="changePassword()"
-                >
-                  비밀번호 변경
-                </v-btn>
-                  <!-- 비밀번호 변경탭(내 프로필 들어왔을 때만) -->
+                <!-- 비밀번호 변경 부분 -->
+                <PasswordChange />
 
                 <v-divider class="my-2"></v-divider>
 
@@ -249,9 +335,8 @@
                 >내 작성글</v-card-title>
                 <v-divider></v-divider>
                 <MyPost />
-                <MyPostTest />
-                <br>
-                <MyPostTest2 />
+                <MyPost />
+                <MyPost />
               </div>
               <!-- 내 댓글 -->
               <div
@@ -263,7 +348,9 @@
                   pb-0"
                 >내 작성댓글</v-card-title>
                 <v-divider></v-divider>
-                <MyPost />
+                <MyComment />
+                <MyComment />
+                <MyComment />
               </div>
 
               <!-- 내가 스크랩한 글 -->
@@ -287,22 +374,26 @@
 </template>
 
 <script>
+// 구독중인 보드
 import Subscription from "@/components/mypage/Subscription.vue"
+// 내 작성글
 import MyPost from "@/components/mypage/MyPost.vue"
+// 내 댓글
+import MyComment from "@/components/mypage/MyComment.vue"
+// 내 스크랩한 글
 import ScrapPost from "@/components/mypage/ScrapPost.vue"
-// test
-import MyPostTest from "@/components/mypage/MyPostTest.vue"
-import MyPostTest2 from "@/components/mypage/MyPostTest2.vue"
+// 비밀번호 변경
+import PasswordChange from "@/components/mypage/PasswordChange"
+
 
 export default {
   name: "mypage",
   components: {
     Subscription,
     MyPost,
+    MyComment,
     ScrapPost,
-    // test용
-    MyPostTest,
-    MyPostTest2,
+    PasswordChange,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -340,6 +431,13 @@ export default {
         location: "광주",
         generation: 4,
         profileImg: "https://avatars0.githubusercontent.com/u/9064066?v=4&s=460",
+        // 내 정보 edit 버튼 클릭 flag
+        myInfoEdit: false,
+        // 내 정보 지역, 기수 변경 정보
+        options: {
+        location: ['서울', '대전', '구미', '광주'],
+        generation: [4, 3, 2, 1],
+        },
       },
       // 구독 중 보드
       list() {
@@ -376,11 +474,15 @@ export default {
       // 현재 가르키고 있는 탭 부분 변경
       this.ResponsiveSize.whichTapPoint = point
     },
-    changePassword() {
-      alert('비밀번호변경')
+    editMyInfo() {
+      this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit
     },
   },
 }
 </script>
 <style scoped>
+/* 전체 메인 배경색 */
+.main-bg-color {
+  background-color: #ebebe9;
+}
 </style>

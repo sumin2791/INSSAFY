@@ -19,7 +19,7 @@ export default {
   },
   computed:{
     comments() {
-      return this.$store.state.comments
+      return this.$store.state.comment.commentList
     },
   }
 }

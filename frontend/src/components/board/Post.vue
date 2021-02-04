@@ -23,12 +23,6 @@
       <div class="description r-desc">{{post.post_description}}</div>
     </div>
     <div class="post-footer">
-      <div v-if="post.post_like>=10">
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:37.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
-      </div>
-      <div v-else>
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:28.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
-      </div>
       <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{post.post_like}}</div>
       <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
       <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{post.comment_count}}</div>
@@ -53,9 +47,10 @@ export default {
   
   methods:{
     goToDetail() {
-      console.log(this.post)
+      console.log(this.post.post_id)
       // params를 이용해서 데이터를 넘겨줄 수 있다.
-      this.$router.push({ name: 'Post', params: {post:this.post} });
+      this.$router.push({ name: 'Post', params: { board_id:this.$route.params.board_id, post_id: this.post.post_id }})
+      // this.$router.push({ name: 'Post', params: {post:this.post} });
     },
     postLike(e){
       this.flagLike = !this.flagLike

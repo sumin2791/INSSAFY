@@ -60,6 +60,7 @@
 <script>
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
+
 export default {
   components: {},
   data: () => {
@@ -119,6 +120,8 @@ export default {
       this.isSubmit = isSubmit;
     },
     onLogin: function() {
+      console.log(this.email)
+      console.log(this.password)
       this.$store
         .dispatch('auth/login', {
           email: this.email,
@@ -141,7 +144,10 @@ export default {
             // console.log(this.$store.state.auth.token);
             // console.log(this.$store.state.auth.email);
           }
-        });
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
   },
 };
