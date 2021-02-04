@@ -23,12 +23,6 @@
       <div class="description r-desc">{{post.post_description}}</div>
     </div>
     <div class="post-footer">
-      <div v-if="post.post_like>=10">
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:37.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
-      </div>
-      <div v-else>
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:28.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
-      </div>
       <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{post.post_like}}</div>
       <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
       <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{post.comment_count}}</div>

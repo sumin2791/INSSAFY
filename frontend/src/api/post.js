@@ -1,11 +1,7 @@
 import http from './http';
 
-export function getPostList(board_id){
-  return http.get('/post/getPostList',{
-    params:{
-      board_id:board_id
-    }
-  })
+export function getPostList(params){
+  return http.get('/post/getPostList',{params:params})
 }
 
 

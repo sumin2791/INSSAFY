@@ -122,12 +122,12 @@ export default [
 
   // board
   {
-    path: '/board/:board_id',
+    path: '/board/:board_id(\\d+)',
     name: 'Board',
     component: Board,
   },
   {
-    path: '/board/:board_id/post/:post_id',
+    path: '/board/:board_id(\\d+)/post/:post_id(\\d+)',
     name: 'Post',
     component: PostDetail,
     props: true,

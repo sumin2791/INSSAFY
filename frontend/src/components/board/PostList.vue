@@ -39,15 +39,15 @@ export default {
   methods: {
     create(){
       const BOARD_ID = Number(this.$route.params.board_id)
-    postApi.getPostList(BOARD_ID)
-      .then(res=>{
-        console.log(res)
-        this.posts = res.data.postList
-      })
-      .catch(err=>{
-        console.log(err)
-      })
-    }
+      postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId})
+        .then(res=>{
+          console.log(res)
+          this.posts = res.data.postList
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }
   }
 }
 </script>
