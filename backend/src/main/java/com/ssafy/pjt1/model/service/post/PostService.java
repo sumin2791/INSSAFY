@@ -36,7 +36,7 @@ public interface PostService {
 
 	public int getPostLikeCount(int post_id);
 
-	public List<CommentDto> getComment(int post_id);
+	public List<Map<String, Object>> getComment(int post_id);
 
 	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
@@ -62,7 +62,7 @@ public interface PostService {
 
 	public void deleteCommentAll(int post_id);
 
-	public List<Map<String, Object>> getSalesList(int board_id);
+	public List<Map<String, Object>> getSalesList(Map<String, Object> map);
 
 	public List<PostDto> marketPostNew(Map<String, Object> map);
 

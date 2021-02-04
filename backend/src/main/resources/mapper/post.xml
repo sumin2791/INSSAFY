@@ -113,11 +113,12 @@
 		where post_id = #{post_id} and is_used = 1;	
 	</select>
 
-	<select id="getComment" parameterType="int" resultType="CommentDto">
-		select *
-		from comment
-		where post_id = #{post_id} and is_used = 1
-		order by comment_date desc;	
+	<select id="getComment" parameterType="int" resultType="map">
+		select c.comment_id, c.post_id, c.user_id, c.comment_description, c.comment_date, u.user_nickname
+		from comment as c left outer join user as u
+		on c.user_id = u.user_id
+		where c.post_id = #{post_id} and c.is_used = 1 and u.is_used = 1
+		order by c.comment_date desc;	
 	</select>
 
 	<select id="getPostList" parameterType="map" resultType="map">
@@ -198,18 +199,32 @@
 		where post_id = #{post_id};
 	</update>
 
-	<select id="getSalesList" parameterType="int" resultType="map">
-		select p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, l.like_count, c.comment_count
+	<select id="getSalesList" parameterType="map" resultType="map">
+		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
+		p.post_header, p.post_state, l.like_count, c.comment_count, u.user_nickname, pl.is_used as isLiked, s.is_used as isScrapped
 		from (select post_id, count(post_id) as like_count
 			  from postLike 
+			  where is_used = 1
 			  group by post_id) as l right outer join post as p 
 			  on l.post_id = p.post_id 
 			  left outer join
 			  (select post_id, count(post_id) as comment_count
 			  from comment
+			  where is_used = 1
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
+			  left outer join user as u
+			  on p.user_id = u.user_id 
+			  left outer join
+			  (select *
+			  from postLike
+			  where user_id = #{user_id} and is_used = 1) as pl
+			  on p.post_id = pl.post_id
+			  left outer join 
+			  (select *
+			  from scrap
+			  where user_id = #{user_id} and is_used = 1) as s
+			  on p.post_id = s.post_id
 		where p.board_id = #{board_id} and p.is_used = 1 and p.post_state != -1
 		order by p.post_date desc;
 	</select>
