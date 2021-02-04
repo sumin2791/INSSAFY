@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ssafy.pjt1.model.dto.comment.CommentDto;
+import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.comment.CommentService;
+import com.ssafy.pjt1.model.service.post.PostService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +30,16 @@ public class CommentController {
     public static final Logger logger = LoggerFactory.getLogger(CommentController.class);
     private static final String SUCCESS = "success";
     private static final String FAIL = "fail";
+    private static final String PERMISSION = "No Permission";
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private BoardService boardService;
+
+    @Autowired
+    private PostService postService;
 
     /*
      * 기능: 댓글 생성
@@ -47,16 +56,27 @@ public class CommentController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("comment/create 호출성공");
         try {
-            CommentDto commentDto = new CommentDto();
-            commentDto.setUser_id((String) param.get("user_id"));
-            commentDto.setPost_id((int) param.get("post_id"));
-            commentDto.setComment_description((String) param.get("comment_description"));
-            commentService.createComment(commentDto);
+            String user_id = (String) param.get("user_id");
+            int post_id = (int) param.get("post_id");
+            int board_id = boardService.getIdbyPostId(post_id);
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id", user_id);
+            map.put("board_id", board_id);
+            if(boardService.isUnSubscribed(map)!=0){
+                CommentDto commentDto = new CommentDto();
+                commentDto.setUser_id(user_id);
+                commentDto.setPost_id(post_id);
+                commentDto.setComment_description((String) param.get("comment_description"));
+                commentService.createComment(commentDto);
 
-            int comment_id = commentDto.getComment_id();
-            commentService.createNotification(comment_id);
+                int comment_id = commentDto.getComment_id();
+                commentService.createNotification(comment_id);
 
-            resultMap.put("message", SUCCESS);
+                resultMap.put("message", SUCCESS);
+            }else{
+                resultMap.put("message", PERMISSION);
+            }
+            
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
