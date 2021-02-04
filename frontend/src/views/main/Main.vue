@@ -235,7 +235,9 @@ export default {
     };
   },
   created() {
-    // if(!this.$store.state.auth.user.token && this.$store.state.auth.)
+    if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
+      this.$store.dispatch('auth/getSubBoard');
+    }
   },
   methods: {
     clickFavorite: function(index) {

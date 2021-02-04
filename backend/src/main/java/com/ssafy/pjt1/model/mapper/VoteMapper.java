@@ -33,3 +33,4 @@ public interface VoteMapper {
 	public void voteDeleteAll(int vote_id);
     
 }
+

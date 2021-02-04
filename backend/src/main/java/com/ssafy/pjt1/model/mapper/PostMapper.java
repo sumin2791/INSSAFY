@@ -71,4 +71,8 @@ public interface PostMapper {
 
 	public List<PostDto> marketPostPopular(Map<String, Object> map);
 
+	public String getWriterName(String user_id);
+
+	public int isWriter(Map<String, Object> map);
+
 }

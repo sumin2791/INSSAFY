@@ -24,6 +24,7 @@ export default {
   namespaced: true,
   state: {
     user: INIT_USER(),
+    temp: 'dd',
   },
 
   mutations: {
@@ -77,12 +78,6 @@ export default {
             nickname: response.data.user.user_nickname,
           });
 
-          // 구독 보드 리스트도 가져오기
-          const responseSubBoard = await userApi.getSubBoards(response.data.user.user_id);
-          console.log('구독보드리스트 결과:');
-          console.log(responseSubBoard);
-          context.commit('SET_SUBSCRIBE_BOARD', responseSubBoard);
-
           //이메일 인증을 완료하지 않은 유저의 경우 email 활용하여 링크생성
         } else if (response.data.message === 'NO_AUTH') {
           context.commit('setEmail', response.data.user.user_email);
@@ -97,6 +92,19 @@ export default {
     logout({ commit }) {
       // axios.defaults.headers.common['Authorization'] = undefined;
       commit('setLogoutState');
+    },
+
+    async getSubBoard(context) {
+      try {
+        // 구독 보드 리스트도 가져오기
+        const responseSubBoard = await userApi.getSubBoards(this.state.auth.user.userId);
+        console.log('구독보드리스트 결과:');
+        console.log(responseSubBoard);
+        context.commit('SET_SUBSCRIBE_BOARD', responseSubBoard);
+        return responseSubBoard;
+      } catch (e) {
+        console.log(e);
+      }
     },
 
     // //promise 형태 사용
