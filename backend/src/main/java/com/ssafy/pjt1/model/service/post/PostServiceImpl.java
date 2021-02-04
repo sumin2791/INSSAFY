@@ -113,7 +113,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<CommentDto> getComment(int post_id) {
+	public List<Map<String, Object>> getComment(int post_id) {
 		return sqlSession.getMapper(PostMapper.class).getComment(post_id);
 	}
 

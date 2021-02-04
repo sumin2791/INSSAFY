@@ -108,7 +108,7 @@ public class PostController {
                 map.put("post_id", post_id);
                 int isScrapped = postService.isUnScrapped(map);
                 int isLiked = postService.isUnLiked(map);
-                List<CommentDto> commentList = postService.getComment(post_id);
+                List<Map<String, Object>> commentList = postService.getComment(post_id);
                 String writer_nickname = postService.getWriterName(postDto.getUser_id());
                 
                 resultMap.put("postDto", postDto);

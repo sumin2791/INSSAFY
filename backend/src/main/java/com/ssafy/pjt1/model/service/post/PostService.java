@@ -36,7 +36,7 @@ public interface PostService {
 
 	public int getPostLikeCount(int post_id);
 
-	public List<CommentDto> getComment(int post_id);
+	public List<Map<String, Object>> getComment(int post_id);
 
 	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
