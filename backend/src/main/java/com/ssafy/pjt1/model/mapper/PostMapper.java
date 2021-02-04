@@ -65,8 +65,7 @@ public interface PostMapper {
 
 	public void deleteCommentAll(int post_id);
 
-	public List<Map<String, Object>> getSalesList(int board_id);
-
+	public List<Map<String, Object>> getSalesList(Map<String, Object> map);
 	public List<PostDto> marketPostNew(Map<String, Object> map);
 
 	public List<PostDto> marketPostPopular(Map<String, Object> map);

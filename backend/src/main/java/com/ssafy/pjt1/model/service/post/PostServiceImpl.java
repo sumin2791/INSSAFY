@@ -158,8 +158,8 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<Map<String, Object>> getSalesList(int board_id) {
-		return sqlSession.getMapper(PostMapper.class).getSalesList(board_id);
+	public List<Map<String, Object>> getSalesList(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).getSalesList(map);
 	}
 
 	@Override
