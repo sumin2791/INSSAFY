@@ -48,7 +48,7 @@ export default {
         .then(res=>{
           if(res.data.message==="NULL"){
 
-            this.route.push({ name: 'PageNotFound'})
+            this.$router.push({ name: 'PageNotFound'})
           }else{
             this.board.name=res.data.boardDto.board_name
             this.board.description=res.data.boardDto.board_description

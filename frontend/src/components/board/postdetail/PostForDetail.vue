@@ -97,15 +97,19 @@ export default {
       .then(res=>{
         console.log(res.data)
         console.log(res.data.postDto)
-        this.post = res.data.postDto
-        
-        //좋아요와 스크립트 여부는 vuex에 저장해놔야함...
-        this.$store.dispatch('post/isLiked',res.data.isLiked)
-        this.$store.dispatch('post/isScrapped',res.data.isScrapped)
-        //그리고 댓글 리스트를 여기서 가져오니까 이것도 vuex에 저장해야 할 듯?
-        this.$store.dispatch('comment/getCommentList',res.data.commentList)
-        // 포스트 라이크 카운트, 댓글 카운트 도 vuex에!
-        this.$store.dispatch('post/isLikeCount',res.data.like_count)
+        if(res.data.message==="NULL"){
+          this.$router.push({ name: 'PageNotFound'})
+        }else{
+          this.post = res.data.postDto
+          
+          //좋아요와 스크립트 여부는 vuex에 저장해놔야함...
+          this.$store.dispatch('post/isLiked',res.data.isLiked)
+          this.$store.dispatch('post/isScrapped',res.data.isScrapped)
+          //그리고 댓글 리스트를 여기서 가져오니까 이것도 vuex에 저장해야 할 듯?
+          this.$store.dispatch('comment/getCommentList',res.data.commentList)
+          // 포스트 라이크 카운트, 댓글 카운트 도 vuex에!
+          this.$store.dispatch('post/isLikeCount',res.data.like_count)
+        }
         
       })
       .catch(err=>{
