@@ -19,12 +19,29 @@ const INIT_USER = () => {
     nickname: localStorage.getItem('nickname'),
   };
 };
+const INIT_SUB_BOARD = () => {
+  const getSubBoard = localStorage.subBoard;
+  if (!getSubBoard) return null;
+  const subBoard = JSON.parse(localStorage.subBoard);
+  let result = [];
+  subBoard.forEach((element) => {
+    result.push({
+      board_id: element.board_id,
+      favorite_flag: element.favorite_flag,
+      is_used: element.is_used,
+      user_id: element.user_id,
+      user_role: element.user_role,
+      write_post_count: element.write_post_count,
+    });
+  });
+  return result;
+};
 
 export default {
   namespaced: true,
   state: {
     user: INIT_USER(),
-    temp: 'dd',
+    subBoard: INIT_SUB_BOARD(),
   },
 
   mutations: {
@@ -49,9 +66,14 @@ export default {
       localStorage.email = state.user.email;
       localStorage.nickname = state.user.nickname;
     },
-    //
+    //구독목록 가져오기
     SET_SUBSCRIBE_BOARD(state, responseSubBoard) {
       localStorage.subBoard = JSON.stringify(responseSubBoard.data.boards);
+      state.subBoard = INIT_SUB_BOARD();
+    },
+    //구독목록 새로고침,
+    setSubBoardRefresh(state) {
+      state.subBoard = INIT_SUB_BOARD();
     },
 
     setLogoutState(state) {
@@ -64,7 +86,7 @@ export default {
     async login(context, { email, password }) {
       try {
         const response = await authApi.login(email, password);
-        console.log(response);
+        // console.log(response);
         //로그인 성공 && 인증 완료
         if (response.data.message === 'SUCCESS') {
           // context.commit('setToken', response.data.auth_token);
@@ -98,28 +120,23 @@ export default {
       try {
         // 구독 보드 리스트도 가져오기
         const responseSubBoard = await userApi.getSubBoards(this.state.auth.user.userId);
-        console.log('구독보드리스트 결과:');
-        console.log(responseSubBoard);
+        // console.log('구독보드리스트 결과:');
+        // console.log(responseSubBoard);
         context.commit('SET_SUBSCRIBE_BOARD', responseSubBoard);
         return responseSubBoard;
       } catch (e) {
         console.log(e);
       }
     },
-
-    // //promise 형태 사용
-    // login2(context, { email, password }) {
-    //   authApi
-    //     .login(email, password)
-    //     .than((response) => {
-    //       if (response.state === 200) {
-    //         context.setToken('setToken', response.data.data);
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //       alert('이메일 또는 비밀번호 불일치!');
-    //     });
-    // },
+  },
+  getters: {
+    //구독목록 리스트 가져오기
+    getSubBoardList(state) {
+      return state.subBoard;
+    },
+    //구독목록 리스트 중 즐겨찾기한 리스트 가져오기
+    getSubBoardFavoriteList: (state) => {
+      return state.subBoard.filter((board) => board.favorite_flag == 1);
+    },
   },
 };

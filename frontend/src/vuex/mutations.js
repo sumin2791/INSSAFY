@@ -17,6 +17,9 @@ export default {
   setSpinnerTogle(state) {
     state.spinnerActive = !state.spinnerActive;
   },
+  setSpinnerMessage(state, message) {
+    state.spinnerMessage = message;
+  },
 
   //Toast
   setToastTogle(state) {
@@ -47,5 +50,4 @@ export default {
   CREATE_POST(state, postItem) {
     state.posts.push(postItem);
   },
-  
 };

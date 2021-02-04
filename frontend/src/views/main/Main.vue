@@ -10,15 +10,15 @@
         <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" />
       </svg>
       <swiper id="f-swiper" class="swiper" :options="swiperOption" @clickSlide="clickFavorite">
-        <swiper-slide v-for="item in list()" v-bind:key="item.id">
+        <swiper-slide v-for="(item, index) in getFavorites" v-bind:key="`faborite${index}`">
           <div class="frame">
-            <p id="f-type" class="r-title">{{ item.type }}</p>
+            <p id="f-type" class="r-title">큐레이션? 커스텀?</p>
             <div class="bg-image"></div>
             <div class="inner">
-              <div id="f-title" class="f-text b-desc">{{ item.title }}</div>
-              <p id="f-desc" class="f-text r-desc">{{ item.description }}</p>
+              <div id="f-title" class="f-text b-desc">제목 없음</div>
+              <p id="f-desc" class="f-text r-desc">설명없음</p>
               <p id="f-hashtag" class="f-text hashtag l-desc">
-                {{ item.hashtag }}
+                {{ item.write_post_count }}
               </p>
             </div>
             <div id="f-option" class="t-desc-e">
@@ -78,6 +78,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 import 'swiper/css/swiper.css';
 import BoardItem from '@/components/popular/BoardItem.vue';
 import PostItem from '@/components/popular/PostItem.vue';
+import { mapGetters } from 'vuex';
 
 //toast nority
 
@@ -237,7 +238,15 @@ export default {
   created() {
     if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
       this.$store.dispatch('auth/getSubBoard');
+      this.$store.dispatch('main/getFavorites', { userId: this.$store.state.auth.user.userId });
+      console.log(this.$store.getters['auth/getSubBoardFavoriteList']);
     }
+  },
+  computed: {
+    ...mapGetters(['auth/getSubBoardFavoriteList', 'main/getFavorites']),
+  },
+  mounted() {
+    console.log(this.'main/getFavorites');
   },
   methods: {
     clickFavorite: function(index) {
