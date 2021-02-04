@@ -12,7 +12,7 @@
       >
         <v-icon color="#fff">mdi-heart</v-icon>
       </v-btn>
-      <v-card-title>{{ board.board_name }}</v-card-title>
+      <v-card-title @click="goToBoard" style="cursor:pointer">{{ board.board_name }}</v-card-title>
       <v-card-subtitle 
         class="pb-0
           text-white 
@@ -56,6 +56,12 @@ export default {
     }
   },
   created() {
+  },
+  methods:{
+    goToBoard(){
+      console.log(this.board.board_id)
+      this.$router.push({ name: 'Board', params: { board_id:this.board.board_id}})
+    }
   }
 }
 </script>
