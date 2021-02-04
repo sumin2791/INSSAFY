@@ -24,7 +24,7 @@
           </div>
           <div class="post-write">
             <!-- <b-button variant="light">글쓰기</b-button> -->
-            <PostWrite/>
+            <PostWrite :inBoard="inBoard"/>
           </div>
           <PostList/>
         </b-col>

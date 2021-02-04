@@ -22,8 +22,6 @@ import BoardForm from './views/board/BoardForm.vue';
 //search
 import SearchPost from './views/search/SearchPost.vue';
 import SearchBoard from './views/search/SearchBoard.vue';
-// 화면 test용
-import SearchBoardTest from './views/search/SearchBoardTest.vue';
 
 // Chat
 import ChatPage from './views/openchat/ChatPage.vue';
@@ -151,12 +149,6 @@ export default [
     path: '/search/board',
     name: 'SearchBoard',
     component: SearchBoard,
-  },
-  // test 용
-  {
-    path: '/search/board/test',
-    name: 'SearchBoardTest',
-    component: SearchBoardTest,
   },
 
   // 채팅 관련 영역

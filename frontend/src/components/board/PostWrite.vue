@@ -1,6 +1,15 @@
 <template>
   <div>
     <b-button v-b-modal.modal-post variant="light" class="btn-write">글쓰기</b-button>
+    <b-modal id="modal-post" title="Info" v-if="!inBoard" ok-only>
+      <p class="my-4">구독하시면 글을 작성할 수 있어요😊</p>
+      <template #modal-footer="{ok}">
+        <!-- Emulate built in modal footer ok and cancel button actions -->
+        <b-button variant="submit" @click="ok()">
+          오키
+        </b-button>
+      </template>
+    </b-modal>
     <b-modal
       id="modal-post"
       ref="modal"
@@ -11,6 +20,7 @@
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
+      v-if="inBoard"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -42,9 +52,10 @@
         </b-form-group>
         <b-form-group
           label-for="multiple-media"
+          disabled
         >
           <b-form-file 
-            multiple
+            disabled
             id="multiple-media"
             v-model="images"
             placeholder="Choose a file or drop it here..."
@@ -103,6 +114,9 @@ export default {
       descriptionState: null,
     }
   },
+  props:{
+    inBoard:Boolean
+  },
   methods: {
     titleCheckFormValidity() {
       const valid = this.$refs.form.checkValidity()
@@ -138,17 +152,17 @@ export default {
       // Push the name to submitted names
       // this.submittedNames.push(this.name)
       // Hide the modal manually
-      let today= new Date()
-      const posts = this.$store.state.posts
-      let idx= posts.length
+      // const posts = this.$store.state.posts
       const BOARD_ID = Number(this.$route.params.board_id)
+      // var fd = new FormData()
+      // fd.append('post_image', this.images)
 
       const postItem ={
         user_id:String(localStorage.getItem('userId')),
         board_id:BOARD_ID,
         post_title:this.title, 
         post_description:this.description,
-        post_image:JSON.stringify(this.images),
+        post_image:'',
         post_iframe:'',
         post_header:'',
         post_state:0
@@ -157,16 +171,12 @@ export default {
       
       postApi.create(postItem)
         .then(res=>{
-          console.log(`post 생성 완료`)
-          console.log(res)
           this.$store.dispatch('board/isWriteFlag')
         })
         .catch(err=>{
+          
           console.log(`post 생성 실패 ${err}`)
         })
-
-      // this.$store.dispatch('createPost',postItem)
-      
 
       console.log(this.images)
       this.$nextTick(() => {

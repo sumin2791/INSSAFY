@@ -319,9 +319,15 @@
                   pb-0"
                 >구독중인 보드</v-card-title>
                 <v-divider></v-divider>
-                <Subscription />
-                <Subscription />
-                <Subscription />
+                <div
+                  v-for="(board,idx) in subBoards"
+                  :key="idx"
+                >
+
+                  <Subscription :board="board"/>
+                </div>
+                <!-- <Subscription />
+                <Subscription /> -->
               </div>
               
               <!-- 내 작성글 -->
@@ -385,6 +391,9 @@ import ScrapPost from "@/components/mypage/ScrapPost.vue"
 // 비밀번호 변경
 import PasswordChange from "@/components/mypage/PasswordChange"
 
+//api 가져오기
+import * as userApi from '@/api/user'
+
 
 export default {
   name: "mypage",
@@ -403,6 +412,7 @@ export default {
   },
   // resize 실시해서 현재 화면 크기 확인
   mounted () {
+    this.fetchData()
     this.onResize()
 
     window.addEventListener('resize', this.onResize, { passive: true })
@@ -440,24 +450,49 @@ export default {
         },
       },
       // 구독 중 보드
-      list() {
-        var list = [];
-        for (let index = 1; index <= 10; index++) {
-          var item = {
-            id: index,
-            type: 'curation',
-            title: '보드명',
-            description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
-            hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
-            count: 100,
-          };
-          list.push(item);
-        }
-        return list;
-      },
+      // list() {
+      //   var list = [];
+      //   for (let index = 1; index <= 10; index++) {
+      //     var item = {
+      //       id: index,
+      //       type: 'curation',
+      //       title: '보드명',
+      //       description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
+      //       hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
+      //       count: 100,
+      //     };
+      //     list.push(item);
+      //   }
+      //   return list;
+      // },
+      subBoards:[],
     }
   },
   methods: {
+    // 내 정보보기
+    fetchData(){
+      userApi.getMyPage(localStorage.userId)
+        .then(res=>{
+          // 아직 데이터 다 받아오지 않았어요. 사진이랑 이런거 없으니까요...
+          this.myInfo.nickName=res.data.user.user_nickname
+          this.myInfo.email=res.data.user.user_email
+          this.myInfo.generation = res.data.user.user_generation
+          this.myInfo.location = res.data.user.user_location
+        })
+        .catch(err=>{
+          console.log(err)
+        });
+        
+      userApi.getSubBoard(localStorage.userId)
+        .then(res=>{
+          console.log(res)
+          this.subBoards = res.data.boards
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+    }, 
+
     // 현재 활성화된 기기에 따라 flag 변경
     onResize() {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;

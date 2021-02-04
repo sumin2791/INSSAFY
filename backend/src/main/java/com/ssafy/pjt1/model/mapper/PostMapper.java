@@ -49,7 +49,7 @@ public interface PostMapper {
 
 	public List<CommentDto> getComment(int post_id);
 
-	public List<Map<String, Object>> getPostList(int board_id);
+	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
 	public List<PostDto> searchPostNew(String keyword);
 
