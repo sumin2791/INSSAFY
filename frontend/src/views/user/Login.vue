@@ -60,6 +60,7 @@
 <script>
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
+
 export default {
   components: {},
   data: () => {
@@ -119,18 +120,20 @@ export default {
       this.isSubmit = isSubmit;
     },
     onLogin: function() {
+      console.log(this.email)
+      console.log(this.password)
       this.$store
         .dispatch('auth/login', {
           email: this.email,
           password: this.password,
         })
-        .then((res) => {
-          console.log(res);
-          if (res.data.message === 'FAIL') {
+        .then((result) => {
+          console.log(result);
+          if (result.data.message === 'FAIL') {
             alert('이메일 또는 비밀번호를 다시 확인하여 주십시오.');
             this.password = '';
-          } else if (res.data.message === 'NO_AUTH') {
-            //이메일 인증 완료 유도를 위해 toast 활용
+          } else if (result.data.message === 'NO_AUTH') {
+            //이메일 인증 완료 유도를 위해 custom toast 활용
             //toast 내에서 vuex를 활용하여 도메인 링크 동적 생성
             this.$store.commit('setToastTogle');
             this.$store.commit('setToastType', 'email');
@@ -141,7 +144,10 @@ export default {
             // console.log(this.$store.state.auth.token);
             // console.log(this.$store.state.auth.email);
           }
-        });
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
   },
 };
@@ -239,7 +245,7 @@ input {
   height: 40px;
   margin-top: 100px;
   margin-bottom: 20px;
-
+  border: solid 1px #000;
   font-size: 24px;
   transition: color 0.3s, background-color 0.3s ease;
 }

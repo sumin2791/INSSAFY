@@ -8,54 +8,75 @@
         <div>
           <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              {{post.post.user}}
+              {{post.user_nickname}}
             </template>
             <b-dropdown-item href="#">Profile</b-dropdown-item>
             <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
             <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
           </b-dropdown>
         </div>
-        <div class="post-date">{{post.post.post_date}}</div>
+        <div class="post-date">{{post.post_date}}</div>
       </div>
     </div>
     <div class="post-body">
-      <div class="title f-text b-desc">{{post.post.post_title}}</div>
-      <div class="description r-desc">{{post.post.post_description}}</div>
+      <div class="title f-text b-desc">{{post.post_title}}</div>
+      <div class="description r-desc">{{post.post_description}}</div>
 
       <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
     </div>
     <div class="post-footer">
-      <div v-if="post.post.post_like>=10">
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:37.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post.post_like}}</div>
-      </div>
-      <div v-else>
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:28.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post.post_like}}</div>
-      </div>
-      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{post.post.post_like}}</div>
-      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post.post_like}}</div>
-      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{post.post.comment_count}}</div>
-      <div class="post-bookmark" @click="postBookmark" v-if="flagBookmark"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
-      <div class="post-bookmark" @click="postBookmark" v-if="!flagBookmark"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
+      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{countLike}}</div>
+      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{countLike}}</div>
+      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon>{{countComment}}</div>
+      <div class="post-bookmark" @click="postScrap" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
+      <div class="post-bookmark" @click="postScrap" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
     </div>
   </div>
 </template>
 
 <script>
+import * as postApi from '@/api/post'
+
 export default {
   name:"PostForDetail",
   props:{
-    post:Object
+    // post:Object
   },
   data() {
     return {
-      flagLike:false,
-      flagBookmark:false,
-      viewImage:null
+      viewImage:null,
+      post:{}
     }
   },
+  computed:{
+    flagLike(){
+      return this.$store.state.post.flagLike
+    },
+    flagScrap(){
+      return this.$store.state.post.flagScrap
+    },
+    countLike(){
+      return this.$store.state.post.countLike
+    },
+    countComment(){
+      const commentList = this.$store.state.comment.commentList
+      return commentList.length
+    },
+    writeFlag(){
+      return this.$store.state.comment.writeFlag
+    }
+  },
+  watch:{
+    writeFlag:'fetchData'
+    // '$route':'fetchData'
+  },
   created() {
-    var input = this.post.post.img
+    this.fetchData()
 
+    // 이미지 하나만 추출했어요.
+    var input = this.post.post_image
+    console.log('img')
+    console.log(input)
     if (input && input[0]) {
       var reader = new FileReader();
       reader.onload = e => {
@@ -67,19 +88,66 @@ export default {
     }
   },
   methods:{
-    postLike(e){
-      this.flagLike = !this.flagLike
-      console.log(this.flagLike)
-      // 포스트좋아하는거 카운트 바꾸기 위한 지금 이 방식은 bug가 존재합니다. (유저와 연동이 안되어 있기 때문) 
-      const flagLikeItem={
-        flagLike:this.flagLike,
-        post_id:this.post.post.post_id
-      }
-      this.$store.dispatch('postLike',flagLikeItem)
+    fetchData(){
+      this.loading=true
+      postApi.getPost({
+        login_id:String(localStorage.getItem('userId')),
+        post_id:Number(this.$route.params.post_id)
+      })
+      .then(res=>{
+        console.log(res.data)
+        console.log(res.data.postDto)
+        if(res.data.message==="NULL"){
+          this.$router.push({ name: 'PageNotFound'})
+        }else{
+          this.post = res.data.postDto
+          
+          //좋아요와 스크립트 여부는 vuex에 저장해놔야함...
+          this.$store.dispatch('post/isLiked',res.data.isLiked)
+          this.$store.dispatch('post/isScrapped',res.data.isScrapped)
+          //그리고 댓글 리스트를 여기서 가져오니까 이것도 vuex에 저장해야 할 듯?
+          this.$store.dispatch('comment/getCommentList',res.data.commentList)
+          // 포스트 라이크 카운트, 댓글 카운트 도 vuex에!
+          this.$store.dispatch('post/isLikeCount',this.post.post_like)
+        }
+        
+      })
+      .catch(err=>{
+        console.log(err)
+      })
     },
-    postBookmark(e){
-      this.flagBookmark = !this.flagBookmark
-      console.log(this.flagBookmark)
+
+    // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
+    postLike(e){
+      postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
+        .then((res)=>{
+          if(res.data.message==='No Subscription'){
+            alert('구독 후에 이용가능합니다.')
+          }else{
+            this.$store.dispatch('post/postLike',this.flagLike)
+          }
+          // console.log(res)
+        })
+        .catch(err=>{
+          console.error(err)
+        })
+      
+    },
+
+    // user가 스크랩 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
+    postScrap(e){
+      postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
+        .then((res)=>{
+          if(res.data.message==='No Subscription'){
+            alert('구독 후에 이용가능합니다.')
+          }else{
+            this.$store.dispatch('post/postScrap') 
+          }
+            // console.log(res)
+          })
+          .catch(err=>{
+            console.error(err)
+          })
     }
   }
 }

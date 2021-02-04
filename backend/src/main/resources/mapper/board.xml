@@ -5,20 +5,20 @@
 
 	<insert id="createBoard" parameterType="BoardDto" useGeneratedKeys="true" keyProperty="board_id">
 		insert into board (board_name, board_description, board_image, board_igmyeong,
-		board_location,board_hash,board_date,user_id)
+		board_location,board_hash,board_date,user_id,is_used)
 		values ( #{board_name}, #{board_description}, #{board_image}, #{board_igmyeong} ,
-		#{board_location}, #{board_hash}, now(), #{user_id})
+		#{board_location}, #{board_hash}, now(), #{user_id},1)
 	</insert>
 	
 	<insert id="subscribe" parameterType="map">
 		insert into subscription values (
-		#{board_id}, #{user_id}, 0, 0, #{user_role}
+		#{board_id}, #{user_id}, 0, 0, #{user_role}, 1
 		)
 	</insert>
 	
 	<insert id="addFunction" parameterType="map">
 		insert into add_function values (
-		#{board_id}, #{checklist_flag}, #{calendar_flag}, #{vote_flag}
+		#{board_id}, #{checklist_flag}, #{calendar_flag}, #{vote_flag}, 1
 		)
 	</insert>
 	
@@ -28,15 +28,28 @@
 		where board_id = #{board_id} and user_id = #{user_id};	
 	</select>
 	
-	<delete id="unsubscribe"> 
-		delete from subscription 
+	<select id="isUnSubscribed" parameterType="map" resultType="int">
+		select count(*)
+		from subscription 
+		where board_id = #{board_id} and user_id = #{user_id} and is_used = 1;	
+	</select>
+
+	<update id="updateSubscribe"> 
+		update subscription 
+		set is_used = 1
+		where board_id = #{board_id} and user_id = #{user_id};
+	</update>
+
+	<update id="unsubscribe"> 
+		update subscription 
+		set is_used = 0
 		where board_id = #{board_id} and user_id = #{user_id} and user_role != 1;
-	</delete>
+	</update>
 
 	<select id="searchUser" parameterType="string" resultType="UserDto">
 		select *
 		from user
-		where user_email like concat('%',#{user_name} ,'%');
+		where user_email like concat('%',#{user_name} ,'%') and is_used = 1;
 	</select>
 	
 	<update id="updateManager" parameterType="map">
@@ -55,21 +68,23 @@
 	<select id="getBoardsNew" resultType="BoardDto">
 		select *
 		from board
+		where is_used = 1
 		order by board_date desc;
 	</select>
 
 	<select id="getBoardsPopular" resultType="BoardDto">
 		select *
-		from board as b join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
+		from board as b left outer join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
 		on b.board_id = c.board_id
+		where b.is_used = 1
 		order by c.board_count desc;
 	</select>
 
 	<select id="searchBoardNew" parameterType="string" resultType="BoardDto">
 		select *
 		from board
-		where board_name like concat('%',#{keyword} ,'%') or board_description like concat('%',#{keyword} ,'%')
-		or board_hash like concat('%',#{keyword} ,'%')
+		where ( board_name like concat('%',#{keyword} ,'%') or board_description like concat('%',#{keyword} ,'%')
+		or board_hash like concat('%',#{keyword} ,'%') ) and is_used = 1
 		order by board_date desc;
 	</select>
 
@@ -77,15 +92,87 @@
 		select *
 		from board as b join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
 		on b.board_id = c.board_id
-		where b.board_name like concat('%',#{keyword} ,'%') or b.board_description like concat('%',#{keyword} ,'%')
-		or b.board_hash like concat('%',#{keyword} ,'%')
+		where ( b.board_name like concat('%',#{keyword} ,'%') or b.board_description like concat('%',#{keyword} ,'%')
+		or b.board_hash like concat('%',#{keyword} ,'%') ) and b.is_used = 1
 		order by c.board_count desc;
 	</select>
 
-	<delete id="boardDelete" parameterType="int">
-		delete
-		from board
+	<update id="deleteBoard" parameterType="int">
+		update board
+		set is_used = 0
 		where board_id=#{board_id}
-	</delete>
+	</update>
 
+	<select id="detailBoard" parameterType="int" resultType="BoardDto">
+		select *
+		from board 
+		where board_id = #{board_id} and is_used = 1
+	</select>
+
+	<update id="deleteBoardAll" parameterType="int">
+		update add_function
+		set is_used = 0
+		where board_id=#{board_id}
+	</update>
+
+	<update id="deleteSubscription" parameterType="int">
+		update subscription
+		set is_used = 0
+		where board_id=#{board_id}
+	</update>
+
+	<update id="deletePostAll" parameterType="int">
+		update post
+		set is_used = 0
+		where board_id=#{board_id}
+	</update>
+
+	<update id="deleteCalendar" parameterType="int">
+		update calendar_item
+		set is_used = 0
+		where board_id=#{board_id}
+	</update>
+
+	<update id="deleteCheckList" parameterType="int">
+		update check_list_item
+		set is_used = 0
+		where board_id=#{board_id}
+	</update>
+
+	<update id="deleteVote" parameterType="int">
+		update vote
+		set is_used = 0
+		where board_id=#{board_id}
+	</update>
+
+	<select id="getVoteList" parameterType="int" resultType="int">
+		select vote_id
+		from vote
+		where board_id = #{board_id} and is_used = 1;
+	</select>
+
+	<select id="getPostList" parameterType="int" resultType="int">
+		select post_id
+		from post
+		where board_id = #{board_id} and is_used = 1;
+	</select>
+
+	<select id="getBoardCount" resultType="int">
+		select count(*)
+		from subscription
+		where board_id = #{board_id} and is_used = 1;
+	</select>
+
+	<select id="getIdbyPostId" resultType="int">
+		select board_id
+		from post
+		where post_id = #{post_id} and is_used = 1;
+	</select>
+
+	<select id="isManager" parameterType="map" resultType="int">
+		select count(*)
+		from subscription
+		where board_id = #{board_id} and user_id = #{login_id} and is_used = 1
+		and user_role = 1;	
+	</select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.ssafy.pjt1.model.service.comment;
 
+import java.util.Map;
+
 import com.ssafy.pjt1.model.dto.comment.CommentDto;
 import com.ssafy.pjt1.model.mapper.CommentMapper;
 
@@ -36,6 +38,17 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void createNotification(int comment_id) {
 		sqlSession.getMapper(CommentMapper.class).createNotification(comment_id);
+	}
+
+	@Override
+	public void notificationDelete(int comment_id) {
+		sqlSession.getMapper(CommentMapper.class).notificationDelete(comment_id);
+
+	}
+
+	@Override
+	public int isCommentWriter(Map<String, Object> map) {
+		return sqlSession.getMapper(CommentMapper.class).isCommentWriter(map);
 	}
 	
 }

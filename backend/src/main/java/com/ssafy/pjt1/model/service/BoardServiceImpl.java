@@ -84,8 +84,78 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public int boardDelete(int board_id) {
-		return sqlSession.getMapper(BoardMapper.class).boardDelete(board_id);
+	public int deleteBoard(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).deleteBoard(board_id);
+	}
+
+	@Override
+	public BoardDto detailBoard(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).detailBoard(board_id);
+	}
+
+	@Override
+	public int isUnSubscribed(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).isUnSubscribed(map);
+	}
+
+	@Override
+	public void updateSubscribe(Map<String, Object> map) {
+		sqlSession.getMapper(BoardMapper.class).updateSubscribe(map);
+	}
+
+	@Override
+	public void deleteBoardAll(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteBoardAll(board_id);
+	}
+
+	@Override
+	public void deleteSubscription(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteSubscription(board_id);
+	}
+
+	@Override
+	public void deletePostAll(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deletePostAll(board_id);
+	}
+
+	@Override
+	public void deleteCalendar(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteCalendar(board_id);
+	}
+
+	@Override
+	public void deleteCheckList(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteCheckList(board_id);
+	}
+
+	@Override
+	public void deleteVote(int board_id) {
+		sqlSession.getMapper(BoardMapper.class).deleteVote(board_id);
+	}
+
+	@Override
+	public List<Integer> getVoteList(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).getVoteList(board_id);
+	}
+
+	@Override
+	public List<Integer> getPostList(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).getPostList(board_id);
+	}
+
+	@Override
+	public int getBoardCount(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).getBoardCount(board_id);
+	}
+
+	@Override
+	public int getIdbyPostId(int post_id) {
+		return sqlSession.getMapper(BoardMapper.class).getIdbyPostId(post_id);
+	}
+
+	@Override
+	public int isManager(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).isManager(map);
 	}
 
 }

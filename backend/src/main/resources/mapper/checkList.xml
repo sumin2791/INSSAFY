@@ -10,17 +10,17 @@
     <select id="selectCheckLsit" parameterType="String" resultType="CheckListItemDto">
         select *
         from check_list_item
-        where board_id=#{board_id}
+        where board_id=#{board_id} and is_used = 1;
     </select>
 
     <update id="updateCheckLsit" parameterType="CheckListItemDto">
         update check_list_item set check_list_item_done=#{check_list_item_done}, check_list_item_description=#{check_list_item_description}
-        where check_list_item_id = #{check_list_item_id}
+        where check_list_item_id = #{check_list_item_id} and is_used = 0;
     </update>
 
-    <delete id="deleteCheckList" parameterType="String">
-        delete 
-        from check_list_item
-        where check_list_item_id = #{check_list_item_id}
-    </delete>
+    <update id="deleteCheckList" parameterType="String">
+        update check_list_item
+        set is_used = 0
+        where check_list_item_id = #{check_list_item_id} and is_used = 1;
+    </update>
 </mapper>

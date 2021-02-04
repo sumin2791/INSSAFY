@@ -9,8 +9,14 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 
+// vuetify
+import vuetify from './plugins/vuetify';
+
 // fontawesome
 import '@/FontAwesomeIcon.js';
+// masonry
+import VueMasonry from 'vue-masonry-css';
+Vue.use(VueMasonry);
 
 Vue.config.productionTip = false;
 
@@ -21,13 +27,9 @@ Vue.use(IconsPlugin);
 //toast
 //https://www.npmjs.com/package/vue-toast-notification
 import VueToast from 'vue-toast-notification';
-
 // Import one of the available themes
 //import 'vue-toast-notification/dist/theme-default.css';
 import 'vue-toast-notification/dist/theme-sugar.css';
-
-// vuetify
-import vuetify from './plugins/vuetify';
 
 Vue.use(VueToast, {
   position: 'bottom-right',
@@ -64,5 +66,5 @@ new Vue({
   router,
   store,
   vuetify,
-  render: (h) => h(App)
+  render: (h) => h(App),
 }).$mount('#app');

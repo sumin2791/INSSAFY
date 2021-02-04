@@ -1,95 +1,190 @@
 <template>
-  <div class="post">
-    <div class="writer">이미지</div>
-    <div class="title">
-      <div class="first-line">
-        <h4>작성자 이름</h4>
-        <div class="right">
-          <div class="date">2021-01-25</div>
-          <button>X</button>
+  <v-card
+    id="post-box"
+    class="mx-auto
+      my-4
+      d-flex
+      flex-column"
+    color="F9F9F9"
+  >
+    <div 
+      class="img-wrap
+      d-flex
+      flex-column"
+    >
+      <!-- 보드 이미지 위로 나오는 부분 -->
+      <div 
+        class="text"
+      >
+        <!-- 삭제 버튼 -->
+        <div class="align-self-end">
+          <v-btn
+            icon
+            color="#AA2610"
+            @click="removeBoard()"
+          >
+            <v-icon
+              dark
+            >
+              mdi-close-thick
+            </v-icon>
+          </v-btn>
+        </div>
+        <div 
+          class="board-title"
+          @click="moveToBoard()"
+        >
+          {{ post.inBoard }}
         </div>
       </div>
-      <div class="post-contents">
-        <div>게시물 제목</div>
-        <div class="non-read">2</div>
-      </div>
+      <v-img 
+        src="@/assets/images/slide.jpg"
+        height="100px"
+        class="blur"
+      >
+      </v-img>
     </div>
-  </div>
+    <!-- 포스트 제목 -->
+    <v-card-title 
+      class="
+        d-flex
+        flex-row
+        space-between
+        pa-0"
+    >
+      <v-col
+        cols="9"
+        id="post-title"
+        class="font-weight-black"
+      >{{ post.title }}</v-col>
+      <v-col 
+        cols="3"
+        id="post-date" 
+        class="text-overline 
+        text-end"
+      >{{ post.date }}</v-col>
+    </v-card-title>
+
+    <!-- 댓글 내용 -->
+    <v-card-text 
+      id="post-contents"
+      class="font-weight-bold
+        py-0 pl-auto"
+    >
+      {{ post.comment }}
+    </v-card-text>
+    <v-card-actions>
+      <v-list-item class="grow">
+        <v-list-item-avatar class="rounded-circle">
+          <v-img
+            class="elevation-6"
+            alt=""
+            :src="post.boardImg"
+          ></v-img>
+        </v-list-item-avatar>
+        <div>{{ post.writer }}</div>
+
+        <!-- 포스트 좋아요/댓글 수 -->
+        <v-row
+          align="center"
+          justify="end"
+        >
+          <span style="float:right;">
+            <v-icon small> mdi-thumb-up </v-icon>
+            {{ post.likeCount }}
+            <v-icon small> mdi-comment-processing </v-icon>
+            {{ post.commentCount }}
+          </span>
+        </v-row>
+      </v-list-item>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
 export default {
-  name: "ScrapPost",
+  name: 'ScrapPost',
+  data() {
+    return {
+      post:
+        {
+          writer: 'hahawhoa',
+          inBoard: '(보드 이름)모르고리즘이 알고리즘이 될 때까지',
+          boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
+          title: '(게시물제목)저희팀원들 짱이랍니다(게시물제목)저희팀원들 짱이랍니다',
+          comment: "(댓글내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)",
+          date: `21.02.02`,
+          likeCount: 4,
+          commentCount: 4,
+          boardCount: 241,
+        },
+    }
+  },
+  methods: {
+    // 작성글 삭제
+    removeBoard() {
+      console.log('작성글 삭제')
+    },
+    // 해당 보드로 이동(상세 주소 넘겨주기)
+    moveToBoard() {
+      this.$router.push({ name: 'Board' });
+    },
+  },
 }
 </script>
 
 <style scoped>
-h4 {
-  font-size: 1.25rem;
+/* 하나의 게시글 전체 부분 */
+#post-box {
+  border: 0.5px solid #0B2945;
 }
-div,
-p {
-  font-size: 1rem;
-  font-weight: 100;
+/* 이미지 흐리게 하기 */
+.blur {
+  filter: brightness(50%);
+  z-index: 1;
 }
-.post {
+.text {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  color: #FFFFFF;
   display: flex;
-  flex-direction: row;
-  border: 4px dotted #797979;
-  margin: 2%;
-  height: 80px;
-  width: 95%;
-}
-.post .writer {
-  border: 2px solid;
-  text-align: center;
-  border: 1px solid;
-  border-radius: 50%;
-  height: 80%;
-  width: 30%;
-  margin: 2% 5% 2% 1%;
-}
-.post .title {
-  display: flex; 
   flex-direction: column;
-  justify-content: space-around;
-  justify-content: space-evenly;
-  box-sizing: border-box;
-  width: 100%;
-}
-.post .title *{
-  box-sizing: border-box;
-  margin: 0%;
-}
-.title .first-line {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-}
-.title .first-line .right {
-  display: flex;
-  justify-content: flex-end;
-}
-.title h4 {
-  align-self: flex-end;
-}
-/* 날짜 부분 */
-.right .date {
-  font-size: 0.75rem;
-}
-
-/* 채팅방에서 사용하기 위해 알림 부분 추가 */
-.title .post-contents {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.title .post-contents .non-read {
-  margin-right: 2%;
-  background-color: #d91a1a;
-  border-radius: 50%;
-  width: 10%;
   text-align: center;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 2;
+}
+/* 보드로 이동 */
+.board-title {
+  flex-grow: 100%;
+  cursor: pointer;
+}
+/* 게시글 제목 넘치는 부분 처리 */
+#post-title {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}
+/* 날짜 넘치는 부분 처리 */
+#post-date {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  white-space: nowrap;
+}
+/* 댓글 내용 넘치는 부분 처리 */
+#post-contents {
+  font-size: 14px;
+  line-height: 20px;
+  max-height: 40px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 </style>

@@ -41,4 +41,6 @@ public interface UserMapper {
     public int favorite(Map<String, String> map);
 
     public int deleteSubscribe(Map<String, String> map);
+
+    public int quizCheck(String answer);
 }

@@ -2,18 +2,14 @@
   <div class="board-description">
     <div class="board-name-detail">
       <div class="name-setting">
-        <div class="board-name">보드이름</div>
+        <div class="board-name">{{this.board.name}}</div>
         <a href=""><b-icon icon="gear-fill"></b-icon></a>
       </div>
-      <div class="board-detail">보드디테일보드디테일보드디테일보드디테일보드디테일보드디테일보드디테일</div>
+      <div class="board-detail">{{this.board.description}}</div>
     </div>
     <div class="board-hash-people">
       <div class="hashtaglist">
-        <div class="board-hashtag">#태그</div>
-        <div class="board-hashtag">#태그</div>
-        <div class="board-hashtag">#태그</div>
-        <div class="board-hashtag">#태그</div>
-        <div class="board-hashtag">#태그</div>
+        <div class="board-hashtag" v-for="(hash,idx) in this.board.hashtags" :key="idx">{{hash}}</div>
       </div>
       <div class="board-people"><b-icon icon="person-fill" aria-hidden="true"></b-icon> 50</div>
     </div>
@@ -21,8 +17,56 @@
 </template>
 
 <script>
+import * as boardApi from '@/api/board';
+
+
 export default {
-  name:"BoardDescription"
+  name:"BoardDescription",
+  data() {
+    return {
+      loading: false,
+      board:{
+        name:'',
+        description:'',
+        hashtags:[],
+        subscribe_count:50,
+        location:'',
+        igmyeong:'',
+      }
+    }
+  },
+  created() {
+    this.fetchData()
+  },
+  watch:{
+    '$route':'fetchData'
+  },
+  methods: {
+    fetchData(){
+      this.loading=true
+      boardApi.board_detail(this.$route.params.board_id)
+        .then(res=>{
+          if(res.data.message==="NULL"){
+
+            this.$router.push({ name: 'PageNotFound'})
+          }else{
+            this.board.name=res.data.boardDto.board_name
+            this.board.description=res.data.boardDto.board_description
+            this.board.hashtags=res.data.boardDto.board_hash.split('|')
+            if(this.board.hashtags[0]===''){
+              this.board.hashtags=[]
+            }
+            this.board.location=res.data.boardDto.board_location
+            this.board.igmyeong=res.data.boardDto.board_igmyeong
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+
+    }
+  }
+
 }
 </script>
 

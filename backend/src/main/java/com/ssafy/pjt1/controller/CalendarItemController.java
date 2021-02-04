@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.ApiOperation;
@@ -136,8 +137,8 @@ public class CalendarItemController {
      * 
      * @return ResultMap * time:
      */
-    @DeleteMapping("delete/{calendar_item_id}")
-    public ResponseEntity<Map<String, Object>> deleteCalendars(@PathVariable String calendar_item_id) {
+    @PutMapping("delete")
+    public ResponseEntity<Map<String, Object>> deleteCalendars(@RequestParam String calendar_item_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/delete 호출");

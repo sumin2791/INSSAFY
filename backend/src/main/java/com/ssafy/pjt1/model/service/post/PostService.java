@@ -14,6 +14,8 @@ public interface PostService {
 
 	public int postModify(PostDto postDto);
 
+	public int stateModify(Map<String, Object> map);
+
 	public int postDelete(int post_id);
 
 	public int isScrapped(Map<String, Object> map);
@@ -34,9 +36,9 @@ public interface PostService {
 
 	public int getPostLikeCount(int post_id);
 
-	public List<CommentDto> getComment(int post_id);
+	public List<Map<String, Object>> getComment(int post_id);
 
-	public List<Map<String, Object>> getPostList(int board_id);
+	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
 	public List<PostDto> searchPostNew(String keyword);
 
@@ -45,5 +47,29 @@ public interface PostService {
 	public List<PostDto> boardPostNew(Map<String, Object> map);
 
 	public List<PostDto> boardPostPopular(Map<String, Object> map);
+
+	public int isUnLiked(Map<String, Object> map);
+
+	public void updateLike(Map<String, Object> map);
+
+	public int isUnScrapped(Map<String, Object> map);
+
+	public void updateScrap(Map<String, Object> map);
+
+	public void deleteScrapAll(int post_id);
+
+	public void deleteLikeAll(int post_id);
+
+	public void deleteCommentAll(int post_id);
+
+	public List<Map<String, Object>> getSalesList(Map<String, Object> map);
+
+	public List<PostDto> marketPostNew(Map<String, Object> map);
+
+	public List<PostDto> marketPostPopular(Map<String, Object> map);
+
+	public String getWriterName(String user_id);
+
+	public int isWriter(Map<String, Object> map);
 
 }

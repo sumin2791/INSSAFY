@@ -33,6 +33,7 @@ import JoinSuccess from './views/redirect/JoinSuccess';
 
 import Modify from './views/user/Modify';
 
+
 //토큰 없이(비회원) About 외 페이지 접근 시 리다이렉트
 // https://router.vuejs.org/kr/guide/advanced/navigation-guards.html
 import store from './vuex/store';
@@ -122,12 +123,12 @@ export default [
 
   // board
   {
-    path: '/board',
+    path: '/board/:board_id(\\d+)',
     name: 'Board',
     component: Board,
   },
   {
-    path: '/board/post/',
+    path: '/board/:board_id(\\d+)/post/:post_id(\\d+)',
     name: 'Post',
     component: PostDetail,
     props: true,
@@ -145,7 +146,7 @@ export default [
     component: SearchPost,
   },
   {
-    path: '/board/search',
+    path: '/search/board',
     name: 'SearchBoard',
     component: SearchBoard,
   },

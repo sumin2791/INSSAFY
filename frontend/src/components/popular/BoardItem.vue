@@ -2,7 +2,8 @@
   <div id="wrap">
     <div id="popular-item">
       <div id="header">
-        <div id="h-bg"></div>
+        <!-- <div id="h-bg" :style="{ backgroundImage: `url(${item.image})` }" /> -->
+        <div id="h-bg" />
         <div id="h-inner" @click="clickHeader">
           <p id="type" class="l-desc-e">{{ item.type }}</p>
           <p id="board-name" class="b-desc">{{ item.boardName }}</p>
@@ -29,15 +30,8 @@
           <div id="p-bottom"></div>
         </div>
         <div id="follow-togle">
-          <b-icon icon="heart" aria-hidden="true" style="width: 28px; height: 28px; color: #aa2610;" />
-          <b-icon
-            id="f-icon"
-            :class="{ clear: !followState }"
-            icon="heart-fill"
-            @click="clickFollow"
-            aria-hidden="true"
-            style="width: 28px; height: 28px; color: #aa2610;"
-          />
+          <b-icon id="f-icon" icon="heart-fill" aria-hidden="true" />
+          <b-icon id="f-icon-active" :class="{ clear: !followState }" icon="heart-fill" @click="clickFollow" aria-hidden="true" />
         </div>
       </div>
     </div>
@@ -49,7 +43,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 import 'swiper/css/swiper.css';
 
 export default {
-  name: '',
+  name: 'BoardItem',
   props: {
     item: Object,
   },
@@ -73,7 +67,7 @@ export default {
         freeMode: true,
         // threshold: 20,
         autoplay: {
-          delay: 3000,
+          delay: 600,
         },
         on: {
           init: this.init,
@@ -132,7 +126,8 @@ export default {
   height: 100%;
   position: absolute;
   z-index: 1;
-  background-image: url(../../../assets/images/slide.jpg);
+  background-image: url(../../assets/images/slide.jpg);
+  background-position: center;
   background-size: cover;
 }
 #h-inner {
@@ -144,7 +139,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 2;
-  box-shadow: var(--basic-shadow-b);
   background-color: #00000055;
 }
 #h-inner svg {
@@ -221,17 +215,39 @@ export default {
   top: 10px;
   right: 10px;
 }
+
 #f-icon {
+  width: 28px;
+  height: 28px;
+  color: #aa2610;
+  fill: #695c4c44;
+}
+#f-icon-active {
   position: absolute;
   left: 0;
+  width: 28px;
+  height: 28px;
+  color: #aa2610;
   transition: opacity 0.3s ease-in-out;
 }
+@media (min-width: 769px) and (max-width: 1024px) {
+  #f-icon {
+    width: 20px;
+    height: 20px;
+  }
+  #f-icon-active {
+    left: 0;
+    width: 20px;
+    height: 20px;
+  }
+}
+
 .p-slide {
-  font-size: 34px;
+  font-size: 30px;
 }
 @media (max-width: 2000px) {
   .p-slide {
-    font-size: 12px;
+    font-size: 16px;
   }
   #type {
     font-size: 12px;
@@ -241,6 +257,16 @@ export default {
     font-size: 18px;
   }
   #follower {
+    font-size: 12px;
+  }
+}
+@media (max-width: 1440px) {
+  .p-slide {
+    font-size: 16px;
+  }
+}
+@media (max-width: 1100px) {
+  .p-slide {
     font-size: 12px;
   }
 }
