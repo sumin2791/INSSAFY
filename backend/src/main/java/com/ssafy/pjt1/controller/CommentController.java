@@ -89,19 +89,25 @@ public class CommentController {
      * 
      * developer: 윤수민
      * 
-     * @param : CommentDto
+     * @param : CommentDto, login_id
      * 
      * @return : message
      */
     @PutMapping("/modify")
-    public ResponseEntity<Map<String, Object>> commentModify(@RequestBody CommentDto commentDto) {
+    public ResponseEntity<Map<String, Object>> commentModify(@RequestBody CommentDto commentDto,
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("comment/modify 호출 성공");
         try {
-            if (commentService.commentModify(commentDto) == 1) {
-                resultMap.put("message", SUCCESS);
+            if(login_id.equals(commentDto.getUser_id())){
+                if (commentService.commentModify(commentDto) == 1) {
+                    resultMap.put("message", SUCCESS);
+                }
+            }else{
+                resultMap.put("message", PERMISSION);
             }
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -120,15 +126,24 @@ public class CommentController {
      * @return : message
      */
     @DeleteMapping("/delete")
-    public ResponseEntity<Map<String, Object>> commentDelete(@RequestParam(value = "comment_id") int comment_id) {
+    public ResponseEntity<Map<String, Object>> commentDelete(@RequestParam(value = "comment_id") int comment_id,
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("comment/delete 호출성공");
         try {
-            if (commentService.commentDelete(comment_id) == 1) {
-                commentService.notificationDelete(comment_id);
-                resultMap.put("message", SUCCESS);
+            Map<String, Object> map = new HashMap<>();
+            map.put("login_id", login_id);
+            map.put("comment_id", comment_id);
+            if(commentService.isCommentWriter(map)!=0){
+                if (commentService.commentDelete(comment_id) == 1) {
+                    commentService.notificationDelete(comment_id);
+                    resultMap.put("message", SUCCESS);
+                }
+            }else{
+                resultMap.put("message", PERMISSION);
             }
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
