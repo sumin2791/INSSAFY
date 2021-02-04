@@ -1,5 +1,7 @@
 package com.ssafy.pjt1.model.mapper;
 
+import java.util.Map;
+
 import com.ssafy.pjt1.model.dto.comment.CommentDto;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -16,5 +18,7 @@ public interface CommentMapper {
 	public void createNotification(int comment_id);
 
 	public void notificationDelete(int comment_id);
+
+	public int isCommentWriter(Map<String, Object> map);
 
 }

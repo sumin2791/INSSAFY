@@ -37,6 +37,7 @@ public class BoardController {
     public static final Logger logger = LoggerFactory.getLogger(BoardController.class);
     private static final String SUCCESS = "success";
     private static final String FAIL = "fail";
+    private static final String PERMISSION = "No Permission";
 
     @Autowired
     private BoardService boardService;
@@ -219,21 +220,30 @@ public class BoardController {
      * 
      * developer: 윤수민
      * 
-     * @param : BoardDto
+     * @param : BoardDto, login_id
      * 
      * @return : message
      */
     @PutMapping("/modify")
-    public ResponseEntity<Map<String, Object>> modifyBoard(@RequestBody BoardDto boardDto) {
+    public ResponseEntity<Map<String, Object>> modifyBoard(@RequestBody BoardDto boardDto,
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/modify 호출 성공");
         try {
-            if (boardService.modifyBoard(boardDto) == 1) {
-                resultMap.put("message", SUCCESS);
-            } else {
-                resultMap.put("message", FAIL);
-            }
+            int board_id = boardDto.getBoard_id();
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id",board_id);
+            map.put("login_id", login_id);
+            if(boardService.isManager(map)!=0){
+                if (boardService.modifyBoard(boardDto) == 1) {
+                    resultMap.put("message", SUCCESS);
+                } else {
+                    resultMap.put("message", FAIL);
+                }
+            }else{
+                resultMap.put("message", PERMISSION);
+            }   
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("수정 실패", e);
@@ -316,42 +326,50 @@ public class BoardController {
      * 
      * developer: 윤수민
      * 
-     * @param : board_id
+     * @param : board_id, login_id
      * 
      * @return : message
      */
     @DeleteMapping("/delete/{board_id}")
-    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("board_id") int board_id) {
+    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("board_id") int board_id,
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/delete 호출성공");
         try {
-            if (boardService.deleteBoard(board_id) == 1) {
-                // 추가기능 is_used 0으로 변경
-                boardService.deleteBoardAll(board_id);
-                boardService.deleteCalendar(board_id);
-                boardService.deleteCheckList(board_id);
-                boardService.deleteVote(board_id);
-                List<Integer> voteList = boardService.getVoteList(board_id);
-                for (Integer vote_id : voteList) {
-                    voteService.voteDeleteAll(vote_id);
-                }
-                // 구독 is_used 0으로 변경
-                boardService.deleteSubscription(board_id);
-                // 포스트 is_used 0으로 변경
-                List<Integer> postList = boardService.getPostList(board_id);
-                for (Integer post_id : postList) {
-                    if (postService.postDelete(post_id) == 1) {
-                        // postService.deleteScrapAll(post_id);
-                        // postService.deleteLikeAll(post_id);
-                        // postService.deleteCommentAll(post_id);
-                        resultMap.put("message", SUCCESS);
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id",board_id);
+            map.put("login_id", login_id);
+            if(boardService.isManager(map)!=0){
+                if (boardService.deleteBoard(board_id) == 1) {
+                    // 추가기능 is_used 0으로 변경
+                    boardService.deleteBoardAll(board_id);
+                    boardService.deleteCalendar(board_id);
+                    boardService.deleteCheckList(board_id);
+                    boardService.deleteVote(board_id);
+                    List<Integer> voteList = boardService.getVoteList(board_id);
+                    for (Integer vote_id : voteList) {
+                        voteService.voteDeleteAll(vote_id);
                     }
+                    // 구독 is_used 0으로 변경
+                    boardService.deleteSubscription(board_id);
+                    // 포스트 is_used 0으로 변경
+                    List<Integer> postList = boardService.getPostList(board_id);
+                    for (Integer post_id : postList) {
+                        if (postService.postDelete(post_id) == 1) {
+                            // postService.deleteScrapAll(post_id);
+                            // postService.deleteLikeAll(post_id);
+                            // postService.deleteCommentAll(post_id);
+                            resultMap.put("message", SUCCESS);
+                        }
+                    }
+                    boardService.deletePostAll(board_id);
+                    resultMap.put("message", SUCCESS);
                 }
-                boardService.deletePostAll(board_id);
-
-                resultMap.put("message", SUCCESS);
+            }else{
+                resultMap.put("message", PERMISSION);
             }
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
