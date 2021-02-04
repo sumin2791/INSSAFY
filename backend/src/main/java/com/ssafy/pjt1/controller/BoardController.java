@@ -7,6 +7,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.service.BoardService;
+import com.ssafy.pjt1.model.service.main.MainService;
 import com.ssafy.pjt1.model.service.post.PostService;
 import com.ssafy.pjt1.model.service.vote.VoteService;
 
@@ -43,6 +46,12 @@ public class BoardController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
+
+    @Autowired
+    MainService mainService;
 
     /*
      * 기능: 보드 생성
@@ -106,25 +115,31 @@ public class BoardController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/subscribe 호출성공");
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         try {
             Map<String, Object> map = new HashMap<>();
             map.put("user_id", (String) param.get("user_id"));
             map.put("board_id", (int) param.get("board_id"));
             map.put("user_role", (int) param.get("user_role"));
 
+            String board_id = String.valueOf(param.get("board_id"));
             int count = boardService.isSubscribed(map);
             if (count == 0) {
                 logger.info("구독 설정");
                 boardService.subscribe(map);
+                // 구독 누르면 캐시에 해당 보드 구독한 수 넣기
+                zset.add("follow", board_id, mainService.getSubsriptionNumber(board_id) + 1);
             } else {
                 int count2 = boardService.isUnSubscribed(map);
-                if(count2 == 0){
+                if (count2 == 0) {
                     // 전에 구독한 이력이 있지만 현재는 아닌 경우
                     boardService.updateSubscribe(map);
-                }else{
+                    // 구독 누르면 캐시에 해당 보드 구독한 수 넣기
+                    zset.add("follow", board_id, mainService.getSubsriptionNumber(board_id) + 1);
+                } else {
                     logger.info("구독 해지");
-                // 관리자 아닐 경우 구독 해지
-                boardService.unsubscribe(map);
+                    // 관리자 아닐 경우 구독 해지
+                    boardService.unsubscribe(map);
                 }
             }
 
@@ -320,7 +335,7 @@ public class BoardController {
                 List<Integer> voteList = boardService.getVoteList(board_id);
                 for (Integer vote_id : voteList) {
                     voteService.voteDeleteAll(vote_id);
-                }               
+                }
                 // 구독 is_used 0으로 변경
                 boardService.deleteSubscription(board_id);
                 // 포스트 is_used 0으로 변경
@@ -361,14 +376,15 @@ public class BoardController {
         logger.info("board/searchUser 호출성공");
         try {
             BoardDto boardDto = boardService.detailBoard(board_id);
-            if(boardDto != null){
+            if (boardDto != null) {
                 int board_count = boardService.getBoardCount(board_id);
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
                 resultMap.put("message", SUCCESS);
+            }else{
+                resultMap.put("message", "NULL");
             }
-            resultMap.put("message", "NULL");
-
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
