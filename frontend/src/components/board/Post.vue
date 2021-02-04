@@ -97,12 +97,17 @@ export default {
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
-          if(this.flagLike){
-            this.countLike -= 1
+          console.log(res.data.message)
+          if(res.data.message==='No Subscription'){
+            alert('구독 후에 이용 가능합니다')
           }else{
-            this.countLike += 1
+            if(this.flagLike){
+              this.countLike -= 1
+            }else{
+              this.countLike += 1
+            }
+            this.flagLike = !this.flagLike
           }
-          this.flagLike = !this.flagLike
         })
         .catch((err)=>{
           console.err(err)
@@ -113,7 +118,11 @@ export default {
     postScrap(){
       postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
-          this.flagScrap = !this.flagScrap
+          if(res.data.message==='No Subscription'){
+            alert('구독 후에 이용 가능합니다')
+          }else{
+            this.flagScrap = !this.flagScrap
+          }
         })
         .catch((err)=>{
           console.log(err)
@@ -138,6 +147,7 @@ export default {
 }
 .post .post-body{
   min-height: 150px;
+  cursor: pointer;
 }
 .post .post-footer{
   display:flex;

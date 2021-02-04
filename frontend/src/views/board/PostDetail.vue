@@ -53,7 +53,12 @@ export default {
 
       commentApi.create(params)
         .then(res=>{
-          this.$store.dispatch('comment/isWriteFlag')
+          console.log(res.data.message)
+          if(res.data.message==='No Permission'){
+            alert('구독 후에 이용가능합니다.')
+          }else{
+            this.$store.dispatch('comment/isWriteFlag')
+          }
         })
         .catch(err=>{
           console.log(err)

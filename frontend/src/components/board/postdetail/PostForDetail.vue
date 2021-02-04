@@ -121,7 +121,11 @@ export default {
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
-          this.$store.dispatch('post/postLike',this.flagLike)
+          if(res.data.message==='No Subscription'){
+            alert('구독 후에 이용가능합니다.')
+          }else{
+            this.$store.dispatch('post/postLike',this.flagLike)
+          }
           // console.log(res)
         })
         .catch(err=>{
@@ -134,7 +138,11 @@ export default {
     postScrap(e){
       postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
-          this.$store.dispatch('post/postScrap') 
+          if(res.data.message==='No Subscription'){
+            alert('구독 후에 이용가능합니다.')
+          }else{
+            this.$store.dispatch('post/postScrap') 
+          }
             // console.log(res)
           })
           .catch(err=>{
