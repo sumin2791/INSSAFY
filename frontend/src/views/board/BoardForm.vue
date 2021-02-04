@@ -134,7 +134,18 @@ export default {
       };
       boardApi.board_create(board).then(response => {
         console.log(response.data);
+        const subBoard = JSON.parse(localStorage.subBoard)
+        subBoard.push({
+          board_id:response.data.board_id,
+          user_id:localStorage.userId,
+          favorite_flag:0,
+          is_used:1,
+          user_role:1,
+          write_post_count:0
+        })
+        localStorage.subBoard = JSON.stringify(subBoard)
         alert('게시판 보드 생성')
+        
         this.$router.push({name:'Board',params:{board_id:response.data.board_id}})
       }).catch(error => {
         console.log(error);
