@@ -21,7 +21,7 @@
       </v-card-subtitle>
 
       <v-card-text class="text-white text-start">
-        <div>{{ board.board_hash }}</div>
+        <div class="hashtag-list" v-for="(hash,idx) in hashtags" :key="idx">{{ hash }}</div>
       </v-card-text>
     </div>
 
@@ -56,6 +56,11 @@ export default {
     }
   },
   created() {
+  },
+  computed:{
+    hashtags() {
+      return this.board.board_hash.split('|')
+    }
   },
   methods:{
     goToBoard(){
@@ -93,6 +98,9 @@ export default {
 .board-hashtag {
   align-self: center;
   margin: 5%;
+}
+.hashtag-list{
+  display:inline;
 }
 .scrap-count {
   align-self: flex-end;

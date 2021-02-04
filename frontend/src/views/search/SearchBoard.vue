@@ -14,7 +14,7 @@
       <div 
         class="d-flex 
           flex-row
-          justify-space-between"
+          justify-content-between"
       >
         <!-- 검색 건수 / 정렬 -->
         <div>
