@@ -79,8 +79,8 @@ export default {
           // 구독 보드 리스트도 가져오기
 
           const responseSubBoard = await userApi.getSubBoards(response.data.user.user_id);
-          console.log('구독보드리스트 결과:')
-          console.log(responseSubBoard)
+          // console.log('구독보드리스트 결과:')
+          // console.log(responseSubBoard)
           context.commit('SET_SUBSCRIBE_BOARD',responseSubBoard)
 
 

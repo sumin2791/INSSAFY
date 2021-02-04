@@ -130,7 +130,7 @@ export default [
     component: Board,
   },
   {
-    path: '/board/post/',
+    path: '/board/:board_id(\\d+)/post/:post_id(\\d+)',
     name: 'Post',
     component: PostDetail,
     props: true,
