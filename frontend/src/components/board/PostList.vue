@@ -46,6 +46,7 @@ export default {
           this.posts = res.data.postList
         })
         .catch(err=>{
+          console.log('에러!')
           console.log(err)
         })
       }

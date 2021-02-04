@@ -108,7 +108,7 @@ export default {
           //그리고 댓글 리스트를 여기서 가져오니까 이것도 vuex에 저장해야 할 듯?
           this.$store.dispatch('comment/getCommentList',res.data.commentList)
           // 포스트 라이크 카운트, 댓글 카운트 도 vuex에!
-          this.$store.dispatch('post/isLikeCount',res.data.like_count)
+          this.$store.dispatch('post/isLikeCount',this.post.post_like)
         }
         
       })
@@ -119,9 +119,9 @@ export default {
 
     // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postLike(e){
-      this.$store.dispatch('post/postLike',this.flagLike)
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
+          this.$store.dispatch('post/postLike',this.flagLike)
           // console.log(res)
         })
         .catch(err=>{
@@ -132,9 +132,9 @@ export default {
 
     // user가 스크랩 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postScrap(e){
-      this.$store.dispatch('post/postScrap') 
       postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
+          this.$store.dispatch('post/postScrap') 
             // console.log(res)
           })
           .catch(err=>{
