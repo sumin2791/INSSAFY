@@ -60,5 +60,9 @@ public interface BoardMapper {
 	public int getBoardCount(int board_id);
 
 	public BoardDto detailBoard(int board_id);
+
+	public int getIdbyPostId(int post_id);
+
+	public int isManager(Map<String, Object> map);
 	
 }

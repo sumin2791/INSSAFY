@@ -32,4 +32,10 @@
 		where comment_id = #{comment_id}
 	</update>
 
+	<select id="isCommentWriter" parameterType="map" resultType="int">
+		select count(*)
+		from comment
+		where comment_id = #{comment_id} and user_id = #{login_id} and is_used = 1;	
+	</select>
+
 </mapper>

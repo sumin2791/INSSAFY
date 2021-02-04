@@ -47,9 +47,9 @@ public interface PostMapper {
 
 	public int getPostLikeCount(int post_id);
 
-	public List<CommentDto> getComment(int post_id);
+	public List<Map<String, Object>> getComment(int post_id);
 
-	public List<Map<String, Object>> getPostList(int board_id);
+	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
 	public List<PostDto> searchPostNew(String keyword);
 
@@ -65,10 +65,14 @@ public interface PostMapper {
 
 	public void deleteCommentAll(int post_id);
 
-	public List<Map<String, Object>> getSalesList(int board_id);
+	public List<Map<String, Object>> getSalesList(Map<String, Object> map);
 
 	public List<PostDto> marketPostNew(Map<String, Object> map);
 
 	public List<PostDto> marketPostPopular(Map<String, Object> map);
+
+	public String getWriterName(String user_id);
+
+	public int isWriter(Map<String, Object> map);
 
 }
