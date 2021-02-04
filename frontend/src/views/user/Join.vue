@@ -227,6 +227,7 @@ export default {
     onJoin: function() {
       //spinner 동작
       this.$store.commit('setSpinnerTogle');
+      this.$store.commit('setSpinnerMessage', '메일 발송 중');
       var member = {
         user_email: this.email,
         user_password: this.password,
@@ -267,16 +268,16 @@ export default {
             this.error.emailDuplicate = false;
             this.indicator.email = true;
           } else {
-            this.error.email = '이미 가입되어 있는 이메일입니다.';
             this.indicator.email = false;
+            this.checkForm();
+            this.error.email = '이미 가입되어 있는 이메일입니다.';
           }
-          this.checkForm();
         })
         .catch((error) => {
-          this.error.email = '이미 가입되어 있는 이메일입니다.';
           this.indicator.email = false;
-          console.log(error);
           this.checkForm();
+          this.error.email = '이미 가입되어 있는 이메일입니다.';
+          console.log(error);
         });
     },
     waitDuplicate: function() {

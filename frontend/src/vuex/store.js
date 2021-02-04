@@ -11,7 +11,8 @@ import auth from './auth';
 import error from './error';
 import board from './board';
 import post from './post';
-import comment from './comment'
+import comment from './comment';
+import main from './main';
 
 Vue.use(Vuex);
 
@@ -34,6 +35,7 @@ const POPULAR = () => {};
 const state = {
   //spinner(로디용)
   spinnerActive: false,
+  spinnerMessage: '',
   //toast
   toastActive: false,
   toastType: {
@@ -42,8 +44,6 @@ const state = {
     email: false,
   },
   searchState: SEARCH_STATE(),
-
-
 
   //가입하기 인증 문제
   problems: PROBLEMS(),
@@ -59,6 +59,7 @@ export default new Vuex.Store({
     error,
     board,
     post,
-    comment
+    comment,
+    main,
   },
 });
