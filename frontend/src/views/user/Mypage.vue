@@ -43,17 +43,63 @@
                   >
                     <!-- 닉네임 -->
                     <div
-                      class="text-h4"
+                      class="text-h5"
+                      v-if="!myInfo.myInfoEdit"
                     >
-                      {{ myInfo.nickName }}
+                      {{ myInfo.nickName }}    
+                    </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                      <v-text-field
+                        dense
+                        label="nickname"
+                        v-model="myInfo.nickName"
+                        class="text-h5"
+                        color="grey-darken-4"
+                      ></v-text-field>
                     </div>
                     <!-- 이메일 -->
-                    <div>
+                    <div
+                      v-if="!myInfo.myInfoEdit"
+                    >
                       {{ myInfo.email }}
                     </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                      <v-text-field
+                        dense
+                        label="email"
+                        v-model="myInfo.email"
+                        color="grey-darken-4"
+                      ></v-text-field>
+                    </div>
                     <!-- 지역 & 기수 -->
-                    <div>
+                    <div
+                      v-if="!myInfo.myInfoEdit"
+                    >
                       {{ myInfo.location }} {{ myInfo.generation }}기
+                    </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                    <v-row>
+                      <v-col>
+                        <v-select
+                          v-model="myInfo.location"
+                          :items="myInfo.options.location"
+                          label="지역"
+                        ></v-select>
+                      </v-col>
+                      <v-col>
+                        <v-select
+                          v-model="myInfo.generation"
+                          :items="myInfo.options.generation"
+                          label="기수"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
                     </div>
                   </div>
                   <!-- edit 버튼('나'일 때만 보여주기) -->
@@ -65,7 +111,8 @@
                       outlined
                       x-small
                       fab
-                      color="#0B2945"
+                      :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'"
+                      @click="editMyInfo()"
                     >
                       <v-icon dark>
                         mdi-pencil
@@ -74,59 +121,7 @@
                   </div>
                 </v-list-item>
                 <!-- 비밀번호 변경 부분 -->
-                <v-dialog
-                  v-model="dialog"
-                  persistent
-                  max-width="400px"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      block
-                      depressed
-                      v-bind="attrs"
-                      v-on="on"
-                      class="pa-0"
-                    >
-                    비밀번호 변경
-                    </v-btn>  
-                  </template>
-                  <v-card>
-                    <v-card-title>
-                      <span class="headline">비밀번호 확인</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-text-field
-                            label="비밀번호 확인"
-                            hint="비밀번호 변경을 위해 비밀번호를 입력해주세요"
-                            :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
-                            :type="passwordShow ? 'text' : 'password'"
-                            required
-                            @click:append="passwordShow = !passwordShow"
-                          ></v-text-field>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="dialog = false"
-                      >
-                        Close
-                      </v-btn>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="dialog = false"
-                      >
-                        다음
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                <PasswordChange />
 
                 <v-divider class="my-2"></v-divider>
                 <!-- 이동 탭 부분 -->
@@ -199,9 +194,10 @@
                         outlined
                         x-small
                         fab
-                        color="#0B2945"
+                        :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'"
+                        @click="editMyInfo()"
                       >
-                        <v-icon dark>
+                        <v-icon>
                           mdi-pencil
                         </v-icon>
                       </v-btn>
@@ -218,74 +214,70 @@
                     >
                   </v-avatar>
                   
-                  <!-- 사용자 입력한 값 보여주기 -->
+                  <!-- 닉네임 -->
                   <div
+                    v-if="!myInfo.myInfoEdit"
                     class="mt-4
                     text-h5 
                     font-weight-black">
                     {{ myInfo.nickName }}
                   </div>
-                  <div>
-                    {{ myInfo.email }}
+                  <div
+                    v-if="myInfo.myInfoEdit"
+                  >
+                    <v-text-field
+                      dense
+                      label="nickname"
+                      v-model="myInfo.nickName"
+                      class="text-h5"
+                      color="grey-darken-4"
+                    ></v-text-field>
                   </div>
-                  <div>
-                    {{ myInfo.location }} {{ myInfo.generation }}기
+                  <!-- 이메일 부분 -->
+                  <div
+                      v-if="!myInfo.myInfoEdit"
+                    >
+                      {{ myInfo.email }}
+                    </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                      <v-text-field
+                        dense
+                        label="email"
+                        v-model="myInfo.email"
+                        color="grey-darken-4"
+                      ></v-text-field>
+                    </div>
+                    <!-- 지역 & 기수 -->
+                    <div
+                      v-if="!myInfo.myInfoEdit"
+                    >
+                      {{ myInfo.location }} {{ myInfo.generation }}기
+                    </div>
+                    <div
+                      v-if="myInfo.myInfoEdit"
+                    >
+                    <v-row>
+                      <v-col>
+                        <v-select
+                          v-model="myInfo.location"
+                          :items="myInfo.options.location"
+                          label="지역"
+                        ></v-select>
+                      </v-col>
+                      <v-col>
+                        <v-select
+                          v-model="myInfo.generation"
+                          :items="myInfo.options.generation"
+                          label="기수"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
                   </div>
                 </div>
                 <!-- 비밀번호 변경 부분 -->
-                <v-dialog
-                  v-model="dialog"
-                  persistent
-                  max-width="400px"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      block
-                      depressed
-                      v-bind="attrs"
-                      v-on="on"
-                      class="pa-0"
-                    >
-                    비밀번호 변경
-                    </v-btn>  
-                  </template>
-                  <v-card>
-                    <v-card-title>
-                      <span class="headline">비밀번호 확인</span>
-                    </v-card-title>
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-text-field
-                            label="비밀번호 확인"
-                            hint="비밀번호 변경을 위해 비밀번호를 입력해주세요"
-                            :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
-                            :type="passwordShow ? 'text' : 'password'"
-                            required
-                            @click:append="passwordShow = !passwordShow"
-                          ></v-text-field>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="dialog = false"
-                      >
-                        Close
-                      </v-btn>
-                      <v-btn
-                        color="blue darken-1"
-                        text
-                        @click="dialog = false"
-                      >
-                        다음
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                <PasswordChange />
 
                 <v-divider class="my-2"></v-divider>
 
@@ -382,10 +374,16 @@
 </template>
 
 <script>
+// 구독중인 보드
 import Subscription from "@/components/mypage/Subscription.vue"
+// 내 작성글
 import MyPost from "@/components/mypage/MyPost.vue"
+// 내 댓글
 import MyComment from "@/components/mypage/MyComment.vue"
+// 내 스크랩한 글
 import ScrapPost from "@/components/mypage/ScrapPost.vue"
+// 비밀번호 변경
+import PasswordChange from "@/components/mypage/PasswordChange"
 
 
 export default {
@@ -395,6 +393,7 @@ export default {
     MyPost,
     MyComment,
     ScrapPost,
+    PasswordChange,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -432,11 +431,14 @@ export default {
         location: "광주",
         generation: 4,
         profileImg: "https://avatars0.githubusercontent.com/u/9064066?v=4&s=460",
+        // 내 정보 edit 버튼 클릭 flag
+        myInfoEdit: false,
+        // 내 정보 지역, 기수 변경 정보
+        options: {
+        location: ['서울', '대전', '구미', '광주'],
+        generation: [4, 3, 2, 1],
+        },
       },
-      // 비밀번호 변경 버튼
-      dialog: false,
-      // 비밀번호 텍스트 보여주기
-      passwordShow: false,
       // 구독 중 보드
       list() {
         var list = [];
@@ -471,6 +473,9 @@ export default {
       this.mobileTap[point] = true;
       // 현재 가르키고 있는 탭 부분 변경
       this.ResponsiveSize.whichTapPoint = point
+    },
+    editMyInfo() {
+      this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit
     },
   },
 }
