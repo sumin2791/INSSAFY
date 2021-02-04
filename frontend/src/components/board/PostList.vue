@@ -19,7 +19,8 @@ export default {
   name:"PostList",
   data() {
     return {
-      posts:[]
+      posts:[],
+      user_input_posts:[],
     }
   },
   components:{

@@ -8,7 +8,7 @@
         <div>
           <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              {{post.user_id}}
+              {{post.user_nickname}}
             </template>
             <b-dropdown-item href="#">Profile</b-dropdown-item>
             <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
@@ -27,7 +27,7 @@
     <div class="post-footer">
       <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{countLike}}</div>
       <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{countLike}}</div>
-      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon>댓글</div>
+      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon>{{countComment}}</div>
       <div class="post-bookmark" @click="postScrap" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
       <div class="post-bookmark" @click="postScrap" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
     </div>
@@ -58,8 +58,16 @@ export default {
     countLike(){
       return this.$store.state.post.countLike
     },
+    countComment(){
+      const commentList = this.$store.state.comment.commentList
+      return commentList.length
+    },
+    writeFlag(){
+      return this.$store.state.comment.writeFlag
+    }
   },
   watch:{
+    writeFlag:'fetchData'
     // '$route':'fetchData'
   },
   created() {
@@ -67,7 +75,8 @@ export default {
 
     // 이미지 하나만 추출했어요.
     var input = this.post.post_image
-
+    console.log('img')
+    console.log(input)
     if (input && input[0]) {
       var reader = new FileReader();
       reader.onload = e => {
