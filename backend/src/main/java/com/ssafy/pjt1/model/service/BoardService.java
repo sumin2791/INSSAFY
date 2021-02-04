@@ -59,4 +59,6 @@ public interface BoardService {
 	public int getBoardCount(int board_id);
 
 	public int getIdbyPostId(int post_id);
+
+	public int isManager(Map<String, Object> map);
 }

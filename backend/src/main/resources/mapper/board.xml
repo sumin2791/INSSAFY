@@ -169,4 +169,10 @@
 		where post_id = #{post_id} and is_used = 1;
 	</select>
 
+	<select id="isManager" parameterType="map" resultType="int">
+		select count(*)
+		from subscription
+		where board_id = #{board_id} and user_id = #{login_id} and is_used = 1
+		and user_role = 1;	
+	</select>
 </mapper>
