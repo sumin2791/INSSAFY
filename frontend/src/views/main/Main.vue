@@ -48,17 +48,23 @@
           <button class="p-button r-desc" @click="clickPBtn2">게시글 리스트</button>
         </div>
       </div>
-      <div id="p-item-container">
-        <p class="p-desc l-desc">팔로워 수</p>
-        <Item class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
+      <p class="p-desc l-desc">팔로워 수</p>
+      <div class="p-item-container">
+        <BoardItem class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
       </div>
-      <div id="p-item-container">
-        <p class="p-desc l-desc">팔로워 수</p>
-        <Item class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
+      <p class="p-desc l-desc">게시글 수</p>
+      <div class="p-item-container">
+        <BoardItem class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
       </div>
-      <div id="p-item-container">
-        <p class="p-desc l-desc">팔로워 수</p>
-        <Item class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
+      <div id="sub-title-container">
+        <p class="p-desc l-desc">좋아요 수</p>
+        <p class="p-desc l-desc" style="margin-left: 2%">댓글 수</p>
+      </div>
+      <div id="p-item-container2">
+        <p class="p-desc l-desc mobile">좋아요 수</p>
+        <PostItem class="p-item2" :items="popular2.like" />
+        <p class="p-desc l-desc mobile">댓글 수</p>
+        <PostItem class="p-item2" :items="popular2.comment" />
       </div>
     </div>
   </div>
@@ -70,7 +76,8 @@
 //https://github.surmon.me/vue-awesome-swiper/?ref=madewithvuejs.com
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 import 'swiper/css/swiper.css';
-import Item from '../../components/board/popular/item.vue';
+import BoardItem from '@/components/popular/BoardItem.vue';
+import PostItem from '@/components/popular/PostItem.vue';
 
 //toast nority
 
@@ -81,7 +88,8 @@ export default {
     Swiper,
     SwiperSlide,
     //popular
-    Item,
+    BoardItem,
+    PostItem,
     //
   },
   data() {
@@ -91,24 +99,75 @@ export default {
         position: 'bottom-right',
         padding: '1rem',
       },
+      popular2: {
+        like: [
+          {
+            baordName: '여행',
+            count: 100,
+            postTitle: '좋아요 많은 게시글 제목',
+            postId: 'post 이동을 위한 id값',
+            image: '../../assets/images/img1.jpg',
+          },
+          {
+            baordName: '여행',
+            count: 60,
+            postTitle: '좋아요 많은 게시글 제목2',
+            postId: 'post 이동을 위한 id값',
+            image: '../../assets/images/img2.jpg',
+          },
+          {
+            baordName: '여행',
+            count: 40,
+            postTitle: '좋아요 많은 게시글 제목3',
+            postId: 'post 이동을 위한 id값',
+            image: '../../assets/images/img3.jpg',
+          },
+        ],
+        comment: [
+          {
+            baordName: '여행',
+            count: 100,
+            postTitle: '코멘트 많은 게시글 제목1',
+            postId: 'post 이동을 위한 id값',
+            image: '../../assets/images/img1.jpg',
+          },
+          {
+            baordName: '여행',
+            count: 80,
+            postTitle: '코멘트 많은 게시글 제목2',
+            postId: 'post 이동을 위한 id값',
+            image: '../../assets/images/img2.jpg',
+          },
+          {
+            baordName: '여행',
+            count: 60,
+            postTitle: '코멘트 많은 게시글 제목3',
+            postId: 'post 이동을 위한 id값',
+            image: '../../assets/images/img3.jpg',
+          },
+        ],
+      },
       popular: [
         {
           type: 'Custom',
           boardName: '여행',
           follower: '609',
           postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
+          image: '../../assets/images/slide.jpg',
         },
         {
           type: 'Custom',
           boardName: '여행',
           follower: '609',
           postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
+          image: '../../assets/images/slide.jpg',
         },
         {
           type: 'Custom',
           boardName: '여행',
           follower: '609',
           postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
+          image: '../../assets/images/slide.jpg',
         },
       ],
       list: function() {
@@ -174,6 +233,11 @@ export default {
         },
       },
     };
+  },
+  created() {
+    if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
+      this.$store.dispatch('auth/getSubBoard');
+    }
   },
   methods: {
     clickFavorite: function(index) {
@@ -406,7 +470,7 @@ p {
   margin-left: 0;
   z-index: 1;
   background: var(--basic-color-bg); /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #ebebe900 150px, #ebebe9ff 200px); /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, #ebebe900 150px, #ebebe9ff 200px); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #ebebe900 150px, #ebebe9ff 200px); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 #c-list button:first-child {
@@ -445,7 +509,6 @@ c-btn:active {
 /*-------------------------------------------------- */
 #popular-container {
   width: 90%;
-  height: 600px;
   margin: 0 5%;
 }
 #p-header {
@@ -473,19 +536,16 @@ c-btn:active {
 
 .p-item-container {
   display: flex;
-  margin-bottom: 100px !important;
   flex-direction: row;
   justify-content: space-between;
 }
 
 .p-item {
-  width: 30% !important;
-  margin: 10px 1.65%;
-  box-shadow: var(--basic-shadow-s);
+  width: 32.5% !important;
+  margin-bottom: 10px;
 }
 @media (max-width: 768px) {
   .p-item-container {
-    display: relative;
     flex-direction: column;
   }
   .p-item {
@@ -504,7 +564,47 @@ c-btn:active {
     transition: background-color 0.3s, color 0.3s ease;
   }
 }
+#sub-title-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 .p-desc {
-  margin: 0px 1.65% -10px;
+  margin: 0;
+  width: 50%;
+}
+.mobile {
+  display: none;
+}
+
+/* pupular 내 인기 게시물 */
+.line {
+  width: 50%;
+  margin: 15px auto 10px;
+}
+#p-item-container2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 50px;
+}
+.p-item2 {
+  width: 49.2%;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  #sub-title-container {
+    display: none;
+  }
+  #p-item-container2 {
+    flex-direction: column;
+  }
+  .p-item2 {
+    width: 100% !important;
+  }
+  .mobile {
+    display: inherit;
+  }
 }
 </style>

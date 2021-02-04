@@ -4,11 +4,11 @@
     <b-container class="board">
       <b-row>
         <header>
-          <router-link to="/board"><b-icon icon="chevron-compact-left" aria-hidden="true"></b-icon>Board</router-link>
+          <router-link :to="{ name:'Board', params: {board_id:$route.params.board_id}}"><b-icon icon="chevron-compact-left" aria-hidden="true"></b-icon>Board</router-link>
           
         </header>
         <section>
-          <Post :post="$attrs"/>
+          <Post/>
           <hr>
           <input 
             type="text" 
@@ -28,6 +28,9 @@
 <script>
 import Post from '@/components/board/postdetail/PostForDetail.vue'
 import CommentList from '@/components/board/postdetail/CommentList.vue'
+
+import * as commentApi from '@/api/comment';
+
 export default {
   name:'PostDetail',
   data() {
@@ -40,17 +43,23 @@ export default {
     CommentList,
   },
   methods:{
+    
     createComment(){
-      let today = new Date();  
-      const commentItem ={
-        user:'이름',
-        comment:this.comment,
-        date:`${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`
+      const params = {
+        user_id: String(localStorage.userId),
+        post_id: Number(this.$route.params.post_id),
+        comment_description : String(this.comment)
       }
-      console.log(commentItem)
-      if(commentItem && commentItem.comment.trim())
-        this.$store.dispatch('createComment',commentItem)
-      this.comment=''
+
+      commentApi.create(params)
+        .then(res=>{
+          this.$store.dispatch('comment/isWriteFlag')
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+        this.comment=''
+      // this.$store.dispatch('createComment',params)
     }
   }
   

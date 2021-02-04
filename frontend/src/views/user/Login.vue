@@ -127,13 +127,13 @@ export default {
           email: this.email,
           password: this.password,
         })
-        .then((res) => {
-          console.log(res);
-          if (res.data.message === 'FAIL') {
+        .then((result) => {
+          console.log(result);
+          if (result.data.message === 'FAIL') {
             alert('이메일 또는 비밀번호를 다시 확인하여 주십시오.');
             this.password = '';
-          } else if (res.data.message === 'NO_AUTH') {
-            //이메일 인증 완료 유도를 위해 toast 활용
+          } else if (result.data.message === 'NO_AUTH') {
+            //이메일 인증 완료 유도를 위해 custom toast 활용
             //toast 내에서 vuex를 활용하여 도메인 링크 동적 생성
             this.$store.commit('setToastTogle');
             this.$store.commit('setToastType', 'email');

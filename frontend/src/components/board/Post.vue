@@ -8,7 +8,7 @@
         <div>
           <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              {{post.user}}
+              {{post.user_nickname}}
             </template>
             <b-dropdown-item href="#">Profile</b-dropdown-item>
             <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
@@ -23,15 +23,9 @@
       <div class="description r-desc">{{post.post_description}}</div>
     </div>
     <div class="post-footer">
-      <div v-if="post.post_like>=10">
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:37.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
-      </div>
-      <div v-else>
-        <div class="post-like" @click="postLike" v-if="flagLike"  style="z-index: 1; position:relative; left:28.64px"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
-      </div>
-      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{post.post_like}}</div>
-      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{post.post_like}}</div>
-      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{post.comment_count}}</div>
+      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> <div v-if="isLike"> {{post.like_count}}</div><div v-else>0</div></div>
+      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> <div v-if="isLike"> {{post.like_count}}</div><div v-else>0</div></div>
+      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> <div v-if="isComment"> {{post.comment_count}}</div><div v-else>0</div></div>
       <div class="post-bookmark" @click="postBookmark" v-if="flagBookmark"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
       <div class="post-bookmark" @click="postBookmark" v-if="!flagBookmark"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
     </div>
@@ -50,12 +44,21 @@ export default {
       flagBookmark:false,
     }
   },
+  computed:{
+    isComment() {
+      return Object.keys(this.post).includes('comment_count')
+    },
+    isLike() {
+      return Object.keys(this.post).includes('like_count')
+    }
+  },
   
   methods:{
     goToDetail() {
-      console.log(this.post)
+      console.log(this.post.post_id)
       // params를 이용해서 데이터를 넘겨줄 수 있다.
-      this.$router.push({ name: 'Post', params: {post:this.post} });
+      this.$router.push({ name: 'Post', params: { board_id:this.$route.params.board_id, post_id: this.post.post_id }})
+      // this.$router.push({ name: 'Post', params: {post:this.post} });
     },
     postLike(e){
       this.flagLike = !this.flagLike
@@ -98,7 +101,14 @@ export default {
   justify-content: flex-end;
   margin-top:1rem;
 }
+.post-like{
+  display:flex;
+  align-items: center;
+  margin-left: 0.5rem;
+}
 .post-comment{
+  display:flex;
+  align-items: center;
   margin-left: 0.5rem;
 }
 .post-bookmark{

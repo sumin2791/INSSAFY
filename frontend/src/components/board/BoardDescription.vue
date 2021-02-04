@@ -39,21 +39,26 @@ export default {
     this.fetchData()
   },
   watch:{
-    '$route':'featchData'
+    '$route':'fetchData'
   },
   methods: {
     fetchData(){
       this.loading=true
       boardApi.board_detail(this.$route.params.board_id)
         .then(res=>{
-          this.board.name=res.data.boardDto.board_name
-          this.board.description=res.data.boardDto.board_description
-          this.board.hashtags=res.data.boardDto.board_hash.split('|')
-          if(this.board.hashtags[0]===''){
-            this.board.hashtags=[]
+          if(res.data.message==="NULL"){
+
+            this.route.push({ name: 'PageNotFound'})
+          }else{
+            this.board.name=res.data.boardDto.board_name
+            this.board.description=res.data.boardDto.board_description
+            this.board.hashtags=res.data.boardDto.board_hash.split('|')
+            if(this.board.hashtags[0]===''){
+              this.board.hashtags=[]
+            }
+            this.board.location=res.data.boardDto.board_location
+            this.board.igmyeong=res.data.boardDto.board_igmyeong
           }
-          this.board.location=res.data.boardDto.board_location
-          this.board.igmyeong=res.data.boardDto.board_igmyeong
         })
         .catch(err=>{
           console.log(err)

@@ -24,7 +24,7 @@
           </div>
           <div class="post-write">
             <!-- <b-button variant="light">글쓰기</b-button> -->
-            <PostWrite/>
+            <PostWrite :inBoard="inBoard"/>
           </div>
           <PostList/>
         </b-col>
@@ -55,23 +55,25 @@ export default {
     }
   },
   created() {
+    // this.$store.dispatch('board/IsInBoard',Number(this.$route.params.board_id))
     const boards = JSON.parse(localStorage.subBoard)
     const boardIds = boards.map(e => {
       return e.board_id
     });
 
     this.inBoard = boardIds.includes(Number(this.$route.params.board_id))
+    // this.inBoard = this.$store.state.board.inBoard
   },
   computed: {
-    
+    // inBoard() {
+    //   return this.$store.state.board.inBoard
+    // }
   },
   methods:{
     onSubscribe(){
       const BOARD_ID = Number(this.$route.params.board_id)
 
       const boards = JSON.parse(localStorage.subBoard)
-      console.log('boards 구조확인해야함')
-      console.log(boards)
       const board = boards.filter(board => board.board_id===Number(this.$route.params.board_id))
       
       const params = {
@@ -87,6 +89,7 @@ export default {
             return
           }else{
             this.inBoard = !this.inBoard
+            
             // localStorage 수정해주는 부분
             if(board.length>0){
               // 보드가 있네? 그럼 구독 해지!
@@ -96,10 +99,10 @@ export default {
               // 보드가 없었어. 그러면 바로 구독하면 돼!
               boards.push({
                 board_id:Number(this.$route.params.board_id),
-                favorite_flag:0,
-                is_used:0,
                 user_id: localStorage.userId,
+                favorite_flag:0,
                 write_post_count: 0,
+                is_used:0,
                 user_role: 0
               })
             }

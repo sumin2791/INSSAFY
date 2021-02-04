@@ -1,15 +1,15 @@
 <template>
   <div>
     <b-button v-b-modal.modal-post variant="light" class="btn-write">글쓰기</b-button>
-
-    <!-- <div class="mt-3">
-      Submitted Names:
-      <div v-if="submittedNames.length === 0">--</div>
-      <ul v-else class="mb-0 pl-3">
-        <li v-for="(name,idx) in submittedNames" :key="idx">{{ name }}</li>
-      </ul>
-    </div> -->
-
+    <b-modal id="modal-post" title="Info" v-if="!inBoard" ok-only>
+      <p class="my-4">구독하시면 글을 작성할 수 있어요😊</p>
+      <template #modal-footer="{ok}">
+        <!-- Emulate built in modal footer ok and cancel button actions -->
+        <b-button variant="submit" @click="ok()">
+          오키
+        </b-button>
+      </template>
+    </b-modal>
     <b-modal
       id="modal-post"
       ref="modal"
@@ -20,6 +20,7 @@
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
+      v-if="inBoard"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -51,9 +52,10 @@
         </b-form-group>
         <b-form-group
           label-for="multiple-media"
+          disabled
         >
           <b-form-file 
-            multiple
+            disabled
             id="multiple-media"
             v-model="images"
             placeholder="Choose a file or drop it here..."
@@ -76,78 +78,113 @@
         </b-button>
       </template>
     </b-modal>
+    <!-- <b-modal
+      id="modal-post"
+      ref="modal"
+      size="xl"
+      title="Post"
+      no-close-on-backdrop
+      ok-only
+      @show="resetModal"
+      @hidden="resetModal"
+      @ok="handleOk"
+    >
+      <form ref="form" @submit.stop.prevent="handleSubmit">
+        여기?
+      </form>
+      <template #modal-footer="{ok}">
+        <b-button variant="submit" @click="ok()">
+          게시
+        </b-button>
+      </template>
+    </b-modal> -->
   </div>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        title: '',
-        description:'',
-        images:[],
-        titleState: null,
-        descriptionState: null,
-      }
-    },
-    methods: {
-      titleCheckFormValidity() {
-        const valid = this.$refs.form.checkValidity()
-        this.titleState = valid
-        return valid
-      },
-      descriptionCheckFormValidity() {
-        const valid = this.$refs.form.checkValidity()
-        this.descriptionState = valid
-        return valid
-      },
-      resetModal() {
-        this.title = ''
-        this.description = ''
-        this.titleState = null
-        this.descriptionState = null
-        this.images=[]
-      },
-      handleOk(bvModalEvt) {
-        // Prevent modal from closing
-        bvModalEvt.preventDefault()
-        // Trigger submit handler
-        this.handleSubmit()
-      },
-      handleSubmit() {
-        // Exit when the form isn't valid
-        if (!this.titleCheckFormValidity() ) {
-          return
-        }
-        if (!this.descriptionCheckFormValidity()) {
-          return
-        }
-        // Push the name to submitted names
-        // this.submittedNames.push(this.name)
-        // Hide the modal manually
-        let today= new Date()
-        const posts = this.$store.state.posts
-        let idx= posts.length
-        const postItem ={
-          post_id:idx+1,
-          user:'testttttt', 
-          post_title:this.title, 
-          post_description:this.description,
-          post_like:0,
-          comment_count:0,
-          post_date:`${today.getFullYear()}-${today.getMonth()+1}-${today.getDay()}/${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`,
-          img:this.images
-        }
-        this.$store.dispatch('createPost',postItem)
-        
+import * as postApi from '@/api/post';
 
-        console.log(this.images)
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-post')
-        })
+export default {
+  data() {
+    return {
+      title: '',
+      description:'',
+      images:[],
+      titleState: null,
+      descriptionState: null,
+    }
+  },
+  props:{
+    inBoard:Boolean
+  },
+  methods: {
+    titleCheckFormValidity() {
+      const valid = this.$refs.form.checkValidity()
+      this.titleState = valid
+      return valid
+    },
+    descriptionCheckFormValidity() {
+      const valid = this.$refs.form.checkValidity()
+      this.descriptionState = valid
+      return valid
+    },
+    resetModal() {
+      this.title = ''
+      this.description = ''
+      this.titleState = null
+      this.descriptionState = null
+      this.images=[]
+    },
+    handleOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault()
+      // Trigger submit handler
+      this.handleSubmit()
+    },
+    handleSubmit() {
+      // Exit when the form isn't valid
+      if (!this.titleCheckFormValidity() ) {
+        return
       }
+      if (!this.descriptionCheckFormValidity()) {
+        return
+      }
+      // Push the name to submitted names
+      // this.submittedNames.push(this.name)
+      // Hide the modal manually
+      // const posts = this.$store.state.posts
+      const BOARD_ID = Number(this.$route.params.board_id)
+      // var fd = new FormData()
+      // fd.append('post_image', this.images)
+
+      const postItem ={
+        user_id:String(localStorage.getItem('userId')),
+        board_id:BOARD_ID,
+        post_title:this.title, 
+        post_description:this.description,
+        post_image:'',
+        post_iframe:'',
+        post_header:'',
+        post_state:0
+      }
+      console.log(postItem)
+      
+      postApi.create(postItem)
+        .then(res=>{
+          this.$store.dispatch('board/isWriteFlag')
+        })
+        .catch(err=>{
+          
+          console.log(`post 생성 실패 ${err}`)
+        })
+
+      console.log(this.images)
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-post')
+      })
     }
   }
+}
 </script>
 
 <style scoped>
