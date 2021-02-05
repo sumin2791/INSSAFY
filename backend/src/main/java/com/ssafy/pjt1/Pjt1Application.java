@@ -36,7 +36,6 @@ public class Pjt1Application implements WebMvcConfigurer {
 				.excludePathPatterns("/v2/api-docs").excludePathPatterns("/webjars/**");
 	}
 
-	// Interceptor를 이용해서 처리하므로 전역의 Corss Origin 처리를 해준다.
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**").allowedOrigins("*").allowedMethods("*").allowedHeaders("*").exposedHeaders("auth_token");
