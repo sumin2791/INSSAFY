@@ -3,6 +3,7 @@ package com.ssafy.pjt1.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,20 +33,19 @@ public class StudyController {
      * 
      * developer: 윤수민
      * 
-     * @param :
+     * @param : 
      * 
-     * @return : message,
-     * postList(post_id,user_id,post_date,post_title,post_description,
+     * @return : message, postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getPromoList")
-    public ResponseEntity<Map<String, Object>> getPromoList() {
+    public ResponseEntity<Map<String, Object>> getPromoList(){
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
-            List<Map<String, Object>> postList = studyService.getPromoList();
-            resultMap.put("postList", postList);
+            List<Map<String, Object>> postList = studyService.getPromoList(); 
+            resultMap.put("postList", postList);          
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
@@ -54,5 +54,5 @@ public class StudyController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
-
+    
 }

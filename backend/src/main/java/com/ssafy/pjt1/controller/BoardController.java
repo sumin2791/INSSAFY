@@ -224,24 +224,24 @@ public class BoardController {
      */
     @PutMapping("/modify")
     public ResponseEntity<Map<String, Object>> modifyBoard(@RequestBody BoardDto boardDto,
-            @RequestParam(value = "login_id") String login_id) {
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/modify 호출 성공");
         try {
             int board_id = boardDto.getBoard_id();
             Map<String, Object> map = new HashMap<>();
-            map.put("board_id", board_id);
+            map.put("board_id",board_id);
             map.put("login_id", login_id);
-            if (boardService.isManager(map) != 0) {
+            if(boardService.isManager(map)!=0){
                 if (boardService.modifyBoard(boardDto) == 1) {
                     resultMap.put("message", SUCCESS);
                 } else {
                     resultMap.put("message", FAIL);
                 }
-            } else {
+            }else{
                 resultMap.put("message", PERMISSION);
-            }
+            }   
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("수정 실패", e);
@@ -330,15 +330,15 @@ public class BoardController {
      */
     @DeleteMapping("/delete/{board_id}")
     public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("board_id") int board_id,
-            @RequestParam(value = "login_id") String login_id) {
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/delete 호출성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("board_id", board_id);
+            map.put("board_id",board_id);
             map.put("login_id", login_id);
-            if (boardService.isManager(map) != 0) {
+            if(boardService.isManager(map)!=0){
                 if (boardService.deleteBoard(board_id) == 1) {
                     // 추가기능 is_used 0으로 변경
                     boardService.deleteBoardAll(board_id);
@@ -364,10 +364,10 @@ public class BoardController {
                     boardService.deletePostAll(board_id);
                     resultMap.put("message", SUCCESS);
                 }
-            } else {
+            }else{
                 resultMap.put("message", PERMISSION);
             }
-
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -397,10 +397,10 @@ public class BoardController {
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
                 resultMap.put("message", SUCCESS);
-            } else {
+            }else{
                 resultMap.put("message", "NULL");
             }
-
+            
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
