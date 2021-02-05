@@ -138,7 +138,6 @@ export default [
     name: 'BoardForm',
     component: BoardForm,
   },
-
   // 검색 관련 영역
   {
     path: '/post/search',
@@ -146,7 +145,7 @@ export default [
     component: SearchPost,
   },
   {
-    path: '/search/board',
+    path: '/board/search',
     name: 'SearchBoard',
     component: SearchBoard,
   },
