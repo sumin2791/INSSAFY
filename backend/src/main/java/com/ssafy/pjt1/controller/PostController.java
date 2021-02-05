@@ -60,7 +60,7 @@ public class PostController {
             int board_id = (int) param.get("board_id");
             map.put("user_id", user_id);
             map.put("board_id", board_id);
-            if(boardService.isUnSubscribed(map)!=0){
+            if (boardService.isUnSubscribed(map) != 0) {
                 PostDto postDto = new PostDto();
                 postDto.setUser_id(user_id);
                 postDto.setBoard_id(board_id);
@@ -73,7 +73,7 @@ public class PostController {
                 postService.createPost(postDto);
 
                 resultMap.put("message", SUCCESS);
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
             }
         } catch (Exception e) {
@@ -90,7 +90,8 @@ public class PostController {
      * 
      * @param : login_id, post_id
      * 
-     * @return : message, PostDto, isScrapped, isLiked, like_count, commentList, writer_nickname
+     * @return : message, PostDto, isScrapped, isLiked, like_count, commentList,
+     * writer_nickname
      */
     @GetMapping("/getPostById")
     public ResponseEntity<Map<String, Object>> getPostById(@RequestParam(value = "post_id") int post_id,
@@ -108,7 +109,7 @@ public class PostController {
                 int isLiked = postService.isUnLiked(map);
                 List<Map<String, Object>> commentList = postService.getComment(post_id);
                 String writer_nickname = postService.getWriterName(postDto.getUser_id());
-                
+
                 resultMap.put("postDto", postDto);
                 resultMap.put("isScrapped", isScrapped);
                 resultMap.put("isLiked", isLiked);
@@ -138,23 +139,23 @@ public class PostController {
      * @return : message
      */
     @PutMapping("/modify")
-    public ResponseEntity<Map<String, Object>> postModify(@RequestBody PostDto postDto, 
-    @RequestParam(value = "login_id") String login_id) {
+    public ResponseEntity<Map<String, Object>> postModify(@RequestBody PostDto postDto,
+            @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/modify 호출 성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("post_id",postDto.getPost_id());
+            map.put("post_id", postDto.getPost_id());
             map.put("login_id", login_id);
-            if(postService.isWriter(map)!=0){
+            if (postService.isWriter(map) != 0) {
                 if (postService.postModify(postDto) == 1) {
                     resultMap.put("message", SUCCESS);
                 }
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
             }
-            
+
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -180,19 +181,19 @@ public class PostController {
         logger.info("post/modifyState 호출 성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("post_id",post_id);
+            map.put("post_id", post_id);
             map.put("login_id", login_id);
-            if(postService.isWriter(map)!=0){
+            if (postService.isWriter(map) != 0) {
                 Map<String, Object> map2 = new HashMap<>();
                 map2.put("post_id", post_id);
                 map2.put("post_state", post_state);
                 if (postService.stateModify(map2) == 1) {
                     resultMap.put("message", SUCCESS);
                 }
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
             }
-            
+
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -212,25 +213,25 @@ public class PostController {
      */
     @DeleteMapping("/delete/{post_id}")
     public ResponseEntity<Map<String, Object>> postDelete(@PathVariable("post_id") int post_id,
-    @PathVariable("login_id") String login_id) {
+            @PathVariable("login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/delete 호출성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("post_id",post_id);
+            map.put("post_id", post_id);
             map.put("login_id", login_id);
-            if(postService.isWriter(map)!=0){
+            if (postService.isWriter(map) != 0) {
                 if (postService.postDelete(post_id) == 1) {
                     // postService.deleteScrapAll(post_id);
                     // postService.deleteLikeAll(post_id);
                     // postService.deleteCommentAll(post_id);
                     resultMap.put("message", SUCCESS);
                 }
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
             }
-            
+
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -258,10 +259,10 @@ public class PostController {
             int post_id = (int) param.get("post_id");
             int board_id = boardService.getIdbyPostId(post_id);
             Map<String, Object> map = new HashMap<>();
-            
+
             map.put("user_id", user_id);
             map.put("board_id", board_id);
-            if(boardService.isUnSubscribed(map)!=0){
+            if (boardService.isUnSubscribed(map) != 0) {
                 Map<String, Object> map2 = new HashMap<>();
                 map2.put("user_id", user_id);
                 map2.put("post_id", post_id);
@@ -281,11 +282,10 @@ public class PostController {
                     }
                 }
                 resultMap.put("message", SUCCESS);
-            }else{
+            } else {
                 resultMap.put("message", "No Subscription");
-            } 
+            }
 
-            
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -312,11 +312,11 @@ public class PostController {
             int post_id = (int) param.get("post_id");
             int board_id = boardService.getIdbyPostId(post_id);
             Map<String, Object> map = new HashMap<>();
-            
+
             map.put("user_id", user_id);
             map.put("board_id", board_id);
 
-            if(boardService.isUnSubscribed(map)!=0){
+            if (boardService.isUnSubscribed(map) != 0) {
                 Map<String, Object> map2 = new HashMap<>();
                 map2.put("user_id", user_id);
                 map2.put("post_id", post_id);
@@ -340,10 +340,10 @@ public class PostController {
                     }
                 }
                 resultMap.put("message", SUCCESS);
-            }else{
+            } else {
                 resultMap.put("message", "No Subscription");
-            }         
-            
+            }
+
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -360,20 +360,20 @@ public class PostController {
      * 
      * @return : message,
      * postList(post_id,user_id,post_date,post_title,post_description,
-     * post_image,post_iframe,post_header,post_state,like_count, comment_count,writer_nickname,
-     * isLiked(1:좋아요누른 상태 0:좋아요 취소상태 리턴값 없는 경우:좋아요 안누른 상태),
-     * isScrapped(isLiked와 마찬가지))
+     * post_image,post_iframe,post_header,post_state,like_count,
+     * comment_count,writer_nickname, isLiked(1:좋아요누른 상태 0:좋아요 취소상태 리턴값 없는 경우:좋아요
+     * 안누른 상태), isScrapped(isLiked와 마찬가지))
      */
     @GetMapping("/getPostList")
-    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id, 
-    @RequestParam(value = "user_id") String user_id) {
+    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id,
+            @RequestParam(value = "user_id") String user_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("board_id",board_id);
-            map.put("user_id",user_id);
+            map.put("board_id", board_id);
+            map.put("user_id", user_id);
             List<Map<String, Object>> postList = postService.getPostList(map);
             logger.info("postList: " + postList);
             resultMap.put("postList", postList);
@@ -399,14 +399,14 @@ public class PostController {
      */
     @GetMapping("/getSalesList")
     public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id") int board_id,
-    @RequestParam(value = "login_id") String login_id) {
+            @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/getSalesList 호출성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("board_id",board_id);
-            map.put("login_id",login_id);
+            map.put("board_id", board_id);
+            map.put("login_id", login_id);
             List<Map<String, Object>> postList = postService.getSalesList(map);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
