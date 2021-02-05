@@ -9,7 +9,8 @@ public class BoardDto {
     private String board_location;
     private String board_hash;
     private String board_date;
-    private String user_id;
+	private String user_id;
+	private int board_state;
     
 	public int getBoard_id() {
 		return board_id;
@@ -64,6 +65,14 @@ public class BoardDto {
 	}
 	public void setUser_id(String user_id) {
 		this.user_id = user_id;
+	}
+	
+	public int getBoard_state() {
+		return this.board_state;
+	}
+
+	public void setBoard_state(int board_state) {
+		this.board_state = board_state;
 	}
 	
 	public BoardDto() {

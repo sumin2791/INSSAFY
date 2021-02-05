@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.pjt1.model.dto.board.BoardDto;
+import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.study.StudyService;
 
 import org.slf4j.Logger;
@@ -25,6 +29,7 @@ public class StudyController {
     public static final Logger logger = LoggerFactory.getLogger(StudyController.class);
     private static final String SUCCESS = "success";
     private static final String FAIL = "fail";
+    private static final String PERMISSION = "No Permission";
 
     @Autowired
     private StudyService studyService;
@@ -55,5 +60,5 @@ public class StudyController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
-    
+
 }

@@ -60,7 +60,7 @@ public class BoardController {
      * developer: 윤수민
      * 
      * @param : user_id, board_name, board_description, board_location,
-     * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag
+     * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag, board_state
      * 
      * @return : message, board_id
      */
@@ -78,6 +78,7 @@ public class BoardController {
             boardDto.setBoard_location((String) param.get("board_location"));
             boardDto.setBoard_hash((String) param.get("board_hash"));
             boardDto.setUser_id((String) param.get("user_id"));
+            boardDto.setBoard_state((int) param.get("board_state"));
             boardService.createBoard(boardDto);
 
             Map<String, Object> map = new HashMap<>();

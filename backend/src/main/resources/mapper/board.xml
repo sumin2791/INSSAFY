@@ -5,9 +5,9 @@
 
 	<insert id="createBoard" parameterType="BoardDto" useGeneratedKeys="true" keyProperty="board_id">
 		insert into board (board_name, board_description, board_image, board_igmyeong,
-		board_location,board_hash,board_date,user_id,is_used)
+		board_location,board_hash,board_date,user_id,is_used, board_state)
 		values ( #{board_name}, #{board_description}, #{board_image}, #{board_igmyeong} ,
-		#{board_location}, #{board_hash}, now(), #{user_id},1)
+		#{board_location}, #{board_hash}, now(), #{user_id},1, #{board_state})
 	</insert>
 	
 	<insert id="subscribe" parameterType="map">
