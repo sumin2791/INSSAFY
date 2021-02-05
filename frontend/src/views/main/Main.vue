@@ -238,7 +238,7 @@ export default {
   created() {
     if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
       this.$store.dispatch('auth/getSubBoard');
-      // this.$store.dispatch('main/getFavorites', { userId: this.$store.state.auth.user.userId });
+      this.$store.dispatch('main/getFavorites', { userId: this.$store.state.auth.user.userId });
     }
   },
   computed: {
@@ -248,7 +248,7 @@ export default {
   mounted() {
     console.log(this.getFavorites);
     // console.log(this.getSubBoardFavoriteList);
-    // console.log(this.getSubBoardList);
+    console.log(this.getSubBoardList);
   },
   methods: {
     clickFavorite: function(index) {

@@ -12,12 +12,11 @@ instance.interceptors.request.use(function(config) {
   if (store.state.auth.user.token !== null) {
     config['headers'] = {
       // Authorization: `Bearer ${store.state.auth.user.token}`,
-      // auth_token: store.state.auth.user.token,
       auth_token: store.state.auth.user.token,
     };
     // config.headers.Authorization = store.state.token;
   }
-  console.log(config);
+  // console.log(config);
   return config;
 });
 
