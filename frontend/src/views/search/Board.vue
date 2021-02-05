@@ -5,30 +5,43 @@
     max-width="400"
   >
     <div class="text">
-      <v-btn 
-        small
-        fab
-        class="subscription"
-      >
-        <v-icon color="#fff">mdi-heart</v-icon>
-      </v-btn>
-      <v-card-title>{{ board.title }}</v-card-title>
-      <v-card-subtitle 
-        class="pb-0
-          text-white 
-          text-start">
+      <div class="action">
+        <div class="d-flex flex-row align-center ml-2">
+          <v-icon color="#fff">mdi-account-group</v-icon>
+          <div 
+            class="ml-2
+              text-overline">{{ board.count }}</div>
+        </div>
+        <v-btn 
+          small
+          fab
+          class="subscription"
+          @click="subscriptionBoard()"
+        >
+          <v-icon :color="board.isSubscription ? '#fff' : '#AA2610'">mdi-heart</v-icon>
+        </v-btn>
+      </div>
+      <div
+        id="board-title"
+        class="pa-2"
+      >{{ board.title }}</div>
+      <div
+        id="board-description"
+        class="ma-2">
         {{ board.description }}
-      </v-card-subtitle>
+      </div>
 
-      <v-card-text class="text-white text-start">
-        <div>{{ board.hashtag }}</div>
-      </v-card-text>
+      <div
+        id="board-hastag"
+        class="ma-2">
+        {{ board.hashtag }}
+      </div>
     </div>
 
     <v-img
       id="v-img"
       class="align-end blur"
-      height="200px"
+      height="250px"
       src="@/assets/images/slide.jpg"
     >
     </v-img>
@@ -45,50 +58,24 @@ export default {
       board: {
         id: 1,
         type: 'curation',
-        title: '보드명',
-        description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
-        hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
-        count: 100,
+        title: '모르고리즘이 알고리즘이 될 때까지',
+        description: '아 나도 코테 잘 보고 싶다 .......',
+        hashtag: '#코테 #SWEA #네카라 #쩔어 #레쓰고 #내코가석자 #같이가자',
+        count: 167,
+        isSubscription: true,
       },
     }
+  },
+  methods: {
+    subscriptionBoard() {
+      
+      this.board.isSubscription = !this.board.isSubscription
+    },
   },
 }
 </script>
 
 <style scoped>
-.container-board {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: flex-start;
-  width: 16rem;
-  height: 16rem;
-  border: 1px solid;
-}
-.subscription-btn {
-  align-self: flex-end;
-  margin: 1% 1% 0;
-}
-.board-name {
-  align-self: flex-start;
-  margin-left: 3%;
-}
-.board-description {
-  align-self: flex-start;
-  margin-left: 3%;
-}
-.board-name {
-}
-.board-hashtag {
-  align-self: center;
-  margin: 5%;
-}
-.scrap-count {
-  align-self: flex-end;
-  justify-self: flex-end;
-  margin: 3% 2%;
-}
-
 /* 보드 디자인 부분 */
 /* 보드 이미지 전체 감싼 div */
 .img-wrap {
@@ -111,13 +98,57 @@ export default {
   display: flex;
   flex-direction: column;
   text-align: center;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: space-between;
   z-index: 2;
 }
 .subscription {
   display: flex;
   align-self: flex-end;
 }
-
+/* 보드 정보(제목, 설명, 해쉬태그 넘치는 부분 처리) */
+/* 구독자 수, 구독 버튼 */
+.action {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+}
+#board-title {
+  width: 70%;
+  font-size: 16px;
+  line-height: 32px;
+  max-height: 64px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+}
+#board-description {
+  width: 80%;
+  font-size: 14px;
+  line-height: 20px;
+  max-height: 40px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+}
+#board-hastag {
+  width: 75%;
+  font-size: 11px;
+  line-height: 20px;
+  max-height: 40px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: start;
+}
 </style>

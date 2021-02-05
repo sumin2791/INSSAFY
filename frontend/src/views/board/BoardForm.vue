@@ -1,83 +1,128 @@
 <template>
-  <div>
-    <b-container class="board">
-      <b-row>
-        <b-col sm="12" class="header">
-          <router-link to="/board/search"><b-icon icon="chevron-compact-left" aria-hidden="true"></b-icon>Board</router-link>
-        </b-col>
-        <b-col sm="8" class="board-aside">
-          <div class="input-with-label">
-            <label for="board-title">게시판 이름</label>
-            <input
-              id="board-title"
-              placeholder=""
-              type="text"
+  <v-app class="main-bg-color">
+    <!-- 전체 포함하는 컨테이너 -->
+    <v-container
+      class="pt-8"
+    >
+      <!-- 보드 생성하기 제목 -->
+      <div 
+        class="text-overline 
+          text-center
+          font-weight-black"
+        style="font-size: 24px !important;"
+      >보드 생성하기</div>
+      <v-row no-gutters dense>
+        <!-- (PC기준)왼쪽 -->
+        <v-col 
+          class="col-12 col-sm-8">
+          <!-- 보드 이름 -->
+          <v-col>
+            <div class="my-2">보드 이름</div>
+            <v-text-field
+              placeholder="보드이름을 작성해주세요"
+              solo
               v-model="title"
-            />
-            <div class="error-text">에러메시지</div>
-          </div>
-          <div class="input-with-label">
-            <label for="board-description">게시판 설명</label>
-            <textarea id="board-description" cols="30" rows="10"  v-model="description"></textarea>
-            <div class="error-text">에러메시지</div>
-          </div>
-          <b-form-file
-            v-model="file1"
-            placeholder="Choose a file or drop it here..."
-            drop-placeholder="Drop file here..."
-          ></b-form-file>
-        </b-col>
-        
-        <b-col sm="4" class="board-section">
-          <div class="hashtag">
-            <label for="board-description">해쉬태그</label>
-            <input 
-              type="text" 
-              id="board-description" 
-              v-model.trim="hashtag" 
-              @keypress.enter="addHashtag"
-            />
-            <ul class="hashtag-list">
-              <li 
-                v-for="(hashtag,idx) in hashtags"
-                :key="idx"
-              > <div class="hashtag">{{hashtag}}  <button class="delete" @click="deleteHashtag(idx)">x</button></div>
-              </li>
-            </ul>
-          </div>
-          <div class="check-select">
-            <b-form-checkbox v-model="options.ikmyeong" name="check-button" switch>
-              <p v-if="!options.ikmyeong" style="margin:0; text-decoration:line-through;">익명</p>
-              <b v-if="options.ikmyeong">익명</b>
-            </b-form-checkbox>
-            <div class="input-with-label">
-              <select ref="select1" class="join-style" name="location" id="location" v-model="location">
-                <option value="" disabled selected>지역을 선택하세요.</option>
-                <option v-for="location in options.location" :key="location" :value="location">
-                  {{ location }}
-                </option>
-              </select>
+            ></v-text-field>
+          </v-col>
+          <!-- 보드 설명 -->
+          <v-col>
+            <div class="my-2">보드 설명</div>
+            <v-textarea
+              filled
+              solo
+              rows="4"
+              row-height="30"
+              placeholder="보드에 대한 설명을 적어보세요"
+              v-model="description"
+              class="description"
+            ></v-textarea>
+          </v-col>
+          <!-- 해쉬태그 -->
+          <v-col>
+            <div class="my-2">Hash Tag</div>
+            <v-text-field
+              placeholder="ex. #SSAFY"
+              solo
+              v-model.trim="hashtag"
+              @keypress.enter="addHashtag()"
+            ></v-text-field>
+            <!-- 해쉬태그 보여지는 부분 -->
+            <div>
+              <v-chip-group 
+                v-for="(hashtag, idx) in hashtags"
+                :key="idx">
+                <v-chip
+                  class="ma-2"
+                  close
+                  color="indigo darken-4"
+                  text-color="white"
+                  @click:close="deleteHashtag(idx)"
+                > {{ hashtag }}
+                </v-chip>
+              </v-chip-group>
             </div>
-          </div>
-          <hr>
-          <b-form-group label="추가기능(optional)" v-slot="{ ariaDescribedby }">
-            <b-form-checkbox-group
-              id="checkbox-group-1"
-              v-model="selected"
-              :options="options.f"
-              :aria-describedby="ariaDescribedby"
-              name="flavour-1"
-            ></b-form-checkbox-group>
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <button
-        class="btn-createboard b-title"
-        @click="onCreate"
-      >Create</button>
-    </b-container>
-    
-  </div>
+          </v-col>
+        </v-col>
+        <!-- (PC기준)오른쪽 -->
+        <v-col class="col-12 col-sm-4">
+          <!-- 보드 대표 이미지 -->
+          <v-col>
+            <div class="my-2">대표 이미지</div>
+            <v-file-input class="d-flex"
+              filled
+              solo
+              prepend-icon="mdi-image"
+              placeholder="대표 이미지 선택하기"
+            ></v-file-input>
+          </v-col>
+          <!-- 익명 여부 -->
+          <v-col>
+            <div class="my-2">익명성 여부</div>
+            <b-form-checkbox v-model="options.ikmyeong" name="check-button" switch>
+              <p v-if="!options.ikmyeong" style="margin:0; text-decoration:line-through;">익명 보드</p>
+              <b v-if="options.ikmyeong">익명 보드</b>
+            </b-form-checkbox>
+          </v-col>
+          <!-- 지역 정보 -->
+          <v-col>
+            <v-select
+              v-model="location"
+              :items="options.location"
+              label="지역"
+              solo
+            ></v-select>
+          </v-col>
+          <!-- 추가 기능 -->
+          <v-col>
+            <b-form-group label="추가기능(optional)" v-slot="{ ariaDescribedby }">
+              <b-form-checkbox-group
+                id="checkbox-group-1"
+                v-model="selected"
+                :options="options.f"
+                :aria-describedby="ariaDescribedby"
+                name="flavour-1"
+              ></b-form-checkbox-group>
+            </b-form-group>
+          </v-col>
+        </v-col>
+      </v-row>
+      <v-row 
+        no-gutters 
+        dense 
+        class="d-flex 
+          justify-center">
+        <v-btn
+          color="blue-grey"
+          x-large
+          class="ma-2 white--text text-overline"
+          @click="onCreate()"
+
+        >
+          보드 만들기
+        </v-btn>
+      </v-row>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -87,6 +132,7 @@ export default {
   name:"BoardForm",
   data() {
     return {
+      switch1: true,
       title:'',
       description:'',
       file1:[],
@@ -102,7 +148,7 @@ export default {
           {text:'달력',value:'calender',disabled:true},
           {text:'투표',value:'vate',disabled:true},
         ],
-        location: ['전체','서울', '대전', '구미', '광주'],
+        location: ['서울', '대전', '구미', '광주'],
         ikmyeong:false,
       },
     }
@@ -146,159 +192,8 @@ export default {
 </script>
 
 <style scoped>
-.header{
-  font-size:2rem;
-  padding:0;
-}
-.header a{
-  text-decoration: none;
-}
-#board-description{
-  resize: none;
-}
-/* .check-group{
-  display: grid;
-  
-}
-.check-group .input-with-label{
-  display: flex;
-  grid-row: 1;
-} */
-/* @media screen and (max-width:576px) {
-  .check-group .input-with-label{
-  display: -webkit-box;
-  grid-row: 1;
-  }
-} */
-
-.check-select{
-  display: flex;
-  justify-content:space-between;
-}
-.check-select .input-with-label{
-  display: flex;
-  
-}
-.check-select .input-with-label label {
-  margin:0;
-}
-
-input[type="text"] {
-  background: transparent;
-  font-size: 1em;
-  width: 100%;
-  height: 40px;
-  line-height: 1em;
-  border: 1px solid #CCCCCC;
-  padding: 0 20px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  -webkit-transition: .2s;
-  transition: .2s;
-  outline: none;
-}
-input[type="checkbox"] {
-  background: transparent;
-  /* font-size: 1em; */
-  /* width: 100%; */
-  height: 25px;
-  line-height: 1em;
-  border: 1px solid #CCCCCC;
-  margin:0 0.9rem;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  -webkit-transition: .2s;
-  transition: .2s;
-  outline: none;
-}
-.error-text {
-  font-size: 0.8rem;
-  color: #ff0404;
-}
-
-/* label.custom-control-input:checked~label.custom-control-label:after{
-  border-color: #e4606d !important;
-  background-color: #e4606d !important;
-} */
-
-
-textarea{
-  background: transparent;
-  font-size: 1em;
-  width: 100%;
-  height: 300px;
-  line-height: 1em;
-  border: 1px solid #CCCCCC;
-  padding: 8px 20px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  -webkit-transition: .2s;
-  transition: .2s;
-  outline: none;
-}
-label{
-  display: inline-block;
-}
-
-@media screen and (min-width:576px) {
-  li {
-    display: flex;
-    align-items: center;
-  }
-  li .hashtag{
-  display:inline;
-  background-color: #0B2945;
-  border-radius: 0.5rem;
-  color:#f9f9f9;
-  padding-left:0.2rem;
-  padding-right:0.2rem;
-  margin: 0.3rem;
-  }
-  li .hashtag .delete{
-    margin:0%;
-    padding:0.1rem;
-    /* display: inline-block; */
-    height: 10px;
-  }
-  .hashtag-list {
-  height: 200px;
-  margin: 1rem 0;
-}
-}
-@media screen and (max-width:576px) {
-  li {
-    display:inline-block;
-  }
-  li .hashtag{
-  display:inline-block;
-  background-color: #0B2945;
-  border-radius: 0.5rem;
-  color:#f9f9f9;
-  padding-left:0.2rem;
-  padding-right:0.2rem;
-  margin: 0.3rem;
-  }
-  .hashtag-list {
-  margin: 1rem 0;
-  }
-  .btn-createboard{
-    width: 100%;
-    background-color: #000 !important;
-    color: #fff;
-  }
-}
-.btn-createboard{
-  /* position: inherit;  */
-  height: 50px;
-  width:100%;
-  font-size: 24px;
-  margin-top: 10px; 
-  margin-bottom: 10px;
-  text-align: center;
-}
-.btn-createboard:hover,
-.btn-createboard:active {
-  background-color: #000 !important;
-  color: #fff;
+/* 전체 메인 배경색 */
+.main-bg-color {
+  background-color: #ebebe9;
 }
 </style>
