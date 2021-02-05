@@ -17,7 +17,7 @@ instance.interceptors.request.use(function(config) {
     };
     // config.headers.Authorization = store.state.token;
   }
-  // console.log(config);
+  console.log(config);
   return config;
 });
 

@@ -1,11 +1,11 @@
 <template>
-  <div class="container-box">
+  <div id="container-box" class="container-box">
     <!-- 왼쪽 메뉴 부분 -->
-    <div class="title">
-      <h4>curation</h4>
-    </div>
-    <div class="left-info">
+    <div id="left-info" class="left-info">
       <!-- Curation -->
+      <div class="title b-title">
+        <h4>Curation</h4>
+      </div>
       <!-- 해당 큐레이션 description -->
       <div class="description">
         <h4>채용일정</h4>
@@ -21,11 +21,20 @@
         <DueDateItem />
         <DueDateItem />
         <DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
       </div>
     </div>
-    <div class="center-post">
+    <div id="center-post" class="center-post">
       <!-- 캘린더 들어가는 부분 -->
-      <div class="study-calendar">
+      <div id="study-calendar" class="study-calendar">
         캘린더가 들어갈 부분
       </div>
       <!-- 검색 돋보기 아이콘 -->
@@ -33,6 +42,54 @@
         🔍검색창 들어갈 부분
       </div>
       <!-- 게시글 작성 -->
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
+      <div class="create-post">
+        <button>게시글 작성 버튼</button>
+      </div>
       <div class="create-post">
         <button>게시글 작성 버튼</button>
       </div>
@@ -57,16 +114,30 @@ export default {
 </script>
 
 <style scoped>
-.container-box {
+#container-box {
+  position: absolute;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  margin: auto;
+  margin: 0 auto;
   border: 2px solid #000000;
-  height: 100vh;
-  margin: 1% 7%;
+  width: 100%;
+  max-width: 1100px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+}
+#left-info {
+  display: inline-block;
+  width: 28%;
+  height: 100%;
+  overflow: scroll;
 }
 /* 왼쪽 메뉴바 부분 */
+.title {
+  margin-top: 60px;
+}
 .container-box .left-info {
   display: flex;
   flex-direction: column;
@@ -76,8 +147,6 @@ export default {
 /* 스터디 보드 설명 */
 .left-info .description {
   border: 2px dotted;
-  padding-top: 2%;
-  padding-left: 4%;
   flex-basis: 20%;
 }
 /* 스터디 리스트 */
@@ -95,6 +164,16 @@ export default {
 }
 
 /* 가운데 게시글 부분 */
+#center-post {
+  display: inline-block;
+  width: 70%;
+  height: 100%;
+  overflow: scroll;
+}
+#study-calendar {
+  margin-top: 90px;
+  overflow: hidden;
+}
 .container-box .center-post {
   display: flex;
   flex-direction: column;
@@ -125,9 +204,17 @@ export default {
 
 /* 모바일 웹화면 */
 @media (max-width: 426px) {
-  .container-box {
+  #container-box {
     flex-direction: column;
   }
-  /* z-index 화면전환 구현하기 */
+  #left-info {
+    width: 100%;
+    height: auto;
+  }
+  #center-post {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
 }
 </style>
