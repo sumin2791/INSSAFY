@@ -24,6 +24,14 @@ public class StudyServiceImpl implements StudyService {
 		return sqlSession.getMapper(StudyMapper.class).getPromoList();
 	}
 
-	
+	@Override
+	public List<Integer> getStudyId(String login_id) {
+		return sqlSession.getMapper(StudyMapper.class).getStudyId(login_id);
+	}
+
+	@Override
+	public Map<String, Object> getStudyInfo(Integer board_id) {
+		return sqlSession.getMapper(StudyMapper.class).getStudyInfo(board_id);
+	}
 
 }
