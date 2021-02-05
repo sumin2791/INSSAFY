@@ -41,7 +41,7 @@
           <v-col>
             <div class="my-2">Hash Tag</div>
             <v-text-field
-              placeholder="ex. #SSAFY"
+              placeholder="ex. SSAFY"
               solo
               v-model.trim="hashtag"
               @keypress.enter="addHashtag()"
