@@ -17,7 +17,6 @@ import com.ssafy.pjt1.model.service.study.StudyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
 @RequestMapping("/study")
 public class StudyController {

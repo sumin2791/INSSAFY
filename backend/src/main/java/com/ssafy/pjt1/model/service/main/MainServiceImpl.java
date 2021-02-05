@@ -37,7 +37,7 @@ public class MainServiceImpl implements MainService {
         return sqlSession.getMapper(MainMapper.class).selectFavorite(user_id);
     }
 
-    @Scheduled(fixedDelay = 10000) // 10초 마다 캐시 갱신
+    @Scheduled(fixedDelay = 60000) // 10초 마다 캐시 갱신
     @Override
     public void updateSubscriptionCache() {
         logger.info("실행중");
@@ -66,7 +66,7 @@ public class MainServiceImpl implements MainService {
         }
     }
 
-    // @Scheduled(fixedDelay = 10000) // 10초 마다 캐시 갱신
+    // @Scheduled(fixedDelay = 60000) // 10초 마다 캐시 갱신
     @Override
     public void updateCommentCache() {
 
