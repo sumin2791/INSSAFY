@@ -108,7 +108,7 @@ public class PostController {
                 map.put("post_id", post_id);
                 int isScrapped = postService.isUnScrapped(map);
                 int isLiked = postService.isUnLiked(map);
-                List<CommentDto> commentList = postService.getComment(post_id);
+                List<Map<String, Object>> commentList = postService.getComment(post_id);
                 String writer_nickname = postService.getWriterName(postDto.getUser_id());
                 
                 resultMap.put("postDto", postDto);
@@ -393,20 +393,23 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : board_id
+     * @param : board_id, login_id
      * 
      * @return : message,
      * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getSalesList")
-    public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id") int board_id) {
+    public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id") int board_id,
+    @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/getSalesList 호출성공");
         try {
-            List<Map<String, Object>> postList = postService.getSalesList(board_id);
-            logger.info("postList: " + postList);
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id",board_id);
+            map.put("login_id",login_id);
+            List<Map<String, Object>> postList = postService.getSalesList(map);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
