@@ -28,7 +28,7 @@
     <v-img
       id="v-img"
       class="align-end blur"
-      height="200px"
+      height="250px"
       src="@/assets/images/slide.jpg"
     >
     </v-img>
@@ -130,13 +130,57 @@ export default {
   display: flex;
   flex-direction: column;
   text-align: center;
-  align-items: flex-start;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: space-between;
   z-index: 2;
 }
 .subscription {
   display: flex;
   align-self: flex-end;
 }
-
+/* 보드 정보(제목, 설명, 해쉬태그 넘치는 부분 처리) */
+/* 구독자 수, 구독 버튼 */
+.action {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+}
+#board-title {
+  width: 70%;
+  font-size: 16px;
+  line-height: 32px;
+  max-height: 64px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+}
+#board-description {
+  width: 80%;
+  font-size: 14px;
+  line-height: 20px;
+  max-height: 40px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: center;
+}
+#board-hastag {
+  width: 75%;
+  font-size: 11px;
+  line-height: 20px;
+  max-height: 40px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-align: start;
+}
 </style>

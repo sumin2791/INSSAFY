@@ -13,7 +13,6 @@ export default {
     let email = state.auth.user.email;
     if (email == null) return null;
     let domain = email.substring(email.indexOf('@') + 1, email.length);
-    console.log(domain);
     return domain;
   },
 
@@ -25,6 +24,9 @@ export default {
   //spinner
   getSpinnerActive: function(state) {
     return state.spinnerActive;
+  },
+  getSpinnerMessage: function(state) {
+    return state.spinnerMessage;
   },
 
   //Toast

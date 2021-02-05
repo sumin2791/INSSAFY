@@ -1,6 +1,6 @@
 <template>
   <div id="wrap" :class="{ active: getSpinnerActive }">
-    <p class="l-desc">처리 중</p>
+    <p id="message" class="l-desc">{{ getSpinnerMessage }}</p>
     <div id="spinner" class="center" />
   </div>
 </template>
@@ -9,11 +9,12 @@
 import { mapGetters } from 'vuex';
 
 export default {
+  name: 'Spinner',
   data() {
     return {};
   },
   computed: {
-    ...mapGetters(['getSpinnerActive']),
+    ...mapGetters(['getSpinnerActive', 'getSpinnerMessage']),
   },
 };
 </script>
@@ -21,12 +22,11 @@ export default {
 <style scoped>
 #wrap {
   display: none;
-  position: absolute;
+  position: fixed;
   width: 100%;
   height: 100%;
   background-color: #695c4cdd;
   color: #fff;
-  text-align: center;
   transition: opacity 0.3s, transform 0.3s ease;
   opacity: 0;
   transform: scale(1.4);
@@ -41,8 +41,9 @@ export default {
 }
 
 p {
+  width: 200px;
+  height: 14px;
   font-size: 14px;
-  margin-top: calc(50% - 32px);
 }
 
 .center {
@@ -50,7 +51,12 @@ p {
   top: 50%;
   left: 50%;
 }
-
+#message {
+  position: absolute;
+  top: calc(50% - 9px);
+  left: calc(50% - 100px);
+  text-align: center;
+}
 #spinner {
   display: inline-block;
   width: 100px;
