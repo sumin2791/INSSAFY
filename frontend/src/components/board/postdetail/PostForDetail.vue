@@ -15,7 +15,7 @@
             <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
           </b-dropdown>
         </div>
-        <div class="post-date">{{post.post_date}}</div>
+        <div class="post-date">{{date}}</div>
       </div>
     </div>
     <div class="post-body">
@@ -36,6 +36,7 @@
 
 <script>
 import * as postApi from '@/api/post'
+import timeForToday from '@/plugins/timeForToday'
 
 export default {
   name:"PostForDetail",
@@ -64,6 +65,9 @@ export default {
     },
     writeFlag(){
       return this.$store.state.comment.writeFlag
+    },
+    date(){
+      return timeForToday(this.post.post_date)
     }
   },
   watch:{

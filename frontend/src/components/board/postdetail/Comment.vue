@@ -9,24 +9,24 @@
           <div class="user-name-date">
             <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
               <template #button-content>
-                {{comment.user_id}}
+                {{comment.user_nickname}}
               </template>
               <b-dropdown-item href="#">Profile</b-dropdown-item>
               <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
               <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
             </b-dropdown>
-            <div class="post-date">{{comment.comment_date}}</div>
+            <div class="post-date">{{date}}</div>
           </div>
-          <div @click="btnComment" id="btnCommentMobile">
+          <div @click="btnComment" id="btnCommentMobile" v-if="this.flagComment">
             <b-icon icon="three-dots-vertical" aria-hidden="true"></b-icon>
           </div>
         </div>
       </b-col>
-      <b-col class="main">
+      <b-col class="main" @click="btnToggle">
         <div>
           {{comment.comment_description}}
         </div>
-        <div @click="btnComment" id="btnComment">
+        <div @click="btnComment" id="btnComment" v-if="this.flagComment">
           <b-icon icon="three-dots-vertical" aria-hidden="true"></b-icon>
         </div>
       </b-col>
@@ -35,14 +35,35 @@
 </template>
 
 <script>
+import timeForToday from '@/plugins/timeForToday'
+
 export default {
   name:"Comment",
   props:{
     comment:Object
   },
+  data(){
+    return {
+      flagComment:false
+    }
+  },
+  computed:{
+    date(){
+      return timeForToday(this.comment.comment_date)
+    }
+  },
   methods:{
     btnComment() {
       alert(`comment ! `);
+    },
+    btnToggle(){
+      this.flagComment = !this.flagComment
+      console.log(typeof(this.comment.comment_date))
+      const timevalue = new Date(this.comment.comment_date);
+      console.log(timevalue)
+      const today = new Date();
+      console.log(today)
+
     }
   }
 }
@@ -75,6 +96,7 @@ export default {
 .main{
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0;
   /* width:100%; */
 }

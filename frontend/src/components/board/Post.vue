@@ -15,7 +15,7 @@
             <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
           </b-dropdown>
         </div>
-        <div class="post-date">{{post.post_date}}</div>
+        <div class="post-date">{{date}}</div>
       </div>
     </div>
     <div class="post-body" @click="goToDetail">
@@ -36,6 +36,7 @@
 
 <script>
 import * as postApi from '@/api/post'
+import timeForToday from '@/plugins/timeForToday'
 
 export default {
   name:"Post",
@@ -61,6 +62,9 @@ export default {
     },
     isLike() {
       return Object.keys(this.post).includes('like_count')
+    },
+    date(){
+      return timeForToday(this.post.post_date)
     }
   },
   mounted() {
