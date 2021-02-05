@@ -34,7 +34,7 @@ public interface PostMapper {
 	public int isLiked(Map<String, Object> map);
 
 	public void like(Map<String, Object> map);
-	
+
 	public int isUnLiked(Map<String, Object> map);
 
 	public void updateLike(Map<String, Object> map);
@@ -74,5 +74,4 @@ public interface PostMapper {
 	public String getWriterName(String user_id);
 
 	public int isWriter(Map<String, Object> map);
-
 }
