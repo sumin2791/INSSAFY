@@ -77,13 +77,30 @@ public class StudyController {
     public ResponseEntity<Map<String, Object>> getStudyList(@RequestParam(value = "login_id") String login_id){
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        logger.info("post/getPostList 호출성공");
+        logger.info("study/getStudyList 호출성공");
         try {
             List<Integer> studyIdList = studyService.getStudyId(login_id); 
             List<Map<String, Object>> studyList = new ArrayList<Map<String, Object>>();
             for (Integer board_id : studyIdList) {
                 studyList.add(studyService.getStudyInfo(board_id)); 
             }
+            resultMap.put("studyList", studyList);          
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    @GetMapping("/getAllList")
+    public ResponseEntity<Map<String, Object>> getAllList(){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("study/getAllList 호출성공");
+        try {
+            List<Map<String, Object>> studyList = studyService.getAllList();
             resultMap.put("studyList", studyList);          
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {

@@ -34,4 +34,9 @@ public class StudyServiceImpl implements StudyService {
 		return sqlSession.getMapper(StudyMapper.class).getStudyInfo(board_id);
 	}
 
+	@Override
+	public List<Map<String, Object>> getAllList() {
+		return sqlSession.getMapper(StudyMapper.class).getAllList();
+	}
+
 }

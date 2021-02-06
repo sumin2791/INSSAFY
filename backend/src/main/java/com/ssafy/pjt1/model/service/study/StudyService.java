@@ -11,4 +11,6 @@ public interface StudyService {
 
 	Map<String, Object> getStudyInfo(Integer board_id);
 
+	List<Map<String, Object>> getAllList();
+
 }

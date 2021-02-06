@@ -38,7 +38,21 @@
 		where is_used = 1
 		group by board_id) as c
 		on b.board_id = c.board_id
-		where b.board_id = #{board_id} and b.board_state = 3 and b.is_used = 1;
+		where b.board_id = #{board_id} and b.board_state = 3 and b.is_used = 1
+		order by b.board_date;
+	</select>
+
+	<select id="getAllList" parameterType="int" resultType="map">
+		select b.board_name, b.board_description, c.board_count
+		from board as b
+		left outer join
+		(select board_id, count(board_id) as board_count
+		from subscription
+		where is_used = 1
+		group by board_id) as c
+		on b.board_id = c.board_id
+		where b.board_state = 3 and b.is_used = 1
+		order by b.board_date;
 	</select>
 
 	<!-- <insert id="createPost" parameterType="PostDto" useGeneratedKeys="true" keyProperty="post_id">
