@@ -87,17 +87,20 @@ public class MainController {
 
     @ApiOperation(value = "좋아요 top3 불러오기")
     @GetMapping(value = "/getPostLikeRank")
-    public ResponseEntity<Map<String, String>> getLikeRank() {
-        Map<String, String> resultMap = new HashMap<>();
+    public ResponseEntity<Map<String, List<PostDto>>> getLikeRank() {
+        Map<String, List<PostDto>> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            resultMap = mapper.readValue(valueOps.get("postLikeRank"), Map.class);
+
+            List<PostDto> postDto = mapper.readValue(valueOps.get("postLikeRank"), List.class);
+            resultMap.put("like", postDto);
+            // resultMap = mapper.readValue(valueOps.get("postLikeRank"), List.class);
         } catch (Exception e) {
             logger.error("error", e);
         }
-        return new ResponseEntity<Map<String, String>>(resultMap, status);
+        return new ResponseEntity<Map<String, List<PostDto>>>(resultMap, status);
     }
 
 }
