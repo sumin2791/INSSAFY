@@ -3,7 +3,7 @@
     <b-row class="comment" v-cloak>
       <b-col sm="2" class="comment-header">
         <div class="user-profile-img">
-          <b-avatar src="https://placekitten.com/300/300" size="3rem">유저프로필</b-avatar>
+          <b-avatar src="https://placekitten.com/300/300" size="2rem">유저프로필</b-avatar>
         </div>
         <div class="header-detail">
           <div class="user-name-date">
@@ -13,28 +13,27 @@
               </template>
               <b-dropdown-item href="#">Profile</b-dropdown-item>
               <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
-              <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
             </b-dropdown>
-            <div class="post-date">{{date}}</div>
+            <div class="comment-date">{{date}}</div>
           </div>
-          <div @click="showBtn" id="btnCommentMobile">
+          <!-- <div @click="showBtn" id="btnCommentMobile">
             <div>수정</div>
             <div>삭제</div>
-          </div>
+          </div> -->
         </div>
       </b-col>
       <b-col class="main">
-        <div class="comment" @mouseover="showBtn" v-if="!Edit">
+        <div class="comment-description" @mouseover="showBtn" v-if="!Edit">
           {{commentDescription}}
         </div>
         <div
-          class="comment"
+          class="comment-description"
           v-if="Edit"
         >
           <v-text-field
             dense
             label=""
-            v-model="commentDescription"
+            v-model="tempComment"
             class="text-h5"
             color="grey-darken-4"
           ></v-text-field>
@@ -43,7 +42,10 @@
           <div @click="btnCommentModify">수정</div>
           <div @click="btnCommentDelete">삭제</div>
         </div>
-        <button class="p-button r-desc" v-if="Edit" @click="submit">Edit</button>
+        <div class="edit-button-set" v-if="Edit">
+          <button class="p-button r-desc" @click="submit">Edit</button>
+          <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
+        </div>
         
       </b-col>
     </b-row>
@@ -54,6 +56,7 @@
 import * as commentApi from '@/api/comment'
 
 import timeForToday from '@/plugins/timeForToday'
+import deepClone from '@/plugins/deepClone'
 
 export default {
   name:"Comment",
@@ -64,13 +67,16 @@ export default {
     return {
       commentDescription:this.comment.comment_description,
       Edit:false,
-      // flagComment:false
+      tempComment:'',
     }
   },
   computed:{
     date(){
       return timeForToday(this.comment.comment_date)
     }
+  },
+  mounted(){
+    this.tempComment = this.commentDescription
   },
   methods:{
     showBtn(e) {
@@ -80,7 +86,10 @@ export default {
       }
       if(this.comment.user_id===localStorage.userId){
         e.path[1].querySelector('#btnComment').style.visibility="visible"
-        sleep(2000).then(() => e.path[1].querySelector('#btnComment').style.visibility="hidden")
+        sleep(2000).then(() => {
+          if(typeof e === Object || !Object.keys(e.path[1].querySelector('#btnComment')).includes('style'))
+            e.path[1].querySelector('#btnComment').style.visibility="hidden"
+        })
       }
       
     },
@@ -98,30 +107,35 @@ export default {
         })
     },
     btnCommentModify() {
-      
       this.Edit = !this.Edit
       alert(`Edit태그 불러오기!`);
     },
-    submit(){
-      // 아직 수정부분은 완료되지 않았습니다
-      // let params = {}
-      // params.commentDto = this.comment
-      // params.commentDto.comment_description = this.commentDescription
-      // params.login_id = localStorage.userId
-      // console.log(params)
-      // commentApi.comment_modify(params)
-      //   .then(res=>{
-      //     console.log(res.data.message)
-      //     if(res.data.message==='No Permission'){
-      //       alert('구독 후에 이용가능합니다.')
-      //     }else{
-      //       this.$store.dispatch('comment/isWriteFlag')
-      //     }
-      //   })
-      //   .catch(err=>{
-      //     console.log(err)
-      //   })
+    cancel(){
+      this.tempComment = this.commentDescription
       this.Edit = !this.Edit
+    },
+    submit(){
+      this.commentDescription = this.tempComment
+      this.cancel()
+      // 아직 수정부분은 완료되지 않았습니다
+      let params = {}
+      params.commentDto = deepClone(this.comment)
+      params.commentDto.comment_description = this.commentDescription
+      params.login_id = String(localStorage.userId)
+      delete params.commentDto.user_nickname
+      console.log(params)
+      commentApi.comment_modify(params)
+        .then(res=>{
+          console.log(res.data.message)
+          if(res.data.message==='No Permission'){
+            alert('구독 후에 이용가능합니다.')
+          }else{
+            this.$store.dispatch('comment/isWriteFlag')
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        })
       alert(`수정!`);
     },
   }
@@ -129,11 +143,18 @@ export default {
 </script>
 
 <style scoped>
-.comment{
+.row .comment{
   display:flex;
   /* margin-bottom: 1rem; */
   padding:0.8rem;
   flex:1;
+}
+.comment-description{
+  display:flex;
+  /* margin-bottom: 1rem; */
+  padding:0rem;
+  flex:1;
+  margin:auto 0;
 }
 .comment .comment-header{
   display: flex;
@@ -142,12 +163,24 @@ export default {
   padding-right:0;
 }
 .comment .comment-header .header-detail{
-  display:flex;
-  justify-content:space-between;
+  /* display:flex; */
+  /* justify-content:space-between; */
   width: 100%;
+}
+.user-name-date{
+  display:grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+.comment-date{
+  
+  font-size:0.6rem;
 }
 #btnComment{
   visibility:hidden;
+}
+.edit-button-set{
+  display: flex;
 }
 .p-button {
   margin-left: 5px;
@@ -163,6 +196,20 @@ export default {
   color: #fff;
   background-color: #000 !important;
 }
+.p-button-cancel {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button-cancel:hover,
+.p-button-cancel:active {
+  color: #fff;
+  background-color: #aa2610 !important;
+}
 /* #btnCommentMobile{
   display:flex;
 } */
@@ -170,9 +217,7 @@ export default {
   display: inline-block;
   font-size:1fr;
 }
-.post-date{
-  font-size:0.5em;
-}
+
 .main{
   display: flex;
   justify-content: space-between;
@@ -184,6 +229,12 @@ export default {
   #btnComment{
     display: none;
   }
+  .user-name-date{
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* grid-template-columns: 1fr 0.2fr; */
+}
 }
 @media screen and (min-width:576px){
   #btnCommentMobile{

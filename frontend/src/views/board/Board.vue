@@ -92,7 +92,6 @@ export default {
       }
       boardApi.subscribe(params)
         .then(res => {
-          console.log('들어왔나?')
           console.log(res)
           if (res.data.message==='fail'){
             return

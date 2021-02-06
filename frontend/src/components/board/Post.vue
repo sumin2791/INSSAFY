@@ -64,7 +64,9 @@ export default {
       return Object.keys(this.post).includes('like_count')
     },
     date(){
-      return timeForToday(this.post.post_date)
+      let date = this.post.post_date.split('.')[0]
+      date = date.split('T').join(' ')
+      return timeForToday(date)
     }
   },
   mounted() {
@@ -101,7 +103,6 @@ export default {
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
-          console.log(res.data.message)
           if(res.data.message==='No Subscription'){
             alert('구독 후에 이용 가능합니다')
           }else{

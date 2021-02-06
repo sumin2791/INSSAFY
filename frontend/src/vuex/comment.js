@@ -17,7 +17,7 @@ export default {
 
     // user의 입력으로 인해 변하는 부분
     IS_WRITE_FLAG(state){
-      console.log('post 작성후 플래그 변화')
+      console.log('comment 작성후 플래그 변화')
       state.writeFlag = !state.writeFlag
     },
   },

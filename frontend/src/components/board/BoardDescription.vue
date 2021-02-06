@@ -56,8 +56,8 @@
       </div>
     </div>
     <div class="edit-button-set" v-if="Edit">
+      <button class="p-button r-desc" @click="submit">  Edit  </button>
       <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
-      <button class="p-button r-desc" @click="submit">Edit</button>
     </div>
     <div class="careful-line"></div>
   </div>
@@ -71,7 +71,7 @@ import deepClone from '@/plugins/deepClone';
 export default {
   name:"BoardDescription",
   props:{
-    inoard:Boolean,
+    inBoard:Boolean,
     isManager:Boolean,
   },
   data() {
@@ -244,6 +244,7 @@ export default {
 
 .edit-button-set{
   display: flex;
+  justify-content: flex-end;
 }
 .careful-line{
   height: 30px;

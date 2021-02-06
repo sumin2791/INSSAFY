@@ -4,18 +4,33 @@
       <div class="user-profile-img">
         <b-avatar src="https://placekitten.com/300/300" size="4rem">유저프로필</b-avatar>
       </div>
-      <div class="user-name-date">
-        <div>
+      <div class="username-date-option">
+        <div class="user-name-date">
+          <div>
+            <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
+              <template #button-content>
+                {{nickname}}
+              </template>
+              <b-dropdown-item href="#">Profile</b-dropdown-item>
+              <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
+              <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
+            </b-dropdown>
+          </div>
+          <div class="post-date">{{date}}</div>
+        </div>
           <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
-              {{post.user_nickname}}
+              <v-btn icon x-small fab>
+                <v-icon dark>
+                  mdi-dots-vertical
+                </v-icon>
+              </v-btn>
             </template>
-            <b-dropdown-item href="#">Profile</b-dropdown-item>
-            <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
+            <b-dropdown-item href="#">수정</b-dropdown-item>
+            <b-dropdown-item href="#">삭제</b-dropdown-item>
             <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
           </b-dropdown>
-        </div>
-        <div class="post-date">{{date}}</div>
+          
       </div>
     </div>
     <div class="post-body">
@@ -27,7 +42,7 @@
     <div class="post-footer">
       <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{countLike}}</div>
       <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{countLike}}</div>
-      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon>{{countComment}}</div>
+      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{countComment}}</div>
       <div class="post-bookmark" @click="postScrap" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
       <div class="post-bookmark" @click="postScrap" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
     </div>
@@ -41,12 +56,15 @@ import timeForToday from '@/plugins/timeForToday'
 export default {
   name:"PostForDetail",
   props:{
-    // post:Object
+    post:Object,
+    nickname:String,
   },
   data() {
     return {
+      // nickname:'',
       viewImage:null,
-      post:{}
+      // post:{},
+      tempComment:''
     }
   },
   computed:{
@@ -71,16 +89,15 @@ export default {
     }
   },
   watch:{
-    writeFlag:'fetchData'
+    // writeFlag:'fetchData'
     // '$route':'fetchData'
   },
   created() {
-    this.fetchData()
+    console.log(this.post)
+    // this.fetchData()
 
     // 이미지 하나만 추출했어요.
     var input = this.post.post_image
-    console.log('img')
-    console.log(input)
     if (input && input[0]) {
       var reader = new FileReader();
       reader.onload = e => {
@@ -92,34 +109,7 @@ export default {
     }
   },
   methods:{
-    fetchData(){
-      this.loading=true
-      postApi.getPost({
-        login_id:String(localStorage.getItem('userId')),
-        post_id:Number(this.$route.params.post_id)
-      })
-      .then(res=>{
-        console.log(res.data)
-        console.log(res.data.postDto)
-        if(res.data.message==="NULL"){
-          this.$router.push({ name: 'PageNotFound'})
-        }else{
-          this.post = res.data.postDto
-          
-          //좋아요와 스크립트 여부는 vuex에 저장해놔야함...
-          this.$store.dispatch('post/isLiked',res.data.isLiked)
-          this.$store.dispatch('post/isScrapped',res.data.isScrapped)
-          //그리고 댓글 리스트를 여기서 가져오니까 이것도 vuex에 저장해야 할 듯?
-          this.$store.dispatch('comment/getCommentList',res.data.commentList)
-          // 포스트 라이크 카운트, 댓글 카운트 도 vuex에!
-          this.$store.dispatch('post/isLikeCount',this.post.post_like)
-        }
-        
-      })
-      .catch(err=>{
-        console.log(err)
-      })
-    },
+    
 
     // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postLike(e){
@@ -170,6 +160,12 @@ export default {
   display: flex;
   flex-direction: row;
 }
+.username-date-option{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width:100%;
+}
 .post .post-body{
   min-height: 150px;
 }
@@ -213,5 +209,9 @@ img{
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: auto 0;
+}
+.dropdown-menu {
+   min-width: 3.1rem !important;
 }
 </style>

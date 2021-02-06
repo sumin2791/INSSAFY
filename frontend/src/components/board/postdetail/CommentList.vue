@@ -17,10 +17,13 @@ export default {
   components:{
     Comment
   },
+  props:{
+    comments:Array,
+  },
   computed:{
-    comments() {
-      return this.$store.state.comment.commentList
-    },
+    // comments() {
+    //   return this.$store.state.comment.commentList
+    // },
   }
 }
 </script>
