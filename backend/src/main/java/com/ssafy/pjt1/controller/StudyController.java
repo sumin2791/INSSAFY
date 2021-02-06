@@ -93,6 +93,16 @@ public class StudyController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    /*
+     * 기능: 모든 스터디 리스트(생성순)
+     * 
+     * developer: 윤수민
+     * 
+     * @param : 
+     * 
+     * @return : message, studyList(board_name,board_description,board_count)
+     * 
+     */
     @GetMapping("/getAllList")
     public ResponseEntity<Map<String, Object>> getAllList(){
         Map<String, Object> resultMap = new HashMap<>();

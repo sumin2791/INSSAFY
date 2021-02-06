@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.pjt1.model.mapper.BambooMapper">
+
+	<insert id="createBamboo" parameterType="BambooDto" useGeneratedKeys="true" keyProperty="bamboo_id">
+		insert into bamboo (user_id, bamboo_title, bamboo_description,
+		bamboo_image,bamboo_iframe,bamboo_header,bamboo_date, writer_nickname, is_used)
+		values ( #{user_id}, #{bamboo_title}, #{bamboo_description}, #{bamboo_image} ,
+		#{bamboo_iframe}, #{bamboo_header}, now(), #{writer_nickname},1)
+	</insert>
+
+</mapper>

@@ -39,7 +39,7 @@
 		group by board_id) as c
 		on b.board_id = c.board_id
 		where b.board_id = #{board_id} and b.board_state = 3 and b.is_used = 1
-		order by b.board_date;
+		order by b.board_date desc;
 	</select>
 
 	<select id="getAllList" parameterType="int" resultType="map">
@@ -52,38 +52,7 @@
 		group by board_id) as c
 		on b.board_id = c.board_id
 		where b.board_state = 3 and b.is_used = 1
-		order by b.board_date;
+		order by b.board_date desc;
 	</select>
-
-	<!-- <insert id="createPost" parameterType="PostDto" useGeneratedKeys="true" keyProperty="post_id">
-		insert into post (user_id, board_id, post_title, post_description,
-		post_image,post_iframe,post_header,post_state,post_date,post_like, is_used)
-		values ( #{user_id}, #{board_id}, #{post_title}, #{post_description} ,
-		#{post_image}, #{post_iframe}, #{post_header}, #{post_state},now(),0,1)
-	</insert>
-
-	
-
-	<update id="postModify" parameterType="PostDto">
-		update post
-		set  post_title=#{post_title}, post_description=#{post_description},
-		post_image=#{post_image}, post_iframe=#{post_iframe}, post_header=#{post_header}, post_state=#{post_state}
-		where post_id = #{post_id}
-	</update>
-
-	<update id="postDelete" parameterType="int">
-		update post
-		set is_used = 0
-		where post_id=#{post_id}
-	</update>
-
-	<select id="marketPostPopular" parameterType="string" resultType="PostDto">
-		select *
-		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
-		on p.post_id = c.post_id
-		where (p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%'))
-		and p.board_id = #{board_id} and p.is_used = 1 and p.post_state != 0
-		order by c.like_count desc;
-	</select> -->
 
 </mapper>
