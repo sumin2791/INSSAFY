@@ -5,8 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.ssafy.pjt1.model.dto.CommentNumDto;
-import com.ssafy.pjt1.model.service.redis.RedisRepository;
+import com.ssafy.pjt1.model.mapper.redis.PostNumRepo;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -24,7 +23,7 @@ public class RedistTest {
     private StringRedisTemplate redisTemplate;
 
     @Autowired
-    private RedisRepository repo;
+    private PostNumRepo repo;
 
     @Test
     public void zSetTest() {
@@ -42,12 +41,12 @@ public class RedistTest {
     @Test
     public void repository() {
         String key = "test";
-        CommentNumDto dto = new CommentNumDto("abc", "1");
-        repo.save(dto);
-        CommentNumDto dtos = repo.findById("abc").orElse(null);
-        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
-        zset.add(key, "abc", Integer.valueOf(dtos.getNum()));
-        // logger.info("객체: {}", dtos.getNum());
-        logger.info("객체: {}", zset.reverseRange(key, 0, 0));
+        // CommentNumDto dto = new CommentNumDto("abc", "1");
+        // repo.save(dto);
+        // CommentNumDto dtos = repo.findById("abc").orElse(null);
+        // ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        // zset.add(key, "abc", Integer.valueOf(dtos.getNum()));
+        // // logger.info("객체: {}", dtos.getNum());
+        // logger.info("객체: {}", zset.reverseRange(key, 0, 0));
     }
 }

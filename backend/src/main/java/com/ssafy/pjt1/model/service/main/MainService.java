@@ -14,4 +14,5 @@ public interface MainService {
 
     public int getSubsriptionNumber(String board_id);
 
+    public void updatePostSort();
 }

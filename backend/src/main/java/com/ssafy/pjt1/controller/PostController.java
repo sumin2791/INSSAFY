@@ -4,14 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.pjt1.model.dto.comment.CommentDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
+import com.ssafy.pjt1.model.dto.redis.PostNumDto;
+import com.ssafy.pjt1.model.mapper.redis.PostNumRepo;
 import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.post.PostService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +41,12 @@ public class PostController {
 
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private PostNumRepo postNumRepo;
 
     /*
      * 기능: 보드 내 포스트 작성
@@ -73,6 +82,24 @@ public class PostController {
                 postService.createPost(postDto);
 
                 resultMap.put("message", SUCCESS);
+                ///////////////////////////////////////////////////////////// redis 케시에 저장
+                String key = "postNum";
+                String sortkey = "postSort";
+                PostNumDto postNum = postNumRepo.findById(String.valueOf(board_id)).orElse(null);
+                ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+                if (postNum == null) {
+                    // null이니까 1부터 시작
+                    postNum = new PostNumDto(String.valueOf(board_id), "1");
+                    postNumRepo.save(postNum);
+                    zset.add(sortkey, String.valueOf(board_id), 1);
+                } else {
+                    // post개수 받고 1증가해서 저장
+                    int n = Integer.valueOf(postNum.getPost_num());
+                    postNum.setPost_num(String.valueOf(n + 1));
+                    postNumRepo.save(postNum);
+                    zset.add(sortkey, String.valueOf(board_id), n + 1);
+                }
+                //////////////////////////////////////////////////////////////////// redis 설정 끝
             } else {
                 resultMap.put("message", PERMISSION);
             }

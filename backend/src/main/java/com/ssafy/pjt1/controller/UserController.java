@@ -550,7 +550,7 @@ public class UserController {
      * 
      * @return : List<Post>
      */
-    @ApiOperation(value = "북마크(BookMark) 가져오기", notes = "")
+    @ApiOperation(value = "북마크(스크랩) 가져오기", notes = "")
     @GetMapping("user/getScraps/{user_id}")
     public ResponseEntity<Map<String, Object>> getScraps(@PathVariable String user_id) {
         Map<String, Object> resultMap = new HashMap<>();

@@ -50,7 +50,7 @@ public class MainController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
-    @ApiOperation(value = "팔로우수 top3 불러오기")
+    @ApiOperation(value = "팔로우 수 top3 불러오기")
     @GetMapping("/getFollowRank")
     public ResponseEntity<Map<Map<String, String>, List<PostDto>>> getFollowRank() {
         Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
@@ -61,7 +61,24 @@ public class MainController {
         try {
             // top3만 갖고오기
             // logger.info("top{}", valueOps.get("followRank"));
-            resultMap = mapper.readValue(valueOps.get("followRank"), Map.class);
+            resultMap = mapper.readValue(valueOps.get("boardFollowRank"), Map.class);
+        } catch (Exception e) {
+            logger.error("error", e);
+        }
+        return new ResponseEntity<Map<Map<String, String>, List<PostDto>>>(resultMap, status);
+    }
+
+    @ApiOperation(value = "게시글 수 top3 불러오기")
+    @GetMapping("/getPosttRank")
+    public ResponseEntity<Map<Map<String, String>, List<PostDto>>> getPosttRank() {
+        Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            // top3만 갖고오기
+            // logger.info("top{}", valueOps.get("followRank"));
+            resultMap = mapper.readValue(valueOps.get("boardPostRank"), Map.class);
         } catch (Exception e) {
             logger.error("error", e);
         }
