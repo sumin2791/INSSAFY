@@ -6,14 +6,13 @@ import java.util.Map;
 import com.ssafy.pjt1.model.dto.comment.CommentDto;
 import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.comment.CommentService;
-import com.ssafy.pjt1.model.service.post.PostService;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,7 +37,7 @@ public class CommentController {
     private BoardService boardService;
 
     @Autowired
-    private PostService postService;
+    private RedisService redisService;
 
     /*
      * 기능: 댓글 생성
@@ -70,7 +69,8 @@ public class CommentController {
 
                 int comment_id = commentDto.getComment_id();
                 commentService.createNotification(comment_id);
-
+                // redis 댓글수 업데이트
+                redisService.postCommentSortset(post_id);
                 resultMap.put("message", SUCCESS);
             } else {
                 resultMap.put("message", PERMISSION);
@@ -135,7 +135,10 @@ public class CommentController {
             map.put("login_id", login_id);
             map.put("comment_id", comment_id);
             if (commentService.isCommentWriter(map) != 0) {
+                // >>>>>>>>>>>>>>>>> 레디스 삭제
+                redisService.postCommentSortsetDecrease(comment_id);
                 if (commentService.commentDelete(comment_id) == 1) {
+                    // 삭제
                     commentService.notificationDelete(comment_id);
                     resultMap.put("message", SUCCESS);
                 }

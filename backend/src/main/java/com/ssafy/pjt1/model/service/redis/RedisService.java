@@ -1,8 +1,11 @@
 package com.ssafy.pjt1.model.service.redis;
 
 import com.ssafy.pjt1.model.dto.post.PostDto;
+import com.ssafy.pjt1.model.service.comment.CommentService;
 import com.ssafy.pjt1.model.service.post.PostService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -10,12 +13,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RedisService {
-
+    private static final Logger logger = LoggerFactory.getLogger(RedisService.class);
     @Autowired
     private StringRedisTemplate redisTemplate;
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private CommentService commentService;
 
     /*
      * 기능: 회원삭제시 관련된 보드 삭제
@@ -108,9 +114,33 @@ public class RedisService {
      * 
      * developer: 문진환
      */
-    public void postLikeDelete(int post_id) {
+    public void postLikeDecrease(int post_id) {
         String sortkey = "postLikeSort";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         zset.incrementScore(sortkey, String.valueOf(post_id), -1);
+    }
+
+    /*
+     * 기능: 댓글 달시 sort set 1 증가
+     * 
+     * developer: 문진환
+     */
+    public void postCommentSortset(int post_id) {
+        String sortkey = "postCommentSort";
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        zset.incrementScore(sortkey, String.valueOf(post_id), 1);
+    }
+
+    /*
+     * 기능: 댓글 삭제 sort set 1 감소
+     * 
+     * developer: 문진환
+     */
+    public void postCommentSortsetDecrease(int comment_id) {
+        String sortkey = "postCommentSort";
+        String post_id = commentService.getPostIdByCommentId(comment_id);
+        // logger.info(">>>>>>>>>>>>>>>>post_id:{}", post_id);
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        zset.incrementScore(sortkey, post_id, -1);
     }
 }

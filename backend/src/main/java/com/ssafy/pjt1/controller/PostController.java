@@ -345,10 +345,10 @@ public class PostController {
                         redisService.PostLikeSortSet(post_id);
                     } else {
                         logger.info("좋아요 삭제");
+                        //// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 싫어요 1 감소
+                        redisService.postLikeDecrease(post_id);
                         postService.unlike(map2);
                         postService.minusCount(post_id);
-                        //// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 싫어요 1 감소
-                        redisService.postLikeDelete(post_id);
 
                     }
                 }

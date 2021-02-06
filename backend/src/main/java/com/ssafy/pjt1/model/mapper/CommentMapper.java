@@ -21,4 +21,5 @@ public interface CommentMapper {
 
 	public int isCommentWriter(Map<String, Object> map);
 
+	public String getPostIdByCommentId(int comment_id);
 }

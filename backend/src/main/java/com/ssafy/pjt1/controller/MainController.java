@@ -93,9 +93,25 @@ public class MainController {
         ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
         try {
-
             List<PostDto> postDto = mapper.readValue(valueOps.get("postLikeRank"), List.class);
             resultMap.put("like", postDto);
+            // resultMap = mapper.readValue(valueOps.get("postLikeRank"), List.class);
+        } catch (Exception e) {
+            logger.error("error", e);
+        }
+        return new ResponseEntity<Map<String, List<PostDto>>>(resultMap, status);
+    }
+
+    @ApiOperation(value = "코멘트 수 기준 post top3 불러오기")
+    @GetMapping(value = "/getCommentRank")
+    public ResponseEntity<Map<String, List<PostDto>>> getCommentRank() {
+        Map<String, List<PostDto>> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List<PostDto> postDto = mapper.readValue(valueOps.get("postCommentRank"), List.class);
+            resultMap.put("postComment", postDto);
             // resultMap = mapper.readValue(valueOps.get("postLikeRank"), List.class);
         } catch (Exception e) {
             logger.error("error", e);
