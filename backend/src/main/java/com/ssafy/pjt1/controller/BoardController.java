@@ -7,8 +7,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.service.BoardService;
-import com.ssafy.pjt1.model.service.main.MainService;
 import com.ssafy.pjt1.model.service.post.PostService;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 import com.ssafy.pjt1.model.service.vote.VoteService;
 
 @RestController
@@ -47,10 +45,7 @@ public class BoardController {
     private PostService postService;
 
     @Autowired
-    StringRedisTemplate redisTemplate;
-
-    @Autowired
-    MainService mainService;
+    private RedisService redisService;
 
     /*
      * 기능: 보드 생성
@@ -114,7 +109,7 @@ public class BoardController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/subscribe 호출성공");
-        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+
         try {
             Map<String, Object> map = new HashMap<>();
             map.put("user_id", (String) param.get("user_id"));
@@ -126,19 +121,21 @@ public class BoardController {
             if (count == 0) {
                 logger.info("구독 설정");
                 boardService.subscribe(map);
-                // 구독 누르면 캐시에 해당 보드 구독한 수 넣기
-                zset.add("follow", board_id, mainService.getSubsriptionNumber(board_id) + 1);
+                /////////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
+                redisService.boardFollowSortSet(board_id);
             } else {
                 int count2 = boardService.isUnSubscribed(map);
                 if (count2 == 0) {
                     // 전에 구독한 이력이 있지만 현재는 아닌 경우
                     boardService.updateSubscribe(map);
-                    // 구독 누르면 캐시에 해당 보드 구독한 수 넣기
-                    zset.add("follow", board_id, mainService.getSubsriptionNumber(board_id) + 1);
+                    /////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
+                    redisService.boardFollowSortSet(board_id);
                 } else {
                     logger.info("구독 해지");
                     // 관리자 아닐 경우 구독 해지
                     boardService.unsubscribe(map);
+                    ///////////////////////////////////////////// 구독 해지시 redis에서 follower수 -1 감소
+                    redisService.boardFollowSortSetDecrease(String.valueOf(board_id));
                 }
             }
 
@@ -340,6 +337,8 @@ public class BoardController {
             map.put("login_id", login_id);
             if (boardService.isManager(map) != 0) {
                 if (boardService.deleteBoard(board_id) == 1) {
+                    //////////////////////////////// 보드 삭제시 redis에서도 삭제
+                    redisService.boardSortSetDelete(String.valueOf(board_id));
                     // 추가기능 is_used 0으로 변경
                     boardService.deleteBoardAll(board_id);
                     boardService.deleteCalendar(board_id);

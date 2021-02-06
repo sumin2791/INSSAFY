@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController("/main")
 public class MainController {
@@ -32,7 +33,7 @@ public class MainController {
     private MainService service;
 
     @Autowired
-    StringRedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @ApiOperation(value = "즐겨찾기 리스트 불러오기")
     @GetMapping("/selectFavorite/{user_id}")
@@ -55,7 +56,6 @@ public class MainController {
     public ResponseEntity<Map<Map<String, String>, List<PostDto>>> getFollowRank() {
         Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        String key = "followRank";
         ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -69,7 +69,7 @@ public class MainController {
     }
 
     @ApiOperation(value = "게시글 수 top3 불러오기")
-    @GetMapping("/getPosttRank")
+    @GetMapping("/getBoardPostRank")
     public ResponseEntity<Map<Map<String, String>, List<PostDto>>> getPosttRank() {
         Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -84,4 +84,20 @@ public class MainController {
         }
         return new ResponseEntity<Map<Map<String, String>, List<PostDto>>>(resultMap, status);
     }
+
+    @ApiOperation(value = "좋아요 top3 불러오기")
+    @GetMapping(value = "/getPostLikeRank")
+    public ResponseEntity<Map<String, String>> getLikeRank() {
+        Map<String, String> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            resultMap = mapper.readValue(valueOps.get("postLikeRank"), Map.class);
+        } catch (Exception e) {
+            logger.error("error", e);
+        }
+        return new ResponseEntity<Map<String, String>>(resultMap, status);
+    }
+
 }

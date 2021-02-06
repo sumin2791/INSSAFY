@@ -1,12 +1,5 @@
 package com.ssafy.pjt1;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import com.ssafy.pjt1.model.mapper.redis.PostNumRepo;
-
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,20 +15,17 @@ public class RedistTest {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    @Autowired
-    private PostNumRepo repo;
-
     @Test
     public void zSetTest() {
         String key = "test";
-        // ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
-        // zset.add(key, "a", 1);
-        // zset.add(key, "b", 2);
-        // zset.add(key, "c", 3);
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        zset.add(key, "a", 1);
+        zset.add(key, "b", 2);
+        zset.add(key, "c", 3);
         // zset.add(key, "d", 4);
         // zset.add(key, "e", 5);
-        // Set<String> set = zset.reverseRange(key, 0, 2);
-        // logger.info("msg: {}", zset.range(key, 0, 1));
+        zset.incrementScore(key, "b", 2);
+        logger.info("msg: {}", zset.range(key, 0, 2));
     }
 
     @Test

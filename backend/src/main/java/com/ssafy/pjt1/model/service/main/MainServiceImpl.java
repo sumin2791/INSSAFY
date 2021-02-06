@@ -1,6 +1,7 @@
 package com.ssafy.pjt1.model.service.main;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,6 +12,7 @@ import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.mapper.MainMapper;
 import com.ssafy.pjt1.model.service.BoardService;
+import com.ssafy.pjt1.model.service.post.PostService;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -36,6 +38,9 @@ public class MainServiceImpl implements MainService {
     @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private PostService postService;
+
     @Override
     public List<SubscriptionDto> selectFavorite(String user_id) {
         return sqlSession.getMapper(MainMapper.class).selectFavorite(user_id);
@@ -45,7 +50,7 @@ public class MainServiceImpl implements MainService {
     @Override
     public void updateSubscriptionCache() {
         logger.info("boardFollowRank 캐시 업데이트");
-        String key = "follow";
+        String key = "boardFollowSort";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         // follow캐시에서 top3 뽑기
         Set<String> set = zset.reverseRange(key, 0, 2);// board_id 얻어옴
@@ -68,12 +73,6 @@ public class MainServiceImpl implements MainService {
         }
     }
 
-    // @Scheduled(fixedDelay = 60000) // 10초 마다 캐시 갱신
-    @Override
-    public void updateCommentCache() {
-
-    }
-
     @Override
     public int getSubsriptionNumber(String board_id) {
         return sqlSession.getMapper(MainMapper.class).getSubsriptionNumber(board_id);
@@ -83,7 +82,7 @@ public class MainServiceImpl implements MainService {
     @Override
     public void updatePostSort() {
         logger.info("boardPostRank 캐시 업데이트");
-        String key = "postSort";
+        String key = "boardPostSort";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         // postSort캐시에서 top3 뽑기
         Set<String> set = zset.reverseRange(key, 0, 2);// board_id 얻어옴
@@ -100,6 +99,32 @@ public class MainServiceImpl implements MainService {
             String msg = mapper.writeValueAsString(resultMap);
             // logger.info("캐시:{}", msg);
             valueOps.set("boardPostRank", msg);
+        } catch (JsonProcessingException e) {
+            logger.error("msg", e);
+        }
+    }
+
+    @Scheduled(fixedDelay = 60000) // 1분 마다 캐시 갱신
+    @Override
+    public void updatePostLikeSort() {
+        logger.info("postLikeRank 캐시 업데이트");
+        String key = "postLikeSort";
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        // postSort캐시에서 top3 뽑기
+        Set<String> set = zset.reverseRange(key, 0, 2);// board_id 얻어옴
+        List<PostDto> list = new LinkedList<>();
+        for (String post_id : set) {
+            // db조회 객체 top3 얻음
+            list.add(postService.getPostById(Integer.valueOf(post_id)));
+        }
+        // boardPostRank캐시에 넣기
+        ObjectMapper mapper = new ObjectMapper();
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        try {
+            String msg = mapper.writeValueAsString(list);
+            // logger.info("캐시:{}", msg);
+            // postLikeRank 키 값으로 매핑
+            valueOps.set("postLikeRank", msg);
         } catch (JsonProcessingException e) {
             logger.error("msg", e);
         }
