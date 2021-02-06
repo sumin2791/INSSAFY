@@ -64,5 +64,6 @@ public interface BoardMapper {
 	public int getIdbyPostId(int post_id);
 
 	public int isManager(Map<String, Object> map);
-	
+
+	public Map<String, String> getBoardInfo(String board_id);
 }

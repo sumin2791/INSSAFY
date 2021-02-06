@@ -158,4 +158,9 @@ public class BoardServiceImpl implements BoardService {
 		return sqlSession.getMapper(BoardMapper.class).isManager(map);
 	}
 
+	@Override
+	public Map<String, String> getBoardInfo(String board_id) {
+		return sqlSession.getMapper(BoardMapper.class).getBoardInfo(board_id);
+	}
+
 }

@@ -7,9 +7,11 @@ import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.mapper.MainMapper;
+import com.ssafy.pjt1.model.service.BoardService;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -32,33 +34,34 @@ public class MainServiceImpl implements MainService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private BoardService boardService;
+
     @Override
     public List<SubscriptionDto> selectFavorite(String user_id) {
         return sqlSession.getMapper(MainMapper.class).selectFavorite(user_id);
     }
 
-    @Scheduled(fixedDelay = 10000) // 10초 마다 캐시 갱신
+    @Scheduled(fixedDelay = 60000) // 1분 마다 캐시 갱신
     @Override
     public void updateSubscriptionCache() {
-        logger.info("실행중");
+        logger.info("follow 캐시 업데이트");
         String key = "follow";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         // follow캐시에서 top3 뽑기
-        zset.add(key, "8", 3);
-        zset.add(key, "34", 4);
-        zset.add(key, "37", 6);
-        zset.add(key, "32", 10);
         Set<String> set = zset.reverseRange(key, 0, 2);// board_id 얻어옴
-        Map<String, List<PostDto>> resultMap = new HashMap<>();
+        Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
         for (String board_id : set) {
-            // db조회 객체 얻기
-            resultMap.put(board_id, sqlSession.getMapper(MainMapper.class).getRecentFive(board_id));
+            // db조회 객체 top3 얻음
+            resultMap.put(boardService.getBoardInfo(board_id),
+                    sqlSession.getMapper(MainMapper.class).getRecentFive(board_id));
         }
         // followRank캐시에 넣기
         ObjectMapper mapper = new ObjectMapper();
         ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
         try {
             String msg = mapper.writeValueAsString(resultMap);
+            // logger.info("캐시:{}", msg);
             valueOps.set("followRank", msg);
             // logger.info(valueOps.get("followRank"));
         } catch (JsonProcessingException e) {
@@ -66,7 +69,7 @@ public class MainServiceImpl implements MainService {
         }
     }
 
-    // @Scheduled(fixedDelay = 10000) // 10초 마다 캐시 갱신
+    // @Scheduled(fixedDelay = 60000) // 10초 마다 캐시 갱신
     @Override
     public void updateCommentCache() {
 
