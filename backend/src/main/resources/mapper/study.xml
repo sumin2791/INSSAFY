@@ -8,16 +8,53 @@
 		p.post_header, p.post_state, l.like_count, c.comment_count
 		from (select post_id, count(post_id) as like_count
 			  from postLike 
-			  group by post_id) as l right outer join post as p 
+			  where is_used = 1
+			  group by post_id) as l 
+			  right outer join 
+			  post as p 
 			  on l.post_id = p.post_id 
 			  left outer join
 			  (select post_id, count(post_id) as comment_count
 			  from comment
+			  where is_used = 1
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
 		where p.board_id = 37 and p.is_used = 1 and p.post_state = 3
 		order by p.post_date desc;
 	</select>
+
+	<select id="getStudyId" parameterType="string" resultType="int">
+		select board_id
+		from subscription
+		where user_id = #{login_id} and is_used = 1;
+	</select>
+
+	<select id="getStudyInfo" parameterType="int" resultType="map">
+		select b.board_name, b.board_description, c.board_count
+		from board as b
+		left outer join
+		(select board_id, count(board_id) as board_count
+		from subscription
+		where is_used = 1
+		group by board_id) as c
+		on b.board_id = c.board_id
+		where b.board_id = #{board_id} and b.board_state = 3 and b.is_used = 1
+		order by b.board_date;
+	</select>
+
+	<select id="getAllList" parameterType="int" resultType="map">
+		select b.board_name, b.board_description, c.board_count
+		from board as b
+		left outer join
+		(select board_id, count(board_id) as board_count
+		from subscription
+		where is_used = 1
+		group by board_id) as c
+		on b.board_id = c.board_id
+		where b.board_state = 3 and b.is_used = 1
+		order by b.board_date;
+	</select>
+
 	<!-- <insert id="createPost" parameterType="PostDto" useGeneratedKeys="true" keyProperty="post_id">
 		insert into post (user_id, board_id, post_title, post_description,
 		post_image,post_iframe,post_header,post_state,post_date,post_like, is_used)
@@ -25,11 +62,7 @@
 		#{post_image}, #{post_iframe}, #{post_header}, #{post_state},now(),0,1)
 	</insert>
 
-	<select id="getPostById" parameterType="int" resultType="PostDto">
-		select * 
-		from post
-		where post_id = #{post_id} and is_used = 1;
-	</select>
+	
 
 	<update id="postModify" parameterType="PostDto">
 		update post
