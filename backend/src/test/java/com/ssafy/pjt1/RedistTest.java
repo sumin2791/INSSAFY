@@ -1,6 +1,12 @@
 package com.ssafy.pjt1;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+
+import com.ssafy.pjt1.model.dto.CommentNumDto;
+import com.ssafy.pjt1.model.service.redis.RedisRepository;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -15,11 +21,14 @@ public class RedistTest {
     public static final Logger logger = LoggerFactory.getLogger(RedistTest.class);
 
     @Autowired
-    StringRedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisRepository repo;
 
     @Test
     public void zSetTest() {
-        String key = "followRank";
+        String key = "test";
         // ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         // zset.add(key, "a", 1);
         // zset.add(key, "b", 2);
@@ -28,6 +37,17 @@ public class RedistTest {
         // zset.add(key, "e", 5);
         // Set<String> set = zset.reverseRange(key, 0, 2);
         // logger.info("msg: {}", zset.range(key, 0, 1));
-        
+    }
+
+    @Test
+    public void repository() {
+        String key = "test";
+        CommentNumDto dto = new CommentNumDto("abc", "1");
+        repo.save(dto);
+        CommentNumDto dtos = repo.findById("abc").orElse(null);
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        zset.add(key, "abc", Integer.valueOf(dtos.getNum()));
+        // logger.info("객체: {}", dtos.getNum());
+        logger.info("객체: {}", zset.reverseRange(key, 0, 0));
     }
 }
