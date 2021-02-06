@@ -1,21 +1,21 @@
 <template>
-  <div id="container-box" class="container-box">
+  <div id="container-box">
     <!-- 왼쪽 메뉴 부분 -->
     <div id="left-info" class="left-info">
       <!-- Curation -->
-      <div class="title b-title">
+      <div id="type" class="b-title">
         <h4>Curation</h4>
       </div>
       <!-- 해당 큐레이션 description -->
-      <div class="description">
-        <h4>채용일정</h4>
-        <p>
+      <div id="description" class="rounded-bg real-shadow-box">
+        <h4 class="b-desc">채용일정</h4>
+        <p class="l-desc">
           채용일정 너만아니<br />
           채용일정 나도알자
         </p>
       </div>
       <!-- 임박한 채용보기 -->
-      <div class="due-date">
+      <div id="due-date" class="rounded-bg real-shadow-box">
         임박한 채용일정 보여줄 리스트
         <DueDateItem />
         <DueDateItem />
@@ -23,20 +23,58 @@
         <DueDateItem />
         <DueDateItem />
         <DueDateItem />
+        <DueDateItem /><DueDateItem />
         <DueDateItem />
         <DueDateItem />
+        <DueDateItem /><DueDateItem />
         <DueDateItem />
         <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
+        <DueDateItem />
+        <DueDateItem />
+        <DueDateItem /><DueDateItem />
         <DueDateItem />
         <DueDateItem />
         <DueDateItem />
       </div>
+      <hr class="blank" />
     </div>
-    <div id="center-post" class="center-post">
+    <div id="center-post">
       <!-- 캘린더 들어가는 부분 -->
-      <div id="study-calendar" class="study-calendar">
+      <div id="study-calendar">
         캘린더가 들어갈 부분
       </div>
+
       <!-- 검색 돋보기 아이콘 -->
       <div class="search-bar">
         🔍검색창 들어갈 부분
@@ -96,6 +134,7 @@
       <!-- 각각의 게시글 들어갈 부분 -->
       <Post class="post-list" />
     </div>
+    <hr class="blank" />
   </div>
 </template>
 
@@ -114,78 +153,60 @@ export default {
 </script>
 
 <style scoped>
+.rounded-bg {
+  border-radius: 15px;
+  background-color: var(--basic-color-bg2);
+}
+.blank {
+  visibility: hidden;
+  margin: 15px;
+}
+
 #container-box {
   position: absolute;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   margin: 0 auto;
-  border: 2px solid #000000;
   width: 100%;
-  max-width: 1100px;
   height: 100%;
+  max-width: 1100px;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
   z-index: -1;
 }
 #left-info {
-  display: inline-block;
-  width: 28%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-right: 20px;
+  padding: 0 15px;
   height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 /* 왼쪽 메뉴바 부분 */
-.title {
-  margin-top: 60px;
-}
-.container-box .left-info {
-  display: flex;
-  flex-direction: column;
-  background-color: bisque;
-  flex-basis: 32%;
+#type {
+  margin-top: 80px;
 }
 /* 스터디 보드 설명 */
-.left-info .description {
-  border: 2px dotted;
-  flex-basis: 20%;
-}
-/* 스터디 리스트 */
-.left-info .study-list {
-  display: flex;
-  flex-direction: column;
-  border: 2px inset #000000;
-  margin-top: 5%;
-}
-/* 스터디 리스트 헤더 */
-.study-list .hd {
-  display: flex;
-  flex-direction: row;
-  border: 1px dotted;
+#description {
+  width: 100%;
+  margin: 10px 0 20px;
+  padding: 15px;
 }
 
 /* 가운데 게시글 부분 */
 #center-post {
-  display: inline-block;
-  width: 70%;
-  height: 100%;
-  overflow: scroll;
-}
-#study-calendar {
-  margin-top: 90px;
-  overflow: hidden;
-}
-.container-box .center-post {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
-  background-color: pink;
-  flex-basis: 63%;
-  border: 4px solid;
+  flex: 2;
+  height: 100%;
+  overflow-y: scroll;
 }
-
-/* 스터디 캘린더 */
-.center-post .study-calendar {
+#study-calendar {
+  margin-top: 123px;
   background-color: azure;
   width: 100%;
   height: 70%;

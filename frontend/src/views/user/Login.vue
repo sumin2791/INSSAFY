@@ -120,15 +120,12 @@ export default {
       this.isSubmit = isSubmit;
     },
     onLogin: function() {
-      console.log(this.email)
-      console.log(this.password)
       this.$store
         .dispatch('auth/login', {
           email: this.email,
           password: this.password,
         })
         .then((result) => {
-          console.log(result);
           if (result.data.message === 'FAIL') {
             alert('이메일 또는 비밀번호를 다시 확인하여 주십시오.');
             this.password = '';
@@ -146,8 +143,8 @@ export default {
           }
         })
         .catch((err) => {
-          console.log(err)
-        })
+          console.log(err);
+        });
     },
   },
 };

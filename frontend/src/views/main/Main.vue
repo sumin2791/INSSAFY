@@ -246,9 +246,9 @@ export default {
     ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
   },
   mounted() {
-    console.log(this.getFavorites);
+    // console.log(this.getFavorites);
     // console.log(this.getSubBoardFavoriteList);
-    console.log(this.getSubBoardList);
+    // console.log(this.getSubBoardList);
   },
   methods: {
     clickFavorite: function(index) {
