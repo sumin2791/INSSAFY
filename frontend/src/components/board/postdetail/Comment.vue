@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-row class="comment">
+    <b-row class="comment" v-cloak>
       <b-col sm="2" class="comment-header">
         <div class="user-profile-img">
           <b-avatar src="https://placekitten.com/300/300" size="3rem">유저프로필</b-avatar>
@@ -43,7 +43,7 @@
           <div @click="btnCommentModify">수정</div>
           <div @click="btnCommentDelete">삭제</div>
         </div>
-        <button class="p-button r-desc" v-if="Edit" @click="submit">수정</button>
+        <button class="p-button r-desc" v-if="Edit" @click="submit">Edit</button>
         
       </b-col>
     </b-row>

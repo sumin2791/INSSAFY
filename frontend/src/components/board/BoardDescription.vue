@@ -3,25 +3,77 @@
     <div class="board-name-detail">
       <div class="name-setting">
         <div class="board-name">{{this.board.name}}</div>
-        <a href=""><b-icon icon="gear-fill"></b-icon></a>
+        <b-icon icon="gear-fill" v-if="isManager && !Edit" style="cursor:pointer" @click="btnModify"></b-icon>
       </div>
-      <div class="board-detail">{{this.board.description}}</div>
+      <!--보드 show & edit-->
+      <div class="board-detail" v-if="!Edit">{{this.board.description}}</div>
+      <div
+        class="board-detail-form"
+        v-if="Edit"
+      >
+        <v-textarea
+          solo
+          clearable
+          no-resize
+          clear-icon="mdi-close-circle"
+          label=""
+          v-model="tempDescription"
+          color="grey-darken-4"
+        ></v-textarea>
+      </div>
     </div>
-    <div class="board-hash-people">
+    <!--해쉬태그 show & edit -->
+    <div class="board-hash-people" v-if="!Edit">
       <div class="hashtaglist">
         <div class="board-hashtag" v-for="(hash,idx) in this.board.hashtags" :key="idx">{{hash}}</div>
       </div>
-      <div class="board-people"><b-icon icon="person-fill" aria-hidden="true"></b-icon> 50</div>
+      <div class="board-people"><b-icon icon="person-fill" aria-hidden="true"></b-icon> {{board.subscribe_count}}</div>
     </div>
+    <div
+      class="board-hash-form"
+      v-if="Edit"
+    >
+      <v-text-field
+        dense
+        label="해쉬태그"
+        v-model="tempHashtag"
+        class="text-h5"
+        color="grey-darken-4"
+        @keypress.enter="addHashtag"
+      ></v-text-field>
+      <div
+        class="hashtaglist-form"
+        v-for="(hashtag, idx) in tempHashtags"
+        :key="idx">
+        <v-chip
+          class="ma-2"
+          close
+          color="indigo darken-4"
+          text-color="white"
+          @click:close="deleteHashtag(idx)"
+        > {{ hashtag }}
+        </v-chip>
+      </div>
+    </div>
+    <div class="edit-button-set" v-if="Edit">
+      <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
+      <button class="p-button r-desc" @click="submit">Edit</button>
+    </div>
+    <div class="careful-line"></div>
   </div>
 </template>
 
 <script>
 import * as boardApi from '@/api/board';
+import deepClone from '@/plugins/deepClone';
 
 
 export default {
   name:"BoardDescription",
+  props:{
+    inoard:Boolean,
+    isManager:Boolean,
+  },
   data() {
     return {
       loading: false,
@@ -29,21 +81,26 @@ export default {
         name:'',
         description:'',
         hashtags:[],
-        subscribe_count:50,
+        subscribe_count:0,
         location:'',
         igmyeong:'',
-      }
+      },
+      tempDescription:'',
+      tempHashtags: [],
+      tempHashtag:'',
+      Edit:false,
     }
   },
   created() {
     this.fetchData()
+    this.tempDescription = this.board.description
   },
   watch:{
-    '$route':'fetchData'
+    '$route':'fetchData',
+    inBoard:'count'
   },
   methods: {
     fetchData(){
-      this.loading=true
       boardApi.board_detail(this.$route.params.board_id)
         .then(res=>{
           if(res.data.message==="NULL"){
@@ -58,13 +115,52 @@ export default {
             }
             this.board.location=res.data.boardDto.board_location
             this.board.igmyeong=res.data.boardDto.board_igmyeong
+            this.board.subscribe_count = res.data.board_count
+
+            this.tempDescription = res.data.boardDto.board_description
+            this.tempHashtags = deepClone(this.board.hashtags)
           }
         })
         .catch(err=>{
           console.log(err)
         })
+    },
+    count(){
+      if(this.inBoard){
+        this.board.subscribe_count += 1
+      }else{
+        this.board.subscribe_count -= 1
+      }
+    },
+    btnModify() {
+      this.Edit = !this.Edit
+      alert(`Edit태그 불러오기!`);
+    },
+    addHashtag(){
+      if(this.tempHashtags.length===5){
+        alert('해쉬태그는 5개 이하만 가능합니다.')
+        return
+      }
 
-    }
+      this.tempHashtags.push(`#${this.tempHashtag}`)
+      this.tempHashtag=''
+    },
+    deleteHashtag(e){
+      this.tempHashtags.splice(e,1)
+    },
+    cancel(){
+      this.tempHashtags = deepClone(this.board.hashtags)
+      this.tempDescription = this.board.description
+      this.tempHashtag=''
+      this.Edit = !this.Edit
+    },
+    submit(){
+      this.board.hashtags = [this.board.hashtags, ...this.tempHashtags]
+      this.board.description = this.tempDescription
+      this.board.hashtags = deepClone(this.tempHashtags)
+      this.cancel()
+      alert(`수정!`);
+    },
   }
 
 }
@@ -81,6 +177,41 @@ export default {
   justify-content: space-between;
   margin-bottom: 0.5rem;
 }
+.board-detail{
+  margin:0.5rem 0;
+  padding:0 0.5rem;
+}
+.board-detail-form{
+  padding:0 0.5rem;
+}
+.p-button {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button:hover,
+.p-button:active {
+  color: #fff;
+  background-color: #000 !important;
+}
+.p-button-cancel {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button-cancel:hover,
+.p-button-cancel:active {
+  color: #fff;
+  background-color: #aa2610 !important;
+}
 .board-name{
   font-weight: bold;
   font-size:1.3rem;
@@ -91,13 +222,30 @@ export default {
   place-items: center;
   grid-template-columns: 70% 30%
 }
+.hashtaglist{
+  width:100%;
+}
+.board-hash-form{
+  padding:0 0.5rem;
+  margin-bottom: 20px;
+}
+.hashtaglist-form{
+  display: inline-block;
+}
 .board-hashtag{
-  display:inline;
+  display:inline-block;
   background-color: #0B2945;
   border-radius: 0.5rem;
   color:#f9f9f9;
   padding-left:0.2rem;
   padding-right:0.2rem;
   margin: 0.3rem;
+}
+
+.edit-button-set{
+  display: flex;
+}
+.careful-line{
+  height: 30px;
 }
 </style>
