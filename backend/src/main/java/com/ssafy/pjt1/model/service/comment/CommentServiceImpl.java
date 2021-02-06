@@ -17,6 +17,9 @@ public class CommentServiceImpl implements CommentService {
 	@Autowired
 	private SqlSession sqlSession;
 
+	@Autowired
+	private CommentMapper commentMapper;
+
 	public static final Logger logger = LoggerFactory.getLogger(CommentServiceImpl.class);
 
 	@Override
@@ -50,5 +53,10 @@ public class CommentServiceImpl implements CommentService {
 	public int isCommentWriter(Map<String, Object> map) {
 		return sqlSession.getMapper(CommentMapper.class).isCommentWriter(map);
 	}
-	
+
+	@Override
+	public String getPostIdByCommentId(int comment_id) {
+		return commentMapper.getPostIdByCommentId(comment_id);
+	}
+
 }

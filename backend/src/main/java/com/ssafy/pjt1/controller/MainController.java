@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController("/main")
 public class MainController {
@@ -32,7 +33,7 @@ public class MainController {
     private MainService service;
 
     @Autowired
-    StringRedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @ApiOperation(value = "즐겨찾기 리스트 불러오기")
     @GetMapping("/selectFavorite/{user_id}")
@@ -50,21 +51,72 @@ public class MainController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
-    @ApiOperation(value = "팔로우수 top3 불러오기")
+    @ApiOperation(value = "팔로우 수 top3 불러오기")
     @GetMapping("/getFollowRank")
     public ResponseEntity<Map<Map<String, String>, List<PostDto>>> getFollowRank() {
         Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        String key = "followRank";
         ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
         try {
             // top3만 갖고오기
             // logger.info("top{}", valueOps.get("followRank"));
-            resultMap = mapper.readValue(valueOps.get("followRank"), Map.class);
+            resultMap = mapper.readValue(valueOps.get("boardFollowRank"), Map.class);
         } catch (Exception e) {
             logger.error("error", e);
         }
         return new ResponseEntity<Map<Map<String, String>, List<PostDto>>>(resultMap, status);
     }
+
+    @ApiOperation(value = "게시글 수 top3 불러오기")
+    @GetMapping("/getBoardPostRank")
+    public ResponseEntity<Map<Map<String, String>, List<PostDto>>> getPosttRank() {
+        Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            // top3만 갖고오기
+            // logger.info("top{}", valueOps.get("followRank"));
+            resultMap = mapper.readValue(valueOps.get("boardPostRank"), Map.class);
+        } catch (Exception e) {
+            logger.error("error", e);
+        }
+        return new ResponseEntity<Map<Map<String, String>, List<PostDto>>>(resultMap, status);
+    }
+
+    @ApiOperation(value = "좋아요 top3 불러오기")
+    @GetMapping(value = "/getPostLikeRank")
+    public ResponseEntity<Map<String, List<PostDto>>> getLikeRank() {
+        Map<String, List<PostDto>> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List<PostDto> postDto = mapper.readValue(valueOps.get("postLikeRank"), List.class);
+            resultMap.put("like", postDto);
+            // resultMap = mapper.readValue(valueOps.get("postLikeRank"), List.class);
+        } catch (Exception e) {
+            logger.error("error", e);
+        }
+        return new ResponseEntity<Map<String, List<PostDto>>>(resultMap, status);
+    }
+
+    @ApiOperation(value = "코멘트 수 기준 post top3 불러오기")
+    @GetMapping(value = "/getCommentRank")
+    public ResponseEntity<Map<String, List<PostDto>>> getCommentRank() {
+        Map<String, List<PostDto>> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            List<PostDto> postDto = mapper.readValue(valueOps.get("postCommentRank"), List.class);
+            resultMap.put("postComment", postDto);
+            // resultMap = mapper.readValue(valueOps.get("postLikeRank"), List.class);
+        } catch (Exception e) {
+            logger.error("error", e);
+        }
+        return new ResponseEntity<Map<String, List<PostDto>>>(resultMap, status);
+    }
+
 }

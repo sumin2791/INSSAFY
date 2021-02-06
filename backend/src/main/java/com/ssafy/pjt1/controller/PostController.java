@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.pjt1.model.dto.comment.CommentDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.post.PostService;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,9 @@ public class PostController {
 
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private RedisService redisService;
 
     /*
      * 기능: 보드 내 포스트 작성
@@ -73,6 +76,8 @@ public class PostController {
                 postService.createPost(postDto);
 
                 resultMap.put("message", SUCCESS);
+                ///////////////////////////////////////////////// post등록시 redisDto에 저장
+                redisService.boardPostSortSet(String.valueOf(board_id));
             } else {
                 resultMap.put("message", PERMISSION);
             }
@@ -223,6 +228,8 @@ public class PostController {
             map.put("login_id", login_id);
             if (postService.isWriter(map) != 0) {
                 if (postService.postDelete(post_id) == 1) {
+                    // boardPostDto의 redis 안에 value값 1감소
+                    redisService.boardPostSortSetDecrease(post_id);
                     // postService.deleteScrapAll(post_id);
                     // postService.deleteLikeAll(post_id);
                     // postService.deleteCommentAll(post_id);
@@ -326,17 +333,23 @@ public class PostController {
                     logger.info("좋아요 클릭");
                     postService.like(map2);
                     postService.plusCount(post_id);
-
+                    //// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 저장
+                    redisService.PostLikeSortSet(post_id);
                 } else {
                     int count2 = postService.isUnLiked(map2);
                     if (count2 == 0) {
                         // 전에 좋아요한 이력이 있지만 현재는 아닌 경우
                         postService.updateLike(map2);
                         postService.plusCount(post_id);
+                        //// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 저장
+                        redisService.PostLikeSortSet(post_id);
                     } else {
                         logger.info("좋아요 삭제");
+                        //// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 싫어요 1 감소
+                        redisService.postLikeDecrease(post_id);
                         postService.unlike(map2);
                         postService.minusCount(post_id);
+
                     }
                 }
                 resultMap.put("message", SUCCESS);
