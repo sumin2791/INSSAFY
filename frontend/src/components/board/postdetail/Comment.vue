@@ -17,34 +17,54 @@
             </b-dropdown>
             <div class="post-date">{{date}}</div>
           </div>
-          <div @click="btnComment" id="btnCommentMobile" v-if="this.flagComment">
-            <b-icon icon="three-dots-vertical" aria-hidden="true"></b-icon>
+          <div @click="showBtn" id="btnCommentMobile">
+            <div>수정</div>
+            <div>삭제</div>
           </div>
         </div>
       </b-col>
-      <b-col class="main" @click="btnToggle">
-        <div>
-          {{comment.comment_description}}
+      <b-col class="main">
+        <div class="comment" @mouseover="showBtn" v-if="!Edit">
+          {{commentDescription}}
         </div>
-        <div @click="btnComment" id="btnComment" v-if="this.flagComment">
-          <b-icon icon="three-dots-vertical" aria-hidden="true"></b-icon>
+        <div
+          class="comment"
+          v-if="Edit"
+        >
+          <v-text-field
+            dense
+            label=""
+            v-model="commentDescription"
+            class="text-h5"
+            color="grey-darken-4"
+          ></v-text-field>
         </div>
+        <div id="btnComment" v-if="!Edit">
+          <div @click="btnCommentModify">수정</div>
+          <div @click="btnCommentDelete">삭제</div>
+        </div>
+        <button class="p-button r-desc" v-if="Edit" @click="submit">수정</button>
+        
       </b-col>
     </b-row>
   </b-container>
 </template>
 
 <script>
+import * as commentApi from '@/api/comment'
+
 import timeForToday from '@/plugins/timeForToday'
 
 export default {
   name:"Comment",
   props:{
-    comment:Object
+    comment:Object,
   },
   data(){
     return {
-      flagComment:false
+      commentDescription:this.comment.comment_description,
+      Edit:false,
+      // flagComment:false
     }
   },
   computed:{
@@ -53,18 +73,57 @@ export default {
     }
   },
   methods:{
-    btnComment() {
-      alert(`comment ! `);
+    showBtn(e) {
+      // 댓글쓴 사람이랑 로그인한 사람이랑 같아야, 다음 버튼이 보인다.
+      function sleep(ms) {
+        return new Promise((r) => setTimeout(r, ms))
+      }
+      if(this.comment.user_id===localStorage.userId){
+        e.path[1].querySelector('#btnComment').style.visibility="visible"
+        sleep(2000).then(() => e.path[1].querySelector('#btnComment').style.visibility="hidden")
+      }
+      
     },
-    btnToggle(){
-      this.flagComment = !this.flagComment
-      console.log(typeof(this.comment.comment_date))
-      const timevalue = new Date(this.comment.comment_date);
-      console.log(timevalue)
-      const today = new Date();
-      console.log(today)
-
-    }
+    btnCommentDelete() {
+      commentApi.comment_delete({login_id:localStorage.userId, comment_id:this.comment.comment_id})
+        .then(res=>{
+          if(res.data.message==='No Permission'){
+            alert('구독 후에 이용가능합니다.')
+          }else{
+            this.$store.dispatch('comment/isWriteFlag')
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+    },
+    btnCommentModify() {
+      
+      this.Edit = !this.Edit
+      alert(`Edit태그 불러오기!`);
+    },
+    submit(){
+      // 아직 수정부분은 완료되지 않았습니다
+      // let params = {}
+      // params.commentDto = this.comment
+      // params.commentDto.comment_description = this.commentDescription
+      // params.login_id = localStorage.userId
+      // console.log(params)
+      // commentApi.comment_modify(params)
+      //   .then(res=>{
+      //     console.log(res.data.message)
+      //     if(res.data.message==='No Permission'){
+      //       alert('구독 후에 이용가능합니다.')
+      //     }else{
+      //       this.$store.dispatch('comment/isWriteFlag')
+      //     }
+      //   })
+      //   .catch(err=>{
+      //     console.log(err)
+      //   })
+      this.Edit = !this.Edit
+      alert(`수정!`);
+    },
   }
 }
 </script>
@@ -74,6 +133,7 @@ export default {
   display:flex;
   /* margin-bottom: 1rem; */
   padding:0.8rem;
+  flex:1;
 }
 .comment .comment-header{
   display: flex;
@@ -86,6 +146,26 @@ export default {
   justify-content:space-between;
   width: 100%;
 }
+#btnComment{
+  visibility:hidden;
+}
+.p-button {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button:hover,
+.p-button:active {
+  color: #fff;
+  background-color: #000 !important;
+}
+/* #btnCommentMobile{
+  display:flex;
+} */
 .user-name{
   display: inline-block;
   font-size:1fr;

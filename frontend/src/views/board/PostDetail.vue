@@ -51,7 +51,7 @@ export default {
         comment_description : String(this.comment)
       }
 
-      commentApi.create(params)
+      commentApi.comment_create(params)
         .then(res=>{
           console.log(res.data.message)
           if(res.data.message==='No Permission'){
