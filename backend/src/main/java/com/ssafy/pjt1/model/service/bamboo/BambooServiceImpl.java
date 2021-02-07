@@ -30,5 +30,20 @@ public class BambooServiceImpl implements BambooService {
     public List<BambooDto> searchPost(String keyword) {
         return sqlSession.getMapper(BambooMapper.class).searchPost(keyword);
     }
+
+    @Override
+    public int isWriter(Map<String, Object> map) {
+        return sqlSession.getMapper(BambooMapper.class).isWriter(map);
+    }
+
+    @Override
+    public int bambooModify(BambooDto bambooDto) {
+        return sqlSession.getMapper(BambooMapper.class).bambooModify(bambooDto);
+    }
+
+    @Override
+    public int bambooDelete(int bamboo_id) {
+        return sqlSession.getMapper(BambooMapper.class).bambooDelete(bamboo_id);
+    }
     
 }

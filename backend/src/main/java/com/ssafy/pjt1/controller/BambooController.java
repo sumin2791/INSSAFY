@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,8 @@ public class BambooController {
     public static final Logger logger = LoggerFactory.getLogger(BambooController.class);
     private static final String SUCCESS = "success";
     private static final String FAIL = "fail";
+    private static final String PERMISSION = "No Permission";
+
 
     @Autowired
     private BambooService bambooService;
@@ -123,6 +127,76 @@ public class BambooController {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 대나무숲 포스트 수정
+     * 
+     * developer: 윤수민
+     * 
+     * @param : BambooDto, login_id
+     * 
+     * @return : message
+     */
+    @PutMapping("/modify")
+    public ResponseEntity<Map<String, Object>> bambooModify(@RequestBody BambooDto bambooDto,
+            @RequestParam(value = "login_id") String login_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("bamboo/modify 호출 성공");
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("bamboo_id", bambooDto.getBamboo_id());
+            map.put("login_id", login_id);
+            if (bambooService.isWriter(map) != 0) {
+                if (bambooService.bambooModify(bambooDto) == 1) {
+                    resultMap.put("message", SUCCESS);
+                }
+            } else {
+                resultMap.put("message", PERMISSION);
+            }
+
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("error", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 대나무숲 포스트 삭제
+     * 
+     * developer: 윤수민
+     * 
+     * @param : bamboo_id, login_id
+     * 
+     * @return : message
+     */
+    @DeleteMapping("/delete")
+    public ResponseEntity<Map<String, Object>> bamboooDelete(@RequestParam(value = "bamboo_id") int bamboo_id,
+    @RequestParam(value = "login_id") String login_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("bamboo/delete 호출성공");
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("bamboo_id", bamboo_id);
+            map.put("login_id", login_id);
+            if (bambooService.isWriter(map) != 0) {
+                if (bambooService.bambooDelete(bamboo_id) == 1) {
+                    resultMap.put("message", SUCCESS);
+                }
+            } else {
+                resultMap.put("message", PERMISSION);
+            }
+
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("error", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 

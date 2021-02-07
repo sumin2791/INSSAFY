@@ -13,4 +13,10 @@ public interface BambooService {
 
 	public List<BambooDto> searchPost(String keyword);
 
+	public int isWriter(Map<String, Object> map);
+
+	public int bambooModify(BambooDto bambooDto);
+
+	public int bambooDelete(int bamboo_id);
+
 }

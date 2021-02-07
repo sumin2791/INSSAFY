@@ -21,7 +21,26 @@
 		from bamboo
 		where ( bamboo_title like concat('%',#{keyword} ,'%') or bamboo_description like concat('%',#{keyword} ,'%') ) 
 		and is_used = 1
-		order by bamboo_date;
+		order by bamboo_date desc;
 	</select>
 
+	<select id="isWriter" parameterType="map" resultType="int">
+		select count(*)
+		from bamboo
+		where bamboo_id = #{bamboo_id} and user_id = #{login_id} and is_used = 1;	
+	</select>
+
+	<update id="bambooModify" parameterType="BambooDto">
+		update bamboo
+		set  bamboo_title=#{bamboo_title}, bamboo_description=#{bamboo_description},
+		bamboo_image=#{bamboo_image}, bamboo_iframe=#{bamboo_iframe}, 
+		bamboo_header=#{bamboo_header}, writer_nickname=#{writer_nickname}
+		where bamboo_id = #{bamboo_id} and is_used = 1;
+	</update>
+
+	<update id="bambooDelete" parameterType="int">
+		update bamboo
+		set is_used = 0
+		where bamboo_id=#{bamboo_id}
+	</update>
 </mapper>
