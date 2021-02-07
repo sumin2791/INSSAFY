@@ -10,4 +10,10 @@
 		#{bamboo_iframe}, #{bamboo_header}, now(), #{writer_nickname},1)
 	</insert>
 
+	<select id="getAllList" resultType="map">
+		select * 
+		from bamboo
+		where is_used = 1;
+	</select>
+
 </mapper>

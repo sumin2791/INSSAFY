@@ -12,5 +12,7 @@ public interface BambooMapper {
 
 	public void createBamboo(BambooDto bambooDto);
 
+	public List<Map<String, Object>> getAllList();
+
 	
 }
