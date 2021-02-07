@@ -65,7 +65,6 @@ export default {
   },
   data(){
     return {
-      commentDescription:this.comment.comment_description,
       Edit:false,
       tempComment:'',
     }
@@ -73,10 +72,13 @@ export default {
   computed:{
     date(){
       return timeForToday(this.comment.comment_date)
+    },
+    commentDescription(){
+      return this.comment.comment_description
     }
   },
   mounted(){
-    this.tempComment = this.commentDescription
+    
   },
   methods:{
     showBtn(e) {
@@ -86,7 +88,9 @@ export default {
       }
       if(this.comment.user_id===localStorage.userId){
         e.path[1].querySelector('#btnComment').style.visibility="visible"
+        console.log(e)
         sleep(3000).then(() => {
+
           if(typeof e === Object || !Object.keys(e.path[1].querySelector('#btnComment')).includes('style'))
             e.path[1].querySelector('#btnComment').style.visibility="hidden"
         })
@@ -107,6 +111,7 @@ export default {
         })
     },
     btnCommentModify() {
+      this.tempComment = this.commentDescription
       this.Edit = !this.Edit
       alert(`Edit태그 불러오기!`);
     },
@@ -115,15 +120,13 @@ export default {
       this.Edit = !this.Edit
     },
     submit(){
-      this.commentDescription = this.tempComment
-      this.cancel()
+      
       // 아직 수정부분은 완료되지 않았습니다
       let params = {}
       params.commentDto = deepClone(this.comment)
-      params.commentDto.comment_description = this.commentDescription
+      params.commentDto.comment_description = this.tempComment
       params.login_id = String(localStorage.userId)
       delete params.commentDto.user_nickname
-      console.log(params)
       commentApi.comment_modify(params)
         .then(res=>{
           console.log(res.data.message)
@@ -131,6 +134,7 @@ export default {
             alert('구독 후에 이용가능합니다.')
           }else{
             this.$store.dispatch('comment/isWriteFlag')
+            this.cancel()
           }
         })
         .catch(err=>{

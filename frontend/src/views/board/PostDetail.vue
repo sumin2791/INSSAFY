@@ -8,7 +8,7 @@
           
         </header>
         <section>
-          <Post :post="post" :nickname="nickname"/>
+          <Post :post="post" :nickname="nickname" :commentCount="commentCount"/>
           <div class="comment-set">
             <input 
               type="text" 
@@ -19,7 +19,7 @@
             >
             <button class="btn-submit" @click="createComment">한마디!</button>
           </div>
-          <CommentList :comments="commentList"/>
+          <CommentList :comments="comments"/>
         </section>
       </b-row>
     </b-container>
@@ -41,7 +41,8 @@ export default {
       comment: '',
       post:{},
       nickname:'',
-      commentList:[]
+      comments:[],
+      commentCount:0,
     }
   },
   components:{
@@ -65,6 +66,7 @@ export default {
   },
   methods:{
     fetchData(){
+      console.log('댓글수정했는데 이게 되나?')
       this.loading=true
       postApi.getPost({
         login_id:String(localStorage.getItem('userId')),
@@ -74,7 +76,6 @@ export default {
         if(res.data.message==="NULL"){
           this.$router.push({ name: 'PageNotFound'})
         }else{
-          console.log(res)
           this.post = res.data.postDto
           this.nickname = res.data.writer_nickname
           
@@ -82,7 +83,8 @@ export default {
           this.$store.dispatch('post/isLiked',res.data.isLiked)
           this.$store.dispatch('post/isScrapped',res.data.isScrapped)
           //그리고 댓글 리스트를 여기서 가져오니까 이것도 vuex에 저장해야 할 듯?
-          this.commentList = res.data.commentList
+          this.comments = res.data.commentList
+          this.commentCount = this.comments.length
           // this.$store.dispatch('comment/getCommentList',res.data.commentList)
           // 포스트 라이크 카운트, 댓글 카운트 도 vuex에!
           this.$store.dispatch('post/isLikeCount',this.post.post_like)

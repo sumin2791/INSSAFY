@@ -42,7 +42,8 @@
     <div class="post-footer">
       <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{countLike}}</div>
       <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{countLike}}</div>
-      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{countComment}}</div>
+      <!-- <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{countComment}}</div> -->
+      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{commentCount}}</div>
       <div class="post-bookmark" @click="postScrap" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
       <div class="post-bookmark" @click="postScrap" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
     </div>
@@ -63,6 +64,7 @@ export default {
   props:{
     post:Object,
     nickname:String,
+    commentCount:Number,
   },
   data() {
     return {
@@ -82,10 +84,10 @@ export default {
     countLike(){
       return this.$store.state.post.countLike
     },
-    countComment(){
-      const commentList = this.$store.state.comment.commentList
-      return commentList.length
-    },
+    // countComment(){
+    //   const commentList = this.$store.state.comment.commentList
+    //   return commentList.length
+    // },
     date(){
       return timeForToday(this.post.post_date)
     },
