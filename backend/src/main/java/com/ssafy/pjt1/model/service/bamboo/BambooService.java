@@ -9,6 +9,8 @@ public interface BambooService {
 
 	public void createBamboo(BambooDto bambooDto);
 
-	public List<Map<String, Object>> getAllList();
+	public List<BambooDto> getAllList();
+
+	public List<BambooDto> searchPost(String keyword);
 
 }

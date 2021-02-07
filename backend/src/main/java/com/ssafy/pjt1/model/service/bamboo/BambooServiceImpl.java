@@ -22,8 +22,13 @@ public class BambooServiceImpl implements BambooService {
     }
 
     @Override
-    public List<Map<String, Object>> getAllList() {
+    public List<BambooDto> getAllList() {
         return sqlSession.getMapper(BambooMapper.class).getAllList();
+    }
+
+    @Override
+    public List<BambooDto> searchPost(String keyword) {
+        return sqlSession.getMapper(BambooMapper.class).searchPost(keyword);
     }
     
 }

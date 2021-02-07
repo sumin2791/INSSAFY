@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
@@ -82,7 +83,7 @@ public class BambooController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("bamboo/getAllList 호출성공");
         try {
-            List<Map<String, Object>> bambooList = bambooService.getAllList();
+            List<BambooDto> bambooList = bambooService.getAllList();
             resultMap.put("bambooList", bambooList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
@@ -90,6 +91,38 @@ public class BambooController {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 대나무숲 포스트 검색 (최신순)
+     * 
+     * developer: 윤수민
+     * 
+     * @param : keyword
+     * 
+     * @return : bambooList, message
+     */
+    @GetMapping("/searchPost")
+    public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "keyword") String keyword) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("/bamboo/searchPost 호출 성공");
+        try {
+            List<BambooDto> bambooList = bambooService.searchPost(keyword);
+            resultMap.put("bambooList", bambooList);
+            if(!bambooList.isEmpty()){
+                resultMap.put("message", SUCCESS);
+            }else{
+                resultMap.put("message", "NULL");
+            }
+                        
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("검색 호출 실패", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
