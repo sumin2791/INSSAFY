@@ -118,7 +118,7 @@
 		from comment as c left outer join user as u
 		on c.user_id = u.user_id
 		where c.post_id = #{post_id} and c.is_used = 1 and u.is_used = 1
-		order by c.comment_date desc;	
+		order by c.comment_id;	
 	</select>
 
 	<select id="getPostList" parameterType="map" resultType="map">
