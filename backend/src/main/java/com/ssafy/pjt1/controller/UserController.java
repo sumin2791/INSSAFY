@@ -11,12 +11,11 @@ import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.service.JwtService;
 import com.ssafy.pjt1.model.service.MailSendService;
 import com.ssafy.pjt1.model.service.UserService;
-import com.ssafy.pjt1.model.service.main.MainService;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,6 +50,9 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RedisService redisService;
 
     /*
      * 기능: 로그인
@@ -550,7 +552,7 @@ public class UserController {
      * 
      * @return : List<Post>
      */
-    @ApiOperation(value = "북마크(BookMark) 가져오기", notes = "")
+    @ApiOperation(value = "북마크(스크랩) 가져오기", notes = "")
     @GetMapping("user/getScraps/{user_id}")
     public ResponseEntity<Map<String, Object>> getScraps(@PathVariable String user_id) {
         Map<String, Object> resultMap = new HashMap<>();
