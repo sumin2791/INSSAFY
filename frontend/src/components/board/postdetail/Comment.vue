@@ -86,7 +86,7 @@ export default {
       }
       if(this.comment.user_id===localStorage.userId){
         e.path[1].querySelector('#btnComment').style.visibility="visible"
-        sleep(2000).then(() => {
+        sleep(3000).then(() => {
           if(typeof e === Object || !Object.keys(e.path[1].querySelector('#btnComment')).includes('style'))
             e.path[1].querySelector('#btnComment').style.visibility="hidden"
         })
@@ -146,7 +146,8 @@ export default {
 .row .comment{
   display:flex;
   /* margin-bottom: 1rem; */
-  padding:0.8rem;
+
+  padding:0 0.8rem;
   flex:1;
 }
 .comment-description{

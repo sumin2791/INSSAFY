@@ -18,7 +18,7 @@
           </div>
           <div class="post-date">{{date}}</div>
         </div>
-          <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
+          <b-dropdown v-if="flagWriter" id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>
               <v-btn icon x-small fab>
                 <v-icon dark>
@@ -26,8 +26,8 @@
                 </v-icon>
               </v-btn>
             </template>
-            <b-dropdown-item href="#">수정</b-dropdown-item>
-            <b-dropdown-item href="#">삭제</b-dropdown-item>
+            <b-dropdown-item ><PostModify :post="post"/></b-dropdown-item>
+            <b-dropdown-item >삭제</b-dropdown-item>
             <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
           </b-dropdown>
           
@@ -50,11 +50,16 @@
 </template>
 
 <script>
+import PostModify from '@/components/board/postdetail/PostModify'
+
 import * as postApi from '@/api/post'
 import timeForToday from '@/plugins/timeForToday'
 
 export default {
   name:"PostForDetail",
+  components:{
+    PostModify
+  },
   props:{
     post:Object,
     nickname:String,
@@ -81,15 +86,15 @@ export default {
       const commentList = this.$store.state.comment.commentList
       return commentList.length
     },
-    writeFlag(){
-      return this.$store.state.comment.writeFlag
-    },
     date(){
       return timeForToday(this.post.post_date)
+    },
+    flagWriter(){
+      return this.post.user_id===localStorage.userId
     }
   },
   watch:{
-    // writeFlag:'fetchData'
+
     // '$route':'fetchData'
   },
   created() {
@@ -110,7 +115,6 @@ export default {
   },
   methods:{
     
-
     // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})

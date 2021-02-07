@@ -9,14 +9,16 @@
         </header>
         <section>
           <Post :post="post" :nickname="nickname"/>
-          <hr>
-          <input 
-            type="text" 
-            placeholder="댓글을 입력해주세요" 
-            id="comment"
-            v-model="comment"
-            @keypress.enter="createComment"
-          >
+          <div class="comment-set">
+            <input 
+              type="text" 
+              placeholder="착한 한마디 남겨주세요 :)" 
+              id="comment"
+              v-model="comment"
+              @keypress.enter="createComment"
+            >
+            <button class="btn-submit" @click="createComment">한마디!</button>
+          </div>
           <CommentList :comments="commentList"/>
         </section>
       </b-row>
@@ -47,14 +49,18 @@ export default {
     CommentList,
   },
   computed:{
-    writeFlag(){
-      return this.$store.state.comment.writeFlag
+    flagComment(){
+      return this.$store.state.comment.flagComment
+    },
+    flagModify(){
+      return this.$store.state.post.flagModify
     },
   },
   watch:{
-    writeFlag:'fetchData'
+    flagComment:'fetchData',
+    flagModify : 'fetchData'
   },
-  created(){
+  mounted(){
     this.fetchData()
   },
   methods:{
@@ -88,25 +94,29 @@ export default {
       })
     },
     createComment(){
-      const params = {
-        user_id: String(localStorage.userId),
-        post_id: Number(this.$route.params.post_id),
-        comment_description : String(this.comment)
-      }
-
-      commentApi.comment_create(params)
-        .then(res=>{
-          console.log(res.data.message)
-          if(res.data.message==='No Permission'){
-            alert('구독 후에 이용가능합니다.')
-          }else{
-            this.$store.dispatch('comment/isWriteFlag')
-          }
-        })
-        .catch(err=>{
-          console.log(err)
-        })
+      if(this.comment.trim()!=""){
+        const params = {
+          user_id: String(localStorage.userId),
+          post_id: Number(this.$route.params.post_id),
+          comment_description : String(this.comment)
+        }
         this.comment=''
+        commentApi.comment_create(params)
+          .then(res=>{
+            console.log(res.data.message)
+            if(res.data.message==='No Permission'){
+              alert('구독 후에 이용가능합니다.')
+            }else{
+              this.$store.dispatch('comment/isWriteFlag')
+            }
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+      }else{
+        alert('빈칸이에요..')
+      }
+        
       // this.$store.dispatch('createComment',params)
     }
   }
@@ -132,8 +142,36 @@ section {
   margin:0 2%;
   width:96%;
 }
-#comment {
-  width:100%;
+.comment-set{
+  display: flex;
   margin-bottom: 1rem;
+}
+#comment {
+  width:90%;
+  border: 1px solid #949590 ;
+  border-radius: 1rem;
+  height: 2.5rem;
+  padding:0.1rem 1rem
+}
+.btn-submit {
+  padding:0.1rem 1rem;
+  margin: 0 auto;
+  font-size:0.8em;
+  border-radius: 1rem;
+  border: solid 1px #000;
+  transition: color 0.3s, background-color 0.3s ease;
+}
+.btn-submit:hover,
+.btn-submit:active {
+  background-color: #000 !important;
+  color: #fff;
+}
+@media screen and (max-width:576px){
+  #comment{
+    width:100%;
+  }
+  .btn-submit{
+    display: none;
+  }
 }
 </style>

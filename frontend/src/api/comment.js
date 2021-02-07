@@ -6,7 +6,7 @@ export function comment_create(params){
 }
 
 //댓글 수정
-// axios .post(url,{},{params:{query}})
+// axios .post(url,{body},{params:{query}})
 export function comment_modify(params){
   const login_id = params.login_id
   return http.put('/comment/modify',params.commentDto,{params:{login_id}})
