@@ -1,132 +1,163 @@
 <template>
-  <div class="container-box">
-    <!-- 왼쪽 메뉴 부분 -->
-    <div class="left-info">
-        <!-- Curation -->
-        <div class="title">
-          <h4>curation</h4>
-        </div>
-        <!-- 해당 큐레이션 description -->
-        <div class="description">
-          <h4>학습공유</h4>
-          <p>
-            오늘의 학습내용<br>
-            함께 나누고픈 내용 공유
-          </p>
-        </div>
-        <!-- 랭킹 -->
-        <div class="ranking">
-          <h4>RANK</h4>
-          <p>오늘의 1등: 멍청한 소라게</p>
-          <p>오늘의 2등: 왈왈한 소라게</p>
-          <p>오늘의 3등: 냥냥한 소라게</p>
-        </div>
-        <!-- 워드 클라우드 부분 -->
-        <div class="word-cloud">
-          워드 크라우드 부분
-        </div>
-    </div>
-    <div class="center-post">
-      <!-- 검색 돋보기 아이콘 -->
-      <div class="search-bar">
-      🔍검색창 들어갈 부분
-      </div>
-      <!-- 게시글 작성 -->
-      <div class="create-post">
-      <button>게시글 작성 버튼</button>
-      </div>
-      <!-- 각각의 게시글 들어갈 부분 -->
-      <Post 
-        class="post-list"
-      />
-      <Post 
-        class="post-list"
-      />
-      <Post 
-        class="post-list"
-      />
-    </div>
-  </div>
+  <v-app class="main-bg-color">
+    <v-main class="grey lighten-3">
+      <v-container
+        class="pt-8"
+      >
+        <!-- PC에서 보여줄 curation이름과 검색 -->
+        <v-row 
+          v-if="!ResponsiveSize.isMobile"
+          no-gutters 
+          dense
+          class="d-flex 
+            flex-row 
+            justify-space-between"
+        >
+          <!-- 페이지 이름 -->
+          <div 
+            class="text-overline  text-weight-black"
+            style="font-size: 20px !important;"
+          >Curation</div>
+          <!-- 검색관련 부분 -->
+          <div 
+            class="d-flex 
+              flex-row 
+              justify-flex-end"
+          >
+            <!-- 검색바 -->
+            <v-text-field
+              placeholder="검색"
+              solo
+              v-model="searchKeyword"
+            ></v-text-field>
+          </div>
+        </v-row>
+        <v-row dense>
+          
+          <!-- 왼쪽 학습공유 설명 부분 -->
+          <v-col 
+            class="col-12 col-sm-4" 
+          >
+            <v-sheet>
+              <!-- 학습공유 설명 부분 -->
+              <v-list color="transparent">
+                <!-- 학습공유 설명 부분 -->
+                <div
+                  class="d-flex
+                  flex-column
+                  justify-space-between"
+                  style="min-height: 25vh;"
+                >
+                  <!-- 내 정보 타이틀 -->
+                  <div class="text-h5">학습공유</div>
+                  <div class="text-start pa-1 ma-auto">
+                    오늘의 학습 내용<br>함께 나누고픈 내용 공유
+                  </div>
+                </div>
+                <!-- ranking 부분 -->
+                <v-divider class="my-2"></v-divider>
+                <v-list-item>RANK</v-list-item>
+                <v-col>
+                  <LearningRank />
+                </v-col>
+                <!-- ranking 1위의 한마디 -->
+                <v-list-item>RANK 1위의 한마디</v-list-item>
+                <v-col class="font-weight-black text-center">
+                  "{{ first.speech }}"
+                </v-col>
+                <v-col class="text-end text-caption">
+                  -{{ first.nickName }}-
+                </v-col>
+                <!-- 워드 클라우드 부분 -->
+                <v-divider class="my-2"></v-divider>
+                <v-list-item>워드 클라우드 부분</v-list-item>
+                <v-col class="d-flex justify-center">
+                  <v-avatar size="200">
+                    <v-img src="@/assets/images/wordcloud.jpg"></v-img>
+                  </v-avatar>
+                </v-col>
+              </v-list>
+            </v-sheet>
+          </v-col>
+          <!-- 오른쪽 학습공유 본문 부분 -->
+          <v-col
+            class="col-12 col-sm-8"  
+          >
+            <!-- 학습공유 게시글쓰기 -->
+            <LearningPostWrite class="mx-4 mb-2"/>
+            <!-- 학습공유 게시물 부분 -->
+            <LearningPost class="mx-4 mb-2"/>
+            <LearningPost class="mx-4 mb-2"/>
+            <LearningPost class="mx-4 mb-2"/> 
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import Post from "@/components/board/Post.vue"
+// rank 리스트
+import LearningRank from "@/components/curation/learningshare/LearningRank.vue"
+// 학습공유 게시물
+import LearningPost from "@/components/curation/learningshare/LearningPost.vue"
+// 학습공유 게시물 쓰기
+import LearningPostWrite from "@/components/curation/learningshare/LearningPostWrite.vue"
 
 export default {
-  name:'LearnShare',
+  name:'LearningShare',
   components: {
-    Post,
+    LearningRank,
+    LearningPost,
+    LearningPostWrite,
   },
+  // 뷰 인스턴스 제거될 때 resize 호출
+  beforeDestroy () {
+      if (typeof window === 'undefined') return
+
+      window.removeEventListener('resize', this.onResize, { passive: true })
+  },
+  // resize 실시해서 현재 화면 크기 확인
+  mounted () {
+    this.onResize()
+
+    window.addEventListener('resize', this.onResize, { passive: true })
+  },
+  data() {
+    return {
+      // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
+      ResponsiveSize: {
+        isMobile: false, 
+        viewSize: 0,
+      },
+      // 검색 키워드
+      searchKeyword: '',
+      // rank1위 한마디
+      first: {
+        nickName: '김싸피',
+        // rank 1위
+        speech: '저는 밥숟가락만 얹었을 뿐인데 아름다운 밤이네요!😎'
+      },
+      wordcloudImg: '@/assets/images/wordcloud.jpg'
+    }
+  },
+  methods: {
+    // 현재 활성화된 기기에 따라 flag 변경
+    onResize() {
+      this.ResponsiveSize.isMobile = window.innerWidth < 426;
+      this.ResponsiveSize.viewSize = window.innerWidth;
+    },
+  }
 }
 </script>
 
 <style scoped>
-.container-box {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin: auto;
-  border: 2px solid #000000;
-  height: 100vh;
-  margin: 1% 7%;
+.main-bg-color {
+  background-color: #ebebe9;
 }
-/* 왼쪽 메뉴바 부분 */
-.container-box .left-info {
-  display: flex;
-  flex-direction: column;
-  /* justify-content: space-between; */
-  background-color: bisque;
-  flex-basis: 32%;
-}
-/* 학습공유 보드 설명 */
-.left-info .description {
-  border: 2px dotted;
-  padding-top: 2%;
-  padding-left: 4%;
+.description {
+  margin: 2%;
+  padding: 10%;
   flex-basis: 20%;
-}
-/* 학습공유 랭킹시스템 */
-.left-info .ranking {
-  border: 2px dotted;
-  padding-top: 2%;
-  padding-left: 5%;
-  margin-top: 5%;
-}
-/* 워드 클라우드 부분 */
-.left-info .word-cloud {
-  display: flex;
-  justify-content: center;
-  flex-basis: 32%;
-  border: 2px inset #000000;
-  margin-top: 5%;
-}
-
-/* 가운데 게시글 부분 */
-.container-box .center-post {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: pink;
-  flex-basis: 63%;
-  border: 4px solid;
-}
-
-/* 검색창 */
-.center-post .search-bar {
-  align-self: flex-end;
-}
-
-/* 각각의 게시글들 */
-.center-post .post-list {
-  border: 2px dotted;
-  margin: 2% 2%;
-}
-
-/* 모바일 웹화면 */
-@media (max-width: 425px) {
-  .container-box {
-    flex-direction: column;
-  }
 }
 </style>

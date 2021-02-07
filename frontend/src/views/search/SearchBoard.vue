@@ -49,24 +49,6 @@
         <v-col class="col-6 col-sm-3" v-for="(board,idx) in boardList" :key="idx">
           <Board :board="board"/>
         </v-col>
-        <!-- <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col>
-        <v-col class="col-6 col-sm-3">
-          <Board />
-        </v-col> -->
       </v-row>
     </v-container>
   </v-main>
