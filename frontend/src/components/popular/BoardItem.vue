@@ -185,7 +185,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   position: absolute;
-  background-color: #fff;
+  background-color: var(--basic-color-bg2);
   width: 100%;
   height: 100%;
 }
@@ -195,9 +195,9 @@ export default {
   position: absolute;
   top: 0;
   z-index: 2;
-  background: #ffffffff; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #ffffff 20%, #ffffff00); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, #ffffff 20%, #ffffff00); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: var(--basic-color-bg2); /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, #f9f9f9 20%, #f9f9f900); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, #f9f9f9 20%, #f9f9f900); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 #p-bottom {
   width: 100%;
@@ -205,9 +205,9 @@ export default {
   position: absolute;
   top: calc(100% - 20%);
   z-index: 1;
-  background: #ffffffff; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to top, #ffffff 20%, #ffffff00); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #ffffff 20%, #ffffff00); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: var(--basic-color-bg2); /* fallback for old browsers */
+  background: -webkit-linear-gradient(to top, #f9f9f9 20%, #f9f9f900); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to top, #f9f9f9 20%, #f9f9f900); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 #follow-togle {
   position: absolute;

@@ -2,62 +2,57 @@
   <div class="container-box">
     <!-- 왼쪽 메뉴 부분 -->
     <div class="left-info">
-        <!-- Curation -->
-        <div class="title">
-          <h4>curation</h4>
-        </div>
-        <!-- 해당 큐레이션 description -->
-        <div class="description">
-          <h4>학습공유</h4>
-          <p>
-            오늘의 학습내용<br>
-            함께 나누고픈 내용 공유
-          </p>
-        </div>
-        <!-- 랭킹 -->
-        <div class="ranking">
-          <h4>RANK</h4>
-          <p>오늘의 1등: 멍청한 소라게</p>
-          <p>오늘의 2등: 왈왈한 소라게</p>
-          <p>오늘의 3등: 냥냥한 소라게</p>
-        </div>
-        <!-- 워드 클라우드 부분 -->
-        <div class="word-cloud">
-          워드 크라우드 부분
-        </div>
+      <!-- Curation -->
+      <div class="title">
+        <h4>curation</h4>
+      </div>
+      <!-- 해당 큐레이션 description -->
+      <div class="description">
+        <h4>학습공유</h4>
+        <p>
+          오늘의 학습내용<br />
+          함께 나누고픈 내용 공유
+        </p>
+      </div>
+      <!-- 랭킹 -->
+      <div class="ranking">
+        <h4>RANK</h4>
+        <p>오늘의 1등: 멍청한 소라게</p>
+        <p>오늘의 2등: 왈왈한 소라게</p>
+        <p>오늘의 3등: 냥냥한 소라게</p>
+      </div>
+      <!-- 워드 클라우드 부분 -->
+      <div class="word-cloud">
+        워드 크라우드 부분
+      </div>
     </div>
     <div class="center-post">
       <!-- 검색 돋보기 아이콘 -->
       <div class="search-bar">
-      🔍검색창 들어갈 부분
+        🔍검색창 들어갈 부분
       </div>
       <!-- 게시글 작성 -->
       <div class="create-post">
-      <button>게시글 작성 버튼</button>
+        <button>게시글 작성 버튼</button>
       </div>
       <!-- 각각의 게시글 들어갈 부분 -->
-      <Post 
-        class="post-list"
-      />
-      <Post 
-        class="post-list"
-      />
-      <Post 
-        class="post-list"
-      />
+      <Post class="post-list" />
+      <Post class="post-list" />
+      <Post class="post-list" />
     </div>
   </div>
 </template>
 
 <script>
-import Post from "@/components/board/Post.vue"
+import Post from '@/components/board/Post.vue';
 
 export default {
-  name:'LearnShare',
+  name: 'LearnShare',
   components: {
     Post,
   },
-}
+  methods: {},
+};
 </script>
 
 <style scoped>

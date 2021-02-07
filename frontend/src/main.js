@@ -4,6 +4,10 @@ import VueRouter from 'vue-router';
 import routes from './routes';
 import store from './vuex/store';
 
+// Polyfills
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 // bootstrap
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -23,6 +27,8 @@ Vue.config.productionTip = false;
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
+
+Vue.use(require('vue-moment'));
 
 //toast
 //https://www.npmjs.com/package/vue-toast-notification
