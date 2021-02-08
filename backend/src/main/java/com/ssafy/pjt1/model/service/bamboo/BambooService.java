@@ -19,4 +19,6 @@ public interface BambooService {
 
 	public int bambooDelete(int bamboo_id);
 
+	public int getTotalCnt();
+
 }

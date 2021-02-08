@@ -63,4 +63,8 @@ public interface BoardService {
 	public int isManager(Map<String, Object> map);
 
 	public Map<String, String> getBoardInfo(String board_id);
+
+	public int getTotalCnt();
+
+	public int getSearchCnt(String keyword);
 }

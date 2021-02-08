@@ -77,7 +77,7 @@ public class BambooController {
      * 
      * @param : page, size
      * 
-     * @return : message,
+     * @return : message, isLastPage(false: 마지막 페이지 아님, true: 마지막 페이지, No data: 출력할 데이터 없음)
      * bambooList(bamboo_title, bamboo_description, bamboo_image,
      * bamboo_iframe, bamboo_header, writer_nickname)
      */
@@ -88,6 +88,14 @@ public class BambooController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("bamboo/getAllList 호출성공");
         try {
+            int totalCnt = bambooService.getTotalCnt();
+            if(totalCnt>(page+1)*size){
+                resultMap.put("isLastPage","false");
+            }else if(totalCnt>page*size){
+                resultMap.put("isLastPage","true");
+            }else{
+                resultMap.put("isLastPage","No data");
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("start",page*size);
             map.put("size",size);

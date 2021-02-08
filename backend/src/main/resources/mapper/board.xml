@@ -87,7 +87,7 @@
 		select *
 		from board
 		where ( board_name like concat('%',#{keyword} ,'%') or board_description like concat('%',#{keyword} ,'%')
-		or board_hash like concat('%',#{keyword} ,'%') ) and is_used = 1
+		or board_hash like concat('%',#{keyword} ,'%') ) and is_used = 1 and board_state = 0
 		order by board_date desc
 		limit #{start}, #{size};
 	</select>
@@ -98,7 +98,8 @@
 		from board as b join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
 		on b.board_id = c.board_id
 		where ( b.board_name like concat('%',#{keyword} ,'%') or b.board_description like concat('%',#{keyword} ,'%')
-		or b.board_hash like concat('%',#{keyword} ,'%') ) and b.is_used = 1
+		or b.board_hash like concat('%',#{keyword} ,'%') ) 
+		and b.is_used = 1 and b.board_state = 0
 		order by c.board_count desc, b.board_date desc
 		limit #{start}, #{size};
 	</select>
@@ -187,4 +188,19 @@
 		from board
 		where board_id = #{board_id} and is_used=1;
 	</select>
+
+	<select id="getTotalCnt" resultType="int">
+		select count(board_id)
+		from board
+		where is_used = 1 and board_state = 0;
+	</select>
+
+	<select id="getSearchCnt" parameterType="string" resultType="int">
+		select count(board_id)
+		from board
+		where ( board_name like concat('%',#{keyword} ,'%') or board_description like concat('%',#{keyword} ,'%')
+		or board_hash like concat('%',#{keyword} ,'%') )
+		and is_used = 1 and board_state = 0;
+	</select>
+
 </mapper>

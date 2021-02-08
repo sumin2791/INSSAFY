@@ -163,4 +163,14 @@ public class BoardServiceImpl implements BoardService {
 		return sqlSession.getMapper(BoardMapper.class).getBoardInfo(board_id);
 	}
 
+	@Override
+	public int getTotalCnt() {
+		return sqlSession.getMapper(BoardMapper.class).getTotalCnt();
+	}
+
+	@Override
+	public int getSearchCnt(String keyword) {
+		return sqlSession.getMapper(BoardMapper.class).getSearchCnt(keyword);
+	}
+
 }
