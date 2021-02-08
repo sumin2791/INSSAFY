@@ -59,7 +59,11 @@ export default {
   },
   computed:{
     hashtags() {
-      return this.board.board_hash.split('|')
+      if(this.board.board_hash!=null){
+        return this.board.board_hash.split('|')
+      }else{
+        return ' '
+      }
     }
   },
   methods:{
