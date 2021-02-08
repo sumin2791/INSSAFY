@@ -28,9 +28,9 @@
             </template>
             <b-dropdown-item ><PostModify :post="post"/></b-dropdown-item>
             <b-dropdown-item >삭제</b-dropdown-item>
+            <b-dropdown-item id="declare">신고</b-dropdown-item>
             <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
           </b-dropdown>
-          
       </div>
     </div>
     <div class="post-body">
@@ -219,5 +219,8 @@ img{
 }
 .dropdown-menu {
    min-width: 3.1rem !important;
+}
+#declare{
+  color:var(--basic-color-new)
 }
 </style>

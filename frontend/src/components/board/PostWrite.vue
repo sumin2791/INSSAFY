@@ -180,7 +180,6 @@ export default {
           console.log(`post 생성 실패 ${err}`)
         })
 
-      console.log(this.images)
       this.$nextTick(() => {
         this.$bvModal.hide('modal-post')
       })

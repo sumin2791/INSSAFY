@@ -13,6 +13,7 @@ import board from './board';
 import post from './post';
 import comment from './comment';
 import main from './main';
+import bamboo from './bamboo';
 
 Vue.use(Vuex);
 
@@ -61,5 +62,6 @@ export default new Vuex.Store({
     post,
     comment,
     main,
+    bamboo,
   },
 });

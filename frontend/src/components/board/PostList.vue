@@ -40,7 +40,7 @@ export default {
   methods: {
     create(){
       const BOARD_ID = Number(this.$route.params.board_id)
-      postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId})
+      postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId,page:0,size:5})
         .then(res=>{
           console.log(res)
           this.posts = res.data.postList
