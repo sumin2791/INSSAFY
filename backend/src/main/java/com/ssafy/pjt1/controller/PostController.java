@@ -482,7 +482,8 @@ public class PostController {
      */
     @GetMapping("/board/searchPost")
     public ResponseEntity<Map<String, Object>> searchBoardPost(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id) {
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/board/searchPost 호출 성공");
@@ -491,6 +492,8 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("board_id", board_id);
+            map.put("start", page*size);
+            map.put("size", size);
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.boardPostNew(map);

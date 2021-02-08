@@ -162,24 +162,26 @@
 		on p.post_id = c.post_id
 		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') ) 
 		and p.is_used = 1 and p.post_state = 0
-		order by c.like_count desc;
+		order by c.like_count desc, p.post_date desc;
 	</select>
 
-	<select id="boardPostNew" parameterType="string" resultType="PostDto">
+	<select id="boardPostNew" parameterType="map" resultType="PostDto">
 		select *
 		from post
 		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') )
 		and board_id = #{board_id} and is_used = 1
-		order by post_date desc;
+		order by post_date desc
+		limit #{start}, #{size};
 	</select>
 
-	<select id="boardPostPopular" parameterType="string" resultType="PostDto">
+	<select id="boardPostPopular" parameterType="map" resultType="PostDto">
 		select *
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 		on p.post_id = c.post_id
 		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') )
 		and p.board_id = #{board_id} and p.is_used = 1
-		order by c.like_count desc;
+		order by c.like_count desc, p.post_date desc
+		limit #{start}, #{size};
 	</select>
 
 	<update id="deleteScrapAll" parameterType="int"> 
@@ -235,7 +237,7 @@
 		select *
 		from post
 		where (post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') )
-		and board_id = #{board_id} and is_used = 1 and post_state != 0
+		and board_id = #{board_id} and is_used = 1 and post_state != -1
 		order by post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -245,8 +247,8 @@
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 		on p.post_id = c.post_id
 		where (p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%'))
-		and p.board_id = #{board_id} and p.is_used = 1 and p.post_state != 0
-		order by c.like_count desc
+		and p.board_id = #{board_id} and p.is_used = 1 and p.post_state != -1
+		order by c.like_count desc, p.post_date desc
 		limit #{start}, #{size};
 	</select>
 
