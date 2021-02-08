@@ -3,7 +3,7 @@
 
 <mapper namespace="com.ssafy.pjt1.model.mapper.StudyMapper">
 
-	<select id="getPromoList" parameterType="int" resultType="map">
+	<select id="getPromoList" parameterType="map" resultType="map">
 		select p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
 		p.post_header, p.post_state, l.like_count, c.comment_count
 		from (select post_id, count(post_id) as like_count
@@ -20,7 +20,8 @@
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
 		where p.board_id = 37 and p.is_used = 1 and p.post_state = 3
-		order by p.post_date desc;
+		order by p.post_date desc
+		limit #{start}, #{size};
 	</select>
 
 	<select id="getStudyId" parameterType="string" resultType="int">
@@ -42,7 +43,7 @@
 		order by b.board_date desc;
 	</select>
 
-	<select id="getAllList" parameterType="int" resultType="map">
+	<select id="getAllList" parameterType="map" resultType="map">
 		select b.board_name, b.board_description, c.board_count
 		from board as b
 		left outer join
@@ -52,7 +53,8 @@
 		group by board_id) as c
 		on b.board_id = c.board_id
 		where b.board_state = 3 and b.is_used = 1
-		order by b.board_date desc;
+		order by b.board_date desc
+		limit #{start}, #{size};
 	</select>
 
 </mapper>

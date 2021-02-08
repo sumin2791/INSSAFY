@@ -369,7 +369,7 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : board_id, user_id
+     * @param : board_id, user_id, page, size
      * 
      * @return : message,
      * postList(post_id,user_id,post_date,post_title,post_description,
@@ -380,8 +380,7 @@ public class PostController {
     @GetMapping("/getPostList")
     public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id,
             @RequestParam(value = "user_id") String user_id,
-            @RequestParam(value = "page") int page,
-            @RequestParam(value = "size") int size) {
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
@@ -415,7 +414,8 @@ public class PostController {
      */
     @GetMapping("/getSalesList")
     public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id") int board_id,
-            @RequestParam(value = "login_id") String login_id) {
+            @RequestParam(value = "login_id") String login_id,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/getSalesList 호출성공");
@@ -423,6 +423,8 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("board_id", board_id);
             map.put("login_id", login_id);
+            map.put("start", page*size);
+            map.put("size", size);
             List<Map<String, Object>> postList = postService.getSalesList(map);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
@@ -439,24 +441,29 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword
+     * @param : sort, keyword, page, size
      * 
      * @return : postList, message
      */
     @GetMapping("/searchPost")
     public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword) {
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/searchBoard 호출 성공");
         try {
             List<PostDto> postList;
+            Map<String, Object> map = new HashMap<>();
+            map.put("keyword", keyword);
+            map.put("start", page*size);
+            map.put("size", size);
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
-                postList = postService.searchPostNew(keyword);
+                postList = postService.searchPostNew(map);
             } else {
                 logger.info("좋아요순 포스트 검색");
-                postList = postService.searchPostPopular(keyword);
+                postList = postService.searchPostPopular(map);
             }
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
@@ -474,13 +481,14 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword, board_id
+     * @param : sort, keyword, board_id, page,size
      * 
      * @return : postList, message
      */
     @GetMapping("/board/searchPost")
     public ResponseEntity<Map<String, Object>> searchBoardPost(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id) {
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/board/searchPost 호출 성공");
@@ -489,6 +497,8 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("board_id", board_id);
+            map.put("start", page*size);
+            map.put("size", size);
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.boardPostNew(map);
@@ -512,13 +522,14 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword, board_id
+     * @param : sort, keyword, board_id, page, size
      * 
      * @return : postList, message
      */
     @GetMapping("/board/searchMarketPost")
     public ResponseEntity<Map<String, Object>> searchMarketPost(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id) {
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/board/searchMarketPost 호출 성공");
@@ -527,6 +538,8 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("board_id", board_id);
+            map.put("start", page*size);
+            map.put("size", size);
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.marketPostNew(map);

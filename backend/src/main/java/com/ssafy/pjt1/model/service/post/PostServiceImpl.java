@@ -123,13 +123,13 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> searchPostNew(String keyword) {
-		return sqlSession.getMapper(PostMapper.class).searchPostNew(keyword);
+	public List<PostDto> searchPostNew(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostNew(map);
 	}
 
 	@Override
-	public List<PostDto> searchPostPopular(String keyword) {
-		return sqlSession.getMapper(PostMapper.class).searchPostPopular(keyword);
+	public List<PostDto> searchPostPopular(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostPopular(map);
 	}
 
 	@Override

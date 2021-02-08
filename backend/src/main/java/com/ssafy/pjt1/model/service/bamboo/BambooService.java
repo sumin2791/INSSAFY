@@ -11,7 +11,7 @@ public interface BambooService {
 
 	public List<BambooDto> getAllList(Map<String, Object> map);
 
-	public List<BambooDto> searchPost(String keyword);
+	public List<BambooDto> searchPost(Map<String, Object> map);
 
 	public int isWriter(Map<String, Object> map);
 

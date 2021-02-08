@@ -23,7 +23,8 @@
 		from bamboo
 		where ( bamboo_title like concat('%',#{keyword} ,'%') or bamboo_description like concat('%',#{keyword} ,'%') ) 
 		and is_used = 1
-		order by bamboo_date desc;
+		order by bamboo_date desc
+		limit #{start}, #{size};
 	</select>
 
 	<select id="isWriter" parameterType="map" resultType="int">

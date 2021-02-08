@@ -253,24 +253,28 @@ public class BoardController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort
+     * @param : sort, page, size
      * 
      * @return : boardList, message
      */
     @GetMapping("/getBoards")
-    public ResponseEntity<Map<String, Object>> getBoards(@RequestParam(value = "sort") String sort) {
+    public ResponseEntity<Map<String, Object>> getBoards(@RequestParam(value = "sort") String sort,
+    @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/getBoards 호출 성공");
 
         try {
-            List<BoardDto> boardList;
+            Map<String, Object> map = new HashMap<>();
+            map.put("start", page*size);
+            map.put("size", size);
+            List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
                 logger.info("최신순 전체 보드 검색");
-                boardList = boardService.getBoardsNew();
+                boardList = boardService.getBoardsNew(map);
             } else {
                 logger.info("구독순 전체 보드 검색");
-                boardList = boardService.getBoardsPopular();
+                boardList = boardService.getBoardsPopular(map);
             }
             resultMap.put("boardList", boardList);
             resultMap.put("message", SUCCESS);
@@ -287,24 +291,29 @@ public class BoardController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword
+     * @param : sort, keyword, page, size
      * 
      * @return : boardList, message
      */
     @GetMapping("/searchBoard")
     public ResponseEntity<Map<String, Object>> searchBoard(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword) {
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/searchBoard 호출 성공");
         try {
-            List<BoardDto> boardList;
+            Map<String, Object> map = new HashMap<>();
+            map.put("keyword", keyword);
+            map.put("start", page*size);
+            map.put("size", size);
+            List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
                 logger.info("최신순 보드 검색");
-                boardList = boardService.searchBoardNew(keyword);
+                boardList = boardService.searchBoardNew(map);
             } else {
                 logger.info("구독순 보드 검색");
-                boardList = boardService.searchBoardPopular(keyword);
+                boardList = boardService.searchBoardPopular(map);
             }
             resultMap.put("boardList", boardList);
             resultMap.put("message", SUCCESS);

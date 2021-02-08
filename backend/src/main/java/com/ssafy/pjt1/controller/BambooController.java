@@ -75,7 +75,7 @@ public class BambooController {
      * 
      * developer: 윤수민
      * 
-     * @param : 
+     * @param : page, size
      * 
      * @return : message,
      * bambooList(bamboo_title, bamboo_description, bamboo_image,
@@ -107,17 +107,22 @@ public class BambooController {
      * 
      * developer: 윤수민
      * 
-     * @param : keyword
+     * @param : keyword, page, size
      * 
      * @return : bambooList, message
      */
     @GetMapping("/searchPost")
-    public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "keyword") String keyword) {
+    public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "keyword") String keyword,
+    @RequestParam(value = "page") int page,@RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/bamboo/searchPost 호출 성공");
         try {
-            List<BambooDto> bambooList = bambooService.searchPost(keyword);
+            Map<String, Object> map = new HashMap<>();
+            map.put("start",page*size);
+            map.put("size",size);
+            map.put("keyword",keyword);
+            List<BambooDto> bambooList = bambooService.searchPost(map);
             resultMap.put("bambooList", bambooList);
             if(!bambooList.isEmpty()){
                 resultMap.put("message", SUCCESS);
