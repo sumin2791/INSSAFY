@@ -45,5 +45,10 @@ public class BambooServiceImpl implements BambooService {
     public int bambooDelete(int bamboo_id) {
         return sqlSession.getMapper(BambooMapper.class).bambooDelete(bamboo_id);
     }
+
+    @Override
+    public int getTotalCnt() {
+        return sqlSession.getMapper(BambooMapper.class).getTotalCnt();
+    }
     
 }
