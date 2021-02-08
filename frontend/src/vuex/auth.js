@@ -17,6 +17,9 @@ const INIT_USER = () => {
     userId: localStorage.getItem('userId'),
     email: localStorage.getItem('email'),
     nickname: localStorage.getItem('nickname'),
+    generation: localStorage.getItem('generation'),
+    image: localStorage.getItem('image'),
+    location: localStorage.getItem('location'),
   };
 };
 const INIT_SUB_BOARD = () => {
@@ -65,6 +68,9 @@ export default {
       localStorage.userId = state.user.userId;
       localStorage.email = state.user.email;
       localStorage.nickname = state.user.nickname;
+      localStorage.generation = state.user.generation;
+      localStorage.image = state.user.image;
+      localStorage.location = state.user.location;
     },
     //구독목록 가져오기
     SET_SUBSCRIBE_BOARD(state, responseSubBoard) {
@@ -98,6 +104,9 @@ export default {
             userId: response.data.user.user_id,
             email: response.data.user.user_email,
             nickname: response.data.user.user_nickname,
+            generation: response.data.user.user_generation,
+            image: response.data.user.user_image,
+            location: response.data.user.user_location,
           });
 
           //이메일 인증을 완료하지 않은 유저의 경우 email 활용하여 링크생성
@@ -128,6 +137,15 @@ export default {
         console.log(e);
       }
     },
+
+    async getMyInfo({ commit }) {
+      try {
+        const responseMyinfo = await userApi.getMyInfo(this.state.auth.user.userId);
+        console.log(responseMyinfo);
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
   getters: {
     //구독목록 리스트 가져오기
@@ -137,6 +155,31 @@ export default {
     //구독목록 리스트 중 즐겨찾기한 리스트 가져오기
     getSubBoardFavoriteList: (state) => {
       return state.subBoard.filter((board) => board.favorite_flag == 1);
+    },
+
+    //이미지 null이면 기본 링크 반환
+    getUserImage(state) {
+      const userImage = state.user.image;
+      if (userImage == null || userImage == 'null') {
+        return null;
+      }
+      return userImage;
+    },
+    //기수별 대표 색상 반환
+    getGenerationColor(state) {
+      const userGeneration = state.user.generation;
+      switch (userGeneration) {
+        case '1':
+          return 'solid 4px #1d80dd';
+        case '2':
+          return 'solid 4px #fcff55';
+        case '3':
+          return 'solid 4px #f1a248';
+        case '4':
+          return 'solid 4px #61d1be';
+        default:
+          return 'solid 4px #fff';
+      }
     },
   },
 };

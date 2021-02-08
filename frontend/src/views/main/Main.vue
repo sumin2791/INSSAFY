@@ -78,7 +78,7 @@ import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 import 'swiper/css/swiper.css';
 import BoardItem from '@/components/popular/BoardItem.vue';
 import PostItem from '@/components/popular/PostItem.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 //toast nority
 
@@ -238,19 +238,22 @@ export default {
   created() {
     if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
       this.$store.dispatch('auth/getSubBoard');
-      this.$store.dispatch('main/getFavorites', { userId: this.$store.state.auth.user.userId });
+      this.actFavorites(this.$store.state.auth.user.userId);
     }
+    this.actFollowRank();
   },
   computed: {
-    ...mapGetters('main', ['getFavorites']),
+    ...mapGetters('main', ['getFavorites', 'getFollowRank']),
     ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
   },
   mounted() {
-    console.log(this.getFavorites);
+    // console.log(this.getFavorites);
     // console.log(this.getSubBoardFavoriteList);
     // console.log(this.getSubBoardList);
+    console.log(this.getFollowRank);
   },
   methods: {
+    ...mapActions('main', ['actFavorites', 'actFollowRank']),
     clickFavorite: function(index) {
       alert(index + ' slide clicked!');
       this.$router.push({ name: 'Board' });

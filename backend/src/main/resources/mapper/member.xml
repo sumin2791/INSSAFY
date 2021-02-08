@@ -31,7 +31,7 @@
 	<update id="updateAuthStatus" parameterType="map">
         update user set
         user_auth = 1
-        where user_email = #{email} is_used = 1;
+        where user_email = #{email} and is_used = 1;
     </update>
 
 	<update id="updatePw" parameterType="map">
