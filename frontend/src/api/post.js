@@ -9,6 +9,11 @@ export function create(params){
   return http.post('/post/create',params)
 }
 
+export function modify(params){
+  const body = params.postItem
+  const login_id = params.login_id
+  return http.put('/post/modify',body,{params:{login_id}})
+}
 
 export function getPost(params){
   return http.get('/post/getPostById', {

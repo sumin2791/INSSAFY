@@ -15,7 +15,7 @@
             <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
           </b-dropdown>
         </div>
-        <div class="post-date">{{post.post_date}}</div>
+        <div class="post-date">{{date}}</div>
       </div>
     </div>
     <div class="post-body" @click="goToDetail">
@@ -36,6 +36,7 @@
 
 <script>
 import * as postApi from '@/api/post'
+import timeForToday from '@/plugins/timeForToday'
 
 export default {
   name:"Post",
@@ -61,6 +62,11 @@ export default {
     },
     isLike() {
       return Object.keys(this.post).includes('like_count')
+    },
+    date(){
+      let date = this.post.post_date.split('.')[0]
+      date = date.split('T').join(' ')
+      return timeForToday(date)
     }
   },
   mounted() {
@@ -97,7 +103,6 @@ export default {
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
-          console.log(res.data.message)
           if(res.data.message==='No Subscription'){
             alert('구독 후에 이용 가능합니다')
           }else{

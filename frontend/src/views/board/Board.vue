@@ -3,7 +3,7 @@
     <b-container class="board">
       <b-row>
         <b-col sm="3" class="board-aside">
-          <BoardDescription/>
+          <BoardDescription :in-board="inBoard" :is-manager="isManager"/>
           <button
             class="btn-subscribe b-title"
             @click="onSubscribe"
@@ -24,7 +24,7 @@
           </div>
           <div class="post-write">
             <!-- <b-button variant="light">글쓰기</b-button> -->
-            <PostWrite :inBoard="inBoard"/>
+            <PostWrite :in-board="inBoard"/>
           </div>
           <PostList/>
         </b-col>
@@ -51,18 +51,27 @@ export default {
   },
   data() {
     return {
-      inBoard:''
+      inBoard:'',
+      isManager:false,
     }
   },
   created() {
     // this.$store.dispatch('board/IsInBoard',Number(this.$route.params.board_id))
+    // 구독했는 지 파악하기 : inBoard
+    const BOARD_ID = Number(this.$route.params.board_id)
     const boards = JSON.parse(localStorage.subBoard)
     const boardIds = boards.map(e => {
       return e.board_id
     });
+    this.inBoard = boardIds.includes(BOARD_ID)
 
-    this.inBoard = boardIds.includes(Number(this.$route.params.board_id))
-    // this.inBoard = this.$store.state.board.inBoard
+    // 구독했다면 관리자인가? 아님 그냥 유저인가? : isManager
+    if(this.inBoard){
+      const idx = boards.findIndex(board => board.board_id===BOARD_ID)
+      if(boards[idx].user_role==1){
+        this.isManager=true
+      }
+    }
   },
   computed: {
     // inBoard() {
@@ -83,7 +92,6 @@ export default {
       }
       boardApi.subscribe(params)
         .then(res => {
-          console.log('들어왔나?')
           console.log(res)
           if (res.data.message==='fail'){
             return

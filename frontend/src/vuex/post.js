@@ -5,6 +5,7 @@ export default {
   state: {
     flagLike:false,
     flagScrap:false,
+    flagModify:false,
 
     countLike:0,
     commnetList:[]
@@ -34,6 +35,9 @@ export default {
     },
     POST_SCRAP(state){
       state.flagScrap = !state.flagScrap
+    },
+    IS_MODIFY_FLAG(state){
+      state.flagModify = !state.flagModify
     }
   },
 
@@ -72,6 +76,9 @@ export default {
     postScrap({commit}){
       commit('POST_SCRAP')
     },
+    isModifyFlag({commit}){
+      commit('IS_MODIFY_FLAG')
+    }
 
     
     
