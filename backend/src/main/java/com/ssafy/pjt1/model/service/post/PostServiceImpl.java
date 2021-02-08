@@ -182,4 +182,14 @@ public class PostServiceImpl implements PostService {
 		return sqlSession.getMapper(PostMapper.class).isWriter(map);
 	}
 
+	@Override
+	public int getSalesCnt() {
+		return sqlSession.getMapper(PostMapper.class).getSalesCnt();
+	}
+
+	@Override
+	public int searchSalesCnt(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchSalesCnt(map);
+	}
+
 }

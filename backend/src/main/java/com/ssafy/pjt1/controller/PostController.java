@@ -408,7 +408,7 @@ public class PostController {
      * 
      * @param : board_id, login_id
      * 
-     * @return : message,
+     * @return : message, isLastPage
      * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
@@ -420,6 +420,14 @@ public class PostController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/getSalesList 호출성공");
         try {
+            int totalCnt = postService.getSalesCnt();
+            if(totalCnt>(page+1)*size){
+                resultMap.put("isLastPage","false");
+            }else if(totalCnt>page*size){
+                resultMap.put("isLastPage","true");
+            }else{
+                resultMap.put("isLastPage","No data");
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("board_id", board_id);
             map.put("login_id", login_id);
@@ -540,6 +548,14 @@ public class PostController {
             map.put("board_id", board_id);
             map.put("start", page*size);
             map.put("size", size);
+            int totalCnt = postService.searchSalesCnt(map);
+            if(totalCnt>(page+1)*size){
+                resultMap.put("isLastPage","false");
+            }else if(totalCnt>page*size){
+                resultMap.put("isLastPage","true");
+            }else{
+                resultMap.put("isLastPage","No data");
+            }
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.marketPostNew(map);

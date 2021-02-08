@@ -41,7 +41,7 @@ public class StudyController {
      * 
      * @param : page, size
      * 
-     * @return : message,
+     * @return : message, 
      * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
@@ -104,7 +104,7 @@ public class StudyController {
      * 
      * @param : page, size
      * 
-     * @return : message, studyList(board_name,board_description,board_count)
+     * @return : message, isLastPage, studyList(board_name,board_description,board_count)
      * 
      */
     @GetMapping("/getAllList")
@@ -114,6 +114,14 @@ public class StudyController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("study/getAllList 호출성공");
         try {
+            int totalCnt = studyService.getTotalCnt();
+            if(totalCnt>(page+1)*size){
+                resultMap.put("isLastPage","false");
+            }else if(totalCnt>page*size){
+                resultMap.put("isLastPage","true");
+            }else{
+                resultMap.put("isLastPage","No data");
+            }
             Map<String, Object> map = new HashMap<>();
             map.put("start", page*size);
             map.put("size", size);

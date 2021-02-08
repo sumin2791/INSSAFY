@@ -72,4 +72,8 @@ public interface PostService {
 
 	public int isWriter(Map<String, Object> map);
 
+	public int getSalesCnt();
+
+	public int searchSalesCnt(Map<String, Object> map);
+
 }

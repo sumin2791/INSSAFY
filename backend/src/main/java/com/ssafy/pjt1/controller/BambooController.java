@@ -91,7 +91,7 @@ public class BambooController {
             int totalCnt = bambooService.getTotalCnt();
             if(totalCnt>(page+1)*size){
                 resultMap.put("isLastPage","false");
-            }else if(totalCnt>=page*size){
+            }else if(totalCnt>page*size){
                 resultMap.put("isLastPage","true");
             }else{
                 resultMap.put("isLastPage","No data");
