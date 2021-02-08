@@ -9,3 +9,8 @@ export function getSubBoard(user_id) {
 export function getMyInfo(userId) {
   return http.get(`/account/user/${userId}`);
 }
+
+//내정보 수정
+export function putMyInfo(member) {
+  return http.put('/account/user', member);
+}

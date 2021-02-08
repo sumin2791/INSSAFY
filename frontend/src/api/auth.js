@@ -28,3 +28,12 @@ export function modify(email, password) {
     password: password,
   });
 }
+
+//비밀번호 이중체크
+export function postPassword(payload) {
+  return http.post('/account/user/password', payload);
+}
+//비밀번호 수정
+export function putPassword(payloard) {
+  return http.put('/account/user/password', payloard);
+}

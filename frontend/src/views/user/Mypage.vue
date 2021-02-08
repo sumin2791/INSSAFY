@@ -30,18 +30,16 @@
                   >
                     <!-- 닉네임 -->
                     <div class="text-h5" v-if="!myInfo.myInfoEdit">
-                      {{ myInfo.nickName }}
+                      {{ myInfo.nickname }}
                     </div>
                     <div v-if="myInfo.myInfoEdit">
-                      <v-text-field dense label="nickname" v-model="myInfo.nickName" class="text-h5" color="grey-darken-4"></v-text-field>
+                      <v-text-field dense label="nickname" v-model="myInfo.nickname" class="text-h5" color="grey-darken-4"></v-text-field>
                     </div>
                     <!-- 이메일 -->
-                    <div v-if="!myInfo.myInfoEdit">
+                    <div>
                       {{ myInfo.email }}
                     </div>
-                    <div v-if="myInfo.myInfoEdit">
-                      <v-text-field dense label="email" v-model="myInfo.email" color="grey-darken-4"></v-text-field>
-                    </div>
+
                     <!-- 지역 & 기수 -->
                     <div v-if="!myInfo.myInfoEdit">{{ myInfo.location }} {{ myInfo.generation }}기</div>
                     <div v-if="myInfo.myInfoEdit">
@@ -150,18 +148,16 @@
                     text-h5 
                     font-weight-black"
                   >
-                    {{ myInfo.nickName }}
+                    {{ myInfo.nickname }}
                   </div>
                   <div v-if="myInfo.myInfoEdit">
-                    <v-text-field dense label="nickname" v-model="myInfo.nickName" class="text-h5" color="grey-darken-4"></v-text-field>
+                    <v-text-field dense label="nickname" v-model="myInfo.nickname" class="text-h5" color="grey-darken-4"></v-text-field>
                   </div>
                   <!-- 이메일 부분 -->
-                  <div v-if="!myInfo.myInfoEdit">
+                  <div>
                     {{ myInfo.email }}
                   </div>
-                  <div v-if="myInfo.myInfoEdit">
-                    <v-text-field dense label="email" v-model="myInfo.email" color="grey-darken-4"></v-text-field>
-                  </div>
+
                   <!-- 지역 & 기수 -->
                   <div v-if="!myInfo.myInfoEdit">{{ myInfo.location }} {{ myInfo.generation }}기</div>
                   <div v-if="myInfo.myInfoEdit">
@@ -292,9 +288,8 @@ export default {
   },
   // resize 실시해서 현재 화면 크기 확인
   mounted() {
-    this.fetchData();
     this.onResize();
-
+    this.fetchData();
     window.addEventListener('resize', this.onResize, { passive: true });
   },
   data() {
@@ -316,65 +311,42 @@ export default {
       ],
       // 내 정보 부분
       myInfo: {
-        nickName: '김싸피',
+        nickname: '김싸피',
         email: 'ssafy@ssafy.com',
         location: '광주',
-        generation: 4,
-        profileImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
+        generation: '4',
+        image: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
         // 내 정보 edit 버튼 클릭 flag
         myInfoEdit: false,
         // 내 정보 지역, 기수 변경 정보
         options: {
           location: ['서울', '대전', '구미', '광주'],
-          generation: [4, 3, 2, 1],
+          generation: ['4', '3', '2', '1'],
         },
       },
-      // 구독 중 보드
-      // list() {
-      //   var list = [];
-      //   for (let index = 1; index <= 10; index++) {
-      //     var item = {
-      //       id: index,
-      //       type: 'curation',
-      //       title: '보드명',
-      //       description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
-      //       hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
-      //       count: 100,
-      //     };
-      //     list.push(item);
-      //   }
-      //   return list;
-      // },
       subBoards: [],
     };
   },
+  created() {
+    this.getMyInfo();
+  },
+  computed: {
+    ...mapGetters('auth', ['getsMyInfo', 'getSubBoardList']),
+  },
   methods: {
-    ...mapActions('user', ['getMyInfo']),
-    chlickProfile: function() {},
+    ...mapActions('auth', ['getMyInfo', 'putMyinfo']),
+    clickProfile: function() {},
     // 내 정보보기
     fetchData() {
-      userApi
-        .getMyInfo(localStorage.userId)
-        .then((res) => {
-          // 아직 데이터 다 받아오지 않았어요. 사진이랑 이런거 없으니까요...
-          this.myInfo.nickName = res.data.user.user_nickname;
-          this.myInfo.email = res.data.user.user_email;
-          this.myInfo.generation = res.data.user.user_generation;
-          this.myInfo.location = res.data.user.user_location;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      //myInfo에 데이터 패치
+      this.myInfo.nickname = this.getsMyInfo.nickname;
+      this.myInfo.email = this.getsMyInfo.email;
+      this.myInfo.generation = this.getsMyInfo.generation;
+      this.myInfo.location = this.getsMyInfo.location;
+      this.myInfo.image = this.getsMyInfo.image;
 
-      userApi
-        .getSubBoard(localStorage.userId)
-        .then((res) => {
-          console.log(res);
-          this.subBoards = res.data.boards;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      //this.subBoad에 패치
+      this.subBoards = this.getSubBoardList;
     },
 
     // 현재 활성화된 기기에 따라 flag 변경
@@ -394,6 +366,24 @@ export default {
       this.ResponsiveSize.whichTapPoint = point;
     },
     editMyInfo() {
+      if (this.myInfo.myInfoEdit == true) {
+        const member = {
+          user_email: this.myInfo.email,
+          user_generation: this.myInfo.generation,
+          user_image: this.myInfo.image,
+          user_location: this.myInfo.location,
+          user_nickname: this.myInfo.nickname,
+        };
+
+        this.$store.dispatch('auth/putMyinfo', member).then((result) => {
+          if (result) {
+            alert('내 정보가 정상적으로 변경되었습니다.');
+          } else {
+            alert('내 정보 변경 중 문제가 발생했습니다.');
+          }
+          this.fetchData();
+        });
+      }
       this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit;
     },
   },
