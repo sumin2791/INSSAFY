@@ -1,9 +1,9 @@
 <template>
   <v-dialog
-                  v-model="dialog"
-                  persistent
-                  max-width="400px"
-                >
+    v-model="dialog"
+    persistent
+    max-width="400px"
+  >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         block

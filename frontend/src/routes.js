@@ -13,6 +13,8 @@ import StudyMain from '@/views/curation/study/StudyMain';
 import Study from '@/views/curation/study/Study';
 import Market from '@/views/curation/market/Market';
 import Recruitment from '@/views/curation/recruitment/Recruitment';
+// 학습공유 테스트
+import LearnShareTest from '@/views/curation/learningshare/LearnShareTest';
 
 //board
 import Board from './views/board/Board.vue';
@@ -99,6 +101,12 @@ export default [
     path: '/curation/learningshare',
     name: 'LearnShare',
     component: LearnShare,
+  },
+  // 학습공유 테스트
+  {
+    path: '/curation/learningshare/test',
+    name: 'LearnShareTest',
+    component: LearnShareTest,
   },
   {
     path: '/curation/main/study',
