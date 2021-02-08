@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Spinner />
-    <Nav />
+    <Nav id="navigation" />
     <router-view></router-view>
   </div>
 </template>
@@ -21,4 +21,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#navigation {
+  position: relative;
+  z-index: 50;
+}
+</style>
