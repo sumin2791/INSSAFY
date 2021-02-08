@@ -76,4 +76,8 @@ public interface PostService {
 
 	public int searchSalesCnt(Map<String, Object> map);
 
+	public int getTotalPostCnt(int board_id);
+
+	public int getSearchPostCnt(Map<String, Object> map);
+
 }

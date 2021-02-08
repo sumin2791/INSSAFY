@@ -371,7 +371,7 @@ public class PostController {
      * 
      * @param : board_id, user_id, page, size
      * 
-     * @return : message,
+     * @return : message, isLastPage
      * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count,
      * comment_count,writer_nickname, isLiked(1:좋아요누른 상태 0:좋아요 취소상태 리턴값 없는 경우:좋아요
@@ -384,7 +384,12 @@ public class PostController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
-        try {
+        try {            
+            int totalCnt = postService.getTotalPostCnt(board_id);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
             Map<String, Object> map = new HashMap<>();
             map.put("board_id", board_id);
             map.put("user_id", user_id);
@@ -491,7 +496,7 @@ public class PostController {
      * 
      * @param : sort, keyword, board_id, page,size
      * 
-     * @return : postList, message
+     * @return : postList, message, isLastPage
      */
     @GetMapping("/board/searchPost")
     public ResponseEntity<Map<String, Object>> searchBoardPost(@RequestParam(value = "sort") String sort,
@@ -507,6 +512,12 @@ public class PostController {
             map.put("board_id", board_id);
             map.put("start", page*size);
             map.put("size", size);
+
+            int totalCnt = postService.getSearchPostCnt(map);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.boardPostNew(map);

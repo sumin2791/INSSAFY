@@ -279,4 +279,17 @@
 		and board_id = 34 and is_used = 1 and post_state != -1
 	</select>
 
+	<select id="getTotalPostCnt" parameterType="int" resultType="int">
+		select count(post_id)
+		from post 
+		where board_id = #{board_id} and is_used = 1;
+	</select>
+
+	<select id="getSearchPostCnt" parameterType="map" resultType="int">
+		select count(post_id)
+		from post
+		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') )
+		and board_id = #{board_id} and is_used = 1;
+	</select>
+
 </mapper>
