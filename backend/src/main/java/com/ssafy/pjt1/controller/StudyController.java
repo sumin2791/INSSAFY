@@ -46,12 +46,16 @@ public class StudyController {
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getPromoList")
-    public ResponseEntity<Map<String, Object>> getPromoList() {
+    public ResponseEntity<Map<String, Object>> getPromoList(@RequestParam(value = "page") int page, 
+    @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
-            List<Map<String, Object>> postList = studyService.getPromoList();
+            Map<String, Object> map = new HashMap<>();
+            map.put("start", page*size);
+            map.put("size", size);
+            List<Map<String, Object>> postList = studyService.getPromoList(map);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
@@ -104,12 +108,16 @@ public class StudyController {
      * 
      */
     @GetMapping("/getAllList")
-    public ResponseEntity<Map<String, Object>> getAllList(){
+    public ResponseEntity<Map<String, Object>> getAllList(@RequestParam(value = "page") int page, 
+    @RequestParam(value = "size") int size){
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("study/getAllList 호출성공");
         try {
-            List<Map<String, Object>> studyList = studyService.getAllList();
+            Map<String, Object> map = new HashMap<>();
+            map.put("start", page*size);
+            map.put("size", size);
+            List<Map<String, Object>> studyList = studyService.getAllList(map);
             resultMap.put("studyList", studyList);          
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
