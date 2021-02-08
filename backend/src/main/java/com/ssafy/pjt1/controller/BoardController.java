@@ -255,7 +255,7 @@ public class BoardController {
      * 
      * @param : sort, page, size
      * 
-     * @return : boardList, message
+     * @return : boardList, message, isLastPage
      */
     @GetMapping("/getBoards")
     public ResponseEntity<Map<String, Object>> getBoards(@RequestParam(value = "sort") String sort,
@@ -265,6 +265,11 @@ public class BoardController {
         logger.info("/board/getBoards 호출 성공");
 
         try {
+            int totalCnt = boardService.getTotalCnt();
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
             Map<String, Object> map = new HashMap<>();
             map.put("start", page*size);
             map.put("size", size);
@@ -303,6 +308,11 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/searchBoard 호출 성공");
         try {
+            int totalCnt = boardService.getSearchCnt(keyword);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+            logger.info("!!!!!cnt: "+totalCnt);
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("start", page*size);

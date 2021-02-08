@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.service.BoardService;
+import com.ssafy.pjt1.model.service.post.PostService;
 import com.ssafy.pjt1.model.service.study.StudyService;
 
 import org.slf4j.Logger;
@@ -33,6 +34,9 @@ public class StudyController {
 
     @Autowired
     private StudyService studyService;
+
+    @Autowired
+    private PostService postService;
 
     /*
      * 기능: 스터디 모집글 리스트
@@ -52,6 +56,11 @@ public class StudyController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
+            int totalCnt = postService.getTotalPostCnt(37);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
             Map<String, Object> map = new HashMap<>();
             map.put("start", page*size);
             map.put("size", size);

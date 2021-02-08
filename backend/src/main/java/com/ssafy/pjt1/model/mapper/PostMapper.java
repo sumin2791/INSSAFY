@@ -82,4 +82,6 @@ public interface PostMapper {
 	public int getTotalPostCnt(int board_id);
 
 	public int getSearchPostCnt(Map<String, Object> map);
+
+	public int getAllSearchPostCnt(String keyword);
 }

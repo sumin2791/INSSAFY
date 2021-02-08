@@ -80,4 +80,6 @@ public interface PostService {
 
 	public int getSearchPostCnt(Map<String, Object> map);
 
+	public int getAllSearchPostCnt(String keyword);
+
 }

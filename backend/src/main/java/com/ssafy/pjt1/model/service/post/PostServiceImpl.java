@@ -202,4 +202,9 @@ public class PostServiceImpl implements PostService {
 		return sqlSession.getMapper(PostMapper.class).getSearchPostCnt(map);
 	}
 
+	@Override
+	public int getAllSearchPostCnt(String keyword) {
+		return sqlSession.getMapper(PostMapper.class).getAllSearchPostCnt(keyword);
+	}
+
 }

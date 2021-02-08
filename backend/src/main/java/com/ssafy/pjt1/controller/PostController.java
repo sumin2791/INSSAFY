@@ -466,6 +466,11 @@ public class PostController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/searchBoard 호출 성공");
         try {
+            int totalCnt = postService.getAllSearchPostCnt(keyword);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
             List<PostDto> postList;
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
