@@ -144,7 +144,8 @@
 			  where user_id = #{user_id} and is_used = 1) as s
 			  on p.post_id = s.post_id
 		where p.board_id = #{board_id} and p.is_used = 1
-		order by p.post_date desc;
+		order by p.post_date desc
+		limit #{start}, #{size};
 	</select>
 
 	<select id="searchPostNew" parameterType="string" resultType="PostDto">

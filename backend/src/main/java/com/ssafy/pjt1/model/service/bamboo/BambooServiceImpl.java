@@ -22,8 +22,8 @@ public class BambooServiceImpl implements BambooService {
     }
 
     @Override
-    public List<BambooDto> getAllList(int page) {
-        return sqlSession.getMapper(BambooMapper.class).getAllList(page);
+    public List<BambooDto> getAllList(Map<String, Object> map) {
+        return sqlSession.getMapper(BambooMapper.class).getAllList(map);
     }
 
     @Override

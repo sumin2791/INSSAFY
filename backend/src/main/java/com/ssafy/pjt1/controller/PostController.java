@@ -379,7 +379,9 @@ public class PostController {
      */
     @GetMapping("/getPostList")
     public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id,
-            @RequestParam(value = "user_id") String user_id) {
+            @RequestParam(value = "user_id") String user_id,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
@@ -387,8 +389,9 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("board_id", board_id);
             map.put("user_id", user_id);
+            map.put("start", page*size);
+            map.put("size", size);
             List<Map<String, Object>> postList = postService.getPostList(map);
-            logger.info("postList: " + postList);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {

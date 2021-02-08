@@ -15,7 +15,7 @@
 		from bamboo
 		where is_used = 1
 		order by bamboo_date desc
-		limit #{page}, 5;
+		limit #{start}, #{size};
 	</select>
 
 	<select id="searchPost" parameterType="string" resultType="BambooDto">
