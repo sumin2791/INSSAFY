@@ -28,6 +28,8 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
+//https://www.npmjs.com/package/vue-moment
+//[moment 사용법]: https://flamingotiger.github.io/javascript/momentjs/
 Vue.use(require('vue-moment'));
 
 //toast
