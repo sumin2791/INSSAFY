@@ -65,36 +65,42 @@
 		where board_id = #{board_id}
 	</update>
 
-	<select id="getBoardsNew" resultType="BoardDto">
+	<select id="getBoardsNew" parameterType="map" resultType="map">
 		select *
 		from board
-		where is_used = 1
-		order by board_date desc;
+		where is_used = 1 and board_state = 0
+		order by board_date desc
+		limit #{start}, #{size};
 	</select>
 
-	<select id="getBoardsPopular" resultType="BoardDto">
-		select *
+	<select id="getBoardsPopular" parameterType="map" resultType="map">
+		select b.board_id, b.board_name,b.board_description,b.board_image,b.board_location,b.board_hash,
+        b.board_date,b.user_id,b.board_state, c.board_count as subscription_count
 		from board as b left outer join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
 		on b.board_id = c.board_id
-		where b.is_used = 1
-		order by c.board_count desc;
+		where b.is_used = 1 and b.board_state = 0
+		order by c.board_count desc, b.board_date desc
+		limit #{start}, #{size};
 	</select>
 
-	<select id="searchBoardNew" parameterType="string" resultType="BoardDto">
+	<select id="searchBoardNew" parameterType="map" resultType="map">
 		select *
 		from board
 		where ( board_name like concat('%',#{keyword} ,'%') or board_description like concat('%',#{keyword} ,'%')
 		or board_hash like concat('%',#{keyword} ,'%') ) and is_used = 1
-		order by board_date desc;
+		order by board_date desc
+		limit #{start}, #{size};
 	</select>
 
-	<select id="searchBoardPopular" parameterType="string" resultType="BoardDto">
-		select *
+	<select id="searchBoardPopular" parameterType="map" resultType="map">
+		select b.board_id, b.board_name,b.board_description,b.board_image,b.board_location,b.board_hash,
+        b.board_date,b.user_id,b.board_state, c.board_count as subscription_count
 		from board as b join (select count(board_id) as board_count, board_id from subscription group by board_id) as c 
 		on b.board_id = c.board_id
 		where ( b.board_name like concat('%',#{keyword} ,'%') or b.board_description like concat('%',#{keyword} ,'%')
 		or b.board_hash like concat('%',#{keyword} ,'%') ) and b.is_used = 1
-		order by c.board_count desc;
+		order by c.board_count desc, b.board_date desc
+		limit #{start}, #{size};
 	</select>
 
 	<update id="deleteBoard" parameterType="int">

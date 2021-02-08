@@ -64,23 +64,23 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<BoardDto> getBoardsNew() {
-		return sqlSession.getMapper(BoardMapper.class).getBoardsNew();
+	public List<Map<String, Object>> getBoardsNew(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).getBoardsNew(map);
 	}
 
 	@Override
-	public List<BoardDto> getBoardsPopular() {
-		return sqlSession.getMapper(BoardMapper.class).getBoardsPopular();
+	public List<Map<String, Object>> getBoardsPopular(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).getBoardsPopular(map);
 	}
 
 	@Override
-	public List<BoardDto> searchBoardNew(String keyword) {
-		return sqlSession.getMapper(BoardMapper.class).searchBoardNew(keyword);
+	public List<Map<String, Object>> searchBoardNew(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardNew(map);
 	}
 
 	@Override
-	public List<BoardDto> searchBoardPopular(String keyword) {
-		return sqlSession.getMapper(BoardMapper.class).searchBoardPopular(keyword);
+	public List<Map<String, Object>> searchBoardPopular(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardPopular(map);
 	}
 
 	@Override

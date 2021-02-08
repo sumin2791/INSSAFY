@@ -39,7 +39,7 @@ public class StudyController {
      * 
      * developer: 윤수민
      * 
-     * @param :
+     * @param : page, size
      * 
      * @return : message,
      * postList(post_id,user_id,post_date,post_title,post_description,
@@ -102,7 +102,7 @@ public class StudyController {
      * 
      * developer: 윤수민
      * 
-     * @param : 
+     * @param : page, size
      * 
      * @return : message, studyList(board_name,board_description,board_count)
      * 

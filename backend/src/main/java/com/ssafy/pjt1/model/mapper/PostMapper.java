@@ -51,9 +51,9 @@ public interface PostMapper {
 
 	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
-	public List<PostDto> searchPostNew(String keyword);
+	public List<PostDto> searchPostNew(Map<String, Object> map);
 
-	public List<PostDto> searchPostPopular(String keyword);
+	public List<PostDto> searchPostPopular(Map<String, Object> map);
 
 	public List<PostDto> boardPostNew(Map<String, Object> map);
 

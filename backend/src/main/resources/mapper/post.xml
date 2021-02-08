@@ -148,21 +148,23 @@
 		limit #{start}, #{size};
 	</select>
 
-	<select id="searchPostNew" parameterType="string" resultType="PostDto">
+	<select id="searchPostNew" parameterType="map" resultType="PostDto">
 		select *
 		from post
 		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') ) 
 		and is_used = 1 and post_state = 0
-		order by post_date desc;
+		order by post_date desc
+		limit #{start}, #{size};
 	</select>
 
-	<select id="searchPostPopular" parameterType="string" resultType="PostDto">
+	<select id="searchPostPopular" parameterType="map" resultType="PostDto">
 		select *
 		from post as p join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 		on p.post_id = c.post_id
 		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') ) 
 		and p.is_used = 1 and p.post_state = 0
-		order by c.like_count desc, p.post_date desc;
+		order by c.like_count desc, p.post_date desc
+		limit #{start}, #{size};
 	</select>
 
 	<select id="boardPostNew" parameterType="map" resultType="PostDto">

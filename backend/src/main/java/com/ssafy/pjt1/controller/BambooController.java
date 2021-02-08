@@ -75,7 +75,7 @@ public class BambooController {
      * 
      * developer: 윤수민
      * 
-     * @param : 
+     * @param : page, size
      * 
      * @return : message,
      * bambooList(bamboo_title, bamboo_description, bamboo_image,
@@ -107,7 +107,7 @@ public class BambooController {
      * 
      * developer: 윤수민
      * 
-     * @param : keyword
+     * @param : keyword, page, size
      * 
      * @return : bambooList, message
      */

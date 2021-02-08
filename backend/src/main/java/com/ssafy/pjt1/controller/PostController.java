@@ -369,7 +369,7 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : board_id, user_id
+     * @param : board_id, user_id, page, size
      * 
      * @return : message,
      * postList(post_id,user_id,post_date,post_title,post_description,
@@ -441,24 +441,29 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword
+     * @param : sort, keyword, page, size
      * 
      * @return : postList, message
      */
     @GetMapping("/searchPost")
     public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword) {
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/searchBoard 호출 성공");
         try {
             List<PostDto> postList;
+            Map<String, Object> map = new HashMap<>();
+            map.put("keyword", keyword);
+            map.put("start", page*size);
+            map.put("size", size);
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
-                postList = postService.searchPostNew(keyword);
+                postList = postService.searchPostNew(map);
             } else {
                 logger.info("좋아요순 포스트 검색");
-                postList = postService.searchPostPopular(keyword);
+                postList = postService.searchPostPopular(map);
             }
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
@@ -476,7 +481,7 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword, board_id
+     * @param : sort, keyword, board_id, page,size
      * 
      * @return : postList, message
      */
@@ -517,7 +522,7 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword, board_id
+     * @param : sort, keyword, board_id, page, size
      * 
      * @return : postList, message
      */
