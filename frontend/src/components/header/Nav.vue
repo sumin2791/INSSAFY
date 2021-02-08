@@ -18,13 +18,14 @@ alert(response.data.user.user_email);
             />
           </svg>
         </button>
-        <button class="icon-btn" @click="clickNBtn3" v-if="getToken != null">
+        <Profile id="icon-profile" @clickProfile="clickNBtn3" v-if="getToken != null" />
+        <!-- <button class="icon-btn" @click="clickNBtn3" v-if="getToken != null">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <path
               d="M19 7.001c0 3.865-3.134 7-7 7s-7-3.135-7-7c0-3.867 3.134-7.001 7-7.001s7 3.134 7 7.001zm-1.598 7.18c-1.506 1.137-3.374 1.82-5.402 1.82-2.03 0-3.899-.685-5.407-1.822-4.072 1.793-6.593 7.376-6.593 9.821h24c0-2.423-2.6-8.006-6.598-9.819z"
             />
           </svg>
-        </button>
+        </button> -->
         <button id="login-btn" class="b-title" :class="{ hidden: isLoginRoute }" @click="clickLoginBtn" v-if="getToken == null">
           Login
         </button>
@@ -63,12 +64,14 @@ alert(response.data.user.user_email);
 
 <script>
 import Toast from './Toast';
+import Profile from '@/components/etc/Profile';
 import { mapGetters } from 'vuex';
 
 export default {
   name: 'Nav',
   components: {
     Toast,
+    Profile,
   },
   data() {
     return {};
@@ -189,6 +192,19 @@ svg {
 }
 .icon-btn:hover,
 .icon-btn:active {
+  transform: scale(1.2);
+}
+
+#icon-profile {
+  width: 40px;
+  height: 40px;
+  padding: 2px;
+  margin: 5px 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+#icon-profile:hover,
+#icon-profile:active {
   transform: scale(1.2);
 }
 

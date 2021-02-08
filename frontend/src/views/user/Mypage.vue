@@ -1,18 +1,11 @@
 <template>
   <v-app id="inspire">
-    <v-main 
-      class="main-bg-color"
-    >
-      <v-container
-        class="pt-8"
-      >
+    <v-main class="main-bg-color">
+      <v-container class="pt-8">
         <v-row>
           <!-- 모바일 화면 -->
           <!-- 좌측 내 정보 부분 -->
-          <v-col 
-            cols="12"
-            v-if="ResponsiveSize.isMobile"
-          >
+          <v-col cols="12" v-if="ResponsiveSize.isMobile">
             <v-sheet rounded="lg">
               <v-list color="transparent">
                 <!-- 내 정보 부분 -->
@@ -25,95 +18,46 @@
                   pa-4"
                 >
                   <!-- 프로필 사진 연결하기 -->
-                  <v-avatar
-                    :size="ResponsiveSize.viewSize * 0.3"
-                    class="flex-shrink-1"
-                  >
-                    <img
-                      alt="Avatar"
-                      :src="myInfo.profileImg"
-                    >
+                  <v-avatar :size="ResponsiveSize.viewSize * 0.3" class="flex-shrink-1">
+                    <Profile id="profile-image" @clickProfile="clickProfile" />
                   </v-avatar>
                   <!-- 회원이 입력한 정보 -->
-                  <div 
+                  <div
                     class="ma-4
                     d-flex
                     flex-column
                     align-start"
                   >
                     <!-- 닉네임 -->
-                    <div
-                      class="text-h5"
-                      v-if="!myInfo.myInfoEdit"
-                    >
-                      {{ myInfo.nickName }}    
+                    <div class="text-h5" v-if="!myInfo.myInfoEdit">
+                      {{ myInfo.nickName }}
                     </div>
-                    <div
-                      v-if="myInfo.myInfoEdit"
-                    >
-                      <v-text-field
-                        dense
-                        label="nickname"
-                        v-model="myInfo.nickName"
-                        class="text-h5"
-                        color="grey-darken-4"
-                      ></v-text-field>
+                    <div v-if="myInfo.myInfoEdit">
+                      <v-text-field dense label="nickname" v-model="myInfo.nickName" class="text-h5" color="grey-darken-4"></v-text-field>
                     </div>
                     <!-- 이메일 -->
-                    <div
-                      v-if="!myInfo.myInfoEdit"
-                    >
+                    <div v-if="!myInfo.myInfoEdit">
                       {{ myInfo.email }}
                     </div>
-                    <div
-                      v-if="myInfo.myInfoEdit"
-                    >
-                      <v-text-field
-                        dense
-                        label="email"
-                        v-model="myInfo.email"
-                        color="grey-darken-4"
-                      ></v-text-field>
+                    <div v-if="myInfo.myInfoEdit">
+                      <v-text-field dense label="email" v-model="myInfo.email" color="grey-darken-4"></v-text-field>
                     </div>
                     <!-- 지역 & 기수 -->
-                    <div
-                      v-if="!myInfo.myInfoEdit"
-                    >
-                      {{ myInfo.location }} {{ myInfo.generation }}기
-                    </div>
-                    <div
-                      v-if="myInfo.myInfoEdit"
-                    >
-                    <v-row>
-                      <v-col>
-                        <v-select
-                          v-model="myInfo.location"
-                          :items="myInfo.options.location"
-                          label="지역"
-                        ></v-select>
-                      </v-col>
-                      <v-col>
-                        <v-select
-                          v-model="myInfo.generation"
-                          :items="myInfo.options.generation"
-                          label="기수"
-                        ></v-select>
-                      </v-col>
-                    </v-row>
+                    <div v-if="!myInfo.myInfoEdit">{{ myInfo.location }} {{ myInfo.generation }}기</div>
+                    <div v-if="myInfo.myInfoEdit">
+                      <v-row>
+                        <v-col>
+                          <v-select v-model="myInfo.location" :items="myInfo.options.location" label="지역"></v-select>
+                        </v-col>
+                        <v-col>
+                          <v-select v-model="myInfo.generation" :items="myInfo.options.generation" label="기수"></v-select>
+                        </v-col>
+                      </v-row>
                     </div>
                   </div>
                   <!-- edit 버튼('나'일 때만 보여주기) -->
-                  <div 
-                    class="align-self-start"
-                  >
-                    <v-btn
-                      icon
-                      outlined
-                      x-small
-                      fab
-                      :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'"
-                      @click="editMyInfo()"
-                    >
+                  <div class="align-self-start">
+                    <v-btn icon outlined x-small fab :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'" @click="editMyInfo()">
                       <v-icon dark>
                         mdi-pencil
                       </v-icon>
@@ -130,7 +74,7 @@
                   flex-row"
                   v-model="ResponsiveSize.whichTapPoint"
                   mandatory
-                  >
+                >
                   <v-list-item
                     v-for="[icon, text, index] in links"
                     :key="text"
@@ -138,7 +82,7 @@
                     class="pa-1
                     ma-1"
                     @click="clickMobileTap(index)"
-                  > 
+                  >
                     <!-- 모바일 탭 전환 -->
                     <v-list-item-content
                       class="d-flex
@@ -150,13 +94,11 @@
                     >
                       <v-icon
                         class="pa-2
-                        ma-1">
+                        ma-1"
+                      >
                         {{ icon }}
                       </v-icon>
-                      <div 
-                        style="font-size: 12px;"
-                        class="text-center"
-                      >
+                      <div style="font-size: 12px;" class="text-center">
                         {{ text }}
                       </div>
                     </v-list-item-content>
@@ -165,7 +107,7 @@
               </v-list>
             </v-sheet>
           </v-col>
-          
+
           <!-- PC화면 -->
           <!-- 좌측 내 정보 부분 -->
           <v-col sm="3" v-else>
@@ -189,14 +131,7 @@
                     <div class="text-h5">내 정보</div>
                     <!-- 내 정보 수정버튼 -->
                     <div>
-                      <v-btn
-                        icon
-                        outlined
-                        x-small
-                        fab
-                        :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'"
-                        @click="editMyInfo()"
-                      >
+                      <v-btn icon outlined x-small fab :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'" @click="editMyInfo()">
                         <v-icon>
                           mdi-pencil
                         </v-icon>
@@ -204,74 +139,38 @@
                     </div>
                   </div>
                   <!-- 프로필 이미지 -->
-                  <v-avatar
-                    :size="ResponsiveSize.viewSize * 0.1"
-                    class="align-self-center"
-                  >
-                    <img
-                      alt="Avatar"
-                      :src="myInfo.profileImg"
-                    >
+                  <v-avatar :size="ResponsiveSize.viewSize * 0.1" class="align-self-center">
+                    <Profile id="profile-image" @clickProfile="clickProfile" />
                   </v-avatar>
-                  
+
                   <!-- 닉네임 -->
                   <div
                     v-if="!myInfo.myInfoEdit"
                     class="mt-4
                     text-h5 
-                    font-weight-black">
+                    font-weight-black"
+                  >
                     {{ myInfo.nickName }}
                   </div>
-                  <div
-                    v-if="myInfo.myInfoEdit"
-                  >
-                    <v-text-field
-                      dense
-                      label="nickname"
-                      v-model="myInfo.nickName"
-                      class="text-h5"
-                      color="grey-darken-4"
-                    ></v-text-field>
+                  <div v-if="myInfo.myInfoEdit">
+                    <v-text-field dense label="nickname" v-model="myInfo.nickName" class="text-h5" color="grey-darken-4"></v-text-field>
                   </div>
                   <!-- 이메일 부분 -->
-                  <div
-                      v-if="!myInfo.myInfoEdit"
-                    >
-                      {{ myInfo.email }}
-                    </div>
-                    <div
-                      v-if="myInfo.myInfoEdit"
-                    >
-                      <v-text-field
-                        dense
-                        label="email"
-                        v-model="myInfo.email"
-                        color="grey-darken-4"
-                      ></v-text-field>
-                    </div>
-                    <!-- 지역 & 기수 -->
-                    <div
-                      v-if="!myInfo.myInfoEdit"
-                    >
-                      {{ myInfo.location }} {{ myInfo.generation }}기
-                    </div>
-                    <div
-                      v-if="myInfo.myInfoEdit"
-                    >
+                  <div v-if="!myInfo.myInfoEdit">
+                    {{ myInfo.email }}
+                  </div>
+                  <div v-if="myInfo.myInfoEdit">
+                    <v-text-field dense label="email" v-model="myInfo.email" color="grey-darken-4"></v-text-field>
+                  </div>
+                  <!-- 지역 & 기수 -->
+                  <div v-if="!myInfo.myInfoEdit">{{ myInfo.location }} {{ myInfo.generation }}기</div>
+                  <div v-if="myInfo.myInfoEdit">
                     <v-row>
                       <v-col>
-                        <v-select
-                          v-model="myInfo.location"
-                          :items="myInfo.options.location"
-                          label="지역"
-                        ></v-select>
+                        <v-select v-model="myInfo.location" :items="myInfo.options.location" label="지역"></v-select>
                       </v-col>
                       <v-col>
-                        <v-select
-                          v-model="myInfo.generation"
-                          :items="myInfo.options.generation"
-                          label="기수"
-                        ></v-select>
+                        <v-select v-model="myInfo.generation" :items="myInfo.options.generation" label="기수"></v-select>
                       </v-col>
                     </v-row>
                   </div>
@@ -282,16 +181,8 @@
                 <v-divider class="my-2"></v-divider>
 
                 <!-- 이동 탭 부분 -->
-                <v-list-item-group
-                  v-model="ResponsiveSize.whichTapPoint"
-                  mandatory
-                >
-                  <v-list-item
-                    v-for="[icon, text, index] in links"
-                    :key="text"
-                    link
-                    @click="clickMobileTap(index)"
-                  > 
+                <v-list-item-group v-model="ResponsiveSize.whichTapPoint" mandatory>
+                  <v-list-item v-for="[icon, text, index] in links" :key="text" link @click="clickMobileTap(index)">
                     <!-- 모바일 탭 전환 -->
                     <v-list-item-icon>
                       <v-icon>{{ icon }}</v-icon>
@@ -304,55 +195,44 @@
           </v-col>
 
           <v-col sm="9">
-            <v-sheet
-              min-height="85vh"
-              rounded="lg"
-              class="pa-2"
-            >
+            <v-sheet min-height="85vh" rounded="lg" class="pa-2">
               <!-- 내 구독보드 -->
-              <div
-                v-if="mobileTap[0]"
-              >
+              <div v-if="mobileTap[0]">
                 <v-card-title
                   class="text-h6
                   font-weight-black
                   pb-0"
-                >구독중인 보드</v-card-title>
-                <v-divider></v-divider>
-                <div
-                  v-for="(board,idx) in subBoards"
-                  :key="idx"
+                  >구독중인 보드</v-card-title
                 >
-
-                  <Subscription :board="board"/>
+                <v-divider></v-divider>
+                <div v-for="(board, idx) in subBoards" :key="idx">
+                  <Subscription :board="board" />
                 </div>
                 <!-- <Subscription />
                 <Subscription /> -->
               </div>
-              
+
               <!-- 내 작성글 -->
-              <div
-                v-if="mobileTap[1]"
-              >
+              <div v-if="mobileTap[1]">
                 <v-card-title
                   class="text-h6
                   font-weight-black
                   pb-0"
-                >내 작성글</v-card-title>
+                  >내 작성글</v-card-title
+                >
                 <v-divider></v-divider>
                 <MyPost />
                 <MyPost />
                 <MyPost />
               </div>
               <!-- 내 댓글 -->
-              <div
-                v-if="mobileTap[2]"
-              >
+              <div v-if="mobileTap[2]">
                 <v-card-title
                   class="text-h6
                   font-weight-black
                   pb-0"
-                >내 작성댓글</v-card-title>
+                  >내 작성댓글</v-card-title
+                >
                 <v-divider></v-divider>
                 <MyComment />
                 <MyComment />
@@ -360,14 +240,13 @@
               </div>
 
               <!-- 내가 스크랩한 글 -->
-              <div
-                v-if="mobileTap[3]"
-              >
+              <div v-if="mobileTap[3]">
                 <v-card-title
                   class="text-h6
                   font-weight-black
                   pb-0"
-                >스크랩한 글</v-card-title>
+                  >스크랩한 글</v-card-title
+                >
                 <v-divider></v-divider>
                 <ScrapPost />
               </div>
@@ -381,47 +260,48 @@
 
 <script>
 // 구독중인 보드
-import Subscription from "@/components/mypage/Subscription.vue"
+import Subscription from '@/components/mypage/Subscription.vue';
 // 내 작성글
-import MyPost from "@/components/mypage/MyPost.vue"
+import MyPost from '@/components/mypage/MyPost.vue';
 // 내 댓글
-import MyComment from "@/components/mypage/MyComment.vue"
+import MyComment from '@/components/mypage/MyComment.vue';
 // 내 스크랩한 글
-import ScrapPost from "@/components/mypage/ScrapPost.vue"
+import ScrapPost from '@/components/mypage/ScrapPost.vue';
 // 비밀번호 변경
-import PasswordChange from "@/components/mypage/PasswordChange"
+import PasswordChange from '@/components/mypage/PasswordChange';
 
-//api 가져오기
-import * as userApi from '@/api/user'
-
+import * as userApi from '@/api/user';
+import Profile from '@/components/etc/Profile';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
-  name: "mypage",
+  name: 'mypage',
   components: {
     Subscription,
     MyPost,
     MyComment,
     ScrapPost,
     PasswordChange,
+    Profile,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
-  beforeDestroy () {
-      if (typeof window === 'undefined') return
+  beforeDestroy() {
+    if (typeof window === 'undefined') return;
 
-      window.removeEventListener('resize', this.onResize, { passive: true })
+    window.removeEventListener('resize', this.onResize, { passive: true });
   },
   // resize 실시해서 현재 화면 크기 확인
-  mounted () {
-    this.fetchData()
-    this.onResize()
+  mounted() {
+    this.fetchData();
+    this.onResize();
 
-    window.addEventListener('resize', this.onResize, { passive: true })
+    window.addEventListener('resize', this.onResize, { passive: true });
   },
   data() {
     return {
       // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
       ResponsiveSize: {
-        isMobile: false, 
+        isMobile: false,
         viewSize: 0,
         whichTapPoint: 0,
       },
@@ -436,17 +316,17 @@ export default {
       ],
       // 내 정보 부분
       myInfo: {
-        nickName: "김싸피",
-        email: "ssafy@ssafy.com",
-        location: "광주",
+        nickName: '김싸피',
+        email: 'ssafy@ssafy.com',
+        location: '광주',
         generation: 4,
-        profileImg: "https://avatars0.githubusercontent.com/u/9064066?v=4&s=460",
+        profileImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
         // 내 정보 edit 버튼 클릭 flag
         myInfoEdit: false,
         // 내 정보 지역, 기수 변경 정보
         options: {
-        location: ['서울', '대전', '구미', '광주'],
-        generation: [4, 3, 2, 1],
+          location: ['서울', '대전', '구미', '광주'],
+          generation: [4, 3, 2, 1],
         },
       },
       // 구독 중 보드
@@ -465,33 +345,37 @@ export default {
       //   }
       //   return list;
       // },
-      subBoards:[],
-    }
+      subBoards: [],
+    };
   },
   methods: {
+    ...mapActions('user', ['getMyInfo']),
+    chlickProfile: function() {},
     // 내 정보보기
-    fetchData(){
-      userApi.getMyPage(localStorage.userId)
-        .then(res=>{
+    fetchData() {
+      userApi
+        .getMyInfo(localStorage.userId)
+        .then((res) => {
           // 아직 데이터 다 받아오지 않았어요. 사진이랑 이런거 없으니까요...
-          this.myInfo.nickName=res.data.user.user_nickname
-          this.myInfo.email=res.data.user.user_email
-          this.myInfo.generation = res.data.user.user_generation
-          this.myInfo.location = res.data.user.user_location
+          this.myInfo.nickName = res.data.user.user_nickname;
+          this.myInfo.email = res.data.user.user_email;
+          this.myInfo.generation = res.data.user.user_generation;
+          this.myInfo.location = res.data.user.user_location;
         })
-        .catch(err=>{
-          console.log(err)
+        .catch((err) => {
+          console.log(err);
         });
-        
-      userApi.getSubBoard(localStorage.userId)
-        .then(res=>{
-          console.log(res)
-          this.subBoards = res.data.boards
+
+      userApi
+        .getSubBoard(localStorage.userId)
+        .then((res) => {
+          console.log(res);
+          this.subBoards = res.data.boards;
         })
-        .catch(err=>{
-          console.log(err)
-        })
-    }, 
+        .catch((err) => {
+          console.log(err);
+        });
+    },
 
     // 현재 활성화된 기기에 따라 flag 변경
     onResize() {
@@ -501,23 +385,27 @@ export default {
 
     clickMobileTap: function(point) {
       // 전체 false로 초기화
-      this.mobileTap = this.mobileTap.map(function (el) {
-        return false
-      })
+      this.mobileTap = this.mobileTap.map(function(el) {
+        return false;
+      });
       // 클릭하게 되면 pointing된 부분을 true로 변경
       this.mobileTap[point] = true;
       // 현재 가르키고 있는 탭 부분 변경
-      this.ResponsiveSize.whichTapPoint = point
+      this.ResponsiveSize.whichTapPoint = point;
     },
     editMyInfo() {
-      this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit
+      this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit;
     },
   },
-}
+};
 </script>
 <style scoped>
 /* 전체 메인 배경색 */
 .main-bg-color {
   background-color: #ebebe9;
+}
+#profile-image {
+  width: 100%;
+  height: 100%;
 }
 </style>
