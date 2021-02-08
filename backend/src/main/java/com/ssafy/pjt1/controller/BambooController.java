@@ -82,12 +82,12 @@ public class BambooController {
      * bamboo_iframe, bamboo_header, writer_nickname)
      */
     @GetMapping("/getAllList")
-    public ResponseEntity<Map<String, Object>> getPostByList() {
+    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "page") int page) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("bamboo/getAllList 호출성공");
         try {
-            List<BambooDto> bambooList = bambooService.getAllList();
+            List<BambooDto> bambooList = bambooService.getAllList(page*5);
             resultMap.put("bambooList", bambooList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {

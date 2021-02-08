@@ -10,10 +10,12 @@
 		#{bamboo_iframe}, #{bamboo_header}, now(), #{writer_nickname},1)
 	</insert>
 
-	<select id="getAllList" resultType="BambooDto">
+	<select id="getAllList" parameterType="int" resultType="BambooDto">
 		select * 
 		from bamboo
-		where is_used = 1;
+		where is_used = 1
+		order by bamboo_date desc
+		limit #{page}, 5;
 	</select>
 
 	<select id="searchPost" parameterType="string" resultType="BambooDto">
