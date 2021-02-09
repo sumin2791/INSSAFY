@@ -64,7 +64,6 @@
                 </v-list-item>
                 <!-- 비밀번호 변경 부분 -->
                 <PasswordChange />
-
                 <v-divider class="my-2"></v-divider>
                 <!-- 이동 탭 부분 -->
                 <v-list-item-group
@@ -173,6 +172,9 @@
                 </div>
                 <!-- 비밀번호 변경 부분 -->
                 <PasswordChange />
+                <v-btn block depressed class="pa-0">
+                  회원탈퇴
+                </v-btn>
 
                 <v-divider class="my-2"></v-divider>
 
@@ -243,7 +245,7 @@
                   >스크랩한 글</v-card-title
                 >
                 <v-divider></v-divider>
-                <ScrapPost />
+                <ScrapPost v-for="scrap in getScraps" :key="scrap.post_id" :scrap="scrap" class="pa-2 ani-hover" />
               </div>
             </v-sheet>
           </v-col>
@@ -332,15 +334,16 @@ export default {
     this.getMyInfo();
     this.getSubBoard();
     this.getPosts();
-    this.$store.dispatch('user/actGetComent');
+    this.actGetComent();
+    this.actScraps();
   },
   computed: {
     ...mapGetters('auth', ['getsMyInfo', 'getSubBoardList']),
-    ...mapGetters('user', ['getsPosts', 'getGetComments']),
+    ...mapGetters('user', ['getsPosts', 'getGetComments', 'getScraps']),
   },
   methods: {
     ...mapActions('auth', ['getMyInfo', 'putMyinfo', 'getSubBoard']),
-    ...mapActions('user', ['putDeleteSub', 'getPosts', 'actDeletePost']),
+    ...mapActions('user', ['putDeleteSub', 'getPosts', 'actDeletePost', 'actGetComent', 'actScraps']),
     clickProfile: function() {},
     // 내 정보보기
     fetchData() {

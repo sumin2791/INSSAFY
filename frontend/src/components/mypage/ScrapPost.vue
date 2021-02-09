@@ -25,7 +25,7 @@
           </v-btn>
         </div>
         <div class="board-title" @click="moveToBoard()">
-          {{ post.inBoard }}
+          {{ `보드 제목과 이미지 필요` }}
         </div>
       </div>
       <GradientGenerator class="myinfo-list" style="height: 100px" v-if="board_image == null" :radius="radius" />
@@ -39,13 +39,13 @@
         space-between
         pa-0"
     >
-      <v-col cols="9" id="post-title" class="font-weight-black">{{ post.title }}</v-col>
+      <v-col cols="9" id="post-title" class="font-weight-black">{{ scrap.post_title }}</v-col>
       <v-col
         cols="3"
         id="post-date"
         class="text-overline 
         text-end"
-        >{{ post.date }}</v-col
+        >{{ scrap.post_date | moment('YY. MM. DD') }}</v-col
       >
     </v-card-title>
 
@@ -55,27 +55,26 @@
       class="font-weight-bold
         py-0 pl-auto"
     >
-      {{ post.comment }}
+      {{ scrap.post_description }}
     </v-card-text>
-    <!--
+
     <v-card-actions>
       <v-list-item class="grow">
         <v-list-item-avatar class="rounded-circle">
           <v-img class="elevation-6" alt="" :src="post.boardImg"></v-img>
         </v-list-item-avatar>
-        <div>{{ post.writer }}</div>
+        <div>{{ `작성자 닉네임?` }}</div>
 
         <v-row align="center" justify="end">
           <span style="float:right;">
             <v-icon small> mdi-thumb-up </v-icon>
-            {{ post.likeCount }}
+            {{ scrap.post_like }}
             <v-icon small> mdi-comment-processing </v-icon>
-            {{ post.commentCount }}
+            {{ `댓글수?` }}
           </span>
         </v-row>
       </v-list-item>
     </v-card-actions>
-    -->
   </v-card>
 </template>
 
@@ -84,7 +83,7 @@ import GradientGenerator from '@/components/etc/GradientGenerator';
 export default {
   name: 'ScrapPost',
   props: {
-    comment: Object,
+    scrap: Object,
   },
   components: {
     GradientGenerator,
@@ -106,6 +105,11 @@ export default {
         boardCount: 241,
       },
     };
+  },
+  created() {
+    // if (scraps.board_image != '' && scraps.board_image != null && scraps.board_image != 'null') {
+    //   this.board_image = scraps.board_image;
+    // }
   },
   methods: {
     // 작성글 삭제

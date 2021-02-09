@@ -39,3 +39,9 @@ export function deletePost(payload) {
 export function getComment(user_id) {
   return http.get(`/account/user/getComments/${user_id}`);
 }
+
+//내정보> 내스크랩
+//스크랩 리스트 가져오기
+export function getScraps(user_id) {
+  return http.get(`/account/user/getScraps/${user_id}`);
+}

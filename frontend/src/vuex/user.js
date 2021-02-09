@@ -31,12 +31,30 @@ const INIT_COMMENTS = () => {
     },
   ];
 };
+const INIT_SCRAPS = () => {
+  return [
+    {
+      post_id: -1,
+      user_id: '',
+      board_id: -1,
+      post_date: 'YYYY-MM-DD HH:mm:ss',
+      post_title: '',
+      post_description: '',
+      post_like: -1,
+      post_image: '',
+      post_iframe: '',
+      post_header: '',
+      post_state: -1,
+    },
+  ];
+};
 
 export default {
   namespaced: true,
   state: {
     posts: INIT_POSTS(),
     comments: INIT_COMMENTS(),
+    scraps: INIT_SCRAPS(),
   },
 
   mutations: {
@@ -49,7 +67,13 @@ export default {
     setComments(state, payload) {
       state.comments = payload;
     },
+
+    //스크랩 set
+    setScraps(state, payload) {
+      state.scraps = payload;
+    },
   },
+
   actions: {
     //즐겨찾기 토글
     async actPutFavorite({ commit }, payload) {
@@ -95,7 +119,7 @@ export default {
         const response = await userApi.deletePost(payload);
         console.log(response);
         if (response.data.message == 'success' || response.data.message == 'fail') {
-          return true;
+          // return true;
         }
       } catch (error) {
         console.log(error);
@@ -117,6 +141,21 @@ export default {
         alert('작성 댓글을 가져오는 도중 문제가 발생했습니다.');
       }
     },
+
+    //내 스크랩
+    //rest api 스크랩 리스트 요청
+    async actScraps(context) {
+      try {
+        const response = await userApi.getScraps(context.rootState.auth.user.userId);
+        // console.log(response);
+        if (response.data.message == 'SUCCESS') {
+          context.commit('setScraps', response.data.scraps);
+        }
+      } catch (error) {
+        console.log(error);
+        alert('내 스크랩 목록을 가져오는 도중 문제가 발생했습니다.');
+      }
+    },
   },
 
   getters: {
@@ -130,6 +169,12 @@ export default {
     //작성댓글 리스트
     getGetComments(state) {
       return state.comments;
+    },
+
+    //내 스크랩
+    //스크랩 리스트 반환
+    getScraps(state) {
+      return state.scraps;
     },
   },
 };
