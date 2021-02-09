@@ -18,8 +18,8 @@
           </v-btn>
         </template>
         <!-- <b-dropdown-item ><PostModify :post="post"/></b-dropdown-item> -->
-        <b-dropdown-item v-if="flagWriter" >수정</b-dropdown-item>
-        <b-dropdown-item >삭제</b-dropdown-item>
+        <!-- <b-dropdown-item v-if="flagWriter" ><bambooModify :post="post"/></b-dropdown-item> -->
+        <b-dropdown-item v-if="flagWriter" @click="bamboo_delete">삭제</b-dropdown-item>
         <b-dropdown-item id="declare">신고</b-dropdown-item>
       </b-dropdown>
     </div>
@@ -44,10 +44,14 @@
 </template>
 
 <script>
+// import bambooModify from '@/components/curation/bamboo/bambooModify'
 import timeForToday from '@/plugins/timeForToday'
 
 export default {
   name:"Post",
+  components:{
+    // bambooModify
+  },
   props:{
     post:Object
   },
@@ -57,7 +61,6 @@ export default {
   },
   computed:{
     date(){
-      console.log(this.post.bamboo_date)
       return timeForToday(this.post.bamboo_date)
     },
     flagWriter(){
@@ -66,7 +69,16 @@ export default {
   },
   
   methods:{
-    
+    bamboo_delete(){
+      const params = {
+        bamboo_id:this.post.bamboo_id,
+        login_id:localStorage.userId
+      }
+      this.$store.dispatch('bamboo/deleteBamboo',params)
+    },
+    bamboo_modify(){
+
+    }
   }
 }
 </script>

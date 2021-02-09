@@ -1,4 +1,4 @@
-
+import * as bambooApi from '@/api/bamboo'
 export default {
   namespaced: true,
   state: {
@@ -23,6 +23,16 @@ export default {
     isWriteFlag({commit}){
       commit('IS_WRITE_FLAG')
     },
+    deleteBamboo({commit},params){
+      bambooApi.bamboo_delete(params)
+      .then(res=>{
+        console.log(res)
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+      commit('IS_WRITE_FLAG')
+    }
     
   },
 };

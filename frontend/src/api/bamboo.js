@@ -14,6 +14,7 @@ export function modify(params){
   return http.put('/bamboo/modfiy',{params:params})
 }
 
+//밤부아이디, 로그인아이디
 export function bamboo_delete(params){
   return http.delete('/bamboo/delete',{params:params})
 }
