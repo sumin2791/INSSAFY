@@ -7,14 +7,11 @@ import java.util.Map;
 import com.ssafy.pjt1.model.dto.calendar.CalendarItemDto;
 import com.ssafy.pjt1.model.service.calendar.CalendarItemService;
 
-import org.apache.ibatis.annotations.Delete;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
 @RequestMapping("/calendar")
 public class CalendarItemController {
@@ -159,4 +155,32 @@ public class CalendarItemController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
+
+    /*
+     * 기능: 임박한 채용 리스트 출력
+     * 
+     * developer: 윤수민
+     * 
+     * @param 
+     * 
+     * @return: message, calendarList
+     */
+    @GetMapping("/deadline")
+    public ResponseEntity<Map<String, Object>> getDeadline() {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("/calendar/deadline 호출");
+        try {
+            List<CalendarItemDto> calendarList = service.getDeadline();
+            resultMap.put("message", SUCCESS);
+            resultMap.put("calendarList", calendarList);
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            logger.error("error", e);
+            resultMap.put("message", FAIL);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+    
 }

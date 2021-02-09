@@ -34,7 +34,7 @@ public interface PostMapper {
 	public int isLiked(Map<String, Object> map);
 
 	public void like(Map<String, Object> map);
-	
+
 	public int isUnLiked(Map<String, Object> map);
 
 	public void updateLike(Map<String, Object> map);
@@ -51,9 +51,9 @@ public interface PostMapper {
 
 	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
-	public List<PostDto> searchPostNew(String keyword);
+	public List<PostDto> searchPostNew(Map<String, Object> map);
 
-	public List<PostDto> searchPostPopular(String keyword);
+	public List<PostDto> searchPostPopular(Map<String, Object> map);
 
 	public List<PostDto> boardPostNew(Map<String, Object> map);
 
@@ -75,4 +75,13 @@ public interface PostMapper {
 
 	public int isWriter(Map<String, Object> map);
 
+	public int getSalesCnt();
+
+	public int searchSalesCnt(Map<String, Object> map);
+
+	public int getTotalPostCnt(int board_id);
+
+	public int getSearchPostCnt(Map<String, Object> map);
+
+	public int getAllSearchPostCnt(String keyword);
 }

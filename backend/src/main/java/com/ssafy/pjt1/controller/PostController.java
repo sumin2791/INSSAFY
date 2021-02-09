@@ -4,17 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.pjt1.model.dto.comment.CommentDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.post.PostService;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
 @RequestMapping("/post")
 public class PostController {
@@ -40,6 +38,9 @@ public class PostController {
 
     @Autowired
     private BoardService boardService;
+
+    @Autowired
+    private RedisService redisService;
 
     /*
      * 기능: 보드 내 포스트 작성
@@ -62,7 +63,7 @@ public class PostController {
             int board_id = (int) param.get("board_id");
             map.put("user_id", user_id);
             map.put("board_id", board_id);
-            if(boardService.isUnSubscribed(map)!=0){
+            if (boardService.isUnSubscribed(map) != 0) {
                 PostDto postDto = new PostDto();
                 postDto.setUser_id(user_id);
                 postDto.setBoard_id(board_id);
@@ -75,7 +76,9 @@ public class PostController {
                 postService.createPost(postDto);
 
                 resultMap.put("message", SUCCESS);
-            }else{
+                ///////////////////////////////////////////////// post등록시 redisDto에 저장
+                redisService.boardPostSortSet(String.valueOf(board_id));
+            } else {
                 resultMap.put("message", PERMISSION);
             }
         } catch (Exception e) {
@@ -92,7 +95,8 @@ public class PostController {
      * 
      * @param : login_id, post_id
      * 
-     * @return : message, PostDto, isScrapped, isLiked, like_count, commentList, writer_nickname
+     * @return : message, PostDto, isScrapped, isLiked, like_count, commentList,
+     * writer_nickname
      */
     @GetMapping("/getPostById")
     public ResponseEntity<Map<String, Object>> getPostById(@RequestParam(value = "post_id") int post_id,
@@ -110,7 +114,7 @@ public class PostController {
                 int isLiked = postService.isUnLiked(map);
                 List<Map<String, Object>> commentList = postService.getComment(post_id);
                 String writer_nickname = postService.getWriterName(postDto.getUser_id());
-                
+
                 resultMap.put("postDto", postDto);
                 resultMap.put("isScrapped", isScrapped);
                 resultMap.put("isLiked", isLiked);
@@ -140,23 +144,23 @@ public class PostController {
      * @return : message
      */
     @PutMapping("/modify")
-    public ResponseEntity<Map<String, Object>> postModify(@RequestBody PostDto postDto, 
-    @RequestParam(value = "login_id") String login_id) {
+    public ResponseEntity<Map<String, Object>> postModify(@RequestBody PostDto postDto,
+            @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/modify 호출 성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("post_id",postDto.getPost_id());
+            map.put("post_id", postDto.getPost_id());
             map.put("login_id", login_id);
-            if(postService.isWriter(map)!=0){
+            if (postService.isWriter(map) != 0) {
                 if (postService.postModify(postDto) == 1) {
                     resultMap.put("message", SUCCESS);
                 }
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
             }
-            
+
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -182,19 +186,19 @@ public class PostController {
         logger.info("post/modifyState 호출 성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("post_id",post_id);
+            map.put("post_id", post_id);
             map.put("login_id", login_id);
-            if(postService.isWriter(map)!=0){
+            if (postService.isWriter(map) != 0) {
                 Map<String, Object> map2 = new HashMap<>();
                 map2.put("post_id", post_id);
                 map2.put("post_state", post_state);
                 if (postService.stateModify(map2) == 1) {
                     resultMap.put("message", SUCCESS);
                 }
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
             }
-            
+
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -214,25 +218,27 @@ public class PostController {
      */
     @DeleteMapping("/delete/{post_id}")
     public ResponseEntity<Map<String, Object>> postDelete(@PathVariable("post_id") int post_id,
-    @PathVariable("login_id") String login_id) {
+            @PathVariable("login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/delete 호출성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("post_id",post_id);
+            map.put("post_id", post_id);
             map.put("login_id", login_id);
-            if(postService.isWriter(map)!=0){
+            if (postService.isWriter(map) != 0) {
                 if (postService.postDelete(post_id) == 1) {
+                    // boardPostDto의 redis 안에 value값 1감소
+                    redisService.boardPostSortSetDecrease(post_id);
                     // postService.deleteScrapAll(post_id);
                     // postService.deleteLikeAll(post_id);
                     // postService.deleteCommentAll(post_id);
                     resultMap.put("message", SUCCESS);
                 }
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
             }
-            
+
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -260,10 +266,10 @@ public class PostController {
             int post_id = (int) param.get("post_id");
             int board_id = boardService.getIdbyPostId(post_id);
             Map<String, Object> map = new HashMap<>();
-            
+
             map.put("user_id", user_id);
             map.put("board_id", board_id);
-            if(boardService.isUnSubscribed(map)!=0){
+            if (boardService.isUnSubscribed(map) != 0) {
                 Map<String, Object> map2 = new HashMap<>();
                 map2.put("user_id", user_id);
                 map2.put("post_id", post_id);
@@ -283,11 +289,10 @@ public class PostController {
                     }
                 }
                 resultMap.put("message", SUCCESS);
-            }else{
+            } else {
                 resultMap.put("message", "No Subscription");
-            } 
+            }
 
-            
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -314,11 +319,11 @@ public class PostController {
             int post_id = (int) param.get("post_id");
             int board_id = boardService.getIdbyPostId(post_id);
             Map<String, Object> map = new HashMap<>();
-            
+
             map.put("user_id", user_id);
             map.put("board_id", board_id);
 
-            if(boardService.isUnSubscribed(map)!=0){
+            if (boardService.isUnSubscribed(map) != 0) {
                 Map<String, Object> map2 = new HashMap<>();
                 map2.put("user_id", user_id);
                 map2.put("post_id", post_id);
@@ -328,24 +333,30 @@ public class PostController {
                     logger.info("좋아요 클릭");
                     postService.like(map2);
                     postService.plusCount(post_id);
-
+                    //// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 저장
+                    redisService.PostLikeSortSet(post_id);
                 } else {
                     int count2 = postService.isUnLiked(map2);
                     if (count2 == 0) {
                         // 전에 좋아요한 이력이 있지만 현재는 아닌 경우
                         postService.updateLike(map2);
                         postService.plusCount(post_id);
+                        //// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 저장
+                        redisService.PostLikeSortSet(post_id);
                     } else {
                         logger.info("좋아요 삭제");
+                        //// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 싫어요 1 감소
+                        redisService.postLikeDecrease(post_id);
                         postService.unlike(map2);
                         postService.minusCount(post_id);
+
                     }
                 }
                 resultMap.put("message", SUCCESS);
-            }else{
+            } else {
                 resultMap.put("message", "No Subscription");
-            }         
-            
+            }
+
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -358,26 +369,33 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : board_id, user_id
+     * @param : board_id, user_id, page, size
      * 
-     * @return : message,
+     * @return : message, isLastPage
      * postList(post_id,user_id,post_date,post_title,post_description,
-     * post_image,post_iframe,post_header,post_state,like_count, comment_count,writer_nickname,
-     * isLiked(1:좋아요누른 상태 0:좋아요 취소상태 리턴값 없는 경우:좋아요 안누른 상태),
-     * isScrapped(isLiked와 마찬가지))
+     * post_image,post_iframe,post_header,post_state,like_count,
+     * comment_count,writer_nickname, isLiked(1:좋아요누른 상태 0:좋아요 취소상태 리턴값 없는 경우:좋아요
+     * 안누른 상태), isScrapped(isLiked와 마찬가지))
      */
     @GetMapping("/getPostList")
-    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id, 
-    @RequestParam(value = "user_id") String user_id) {
+    public ResponseEntity<Map<String, Object>> getPostByList(@RequestParam(value = "board_id") int board_id,
+            @RequestParam(value = "user_id") String user_id,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
-        try {
+        try {            
+            int totalCnt = postService.getTotalPostCnt(board_id);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
             Map<String, Object> map = new HashMap<>();
-            map.put("board_id",board_id);
-            map.put("user_id",user_id);
+            map.put("board_id", board_id);
+            map.put("user_id", user_id);
+            map.put("start", page*size);
+            map.put("size", size);
             List<Map<String, Object>> postList = postService.getPostList(map);
-            logger.info("postList: " + postList);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
@@ -395,20 +413,31 @@ public class PostController {
      * 
      * @param : board_id, login_id
      * 
-     * @return : message,
+     * @return : message, isLastPage
      * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getSalesList")
     public ResponseEntity<Map<String, Object>> getSalesList(@RequestParam(value = "board_id") int board_id,
-    @RequestParam(value = "login_id") String login_id) {
+            @RequestParam(value = "login_id") String login_id,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/getSalesList 호출성공");
         try {
+            int totalCnt = postService.getSalesCnt();
+            if(totalCnt>(page+1)*size){
+                resultMap.put("isLastPage","false");
+            }else if(totalCnt>page*size){
+                resultMap.put("isLastPage","true");
+            }else{
+                resultMap.put("isLastPage","No data");
+            }
             Map<String, Object> map = new HashMap<>();
-            map.put("board_id",board_id);
-            map.put("login_id",login_id);
+            map.put("board_id", board_id);
+            map.put("login_id", login_id);
+            map.put("start", page*size);
+            map.put("size", size);
             List<Map<String, Object>> postList = postService.getSalesList(map);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
@@ -425,24 +454,34 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword
+     * @param : sort, keyword, page, size
      * 
      * @return : postList, message
      */
     @GetMapping("/searchPost")
     public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword) {
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/searchBoard 호출 성공");
         try {
+            int totalCnt = postService.getAllSearchPostCnt(keyword);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
             List<PostDto> postList;
+            Map<String, Object> map = new HashMap<>();
+            map.put("keyword", keyword);
+            map.put("start", page*size);
+            map.put("size", size);
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
-                postList = postService.searchPostNew(keyword);
+                postList = postService.searchPostNew(map);
             } else {
                 logger.info("좋아요순 포스트 검색");
-                postList = postService.searchPostPopular(keyword);
+                postList = postService.searchPostPopular(map);
             }
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
@@ -460,13 +499,14 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword, board_id
+     * @param : sort, keyword, board_id, page,size
      * 
-     * @return : postList, message
+     * @return : postList, message, isLastPage
      */
     @GetMapping("/board/searchPost")
     public ResponseEntity<Map<String, Object>> searchBoardPost(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id) {
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/board/searchPost 호출 성공");
@@ -475,6 +515,14 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("board_id", board_id);
+            map.put("start", page*size);
+            map.put("size", size);
+
+            int totalCnt = postService.getSearchPostCnt(map);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.boardPostNew(map);
@@ -498,13 +546,14 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword, board_id
+     * @param : sort, keyword, board_id, page, size
      * 
      * @return : postList, message
      */
     @GetMapping("/board/searchMarketPost")
     public ResponseEntity<Map<String, Object>> searchMarketPost(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id) {
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/board/searchMarketPost 호출 성공");
@@ -513,6 +562,16 @@ public class PostController {
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("board_id", board_id);
+            map.put("start", page*size);
+            map.put("size", size);
+            int totalCnt = postService.searchSalesCnt(map);
+            if(totalCnt>(page+1)*size){
+                resultMap.put("isLastPage","false");
+            }else if(totalCnt>page*size){
+                resultMap.put("isLastPage","true");
+            }else{
+                resultMap.put("isLastPage","No data");
+            }
             if (sort.equals("new")) {
                 logger.info("최신순 포스트 검색");
                 postList = postService.marketPostNew(map);

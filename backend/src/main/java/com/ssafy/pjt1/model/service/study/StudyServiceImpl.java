@@ -20,11 +20,28 @@ public class StudyServiceImpl implements StudyService {
 	public static final Logger logger = LoggerFactory.getLogger(StudyServiceImpl.class);
 
 	@Override
-	public List<Map<String, Object>> getPromoList() {
-		return sqlSession.getMapper(StudyMapper.class).getPromoList();
+	public List<Map<String, Object>> getPromoList(Map<String, Object> map) {
+		return sqlSession.getMapper(StudyMapper.class).getPromoList(map);
 	}
 
-	
+	@Override
+	public List<Integer> getStudyId(String login_id) {
+		return sqlSession.getMapper(StudyMapper.class).getStudyId(login_id);
+	}
+
+	@Override
+	public Map<String, Object> getStudyInfo(Integer board_id) {
+		return sqlSession.getMapper(StudyMapper.class).getStudyInfo(board_id);
+	}
+
+	@Override
+	public List<Map<String, Object>> getAllList(Map<String, Object> map) {
+		return sqlSession.getMapper(StudyMapper.class).getAllList(map);
+	}
+
+	@Override
+	public int getTotalCnt() {
+		return sqlSession.getMapper(StudyMapper.class).getTotalCnt();
+	}
 
 }
-

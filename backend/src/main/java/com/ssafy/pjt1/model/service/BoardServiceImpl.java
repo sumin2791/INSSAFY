@@ -64,23 +64,23 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<BoardDto> getBoardsNew() {
-		return sqlSession.getMapper(BoardMapper.class).getBoardsNew();
+	public List<Map<String, Object>> getBoardsNew(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).getBoardsNew(map);
 	}
 
 	@Override
-	public List<BoardDto> getBoardsPopular() {
-		return sqlSession.getMapper(BoardMapper.class).getBoardsPopular();
+	public List<Map<String, Object>> getBoardsPopular(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).getBoardsPopular(map);
 	}
 
 	@Override
-	public List<BoardDto> searchBoardNew(String keyword) {
-		return sqlSession.getMapper(BoardMapper.class).searchBoardNew(keyword);
+	public List<Map<String, Object>> searchBoardNew(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardNew(map);
 	}
 
 	@Override
-	public List<BoardDto> searchBoardPopular(String keyword) {
-		return sqlSession.getMapper(BoardMapper.class).searchBoardPopular(keyword);
+	public List<Map<String, Object>> searchBoardPopular(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardPopular(map);
 	}
 
 	@Override
@@ -156,6 +156,21 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public int isManager(Map<String, Object> map) {
 		return sqlSession.getMapper(BoardMapper.class).isManager(map);
+	}
+
+	@Override
+	public Map<String, String> getBoardInfo(String board_id) {
+		return sqlSession.getMapper(BoardMapper.class).getBoardInfo(board_id);
+	}
+
+	@Override
+	public int getTotalCnt() {
+		return sqlSession.getMapper(BoardMapper.class).getTotalCnt();
+	}
+
+	@Override
+	public int getSearchCnt(String keyword) {
+		return sqlSession.getMapper(BoardMapper.class).getSearchCnt(keyword);
 	}
 
 }

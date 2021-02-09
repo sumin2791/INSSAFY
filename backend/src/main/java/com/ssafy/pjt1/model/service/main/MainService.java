@@ -10,8 +10,9 @@ public interface MainService {
 
     public void updateSubscriptionCache();
 
-    public void updateCommentCache();
-
     public int getSubsriptionNumber(String board_id);
 
+    public void updatePostSort();
+
+    public void updatePostLikeSort();
 }

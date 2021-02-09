@@ -7,11 +7,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,11 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.service.BoardService;
-import com.ssafy.pjt1.model.service.main.MainService;
 import com.ssafy.pjt1.model.service.post.PostService;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 import com.ssafy.pjt1.model.service.vote.VoteService;
 
-@CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
 @RequestMapping("/board")
 public class BoardController {
@@ -49,10 +45,7 @@ public class BoardController {
     private PostService postService;
 
     @Autowired
-    StringRedisTemplate redisTemplate;
-
-    @Autowired
-    MainService mainService;
+    private RedisService redisService;
 
     /*
      * 기능: 보드 생성
@@ -60,7 +53,7 @@ public class BoardController {
      * developer: 윤수민
      * 
      * @param : user_id, board_name, board_description, board_location,
-     * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag
+     * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag, board_state
      * 
      * @return : message, board_id
      */
@@ -78,6 +71,7 @@ public class BoardController {
             boardDto.setBoard_location((String) param.get("board_location"));
             boardDto.setBoard_hash((String) param.get("board_hash"));
             boardDto.setUser_id((String) param.get("user_id"));
+            boardDto.setBoard_state((int) param.get("board_state"));
             boardService.createBoard(boardDto);
 
             Map<String, Object> map = new HashMap<>();
@@ -116,7 +110,7 @@ public class BoardController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/subscribe 호출성공");
-        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+
         try {
             Map<String, Object> map = new HashMap<>();
             map.put("user_id", (String) param.get("user_id"));
@@ -128,19 +122,21 @@ public class BoardController {
             if (count == 0) {
                 logger.info("구독 설정");
                 boardService.subscribe(map);
-                // 구독 누르면 캐시에 해당 보드 구독한 수 넣기
-                zset.add("follow", board_id, mainService.getSubsriptionNumber(board_id) + 1);
+                /////////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
+                redisService.boardFollowSortSet(board_id);
             } else {
                 int count2 = boardService.isUnSubscribed(map);
                 if (count2 == 0) {
                     // 전에 구독한 이력이 있지만 현재는 아닌 경우
                     boardService.updateSubscribe(map);
-                    // 구독 누르면 캐시에 해당 보드 구독한 수 넣기
-                    zset.add("follow", board_id, mainService.getSubsriptionNumber(board_id) + 1);
+                    /////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
+                    redisService.boardFollowSortSet(board_id);
                 } else {
                     logger.info("구독 해지");
                     // 관리자 아닐 경우 구독 해지
                     boardService.unsubscribe(map);
+                    ///////////////////////////////////////////// 구독 해지시 redis에서 follower수 -1 감소
+                    redisService.boardFollowSortSetDecrease(String.valueOf(board_id));
                 }
             }
 
@@ -226,24 +222,24 @@ public class BoardController {
      */
     @PutMapping("/modify")
     public ResponseEntity<Map<String, Object>> modifyBoard(@RequestBody BoardDto boardDto,
-    @RequestParam(value = "login_id") String login_id) {
+            @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/modify 호출 성공");
         try {
             int board_id = boardDto.getBoard_id();
             Map<String, Object> map = new HashMap<>();
-            map.put("board_id",board_id);
+            map.put("board_id", board_id);
             map.put("login_id", login_id);
-            if(boardService.isManager(map)!=0){
+            if (boardService.isManager(map) != 0) {
                 if (boardService.modifyBoard(boardDto) == 1) {
                     resultMap.put("message", SUCCESS);
                 } else {
                     resultMap.put("message", FAIL);
                 }
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
-            }   
+            }
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("수정 실패", e);
@@ -257,24 +253,33 @@ public class BoardController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort
+     * @param : sort, page, size
      * 
-     * @return : boardList, message
+     * @return : boardList, message, isLastPage
      */
     @GetMapping("/getBoards")
-    public ResponseEntity<Map<String, Object>> getBoards(@RequestParam(value = "sort") String sort) {
+    public ResponseEntity<Map<String, Object>> getBoards(@RequestParam(value = "sort") String sort,
+    @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/getBoards 호출 성공");
 
         try {
-            List<BoardDto> boardList;
+            int totalCnt = boardService.getTotalCnt();
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("start", page*size);
+            map.put("size", size);
+            List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
                 logger.info("최신순 전체 보드 검색");
-                boardList = boardService.getBoardsNew();
+                boardList = boardService.getBoardsNew(map);
             } else {
                 logger.info("구독순 전체 보드 검색");
-                boardList = boardService.getBoardsPopular();
+                boardList = boardService.getBoardsPopular(map);
             }
             resultMap.put("boardList", boardList);
             resultMap.put("message", SUCCESS);
@@ -291,24 +296,34 @@ public class BoardController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword
+     * @param : sort, keyword, page, size
      * 
      * @return : boardList, message
      */
     @GetMapping("/searchBoard")
     public ResponseEntity<Map<String, Object>> searchBoard(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword) {
+            @RequestParam(value = "keyword") String keyword,
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/searchBoard 호출 성공");
         try {
-            List<BoardDto> boardList;
+            int totalCnt = boardService.getSearchCnt(keyword);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+            logger.info("!!!!!cnt: "+totalCnt);
+            Map<String, Object> map = new HashMap<>();
+            map.put("keyword", keyword);
+            map.put("start", page*size);
+            map.put("size", size);
+            List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
                 logger.info("최신순 보드 검색");
-                boardList = boardService.searchBoardNew(keyword);
+                boardList = boardService.searchBoardNew(map);
             } else {
                 logger.info("구독순 보드 검색");
-                boardList = boardService.searchBoardPopular(keyword);
+                boardList = boardService.searchBoardPopular(map);
             }
             resultMap.put("boardList", boardList);
             resultMap.put("message", SUCCESS);
@@ -332,16 +347,18 @@ public class BoardController {
      */
     @DeleteMapping("/delete/{board_id}")
     public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("board_id") int board_id,
-    @RequestParam(value = "login_id") String login_id) {
+            @RequestParam(value = "login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("board/delete 호출성공");
         try {
             Map<String, Object> map = new HashMap<>();
-            map.put("board_id",board_id);
+            map.put("board_id", board_id);
             map.put("login_id", login_id);
-            if(boardService.isManager(map)!=0){
+            if (boardService.isManager(map) != 0) {
                 if (boardService.deleteBoard(board_id) == 1) {
+                    //////////////////////////////// 보드 삭제시 redis에서도 삭제
+                    redisService.boardSortSetDelete(String.valueOf(board_id));
                     // 추가기능 is_used 0으로 변경
                     boardService.deleteBoardAll(board_id);
                     boardService.deleteCalendar(board_id);
@@ -366,10 +383,10 @@ public class BoardController {
                     boardService.deletePostAll(board_id);
                     resultMap.put("message", SUCCESS);
                 }
-            }else{
+            } else {
                 resultMap.put("message", PERMISSION);
             }
-            
+
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             logger.error("error", e);
@@ -399,10 +416,10 @@ public class BoardController {
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
                 resultMap.put("message", SUCCESS);
-            }else{
+            } else {
                 resultMap.put("message", "NULL");
             }
-            
+
         } catch (Exception e) {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;

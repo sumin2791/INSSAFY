@@ -5,6 +5,14 @@ import java.util.Map;
 
 public interface StudyService {
 
-	List<Map<String, Object>> getPromoList();
+	public List<Map<String, Object>> getPromoList(Map<String, Object> map);
+
+	public List<Integer> getStudyId(String login_id);
+
+	public Map<String, Object> getStudyInfo(Integer board_id);
+
+	public List<Map<String, Object>> getAllList(Map<String, Object> map);
+
+	public int getTotalCnt();
 
 }
