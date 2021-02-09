@@ -55,8 +55,6 @@ export default {
       isFavorite: '#ffc83d',
       board_name: '',
       board_image: null,
-      active: false,
-      active2: false,
       radius: '15px',
     };
   },

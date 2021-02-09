@@ -201,7 +201,7 @@
                   >구독중인 보드</v-card-title
                 >
                 <v-divider></v-divider>
-                <Subscription v-for="board in subBoardList" :key="board.board_id" :board="board" class="pa-2 subscription" @delSub="deleteSub" />
+                <Subscription v-for="board in subBoardList" :key="board.board_id" :board="board" class="pa-2 ani-hover" @delSub="deleteSub" />
                 <!-- <Subscription />
                 <Subscription /> -->
               </div>
@@ -215,9 +215,7 @@
                   >내 작성글</v-card-title
                 >
                 <v-divider></v-divider>
-                <MyPost />
-                <MyPost />
-                <MyPost />
+                <MyPost v-for="post in getsPosts" :key="post.post_id" :post="post" class="pa-2 ani-hover" @delPost="deletePost" />
               </div>
               <!-- 내 댓글 -->
               <div v-if="mobileTap[2]">
@@ -228,9 +226,12 @@
                   >내 작성댓글</v-card-title
                 >
                 <v-divider></v-divider>
-                <MyComment />
-                <MyComment />
-                <MyComment />
+                <MyComment
+                  v-for="comment in getGetComments"
+                  :key="`${comment.post_id}/${comment.comment_id}`"
+                  :comment="comment"
+                  class="pa-2 ani-hover"
+                />
               </div>
 
               <!-- 내가 스크랩한 글 -->
@@ -265,6 +266,7 @@ import PasswordChange from '@/components/mypage/PasswordChange';
 import * as userApi from '@/api/user';
 import Profile from '@/components/etc/Profile';
 import { mapGetters, mapActions } from 'vuex';
+import Subscription from '@/components/mypage/Subscription.vue';
 
 export default {
   name: 'mypage',
@@ -329,13 +331,16 @@ export default {
   created() {
     this.getMyInfo();
     this.getSubBoard();
+    this.getPosts();
+    this.$store.dispatch('user/actGetComent');
   },
   computed: {
     ...mapGetters('auth', ['getsMyInfo', 'getSubBoardList']),
+    ...mapGetters('user', ['getsPosts', 'getGetComments']),
   },
   methods: {
     ...mapActions('auth', ['getMyInfo', 'putMyinfo', 'getSubBoard']),
-    ...mapActions('user', ['putDeleteSub']),
+    ...mapActions('user', ['putDeleteSub', 'getPosts', 'actDeletePost']),
     clickProfile: function() {},
     // 내 정보보기
     fetchData() {
@@ -384,7 +389,7 @@ export default {
       }
       this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit;
     },
-    deleteSub: function(board_id) {
+    deleteSub(board_id) {
       this.putDeleteSub({
         user_id: this.$store.state.auth.user.userId,
         board_id: board_id,
@@ -396,11 +401,19 @@ export default {
           });
           // this.subBoardList.splice(deleteIndex, 1);
           this.$delete(this.subBoardList, deleteIndex);
-          console.log(this.subBoardList);
-          this.getSubBoard().then(() => {
-            console.log(this.getSubBoardList);
+        }
+      });
+    },
+    deletePost(post_id) {
+      this.actDeletePost({
+        user_id: this.$store.state.auth.user.userId,
+        post_id: post_id,
+      }).then((result) => {
+        if (result) {
+          const deleteIndex = this.getsPosts.findIndex((post) => {
+            return post.post_id == post_id;
           });
-          // this.subBoardList = this.getSubBoardList;
+          this.$delete(this.getsPosts, deleteIndex);
         }
       });
     },
@@ -431,10 +444,10 @@ export default {
   border-radius: 15px !important;
   background-color: var(--basic-color-bg2);
 }
-.subscription {
+.ani-hover {
   transition: transform 0.5s ease;
 }
-.subscription:hover {
+.ani-hover:hover {
   transform: scale(1.01);
 }
 </style>

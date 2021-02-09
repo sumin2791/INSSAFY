@@ -216,7 +216,7 @@ public class PostController {
      * 
      * @return : message
      */
-    @DeleteMapping("/delete/{post_id}")
+    @DeleteMapping("/delete/{post_id}/{login_id}")
     public ResponseEntity<Map<String, Object>> postDelete(@PathVariable("post_id") int post_id,
             @PathVariable("login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
