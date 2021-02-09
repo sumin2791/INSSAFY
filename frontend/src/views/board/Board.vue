@@ -124,7 +124,6 @@ export default {
     // this.$store.dispatch('board/IsInBoard',Number(this.$route.params.board_id))
     // 구독했는 지 파악하기 : inBoard
     const BOARD_ID = Number(this.$route.params.board_id)
-    console.log(BOARD_ID)
     const boards = JSON.parse(localStorage.subBoard)
     const boardIds = boards.map(e => {
       return e.board_id

@@ -218,6 +218,41 @@ export default {
   color: #fff;
   background-color: #aa2610 !important;
 }
+.board-detail{
+  margin:0.5rem 0;
+  padding:0 0.5rem;
+}
+.board-detail-form{
+  padding:0 0.5rem;
+}
+.p-button {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button:hover,
+.p-button:active {
+  color: #fff;
+  background-color: #000 !important;
+}
+.p-button-cancel {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button-cancel:hover,
+.p-button-cancel:active {
+  color: #fff;
+  background-color: #aa2610 !important;
+}
 .board-name{
   font-weight: bold;
   font-size:1.3rem;
@@ -245,6 +280,14 @@ export default {
   color:#f9f9f9;
   padding: 0 8px;
   margin: 5px 8px 2px 0px;
+}
+
+.edit-button-set{
+  display: flex;
+  justify-content: flex-end;
+}
+.careful-line{
+  height: 30px;
 }
 
 .edit-button-set{
