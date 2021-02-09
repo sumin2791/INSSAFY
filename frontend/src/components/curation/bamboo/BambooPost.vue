@@ -1,26 +1,31 @@
 <template>
   <div class="post">
     <div class="post-header">
-      <div class="user-profile-img">
-        <b-avatar src="https://placekitten.com/300/300" size="4rem">익명</b-avatar>
-      </div>
-      <div class="user-name-date">
-        <div>
-          <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
-            <template #button-content>
-              익명
-            </template>
-            <b-dropdown-item href="#">Profile</b-dropdown-item>
-            <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
-            <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
-          </b-dropdown>
+      <div class="username-date-option">
+        <div class="user-name-date">
+          <div>
+            {{post.writer_nickname}}
+          </div>
+          <div class="post-date">{{date}}</div>
         </div>
-        <div class="post-date">{{post.post_date}}</div>
       </div>
+      <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
+        <template #button-content>
+          <v-btn icon x-small fab>
+            <v-icon dark>
+              mdi-dots-vertical
+            </v-icon>
+          </v-btn>
+        </template>
+        <!-- <b-dropdown-item ><PostModify :post="post"/></b-dropdown-item> -->
+        <!-- <b-dropdown-item v-if="flagWriter" ><bambooModify :post="post"/></b-dropdown-item> -->
+        <b-dropdown-item v-if="flagWriter" @click="bamboo_delete">삭제</b-dropdown-item>
+        <b-dropdown-item id="declare">신고</b-dropdown-item>
+      </b-dropdown>
     </div>
     <div class="">
-      <div class="title f-text b-desc">{{post.post_title}}</div>
-      <div class="description r-desc">{{post.post_description}}</div>
+      <div class="title f-text b-desc">{{post.bamboo_title}}</div>
+      <div class="description r-desc">{{post.bamboo_description}}</div>
     </div>
     <!-- <div class="post-footer">
       <div v-if="post.post_like>=10">
@@ -39,44 +44,52 @@
 </template>
 
 <script>
+// import bambooModify from '@/components/curation/bamboo/bambooModify'
+import timeForToday from '@/plugins/timeForToday'
+
 export default {
   name:"Post",
+  components:{
+    // bambooModify
+  },
   props:{
     post:Object
   },
   data() {
     return {
-      flagLike:false,
-      flagBookmark:false,
+    }
+  },
+  computed:{
+    date(){
+      return timeForToday(this.post.bamboo_date)
+    },
+    flagWriter(){
+      return this.post.user_id===localStorage.userId
     }
   },
   
   methods:{
-    postLike(e){
-      this.flagLike = !this.flagLike
-      console.log(this.flagLike)
-
-      // 포스트좋아하는거 카운트 바꾸기 위한 지금 이 방식은 bug가 존재합니다. (유저와 연동이 안되어 있기 때문) 
-      const flagLikeItem={
-        flagLike:this.flagLike,
-        post_id:this.post.post_id
+    bamboo_delete(){
+      const params = {
+        bamboo_id:this.post.bamboo_id,
+        login_id:localStorage.userId
       }
-      this.$store.dispatch('postLike',flagLikeItem)
+      this.$store.dispatch('bamboo/deleteBamboo',params)
     },
-    postBookmark(e){
-      this.flagBookmark = !this.flagBookmark
-      console.log(this.flagBookmark)
+    bamboo_modify(){
+
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
 .post{
   display: inline-block;
-  margin:1rem 0;
+  margin-top:1rem !important;
+  margin-bottom: 0rem !important;
   background-color: #fff;
-  padding: 1rem;
+  padding: 0.8rem;
   border:1px #949590 solid;
   border-radius:10px;
   height:auto;
@@ -108,12 +121,19 @@ export default {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
 }
+.username-date-option{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width:100%;
+}
 .user-profile-img{
   margin-right: 0.5rem;
 }
 .user-name button{
-  padding:0;
+  padding:0 !important;
   color:black;
+  transform:translate(3px,-6px)
 }
 .user-name button:hover{
   color:black;
@@ -122,10 +142,18 @@ export default {
 .dropdown-item{
   padding:0 0.3rem !important;
 }
+.dropdown-menu {
+   min-width: 3.1rem !important;
+   transform:translate(3px,-6px);
+}
+#declare{
+  color: var(--basic-color-new)
+}
 .user-name-date{
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: auto 0;
 }
 @media screen and (max-width: 576px) {
   .post{
