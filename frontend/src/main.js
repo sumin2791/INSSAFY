@@ -28,6 +28,8 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
+//https://www.npmjs.com/package/vue-moment
+//[moment 사용법]: https://flamingotiger.github.io/javascript/momentjs/
 Vue.use(require('vue-moment'));
 
 //toast
@@ -40,6 +42,8 @@ import 'vue-toast-notification/dist/theme-sugar.css';
 Vue.use(VueToast, {
   position: 'bottom-right',
   duration: 1000,
+  //message: msg,
+  //typs: 'default'
   // duration: 1000,
   // position: 'bottom-right',
   // dismissible: true,
@@ -53,7 +57,7 @@ Vue.use(VueToast, {
   // pauseOnHover: true,
 });
 
-const router = new VueRouter({
+export const router = new VueRouter({
   mode: 'history',
   // base: process.env.BASE_URL,
   routes,

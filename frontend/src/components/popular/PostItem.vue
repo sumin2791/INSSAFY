@@ -154,7 +154,11 @@ export default {
   margin-right: 20px;
   margin-bottom: 0;
   cursor: pointer;
-  transition: transform 1s ease;
+  transition: transform 0.8s ease;
+}
+.pi-p:hover {
+  font-weight: 600;
+  transform: scale(1.2);
 }
 
 .aheader {

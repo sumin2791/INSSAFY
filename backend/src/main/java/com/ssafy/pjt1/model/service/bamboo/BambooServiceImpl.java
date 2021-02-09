@@ -22,13 +22,13 @@ public class BambooServiceImpl implements BambooService {
     }
 
     @Override
-    public List<BambooDto> getAllList() {
-        return sqlSession.getMapper(BambooMapper.class).getAllList();
+    public List<BambooDto> getAllList(Map<String, Object> map) {
+        return sqlSession.getMapper(BambooMapper.class).getAllList(map);
     }
 
     @Override
-    public List<BambooDto> searchPost(String keyword) {
-        return sqlSession.getMapper(BambooMapper.class).searchPost(keyword);
+    public List<BambooDto> searchPost(Map<String, Object> map) {
+        return sqlSession.getMapper(BambooMapper.class).searchPost(map);
     }
 
     @Override
@@ -44,6 +44,11 @@ public class BambooServiceImpl implements BambooService {
     @Override
     public int bambooDelete(int bamboo_id) {
         return sqlSession.getMapper(BambooMapper.class).bambooDelete(bamboo_id);
+    }
+
+    @Override
+    public int getTotalCnt() {
+        return sqlSession.getMapper(BambooMapper.class).getTotalCnt();
     }
     
 }

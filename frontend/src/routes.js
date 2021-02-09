@@ -35,15 +35,17 @@ import JoinSuccess from './views/redirect/JoinSuccess';
 
 import Modify from './views/user/Modify';
 
-
 //토큰 없이(비회원) About 외 페이지 접근 시 리다이렉트
 // https://router.vuejs.org/kr/guide/advanced/navigation-guards.html
 import store from './vuex/store';
 const requireAuth = () => (to, from, next) => {
   const nextRoute = to.path;
-  if (store.getters.getToken != '') {
+  if (store.getters.getToken != null) {
     return next();
-  } else next('/login' + nextRoute);
+  } else {
+    console.log(nextRoute);
+    next('/login' + nextRoute);
+  }
 };
 //로그인 중이면 로그인 페이지 방문시 이전 라우터로 이동
 const redirectBefore = () => (to, from, next) => {
@@ -85,7 +87,7 @@ export default [
     beforeEnter: redirectBefore(),
   },
   {
-    path: '/user/mypage',
+    path: '/mypage',
     name: 'Mypage',
     component: Mypage,
     beforeEnter: requireAuth(), //토큰 정보 없을 때, 로그인 페이지로 redirect

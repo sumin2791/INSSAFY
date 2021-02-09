@@ -66,8 +66,9 @@ export default {
         grabCursor: true,
         freeMode: true,
         // threshold: 20,
+        speed: 1000,
         autoplay: {
-          delay: 600,
+          delay: 1000,
         },
         on: {
           init: this.init,
@@ -244,6 +245,10 @@ export default {
 
 .p-slide {
   font-size: 30px;
+}
+.p-slide:hover {
+  font-weight: 600;
+  transform: scale(1.04) !important;
 }
 @media (max-width: 2000px) {
   .p-slide {

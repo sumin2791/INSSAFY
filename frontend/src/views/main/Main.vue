@@ -250,7 +250,7 @@ export default {
     // console.log(this.getFavorites);
     // console.log(this.getSubBoardFavoriteList);
     // console.log(this.getSubBoardList);
-    console.log(this.getFollowRank);
+    // console.log(this.getFollowRank);
   },
   methods: {
     ...mapActions('main', ['actFavorites', 'actFollowRank']),

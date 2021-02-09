@@ -37,8 +37,8 @@ export default {
           alert('clicked notify');
           break;
         case 2: //로그아웃
-          // this.$store.dispatch('auth/logout');
-          this.$store.commit('auth/setLogoutState');
+          this.$store.dispatch('auth/logout');
+          this.$router.push({ name: 'Login' });
           break;
         default:
           break;
