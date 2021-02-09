@@ -123,13 +123,13 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> searchPostNew(String keyword) {
-		return sqlSession.getMapper(PostMapper.class).searchPostNew(keyword);
+	public List<PostDto> searchPostNew(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostNew(map);
 	}
 
 	@Override
-	public List<PostDto> searchPostPopular(String keyword) {
-		return sqlSession.getMapper(PostMapper.class).searchPostPopular(keyword);
+	public List<PostDto> searchPostPopular(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostPopular(map);
 	}
 
 	@Override
@@ -180,6 +180,31 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public int isWriter(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).isWriter(map);
+	}
+
+	@Override
+	public int getSalesCnt() {
+		return sqlSession.getMapper(PostMapper.class).getSalesCnt();
+	}
+
+	@Override
+	public int searchSalesCnt(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchSalesCnt(map);
+	}
+
+	@Override
+	public int getTotalPostCnt(int board_id) {
+		return sqlSession.getMapper(PostMapper.class).getTotalPostCnt(board_id);
+	}
+
+	@Override
+	public int getSearchPostCnt(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).getSearchPostCnt(map);
+	}
+
+	@Override
+	public int getAllSearchPostCnt(String keyword) {
+		return sqlSession.getMapper(PostMapper.class).getAllSearchPostCnt(keyword);
 	}
 
 }

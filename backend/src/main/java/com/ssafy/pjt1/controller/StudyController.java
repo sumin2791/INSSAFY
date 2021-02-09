@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.service.BoardService;
+import com.ssafy.pjt1.model.service.post.PostService;
 import com.ssafy.pjt1.model.service.study.StudyService;
 
 import org.slf4j.Logger;
@@ -34,24 +35,36 @@ public class StudyController {
     @Autowired
     private StudyService studyService;
 
+    @Autowired
+    private PostService postService;
+
     /*
      * 기능: 스터디 모집글 리스트
      * 
      * developer: 윤수민
      * 
-     * @param :
+     * @param : page, size
      * 
-     * @return : message,
+     * @return : message, 
      * postList(post_id,user_id,post_date,post_title,post_description,
      * post_image,post_iframe,post_header,post_state,like_count, comment_count)
      */
     @GetMapping("/getPromoList")
-    public ResponseEntity<Map<String, Object>> getPromoList() {
+    public ResponseEntity<Map<String, Object>> getPromoList(@RequestParam(value = "page") int page, 
+    @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
-            List<Map<String, Object>> postList = studyService.getPromoList();
+            int totalCnt = postService.getTotalPostCnt(37);
+            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
+            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
+            else resultMap.put("isLastPage","No data");
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("start", page*size);
+            map.put("size", size);
+            List<Map<String, Object>> postList = studyService.getPromoList(map);
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
@@ -98,18 +111,30 @@ public class StudyController {
      * 
      * developer: 윤수민
      * 
-     * @param : 
+     * @param : page, size
      * 
-     * @return : message, studyList(board_name,board_description,board_count)
+     * @return : message, isLastPage, studyList(board_name,board_description,board_count)
      * 
      */
     @GetMapping("/getAllList")
-    public ResponseEntity<Map<String, Object>> getAllList(){
+    public ResponseEntity<Map<String, Object>> getAllList(@RequestParam(value = "page") int page, 
+    @RequestParam(value = "size") int size){
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("study/getAllList 호출성공");
         try {
-            List<Map<String, Object>> studyList = studyService.getAllList();
+            int totalCnt = studyService.getTotalCnt();
+            if(totalCnt>(page+1)*size){
+                resultMap.put("isLastPage","false");
+            }else if(totalCnt>page*size){
+                resultMap.put("isLastPage","true");
+            }else{
+                resultMap.put("isLastPage","No data");
+            }
+            Map<String, Object> map = new HashMap<>();
+            map.put("start", page*size);
+            map.put("size", size);
+            List<Map<String, Object>> studyList = studyService.getAllList(map);
             resultMap.put("studyList", studyList);          
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {

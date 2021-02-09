@@ -24,13 +24,13 @@ public interface BoardService {
 
 	public int modifyBoard(BoardDto boardDto);
 
-	public List<BoardDto> getBoardsNew();
+	public List<Map<String, Object>> getBoardsNew(Map<String, Object> map);
 
-	public List<BoardDto> getBoardsPopular();
+	public List<Map<String, Object>> getBoardsPopular(Map<String, Object> map);
 
-	public List<BoardDto> searchBoardNew(String keyword);
+	public List<Map<String, Object>> searchBoardNew(Map<String, Object> map);
 
-	public List<BoardDto> searchBoardPopular(String keyword);
+	public List<Map<String, Object>> searchBoardPopular(Map<String, Object> map);
 
 	public int deleteBoard(int board_id);
 
@@ -63,4 +63,8 @@ public interface BoardService {
 	public int isManager(Map<String, Object> map);
 
 	public Map<String, String> getBoardInfo(String board_id);
+
+	public int getTotalCnt();
+
+	public int getSearchCnt(String keyword);
 }
