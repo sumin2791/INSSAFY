@@ -27,7 +27,10 @@
       <div class="hashtaglist">
         <div class="board-hashtag" v-for="(hash,idx) in this.board.hashtags" :key="idx">{{hash}}</div>
       </div>
-      <div class="board-people"><b-icon icon="person-fill" aria-hidden="true"></b-icon> {{board.subscribe_count}}</div>
+      <div class="board-people">
+        <v-icon left>
+          mdi-account-group
+        </v-icon>{{board.subscribe_count}}</div>
     </div>
     <div
       class="board-hash-form"
@@ -56,8 +59,8 @@
       </div>
     </div>
     <div class="edit-button-set" v-if="Edit">
-      <button class="p-button r-desc" @click="submit">  Edit  </button>
       <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
+      <button class="p-button r-desc" @click="submit">  Edit  </button>
     </div>
     <div class="careful-line"></div>
   </div>
@@ -167,19 +170,22 @@ export default {
 </script>
 
 <style scoped>
+/* 전체 description-container */
 .board-description{
   display: flex;
   flex-direction: column;
+  padding: 5% 10%;
+  min-height: 30vh;
 }
 .name-setting{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1em;
 }
 .board-detail{
-  margin:0.5rem 0;
-  padding:0 0.5rem;
+  margin: 1em 0;
+  padding:0 0 0 1em;
 }
 .board-detail-form{
   padding:0 0.5rem;
@@ -237,9 +243,8 @@ export default {
   background-color: #0B2945;
   border-radius: 0.5rem;
   color:#f9f9f9;
-  padding-left:0.2rem;
-  padding-right:0.2rem;
-  margin: 0.3rem;
+  padding: 0 8px;
+  margin: 5px 8px 2px 0px;
 }
 
 .edit-button-set{

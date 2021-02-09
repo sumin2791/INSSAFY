@@ -26,19 +26,13 @@
         class="align-self-end 
           ma-2 ml-auto"
       >
-        <v-btn>
-          판매중
-        </v-btn>
-        <v-btn
+        <v-chip
           style="background-color: #0B2945 !important;
           color: #fff;
           border-radius: 10%;"
         >
-          거래중
-        </v-btn>
-        <v-btn>
-          판매완료
-        </v-btn>
+          {{ isState }}
+        </v-chip>
       </v-btn-toggle>
     </v-card-title>
     <!-- 포스트 제목 -->
@@ -58,6 +52,9 @@
 <script>
 export default {
   name: 'ScrapPost',
+  mounted() {
+    this.showState()
+  },
   data() {
     return {
       post:
@@ -70,7 +67,12 @@ export default {
           likeCount: 4,
           commentCount: 4,
           boardCount: 241,
+          // 현재 판매상태
+          state: 2,
+          stateString: '',
         },
+      // 판매상태 정보
+      isState: ['판매중', '거래중', '판매완료'],
     }
   },
   methods: {
@@ -82,6 +84,10 @@ export default {
     moveToBoard() {
       this.$router.push({ name: 'Board' });
     },
+    // 판매상태 정보
+    showState() {
+      this.isState = this.isState[this.post.state]
+    }
   },
 }
 </script>

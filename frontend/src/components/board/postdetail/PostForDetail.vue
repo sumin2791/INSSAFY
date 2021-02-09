@@ -16,7 +16,7 @@
               <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
             </b-dropdown>
           </div>
-          <div class="post-date">{{date}}</div>
+          <div class="post-date" v-cloak>{{date}}</div>
         </div>
           <b-dropdown v-if="flagWriter" id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
             <template #button-content>

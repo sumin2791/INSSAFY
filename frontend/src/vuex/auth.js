@@ -128,7 +128,7 @@ export default {
     async getSubBoard(context) {
       try {
         // 구독 보드 리스트도 가져오기
-        const responseSubBoard = await userApi.getSubBoards(this.state.auth.user.userId);
+        const responseSubBoard = await userApi.getSubBoard(this.state.auth.user.userId);
         // console.log('구독보드리스트 결과:');
         // console.log(responseSubBoard);
         context.commit('SET_SUBSCRIBE_BOARD', responseSubBoard);

@@ -2,6 +2,7 @@
   <v-app class="main-bg-color">
     <v-main class="grey lighten-3">
       <v-container
+        id="container"
         class="pt-8"
       >
         <!-- PC에서 보여줄 curation이름과 검색 -->
@@ -75,6 +76,8 @@
           <v-col
             class="col-12 col-sm-8"  
           >
+            <!-- 중고장터 게시글 작성 -->
+            <MarketPostWrite class="mx-4 mb-2"/>
             <!-- 중고장터 게시물 부분 -->
             <MarketPost class="mx-4 mb-2"/>
             <MarketPost class="mx-4 mb-2"/>
@@ -89,6 +92,8 @@
 <script>
 // 관심 품목 등록 리스트
 import MarketItem from "@/components/curation/market/MarketItem.vue"
+// 중고장터 게시물 작성
+import MarketPostWrite from "@/components/curation/market/MarketPostWrite.vue"
 // 중고장터 게시물
 import MarketPost from "@/components/curation/market/MarketPost.vue"
 
@@ -96,6 +101,7 @@ export default {
   name:'Market',
   components: {
     MarketItem,
+    MarketPostWrite,
     MarketPost,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
@@ -136,6 +142,11 @@ export default {
 </script>
 
 <style scoped>
+/* 전체 감싼 컨테이너 */
+#container {
+ max-width: 1200px !important; 
+}
+
 .main-bg-color {
   background-color: #ebebe9;
 }
