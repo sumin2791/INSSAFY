@@ -27,6 +27,8 @@ import SearchBoard from './views/search/SearchBoard.vue';
 
 // Chat
 import ChatPage from './views/openchat/ChatPage.vue';
+// Chat Test
+import ChatPageTest from './views/openchat/ChatPageTest.vue';
 
 //redirect vue
 import PageNotFound from './views/redirect/PageNotFound';
@@ -126,6 +128,12 @@ export default [
     component: Market,
   },
   {
+    path: '/curation/market/:post_id(\\d+)',
+    name: 'MarketPost',
+    component: PostDetail,
+    props: true,
+  },
+  {
     path: '/curation/recruitment',
     name: 'Recruitment',
     component: Recruitment,
@@ -148,6 +156,7 @@ export default [
     name: 'BoardForm',
     component: BoardForm,
   },
+
   // 검색 관련 영역
   {
     path: '/post/search',
@@ -165,6 +174,13 @@ export default [
     path: '/chat',
     name: 'ChatPage',
     component: ChatPage,
+  },
+
+  // 채팅 관련 영역
+  {
+    path: '/chat/test',
+    name: 'ChatPageTest',
+    component: ChatPageTest,
   },
 
   //redirect 영역
