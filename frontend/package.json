@@ -26,6 +26,7 @@
     "swiper": "5.x",
     "vue": "^2.6.10",
     "vue-awesome-swiper": "^4.1.1",
+    "vue-infinite-loading": "^2.4.5",
     "vue-masonry-css": "^1.0.3",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.1.3",

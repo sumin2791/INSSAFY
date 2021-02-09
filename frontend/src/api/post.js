@@ -4,7 +4,6 @@ export function getPostList(params){
   return http.get('/post/getPostList',{params:params})
 }
 
-
 export function create(params){
   return http.post('/post/create',params)
 }

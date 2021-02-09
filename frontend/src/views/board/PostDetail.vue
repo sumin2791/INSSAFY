@@ -61,7 +61,7 @@ export default {
     flagComment:'fetchData',
     flagModify : 'fetchData'
   },
-  mounted(){
+  created(){
     this.fetchData()
   },
   methods:{

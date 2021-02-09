@@ -1,26 +1,25 @@
 <template>
   <div>
-    <b-button v-b-modal.modal-post variant="light" class="btn-write">글쓰기</b-button>
-    <b-modal id="modal-post" title="Info" v-if="!inBoard" ok-only>
+    <!-- <b-button v-b-modal.modal-post variant="light" class="btn-write">글쓰기</b-button> -->
+    <div v-b-modal.modal-post>수정</div>
+    <!-- <b-modal id="modal-post" title="Info" v-if="!inBoard" ok-only>
       <p class="my-4">구독하시면 글을 작성할 수 있어요😊</p>
       <template #modal-footer="{ok}">
-        <!-- Emulate built in modal footer ok and cancel button actions -->
         <b-button variant="submit" @click="ok()">
           오키
         </b-button>
       </template>
-    </b-modal>
+    </b-modal> -->
     <b-modal
       id="modal-post"
       ref="modal"
       size="xl"
-      title="Post"
+      title="Modify"
       no-close-on-backdrop
-      ok-only
       @show="resetModal"
       @hidden="resetModal"
+      @modal-cancel="resetModal"
       @ok="handleOk"
-      v-if="inBoard"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -31,7 +30,7 @@
           <b-form-input
             id="title-input"
             placeholder="제목"
-            v-model="title"
+            v-model="tempTitle"
             :state="titleState"
             required
           ></b-form-input>
@@ -45,7 +44,7 @@
             id="description-input"
             placeholder="무슨생각하고 있음?"
             style="height:300px"
-            v-model="description"
+            v-model="tempDescription"
             :state="descriptionState"
             required
             no-resize
@@ -58,7 +57,7 @@
           <b-form-file 
             disabled
             id="multiple-media"
-            v-model="images"
+            v-model="tempImages"
             placeholder="Choose a file or drop it here..."
             browse-text='🖼'
           >
@@ -72,10 +71,13 @@
           </b-form-file>
         </b-form-group>
       </form>
-      <template #modal-footer="{ok}">
+      <template #modal-footer="{ok, cancel}">
         <!-- Emulate built in modal footer ok and cancel button actions -->
         <b-button variant="submit" @click="ok()">
-          게시
+          Edit
+        </b-button>
+        <b-button variant="cancel" @click="cancel()">
+          Cancel
         </b-button>
       </template>
     </b-modal>
@@ -103,21 +105,23 @@
 </template>
 
 <script>
-import * as postApi from '@/api/post';
+import * as bambooApi from '@/api/bamboo';
+
+import deepClone from '@/plugins/deepClone'
 
 export default {
-  name:'PostWrite',
+  name:'ModifyForm',
+  props:{
+    post:Object,
+  },
   data() {
     return {
-      title: '',
-      description:'',
-      images:[],
+      tempTitle: '',
+      tempDescription:'',
+      tempImages:[],
       titleState: null,
       descriptionState: null,
     }
-  },
-  props:{
-    inBoard:Boolean
   },
   methods: {
     titleCheckFormValidity() {
@@ -131,11 +135,11 @@ export default {
       return valid
     },
     resetModal() {
-      this.title = ''
-      this.description = ''
+      this.tempTitle = this.post.post_title
+      this.tempDescription = this.post.post_description
       this.titleState = null
       this.descriptionState = null
-      this.images=[]
+      this.tempImages=[]
     },
     handleOk(bvModalEvt) {
       // Prevent modal from closing
@@ -159,25 +163,21 @@ export default {
       // var fd = new FormData()
       // fd.append('post_image', this.images)
 
-      const postItem ={
-        user_id:String(localStorage.getItem('userId')),
-        board_id:BOARD_ID,
-        post_title:this.title, 
-        post_description:this.description,
-        post_image:'',
-        post_iframe:'',
-        post_header:'',
-        post_state:0
-      }
+      let postItem = deepClone(this.post)
+      postItem.bamboo_title = this.tempTitle
+      postItem.bamboo_description = this.tempDescription
+      postItem.bamboo_image = '' //이미지는 DB설계가 아직 안 되어 있음.
+
+      const login_id = localStorage.userId
       console.log(postItem)
-      
-      postApi.create(postItem)
+      bambooApi.modify({postItem,login_id})
         .then(res=>{
-          this.$store.dispatch('board/isWriteFlag')
+          console.log('post 편집')
+          this.$store.dispatch('post/isModifyFlag')
         })
         .catch(err=>{
           
-          console.log(`post 생성 실패 ${err}`)
+          console.log(`post 편집 실패`)
         })
 
       this.$nextTick(() => {
@@ -189,15 +189,16 @@ export default {
 </script>
 
 <style scoped>
-.btn-write {
-  width:100%;
-  position: sticky;
+.modal-footer{
+  display: flex;
 }
+
 .btn-submit {
-  width: 100%;
+  /* width: 100%; */
   height: 40px;
-  
+  /* margin: 5px 10px; */
   font-size: 20px;
+  border: solid 1px #000;
   transition: color 0.3s, background-color 0.3s ease;
 }
 .btn-submit:hover,
@@ -205,11 +206,24 @@ export default {
   background-color: #000 !important;
   color: #fff;
 }
-@media screen and (max-width:576px) {
+.btn-cancel {
+  /* width: 100%; */
+  height: 40px;
+  /* margin: 5px 10px; */
+  font-size: 20px;
+  border: solid 1px #000;
+  transition: color 0.3s, background-color 0.3s ease;
+}
+.btn-cancel:hover,
+.btn-cancel:active {
+  background-color: #aa2610 !important;
+  border: solid 1px #aa2610;
+  color: #fff;
+}
+/* @media screen and (max-width:576px) {
   .btn-submit{
-    width: 100%;
     background-color: #000 !important;
     color: #fff;
   }
-}
+} */
 </style>
