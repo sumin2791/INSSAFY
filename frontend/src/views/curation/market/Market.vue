@@ -65,8 +65,6 @@
                 <v-list-item>관심품목</v-list-item>
                 <v-col>
                   <MarketItem />
-                  <MarketItem />
-                  <MarketItem />
                 </v-col>
               </v-list>
             </v-sheet>
@@ -76,9 +74,12 @@
             class="col-12 col-sm-8"  
           >
             <!-- 중고장터 게시물 부분 -->
-            <MarketPost class="mx-4 mb-2"/>
-            <MarketPost class="mx-4 mb-2"/>
-            <MarketPost class="mx-4 mb-2"/>
+            <div v-for="(post,idx) in posts" :key="idx">
+              <MarketPost class="mx-4 mb-2" :post="post"/>
+            </div>
+            <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+              <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
+            </infinite-loading>
           </v-col>
         </v-row>
       </v-container>
@@ -92,11 +93,15 @@ import MarketItem from "@/components/curation/market/MarketItem.vue"
 // 중고장터 게시물
 import MarketPost from "@/components/curation/market/MarketPost.vue"
 
+import * as marketApi from '@/api/market'
+import InfiniteLoading from 'vue-infinite-loading';
+
 export default {
   name:'Market',
   components: {
     MarketItem,
     MarketPost,
+    InfiniteLoading
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -123,6 +128,8 @@ export default {
       searchLocation: '',
       // 검색 키워드
       searchKeyword: '',
+      posts:[],
+      page:0
     }
   },
   methods: {
@@ -130,6 +137,26 @@ export default {
     onResize() {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
       this.ResponsiveSize.viewSize = window.innerWidth;
+    },
+    infiniteHandler($state){
+      const EACH_LEN = 5
+      marketApi.getSaleList({board_id:34,login_id:localStorage.userId,page:this.page,size:EACH_LEN})
+      .then((res)=>{
+        console.log(res)
+        setTimeout(()=>{
+          if(res.data.postList){
+            this.posts = this.posts.concat(res.data.postList);
+            this.page += 1;
+            $state.loaded();
+            if(res.data.postList.length / EACH_LEN <1){
+              $state.complete();
+            }
+          }else{
+            $state.complete();
+          }
+        },1000);
+      })
+      .catch(err=>{console.log(err)})
     },
   }
 }
