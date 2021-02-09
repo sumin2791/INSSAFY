@@ -1,53 +1,137 @@
 <template>
-  <div class="post">
-    <div class="post-header">
-      <div class="user-profile-img">
-        <b-avatar src="https://placekitten.com/300/300" size="4rem">유저프로필</b-avatar>
-      </div>
-      <div class="username-date-option">
-        <div class="user-name-date">
-          <div>
-            <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
-              <template #button-content>
-                {{nickname}}
-              </template>
-              <b-dropdown-item href="#">Profile</b-dropdown-item>
-              <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
-              <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
-            </b-dropdown>
-          </div>
-          <div class="post-date">{{date}}</div>
-        </div>
-          <b-dropdown v-if="flagWriter" id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
-            <template #button-content>
-              <v-btn icon x-small fab>
-                <v-icon dark>
-                  mdi-dots-vertical
-                </v-icon>
-              </v-btn>
-            </template>
-            <b-dropdown-item ><PostModify :post="post"/></b-dropdown-item>
-            <b-dropdown-item >삭제</b-dropdown-item>
-            <b-dropdown-item id="declare">신고</b-dropdown-item>
-            <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
-          </b-dropdown>
-      </div>
+  <v-card
+    class="d-flex
+      flex-column"
+    color="#F9F9F9"
+  >
+    <!-- 포스트 작성자 부분 -->
+    <v-card-title 
+      class="d-flex 
+        flex-row 
+        align-center 
+        ma-0 
+        pr-0
+        py-0"
+    >
+      <v-list-item 
+        two-line
+        class="pl-0
+          pr-0"
+      >
+        <v-list-item-avatar class="rounded-circle">
+          <v-img
+            class="elevation-6"
+            alt=""
+            :src="profileImg"
+          ></v-img>
+        </v-list-item-avatar>
+        <!-- 작성자이름, 작성일자 -->
+        <v-list-item-content>
+          <v-list-item-subtitle 
+            class="text-body
+              ml-2 
+              font-weight-bold"
+          >
+            {{nickname}}
+          </v-list-item-subtitle>
+          <v-list-item-subtitle 
+            class="text-overline
+              ml-2 
+              font-weight-medium"
+          >
+            {{ date }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+        <v-spacer></v-spacer>
+        <!-- 수정 삭제 신고 버튼 -->
+        <b-dropdown 
+          id="dropdown-dropleft" 
+          class="user-name" 
+          variant="link" 
+          toggle-class="text-decoration-none" 
+          no-caret
+        >
+          <template #button-content>
+            <v-btn icon x-small fab>
+              <v-icon dark>
+                mdi-dots-vertical
+              </v-icon>
+            </v-btn>
+          </template>
+          <!-- 수정, 삭제는 작성자만 보이게 -->
+          <b-dropdown-item v-if="flagWriter"><PostModify :post="post"/></b-dropdown-item>
+          <b-dropdown-item v-if="flagWriter">삭제</b-dropdown-item>
+          <b-dropdown-item>신고</b-dropdown-item>
+          <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
+        </b-dropdown>
+      </v-list-item>
+    </v-card-title>
+    
+    <!-- 포스트 제목 -->
+    <div
+      id="title"
+      class="text-h6
+        mx-4 
+        font-weight-bold"
+    >
+      {{post.post_title}}
     </div>
-    <div class="post-body">
-      <div class="title f-text b-desc">{{post.post_title}}</div>
-      <div class="description r-desc">{{post.post_description}}</div>
-
+    <!-- 게시글 내용 -->
+    <div
+      id="description"
+      class="text-caption
+        mx-4
+        mt-4"
+    >
+      {{post.post_description}}
+      <!-- 이미지 미리보기 -->
       <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
     </div>
-    <div class="post-footer">
-      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> {{countLike}}</div>
-      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{countLike}}</div>
-      <!-- <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{countComment}}</div> -->
-      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> {{commentCount}}</div>
-      <div class="post-bookmark" @click="postScrap" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
-      <div class="post-bookmark" @click="postScrap" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
-    </div>
-  </div>
+
+    <!-- 게시글 관련 이미지/댓글/좋아요 들어갈 부분 -->
+    <v-card-actions id="actions">
+      <!-- 북마크 -->
+      <button
+        @click="postScrap"
+      >
+        <!-- 북마크 중 -->
+        <v-icon
+          middle
+          v-if="flagScrap"
+          color="#0B2945"
+        >mdi-bookmark</v-icon>
+        <!-- 북마크 취소상태 -->
+        <v-icon
+          middle
+          v-else
+        >mdi-bookmark-outline</v-icon>
+      </button>
+      <v-spacer></v-spacer>
+      <!-- 댓글 수 -->
+      <v-icon
+        middle
+      >mdi-comment-processing</v-icon>
+      <span>{{ commentCount }}</span>
+      <!-- 좋아요 -->
+      <button
+        @click="postLike"
+      >
+        <!-- 좋아요 중 -->
+        <v-icon
+          middle
+          v-if="flagLike"
+          color="#FFC400"
+        >mdi-emoticon-excited</v-icon>
+        <!-- 좋아요 취소상태 -->
+        <v-icon
+          middle
+          v-else
+        >mdi-emoticon-neutral-outline</v-icon>
+        <span>{{ countLike }}</span>
+      </button>
+      
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
@@ -71,7 +155,10 @@ export default {
       // nickname:'',
       viewImage:null,
       // post:{},
-      tempComment:''
+      tempComment:'',
+
+      // 추후에 연결해줘야하는 부분 - 이미지(프로필 사진)
+      profileImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
     }
   },
   computed:{
@@ -153,72 +240,18 @@ export default {
 }
 </script>
 
-<style>
-.post{
-  margin:1rem 0;
-  background-color: #fff;
-  padding: 1rem;
-  border:1px #949590 solid;
-  border-radius:10px;
+<style scoped>
+/* 이미지 여부, 댓글, 좋아요, 북마크 부분 */
+#actions * {
+  margin: 2px 2px !important;
 }
-.post .post-header{
-  margin-bottom: 0.5rem;
-  display: flex;
-  flex-direction: row;
+/* 게시글 제목 */
+#title {
+  font-size: 20px;
 }
-.username-date-option{
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width:100%;
-}
-.post .post-body{
-  min-height: 150px;
-}
-img{
-  /* height: 10rem; */
-  width: 70%;
-}
-.post .post-footer{
-  display:flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  margin-top:1rem;
-}
-.post-comment{
-  margin-left: 0.5rem;
-}
-.post-bookmark{
-  margin-left:0.5rem;
-}
-.post .title{
-  font-weight: bold;
-  font-size:1.5rem;
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-}
-.user-profile-img{
-  margin-right: 0.5rem;
-}
-.user-name button{
-  padding:0;
-  color:black;
-}
-.user-name button:hover{
-  color:black;
-  text-decoration: none;
-}
-.dropdown-item{
-  padding:0 0.3rem !important;
-}
-.user-name-date{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: auto 0;
-}
-.dropdown-menu {
-   min-width: 3.1rem !important;
+/* 게시글 내용 */
+#description {
+  font-size: 16px;
 }
 #declare{
   color:var(--basic-color-new)

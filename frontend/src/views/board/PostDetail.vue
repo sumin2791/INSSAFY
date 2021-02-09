@@ -1,30 +1,55 @@
 <template>
-  <div>
-    <!-- chevron-left -->
-    <b-container class="board">
-      <b-row>
-        <header>
+  <v-app class="main-bg-color">
+    <v-main class="grey lighten-3">
+      <v-container id="container"
+        class="pt-8"
+      >
+        <v-row dense>
+          <!-- 뒤로 가기 -->
           <router-link :to="{ name:'Board', params: {board_id:$route.params.board_id}}"><b-icon icon="chevron-compact-left" aria-hidden="true"></b-icon>Board</router-link>
-          
-        </header>
-        <section>
-          <Post :post="post" :nickname="nickname" :commentCount="commentCount"/>
-          <div class="comment-set">
-            <input 
-              type="text" 
-              placeholder="착한 한마디 남겨주세요 :)" 
-              id="comment"
-              v-model="comment"
-              @keypress.enter="createComment"
+            
+        </v-row>        
+        <v-row dense>
+          <v-col class="pb-0">
+            <Post :post="post" :nickname="nickname" :commentCount="commentCount"/>
+          </v-col>    
+        </v-row>
+        <v-row dense>
+          <v-col class="pt-0">
+            <v-card
+              class="my-2
+                d-flex
+                flex-column"
+              color="#F9F9F9"
             >
-            <button class="btn-submit" @click="createComment">한마디!</button>
-          </div>
-          <CommentList :comments="comments"/>
-        </section>
-      </b-row>
-    </b-container>
-    
-  </div>
+            <!-- 입력창 부분 -->
+            <v-row dense>
+              <v-col class="col-sm-10">
+                <v-text-field
+                  solo
+                  dense
+                  id="comment"
+                  class="ml-3"
+                  v-model="comment"
+                  @keypress.enter="createComment"
+                >
+                </v-text-field>
+              </v-col>
+              <v-col class="col-sm-2">
+                <v-btn
+                  @click="createComment"
+                  class="pr-0"
+                >한마디!
+                </v-btn>
+              </v-col>
+            </v-row>
+              <CommentList :comments="comments"/>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
