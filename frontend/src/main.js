@@ -42,6 +42,8 @@ import 'vue-toast-notification/dist/theme-sugar.css';
 Vue.use(VueToast, {
   position: 'bottom-right',
   duration: 1000,
+  //message: msg,
+  //typs: 'default'
   // duration: 1000,
   // position: 'bottom-right',
   // dismissible: true,

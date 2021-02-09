@@ -20,6 +20,13 @@
 .clear {
   opacity: 0;
 }
+.rounded {
+  border-radius: 15px !important;
+}
+.rounded-bg {
+  border-radius: 15px !important;
+  background-color: var(--basic-color-bg2) !important;
+}
 
 /* 정사각형 */
 .square {

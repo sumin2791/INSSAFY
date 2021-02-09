@@ -66,10 +66,6 @@ export default {
 ::-webkit-scrollbar-track {
   margin-top: 112px;
 }
-.rounded-bg {
-  border-radius: 15px;
-  background-color: var(--basic-color-bg2);
-}
 
 .container {
   width: 100%;

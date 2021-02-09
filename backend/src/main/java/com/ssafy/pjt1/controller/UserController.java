@@ -446,6 +446,9 @@ public class UserController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("user/subscribe 호출 성공");
+        System.out.println(map.get("user_id"));
+        System.out.println(map.get("board_id"));
+        System.out.println(map.toString());
         try {
             int res = userService.favorite(map);
             if (res == 1) {
@@ -471,6 +474,7 @@ public class UserController {
         Map<String, String> map = new HashMap<>();
         map.put("user_id", user_id);
         map.put("board_id", board_id);
+        System.out.println(map.toString());
         try {
             int res = userService.deleteSubscribe(map);
             if (res == 1) {

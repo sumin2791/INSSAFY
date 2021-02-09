@@ -6,7 +6,7 @@
           <!-- 모바일 화면 -->
           <!-- 좌측 내 정보 부분 -->
           <v-col cols="12" v-if="ResponsiveSize.isMobile">
-            <v-sheet rounded="lg">
+            <v-sheet class="custom-container">
               <v-list color="transparent">
                 <!-- 내 정보 부분 -->
                 <v-list-item
@@ -69,7 +69,7 @@
                 <!-- 이동 탭 부분 -->
                 <v-list-item-group
                   class="d-flex
-                  flex-row"
+                  flex-row mx-2"
                   v-model="ResponsiveSize.whichTapPoint"
                   mandatory
                 >
@@ -77,7 +77,7 @@
                     v-for="[icon, text, index] in links"
                     :key="text"
                     link
-                    class="pa-1
+                    class="px-0 py-1
                     ma-1"
                     @click="clickMobileTap(index)"
                   >
@@ -109,7 +109,7 @@
           <!-- PC화면 -->
           <!-- 좌측 내 정보 부분 -->
           <v-col sm="3" v-else>
-            <v-sheet rounded="lg">
+            <v-sheet class="custom-container">
               <v-list color="transparent">
                 <div
                   color="grey 
@@ -177,8 +177,8 @@
                 <v-divider class="my-2"></v-divider>
 
                 <!-- 이동 탭 부분 -->
-                <v-list-item-group v-model="ResponsiveSize.whichTapPoint" mandatory>
-                  <v-list-item v-for="[icon, text, index] in links" :key="text" link @click="clickMobileTap(index)">
+                <v-list-item-group v-model="ResponsiveSize.whichTapPoint" mandatory class="px-2 py-0">
+                  <v-list-item v-for="[icon, text, index] in links" :key="text" link @click="clickMobileTap(index)" style="border-radius: 15px">
                     <!-- 모바일 탭 전환 -->
                     <v-list-item-icon>
                       <v-icon>{{ icon }}</v-icon>
@@ -191,7 +191,7 @@
           </v-col>
 
           <v-col sm="9">
-            <v-sheet min-height="85vh" rounded="lg" class="pa-2">
+            <v-sheet min-height="85vh" class="pa-2 custom-container">
               <!-- 내 구독보드 -->
               <div v-if="mobileTap[0]">
                 <v-card-title
@@ -201,9 +201,7 @@
                   >구독중인 보드</v-card-title
                 >
                 <v-divider></v-divider>
-                <div v-for="(board, idx) in subBoards" :key="idx">
-                  <Subscription :board="board" />
-                </div>
+                <Subscription v-for="board in subBoardList" :key="board.board_id" :board="board" class="pa-2 subscription" @delSub="deleteSub" />
                 <!-- <Subscription />
                 <Subscription /> -->
               </div>
@@ -255,8 +253,6 @@
 </template>
 
 <script>
-// 구독중인 보드
-import Subscription from '@/components/mypage/Subscription.vue';
 // 내 작성글
 import MyPost from '@/components/mypage/MyPost.vue';
 // 내 댓글
@@ -273,7 +269,8 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'mypage',
   components: {
-    Subscription,
+    // 구독중인 보드
+    Subscription: () => import('@/components/mypage/Subscription'),
     MyPost,
     MyComment,
     ScrapPost,
@@ -290,6 +287,7 @@ export default {
   mounted() {
     this.onResize();
     this.fetchData();
+    this.subBoardList = this.getSubBoardList;
     window.addEventListener('resize', this.onResize, { passive: true });
   },
   data() {
@@ -324,17 +322,20 @@ export default {
           generation: ['4', '3', '2', '1'],
         },
       },
-      subBoards: [],
+      //구독 보드 리스트
+      subBoardList: [],
     };
   },
   created() {
     this.getMyInfo();
+    this.getSubBoard();
   },
   computed: {
     ...mapGetters('auth', ['getsMyInfo', 'getSubBoardList']),
   },
   methods: {
-    ...mapActions('auth', ['getMyInfo', 'putMyinfo']),
+    ...mapActions('auth', ['getMyInfo', 'putMyinfo', 'getSubBoard']),
+    ...mapActions('user', ['putDeleteSub']),
     clickProfile: function() {},
     // 내 정보보기
     fetchData() {
@@ -344,9 +345,6 @@ export default {
       this.myInfo.generation = this.getsMyInfo.generation;
       this.myInfo.location = this.getsMyInfo.location;
       this.myInfo.image = this.getsMyInfo.image;
-
-      //this.subBoad에 패치
-      this.subBoards = this.getSubBoardList;
     },
 
     // 현재 활성화된 기기에 따라 flag 변경
@@ -386,6 +384,26 @@ export default {
       }
       this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit;
     },
+    deleteSub: function(board_id) {
+      this.putDeleteSub({
+        user_id: this.$store.state.auth.user.userId,
+        board_id: board_id,
+      }).then((result) => {
+        //서버에서 잘 삭제될 경우 data 관리
+        if (result) {
+          const deleteIndex = this.subBoardList.findIndex((board) => {
+            return board.board_id == board_id;
+          });
+          // this.subBoardList.splice(deleteIndex, 1);
+          this.$delete(this.subBoardList, deleteIndex);
+          console.log(this.subBoardList);
+          this.getSubBoard().then(() => {
+            console.log(this.getSubBoardList);
+          });
+          // this.subBoardList = this.getSubBoardList;
+        }
+      });
+    },
   },
 };
 </script>
@@ -397,5 +415,26 @@ export default {
 #profile-image {
   width: 100%;
   height: 100%;
+}
+.theme--light.v-list-item:hover::before,
+.theme--light.v-list-item::before {
+  border-radius: 10px;
+}
+.theme--light.v-list-item--active:hover::before,
+.theme--light.v-list-item--active::before {
+  border-radius: 10px;
+  background-color: var(--basic-color-key);
+  box-shadow: 0 0 4px #000000;
+}
+.custom-container {
+  box-shadow: var(--basic-shadow-s) !important;
+  border-radius: 15px !important;
+  background-color: var(--basic-color-bg2);
+}
+.subscription {
+  transition: transform 0.5s ease;
+}
+.subscription:hover {
+  transform: scale(1.01);
 }
 </style>

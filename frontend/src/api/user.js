@@ -14,3 +14,12 @@ export function getMyInfo(userId) {
 export function putMyInfo(member) {
   return http.put('/account/user', member);
 }
+
+//구독보드 즐겨찾기 토글
+export function putFavorite(payload) {
+  return http.put('/account/user/favorite', payload);
+}
+
+export function putDeleteSub(payload) {
+  return http.put(`/account/user/deleteSub?board_id=${payload.board_id}&user_id=${payload.user_id}`);
+}
