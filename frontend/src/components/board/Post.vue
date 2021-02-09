@@ -21,22 +21,6 @@
         <div>{{date}}</div>
       </div>
       <v-spacer></v-spacer>
-      <!-- 북마크 -->
-      <button
-        @click="postScrap"
-      >
-        <!-- 북마크 중 -->
-        <v-icon
-          large
-          v-if="flagScrap"
-          color="#0B2945"
-        >mdi-bookmark</v-icon>
-        <!-- 북마크 취소상태 -->
-        <v-icon
-          middle
-          v-else
-        >mdi-bookmark-outline</v-icon>
-      </button>
     </v-card-title>
     
     <div class="post-body" @click="goToDetail">
@@ -51,7 +35,6 @@
     </div>
     <!-- 게시글 관련 이미지/댓글/좋아요 들어갈 부분 -->
     <v-card-actions id="actions">
-      <v-spacer></v-spacer>
       <!-- 이미지 -->
       <v-icon v-if="haveImg" middle>mdi-image</v-icon>
       <!-- 댓글 수 -->
@@ -76,6 +59,23 @@
           v-else
         >mdi-emoticon-neutral-outline</v-icon>
         <span>{{ countLike }}</span>
+      </button>
+      <v-spacer></v-spacer>
+      <!-- 북마크 -->
+      <button
+        @click="postScrap"
+      >
+        <!-- 북마크 중 -->
+        <v-icon
+          middle
+          v-if="flagScrap"
+          color="#0B2945"
+        >mdi-bookmark</v-icon>
+        <!-- 북마크 취소상태 -->
+        <v-icon
+          middle
+          v-else
+        >mdi-bookmark-outline</v-icon>
       </button>
       
     </v-card-actions>
