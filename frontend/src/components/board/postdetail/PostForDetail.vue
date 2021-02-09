@@ -253,4 +253,7 @@ export default {
 #description {
   font-size: 16px;
 }
+#declare{
+  color:var(--basic-color-new)
+}
 </style>

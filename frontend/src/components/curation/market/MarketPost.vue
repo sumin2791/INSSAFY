@@ -11,17 +11,17 @@
       <v-list-item-avatar class="rounded-circle">
         <v-img
           class="elevation-6"
-          alt=""
+          alt="이미지"
           :src="post.boardImg"
         ></v-img>
       </v-list-item-avatar>
       <!-- 작성자이름, 작성일자 -->
       <div class="text-caption">
-        <div>{{ post.writer }}</div>
-        <div>{{ post.date }}</div>
+        <div>{{ post.user_nickname }}</div>
+        <div>{{ date }}</div>
       </div>
       <!-- 판매상태 들어갈 부분 -->
-      <v-btn-toggle
+       <v-btn-toggle
         group
         class="align-self-end 
           ma-2 ml-auto"
@@ -36,44 +36,51 @@
       </v-btn-toggle>
     </v-card-title>
     <!-- 포스트 제목 -->
-
-    <v-col
+    <div class="card-body-custom" @click="goToDetail">
+      <v-col
       class="font-weight-black"
-    >{{ post.title }}</v-col>
-
-
-    <!-- 댓글 내용 -->
+    ><v-chip
+      class="ma-2"
+      color="primary"
+      v-if="1"
+    >
+     머리말
+      <!-- {{post.post_header}} -->
+    </v-chip>{{ post.post_title }}</v-col>
     <v-col>
-      {{ post.comment }}
+      {{ post.post_description }}
     </v-col>
+    </div>
+    
+    <div id="card-footer">
+      <div>좋아요수 : {{post.post_like}}</div>
+      <div>댓글수 :</div>
+    </div>
   </v-card>
 </template>
 
 <script>
+import timeForToday from "@/plugins/timeForToday"
 export default {
   name: 'ScrapPost',
-  mounted() {
-    this.showState()
+  props:{
+    post:Object
   },
   data() {
     return {
-      post:
-        {
-          writer: 'hahawhoa',
-          title: '(게시물제목)지금까지 이런 핸드폰은 없었다',
-          boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
-          comment: "For sale, cellphone, never used For sale, cellphone, never used For sale, cellphone, never used For sale, cellphone, never used For sale, cellphone, never used For sale, cellphone, never used For sale, cellphone, never used For sale, cellphone, never used",
-          date: `21.02.02`,
-          likeCount: 4,
-          commentCount: 4,
-          boardCount: 241,
-          // 현재 판매상태
-          state: 2,
-          stateString: '',
-        },
-      // 판매상태 정보
       isState: ['판매중', '거래중', '판매완료'],
     }
+  },
+  computed:{
+    date(){
+      return timeForToday(this.post.post_date)
+    }
+  },
+  created(){
+    console.log(this.post)
+  },
+  mounted(){
+    this.showState()
   },
   methods: {
     // 작성글 삭제
@@ -84,10 +91,14 @@ export default {
     moveToBoard() {
       this.$router.push({ name: 'Board' });
     },
-    // 판매상태 정보
     showState() {
-      this.isState = this.isState[this.post.state]
-    }
+      this.isState = this.isState[this.post.post_state]
+    },
+    goToDetail() {
+      // params를 이용해서 데이터를 넘겨줄 수 있다.
+      this.$router.push({ name: 'MarketPost', params: { post_id: this.post.post_id }})
+      // this.$router.push({ name: 'Post', params: {post:this.post} });
+    },
   },
 }
 </script>
@@ -144,5 +155,14 @@ export default {
 }
 /* stepper 가로정렬로 */
 .stepper {
+}
+#card-footer{
+  display:flex;
+  padding:0 15px 8px;
+  justify-content: flex-end;
+  
+}
+.card-body-custom{
+  cursor:pointer;
 }
 </style>

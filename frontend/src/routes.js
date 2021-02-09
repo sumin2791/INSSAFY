@@ -118,6 +118,12 @@ export default [
     component: Market,
   },
   {
+    path: '/curation/market/:post_id(\\d+)',
+    name: 'MarketPost',
+    component: PostDetail,
+    props: true,
+  },
+  {
     path: '/curation/recruitment',
     name: 'Recruitment',
     component: Recruitment,

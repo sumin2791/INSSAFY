@@ -176,7 +176,8 @@ export default {
         board_hash:this.hashtags.join('|'),
         checklist_flag:0,
         calendar_flag:0,
-        vote_flag:0
+        vote_flag:0,
+        board_state:0
       };
       boardApi.board_create(board).then(response => {
         console.log(response.data);

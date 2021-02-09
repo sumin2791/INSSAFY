@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button v-b-modal.modal-post variant="light" class="btn-write">글쓰기</b-button>
+    <b-button v-b-modal.modal-bamboo variant="light" class="btn-write">글쓰기</b-button>
 
     <!-- <div class="mt-3">
       Submitted Names:
@@ -11,10 +11,10 @@
     </div> -->
 
     <b-modal
-      id="modal-post"
+      id="modal-bamboo"
       ref="modal"
       size="xl"
-      title="Post"
+      title="대나무숲"
       no-close-on-backdrop
       ok-only
       @show="resetModal"
@@ -42,7 +42,7 @@
         >
           <b-form-textarea
             id="description-input"
-            placeholder="무슨생각하고 있음?"
+            placeholder="착한 말을 적어주세요 :)"
             style="height:300px"
             v-model="description"
             :state="descriptionState"
@@ -80,74 +80,79 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        title: '',
-        description:'',
-        images:[],
-        titleState: null,
-        descriptionState: null,
-      }
+import * as bambooApi from '@/api/bamboo'
+export default {
+  data() {
+    return {
+      title: '',
+      description:'',
+      images:[],
+      titleState: null,
+      descriptionState: null,
+    }
+  },
+  methods: {
+    titleCheckFormValidity() {
+      const valid = this.$refs.form.checkValidity()
+      this.titleState = valid
+      return valid
     },
-    methods: {
-      titleCheckFormValidity() {
-        const valid = this.$refs.form.checkValidity()
-        this.titleState = valid
-        return valid
-      },
-      descriptionCheckFormValidity() {
-        const valid = this.$refs.form.checkValidity()
-        this.descriptionState = valid
-        return valid
-      },
-      resetModal() {
-        this.title = ''
-        this.description = ''
-        this.titleState = null
-        this.descriptionState = null
-        this.images=[]
-      },
-      handleOk(bvModalEvt) {
-        // Prevent modal from closing
-        bvModalEvt.preventDefault()
-        // Trigger submit handler
-        this.handleSubmit()
-      },
-      handleSubmit() {
-        // Exit when the form isn't valid
-        if (!this.titleCheckFormValidity() ) {
-          return
-        }
-        if (!this.descriptionCheckFormValidity()) {
-          return
-        }
-        // Push the name to submitted names
-        // this.submittedNames.push(this.name)
-        // Hide the modal manually
-        let today= new Date()
-        const posts = this.$store.state.posts
-        let idx= posts.length
-        const postItem ={
-          post_id:idx+1,
-          user:'testttttt', 
-          post_title:this.title, 
-          post_description:this.description,
-          post_like:0,
-          comment_count:0,
-          post_date:`${today.getFullYear()}-${today.getMonth()+1}-${today.getDay()}/${today.getHours()}:${today.getMinutes()}:${today.getSeconds()}`,
-          img:this.images
-        }
-        this.$store.dispatch('createPost',postItem)
-        
-
-        console.log(this.images)
-        this.$nextTick(() => {
-          this.$bvModal.hide('modal-post')
-        })
+    descriptionCheckFormValidity() {
+      const valid = this.$refs.form.checkValidity()
+      this.descriptionState = valid
+      return valid
+    },
+    resetModal() {
+      this.title = ''
+      this.description = ''
+      this.titleState = null
+      this.descriptionState = null
+      this.images=[]
+    },
+    handleOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault()
+      // Trigger submit handler
+      this.handleSubmit()
+    },
+    handleSubmit() {
+      // Exit when the form isn't valid
+      if (!this.titleCheckFormValidity() ) {
+        return
       }
+      if (!this.descriptionCheckFormValidity()) {
+        return
+      }
+      // Push the name to submitted names
+      // this.submittedNames.push(this.name)
+      // Hide the modal manually
+      const randomNickname = `싸피_${Math.random().toString(36).substr(2,8)}`
+      const bambooItem ={
+        user_id:localStorage.userId, 
+        bamboo_title:this.title, 
+        bamboo_description:this.description,
+        bamboo_image:'',
+        bamboo_iframe:'',
+        bamboo_header:'',
+        writer_nickname:randomNickname
+      }
+      console.log(bambooItem)
+      bambooApi.create(bambooItem)
+      .then(res=>{
+        console.log(res)
+        this.$store.dispatch('bamboo/isWriteFlag')
+      })
+      .catch(err=>{
+        console.log(`밤부 생성 실패`)
+        console.log(err)
+      })
+      
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-bamboo')
+      })
     }
   }
+}
 </script>
 
 <style scoped>
