@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button v-b-modal.modal-post variant="light" class="btn-write">글쓰기</b-button>
+    <b-button v-b-modal.modal-post class="btn-write">글쓰기</b-button>
     <b-modal id="modal-post" title="Info" v-if="!inBoard" ok-only>
       <p class="my-4">구독하시면 글을 작성할 수 있어요😊</p>
       <template #modal-footer="{ok}">
@@ -189,9 +189,26 @@ export default {
 </script>
 
 <style scoped>
+/* 글쓰기 (모달-진입)버튼 */
 .btn-write {
-  width:100%;
   position: sticky;
+  text-align: center;
+  margin: auto;
+  height: 50px;
+  width:100%;
+  border: none;
+  color: var(--basic-color-fill);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: #ebebe9 !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  transition: 0.3s all ease;
+}
+.btn-write:hover,
+.btn-write:active,
+.btn-write:focus {
+  color: #ebebe9 !important;    
+  background-color: var(--basic-color-key) !important;
 }
 .btn-submit {
   width: 100%;

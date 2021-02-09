@@ -2,6 +2,7 @@
   <v-app class="main-bg-color">
     <v-main class="grey lighten-3">
       <v-container
+        id="container"
         class="pt-8"
       >
         <!-- PC에서 보여줄 curation이름과 검색 -->
@@ -65,8 +66,6 @@
                 <v-list-item>관심품목</v-list-item>
                 <v-col>
                   <MarketItem />
-                  <MarketItem />
-                  <MarketItem />
                 </v-col>
               </v-list>
             </v-sheet>
@@ -75,10 +74,15 @@
           <v-col
             class="col-12 col-sm-8"  
           >
+            <!-- 중고장터 게시글 작성 -->
+            <MarketPostWrite class="mx-4 mb-2"/>
             <!-- 중고장터 게시물 부분 -->
-            <MarketPost class="mx-4 mb-2"/>
-            <MarketPost class="mx-4 mb-2"/>
-            <MarketPost class="mx-4 mb-2"/>
+            <div v-for="(post,idx) in posts" :key="idx">
+              <MarketPost class="mx-4 mb-2" :post="post"/>
+            </div>
+            <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+              <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
+            </infinite-loading>
           </v-col>
         </v-row>
       </v-container>
@@ -89,14 +93,21 @@
 <script>
 // 관심 품목 등록 리스트
 import MarketItem from "@/components/curation/market/MarketItem.vue"
+// 중고장터 게시물 작성
+import MarketPostWrite from "@/components/curation/market/MarketPostWrite.vue"
 // 중고장터 게시물
 import MarketPost from "@/components/curation/market/MarketPost.vue"
+
+import * as marketApi from '@/api/market'
+import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   name:'Market',
   components: {
     MarketItem,
+    MarketPostWrite,
     MarketPost,
+    InfiniteLoading
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -123,6 +134,8 @@ export default {
       searchLocation: '',
       // 검색 키워드
       searchKeyword: '',
+      posts:[],
+      page:0
     }
   },
   methods: {
@@ -131,11 +144,36 @@ export default {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
       this.ResponsiveSize.viewSize = window.innerWidth;
     },
+    infiniteHandler($state){
+      const EACH_LEN = 5
+      marketApi.getSaleList({board_id:34,login_id:localStorage.userId,page:this.page,size:EACH_LEN})
+      .then((res)=>{
+        console.log(res)
+        setTimeout(()=>{
+          if(res.data.postList){
+            this.posts = this.posts.concat(res.data.postList);
+            this.page += 1;
+            $state.loaded();
+            if(res.data.postList.length / EACH_LEN <1){
+              $state.complete();
+            }
+          }else{
+            $state.complete();
+          }
+        },1000);
+      })
+      .catch(err=>{console.log(err)})
+    },
   }
 }
 </script>
 
 <style scoped>
+/* 전체 감싼 컨테이너 */
+#container {
+ max-width: 1200px !important; 
+}
+
 .main-bg-color {
   background-color: #ebebe9;
 }
