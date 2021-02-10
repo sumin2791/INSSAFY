@@ -177,7 +177,7 @@ export default {
     async putMyinfo({ commit }, member) {
       try {
         const response = await userApi.putMyInfo(member);
-        console.log(response);
+        // console.log(response);
         if (response.data.message == 'SUCCESS') {
           commit('updateUser', member);
           return true;

@@ -64,6 +64,7 @@
                 </v-list-item>
                 <!-- 비밀번호 변경 부분 -->
                 <PasswordChange />
+                <AccountDelete v-if="myInfo.myInfoEdit" />
                 <v-divider class="my-2"></v-divider>
                 <!-- 이동 탭 부분 -->
                 <v-list-item-group
@@ -172,9 +173,7 @@
                 </div>
                 <!-- 비밀번호 변경 부분 -->
                 <PasswordChange />
-                <v-btn block depressed class="pa-0">
-                  회원탈퇴
-                </v-btn>
+                <AccountDelete v-if="myInfo.myInfoEdit" />
 
                 <v-divider class="my-2"></v-divider>
 
@@ -280,6 +279,8 @@ export default {
     ScrapPost,
     PasswordChange,
     Profile,
+    //회원탈퇴
+    AccountDelete: () => import('@/components/mypage/AccountDelete'),
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy() {
@@ -289,6 +290,11 @@ export default {
   },
   // resize 실시해서 현재 화면 크기 확인
   mounted() {
+    this.getSubBoard();
+    this.getPosts();
+    this.actGetComent();
+    this.actScraps();
+
     this.onResize();
     this.fetchData();
     this.subBoardList = this.getSubBoardList;
@@ -332,10 +338,6 @@ export default {
   },
   created() {
     this.getMyInfo();
-    this.getSubBoard();
-    this.getPosts();
-    this.actGetComent();
-    this.actScraps();
   },
   computed: {
     ...mapGetters('auth', ['getsMyInfo', 'getSubBoardList']),
