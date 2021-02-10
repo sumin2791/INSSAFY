@@ -195,7 +195,7 @@ export default {
 /* 전체 폰트 */
 #container {
   font-family: 'Noto Sans KR', sans-serif !important;
-  background-color: #F9F9F9 !important;
+  background-color: #fcfcfc !important;
 }
 /* 전체 detail 담겨진 부분 */
 #post-detail {

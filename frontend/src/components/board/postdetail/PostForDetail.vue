@@ -295,7 +295,7 @@ export default {
 /* 전체 폰트 */
 #container {
   font-family: 'Noto Sans KR', sans-serif !important;
-  background-color: #F9F9F9 !important;
+  background-color: #fcfcfc !important;
 }
 /* 전체 detail 담겨진 부분 */
 #post-detail {
@@ -332,6 +332,7 @@ export default {
   height: 70%;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   margin-left: 0.6em;
 }
 /* 닉네임 */
