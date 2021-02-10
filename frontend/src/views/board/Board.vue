@@ -1,6 +1,6 @@
 <template>
   <v-app class="main-bg-color">
-    <v-main class="grey lighten-3">
+    <v-main>
       <v-container id="container"
         class="pt-8"
       >
@@ -8,8 +8,7 @@
         <!-- PC에서 보여줄 curation이름과 검색 -->
         <v-row 
           v-if="!ResponsiveSize.isMobile"
-          no-gutters 
-          dense
+          no-gutters
           class="d-flex 
             flex-row 
             justify-space-between"
@@ -34,12 +33,12 @@
           </div>
         </v-row>
 
-        <v-row dense>
+        <v-row>
           <!-- 왼쪽 보드 설명 및 추가 기능 -->
           <v-col 
               class="col-12 col-sm-4" 
             >
-            <v-sheet class="section-bg">
+            <v-sheet id="custom-container">
               <v-list color="transparent">
                 <div
                   class="d-flex
@@ -86,6 +85,10 @@ import PostList from '@/components/board/PostList.vue'
 
 //board api
 import * as boardApi from '@/api/board';
+
+// 스타일 적용
+import '@/assets/css/static/style.css';
+
 
 export default {
   name:'Board',
@@ -200,11 +203,14 @@ export default {
 .main-bg-color {
   background-color: #ebebe9;
 }
+/* 전체 폰트 */
 #container {
-
+  font-family: 'Noto Sans KR', sans-serif !important;
 }
 /* 왼쪽, 오른쪽 섹션 컨테이너 */
-.section-bg {
+#custom-container {
+  box-shadow: var(--basic-shadow-s) !important;
+  border-radius: 15px !important;
   background-color: var(--basic-color-bg2) !important;
 }
 /* 구독버튼 */
