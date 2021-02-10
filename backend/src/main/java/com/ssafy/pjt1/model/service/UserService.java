@@ -31,11 +31,11 @@ public interface UserService {
 
     public List<SubscriptionDto> getSubBoards(String user_id);
 
-    public List<CommentDto> getComments(String user_id);
+    public List<Map<String, String>> getComments(String user_id);
 
-    public List<PostDto> getPosts(String user_id);
+    public List<Map<String, String>> getPosts(String user_id);
 
-    public List<PostDto> getScraps(String user_id);
+    public List<Map<String, String>> getScraps(String user_id);
 
     public int favorite(Map<String, String> map);
 

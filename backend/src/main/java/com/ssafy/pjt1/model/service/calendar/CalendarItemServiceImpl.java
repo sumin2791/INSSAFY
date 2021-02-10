@@ -34,4 +34,9 @@ public class CalendarItemServiceImpl implements CalendarItemService {
     public int deleteCalendar(String calendar_item_id) {
         return sqlSession.getMapper(CalendarItemMapper.class).deleteCalendar(calendar_item_id);
     }
+
+    @Override
+    public List<CalendarItemDto> getDeadline() {
+        return sqlSession.getMapper(CalendarItemMapper.class).getDeadline();
+    }
 }

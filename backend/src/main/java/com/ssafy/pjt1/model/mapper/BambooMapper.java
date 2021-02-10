@@ -12,9 +12,9 @@ public interface BambooMapper {
 
 	public void createBamboo(BambooDto bambooDto);
 
-	public List<BambooDto> getAllList();
+	public List<BambooDto> getAllList(Map<String, Object> map);
 
-	public List<BambooDto> searchPost(String keyword);
+	public List<BambooDto> searchPost(Map<String, Object> map);
 
 	public int isWriter(Map<String, Object> map);
 
@@ -22,4 +22,10 @@ public interface BambooMapper {
 
 	public int bambooDelete(int bamboo_id);
 
+<<<<<<< HEAD
+=======
+	public int getTotalCnt();
+
+	
+>>>>>>> c1f7361603ceaa94cf3bab1cd56baf6c7d8c6089
 }

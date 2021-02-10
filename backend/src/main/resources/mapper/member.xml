@@ -64,26 +64,25 @@
 		where user_id = #{user_id} and is_used = 1;
 	</select>
 
-	<select id="getComments" parameterType="string" resultType="CommentDto">
-		select *
-		from comment
-		where user_id = #{user_id} and is_used = 1;
+	<select id="getComments" parameterType="string" resultType="Map">
+		select p.post_title, c.user_id, c.comment_date, c.comment_id, c.comment_description
+		from comment c left join post p on (c.post_id=p.post_id)
+		where c.user_id=#{user_id} and c.is_used=1;
 	</select>
 
-	<select id="getPosts" parameterType="string" resultType="PostDto">
-		select *
-		from post
-		where user_id = #{user_id} and is_used = 1;
+	<select id="getPosts" parameterType="string" resultType="Map">
+		select b.board_id, post_id, b.user_id, b.board_image, post_description, post_title, b.board_name
+		from board b left join post p on b.board_id=p.board_id
+		where p.user_id=#{user_id} and p.is_used=1;
 	</select>
 
-	<select id="getScraps" parameterType="string" resultType="PostDto">
-		select *
-		from post
-		where post_id in (
-			select post_id
-			from scrap
-			where user_id = #{user_id} and is_used = 1
-		) and is_used = 1
+	<!-- 스크랩 가지고오기-->
+	<select id="getScraps" parameterType="string" resultType="Map">
+		select b.board_name, p.post_id, p.post_title, b.board_id, b.board_image, p.post_date, p.post_description
+		from board b 
+			inner join post p on (b.board_id=p.board_id) 
+			inner join scrap s on (p.post_id=s.post_id)
+		where s.user_id=#{user_id} and s.is_used=1;
 	</select>
 
 	<!-- 즐겨찾기-->

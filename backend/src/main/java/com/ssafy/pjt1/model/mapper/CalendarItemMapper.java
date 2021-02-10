@@ -15,4 +15,6 @@ public interface CalendarItemMapper {
     public int updateCalendar(CalendarItemDto item);
 
     public int deleteCalendar(String calendar_item_id);
+
+	public List<CalendarItemDto> getDeadline();
 }

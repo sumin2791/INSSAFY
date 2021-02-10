@@ -9,14 +9,16 @@ public interface BambooService {
 
 	public void createBamboo(BambooDto bambooDto);
 
-	public List<BambooDto> getAllList();
+	public List<BambooDto> getAllList(Map<String, Object> map);
 
-	public List<BambooDto> searchPost(String keyword);
+	public List<BambooDto> searchPost(Map<String, Object> map);
 
 	public int isWriter(Map<String, Object> map);
 
 	public int bambooModify(BambooDto bambooDto);
 
 	public int bambooDelete(int bamboo_id);
+
+	public int getTotalCnt();
 
 }

@@ -155,4 +155,32 @@ public class CalendarItemController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
+
+    /*
+     * 기능: 임박한 채용 리스트 출력
+     * 
+     * developer: 윤수민
+     * 
+     * @param 
+     * 
+     * @return: message, calendarList
+     */
+    @GetMapping("/deadline")
+    public ResponseEntity<Map<String, Object>> getDeadline() {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("/calendar/deadline 호출");
+        try {
+            List<CalendarItemDto> calendarList = service.getDeadline();
+            resultMap.put("message", SUCCESS);
+            resultMap.put("calendarList", calendarList);
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            logger.error("error", e);
+            resultMap.put("message", FAIL);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+    
 }
