@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.pjt1.model.dto.comment.CommentDto;
+import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.mapper.MainMapper;
@@ -43,7 +43,7 @@ public class MainServiceImpl implements MainService {
     private PostService postService;
 
     @Override
-    public List<SubscriptionDto> selectFavorite(String user_id) {
+    public List<BoardDto> selectFavorite(String user_id) {
         return sqlSession.getMapper(MainMapper.class).selectFavorite(user_id);
     }
 

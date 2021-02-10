@@ -90,17 +90,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<CommentDto> getComments(String user_id) {
+	public List<Map<String, String>> getComments(String user_id) {
 		return sqlSession.getMapper(UserMapper.class).getComments(user_id);
 	}
 
 	@Override
-	public List<PostDto> getPosts(String user_id) {
+	public List<Map<String, String>> getPosts(String user_id) {
 		return sqlSession.getMapper(UserMapper.class).getPosts(user_id);
 	}
 
 	@Override
-	public List<PostDto> getScraps(String user_id) {
+	public List<Map<String, String>> getScraps(String user_id) {
 		return sqlSession.getMapper(UserMapper.class).getScraps(user_id);
 	}
 

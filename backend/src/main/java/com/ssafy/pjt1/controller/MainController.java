@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.service.main.MainService;
@@ -41,7 +42,7 @@ public class MainController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            List<SubscriptionDto> list = service.selectFavorite(user_id);
+            List<BoardDto> list = service.selectFavorite(user_id);
             resultMap.put("favorite", list);
             resultMap.put("status", SUCCESS);
         } catch (Exception e) {

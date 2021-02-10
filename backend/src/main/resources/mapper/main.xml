@@ -3,8 +3,10 @@
 
 <mapper namespace="com.ssafy.pjt1.model.mapper.MainMapper">
 
-  <select id="selectFavorite" parameterType="String" resultType="SubscriptionDto">
-    select * from subscription where favorite_flag = 1 and user_id = #{user_id} and is_used=1;
+  <select id="selectFavorite" parameterType="String" resultType="BoardDto">
+    select *
+    from board
+    where board_id in (select board_id from subscription where favorite_flag = 1 and user_id = #{user_id} and is_used=1);
   </select>
 
   <select id="getSubsriptionNumber" parameterType="String" resultType="Integer">
