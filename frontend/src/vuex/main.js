@@ -38,14 +38,19 @@ export default {
     followRank: INIT_FOLLOW_RANK(),
   },
   getters: {
+    //즐겨찾기
     getFavorites(state) {
       return state.favorites;
     },
+
+    //인기보드
+    //구독자 순(팔로우 순)
     getFollowRank(state) {
       return state.followRank;
     },
   },
   actions: {
+    //즐겨찾기 목록 요청
     async actFavorites(context, userId) {
       try {
         const res = await mainApi.getFavorites(userId);
@@ -56,6 +61,9 @@ export default {
         console.log(e);
       }
     },
+
+    //인기보드
+    //구독자 순 목록 요청
     async actFollowRank({ commit }) {
       try {
         const res = await mainApi.getFollowRank();
@@ -67,9 +75,12 @@ export default {
     },
   },
   mutations: {
+    //즐겨찾기
     setFavorites(state, payload) {
       state.favorites = payload.arr;
     },
+
+    //인기
     setFollowRank(state, payload) {
       // state.followRank = payload.arr;
     },
