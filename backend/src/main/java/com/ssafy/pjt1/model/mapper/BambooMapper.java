@@ -22,10 +22,6 @@ public interface BambooMapper {
 
 	public int bambooDelete(int bamboo_id);
 
-<<<<<<< HEAD
-=======
 	public int getTotalCnt();
-
 	
->>>>>>> c1f7361603ceaa94cf3bab1cd56baf6c7d8c6089
 }

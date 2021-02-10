@@ -1,5 +1,6 @@
 package com.ssafy.pjt1.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
+import com.ssafy.pjt1.model.service.S3Service;
 import com.ssafy.pjt1.model.service.main.MainService;
 
 import org.slf4j.Logger;
@@ -19,11 +21,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController("/main")
+@RestController
+@RequestMapping("/main")
 public class MainController {
 
     public static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -35,6 +42,9 @@ public class MainController {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private S3Service s3Service;
 
     @ApiOperation(value = "즐겨찾기 리스트 불러오기")
     @GetMapping("/selectFavorite/{user_id}")
@@ -120,4 +130,30 @@ public class MainController {
         return new ResponseEntity<Map<String, List<PostDto>>>(resultMap, status);
     }
 
+    /*
+     * 기능: 이미지 삽입
+     * 
+     * developer: 윤수민
+     * 
+     * @param : file
+     * 
+     * @return : message, imgPath
+     */
+    @PostMapping("/image")
+    public ResponseEntity<Map<String, Object>> execWrite(MultipartFile file) throws IOException {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("bamboo/image 호출성공");
+        try {
+            String imgPath = s3Service.upload(file);
+            resultMap.put("imgPath", imgPath);
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
 }
