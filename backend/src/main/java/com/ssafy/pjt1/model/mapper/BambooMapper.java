@@ -22,5 +22,4 @@ public interface BambooMapper {
 
 	public int bambooDelete(int bamboo_id);
 
-	
 }

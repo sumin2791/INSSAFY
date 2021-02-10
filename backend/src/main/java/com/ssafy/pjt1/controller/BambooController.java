@@ -1,9 +1,11 @@
 package com.ssafy.pjt1.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.pjt1.model.service.S3Service;
 import com.ssafy.pjt1.model.dto.bamboo.BambooDto;
 import com.ssafy.pjt1.model.service.bamboo.BambooService;
 
@@ -20,7 +22,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
@@ -36,6 +40,9 @@ public class BambooController {
     @Autowired
     private BambooService bambooService;
 
+    @Autowired
+    private S3Service s3Service;
+
     /*
      * 기능: 대나무숲 포스트 작성
      * 
@@ -44,7 +51,7 @@ public class BambooController {
      * @param : user_id, bamboo_title, bamboo_description, bamboo_image,
      * bamboo_iframe, bamboo_header, writer_nickname
      * 
-     * @return : message
+     * @return : message, bamboo_id
      */
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> postCreate(@RequestBody Map<String, Object> param) {
@@ -60,13 +67,42 @@ public class BambooController {
             bambooDto.setBamboo_title((String) param.get("bamboo_title"));
             bambooDto.setUser_id((String) param.get("user_id"));
             bambooDto.setWriter_nickname((String) param.get("writer_nickname"));
+            bambooDto.setBamboo_image((String) param.get("bamboo_image"));
             bambooService.createBamboo(bambooDto);
+            resultMap.put("bamboo_id", bambooDto.getBamboo_id());
             resultMap.put("message", SUCCESS);
 
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
         }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 대나무숲 포스트 작성시 이미지 삽입
+     * 
+     * developer: 윤수민
+     * 
+     * @param : file
+     * 
+     * @return : message, imgPath
+     */
+    @PostMapping("/image")
+    public ResponseEntity<Map<String, Object>> execWrite(MultipartFile file) throws IOException {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("bamboo/image 호출성공");
+        try {
+            String imgPath = s3Service.upload(file);
+            resultMap.put("imgPath", imgPath);
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
