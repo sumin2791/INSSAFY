@@ -14,6 +14,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,13 +38,8 @@ public class Chatcontroller {
     @Autowired
     private ChatService chatService;
 
-    // @MessageMapping("/hello")
-    // @SendTo("/topic/greetings")
-    // public Greeting greeting(HelloMessage message) throws Exception {
-    // Thread.sleep(1000); // simulated delay
-    // return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) +
-    // "!");
-    // }
+    @Autowired
+    private SimpMessagingTemplate simpleMessageTemplate;
 
     /*
      * 기능: 상대방과 중복된 방이 있는지 확인하고 없으면 방을 만든다
@@ -88,6 +85,15 @@ public class Chatcontroller {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    /*
+     * 기능: 상대방과 중복된 방이 있는지 확인하고 없으면 방을 만든다
+     * 
+     * developer: 문진환
+     * 
+     * @param : user_id, user_id(상대방)
+     * 
+     * @return : room_id
+     */
     @ApiOperation(value = "방에 입장 하고나서 메시지 리스트 출력")
     @PostMapping(value = "/enterRoom")
     public ResponseEntity<Map<String, Object>> checkDupl(@RequestParam("startNUm") int startNUm,
@@ -106,6 +112,24 @@ public class Chatcontroller {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    @MessageMapping("/send")
+    public void greeting(ChatMessage message) throws Exception {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String roomId = message.getRoom_id();
+        String opp_id = message.getOpp_id();
+        try {
+            chatService.insertMessage(message);
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            log.info("error:{}", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        simpleMessageTemplate.convertAndSend("/topic/" + roomId + "/" + opp_id, message);
     }
 
 }
