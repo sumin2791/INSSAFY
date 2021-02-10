@@ -86,9 +86,8 @@
             <!-- 학습공유 게시글쓰기 -->
             <LearningPostWrite class="mx-4 mb-2"/>
             <!-- 학습공유 게시물 부분 -->
-            <LearningPost class="mx-4 mb-2"/>
-            <LearningPost class="mx-4 mb-2"/>
-            <LearningPost class="mx-4 mb-2"/> 
+            <LearningSharePostList />
+
           </v-col>
         </v-row>
       </v-container>
@@ -100,16 +99,19 @@
 // rank 리스트
 import LearningRank from "@/components/curation/learningshare/LearningRank.vue"
 // 학습공유 게시물
-import LearningPost from "@/components/curation/learningshare/LearningPost.vue"
+// import LearningPost from "@/components/curation/learningshare/LearningPost.vue"
 // 학습공유 게시물 쓰기
 import LearningPostWrite from "@/components/curation/learningshare/LearningPostWrite.vue"
+// 학습공유 리스트
+import LearningSharePostList from "@/components/board/PostList"
 
 export default {
   name:'LearningShare',
   components: {
     LearningRank,
-    LearningPost,
+    // LearningPost,
     LearningPostWrite,
+    LearningSharePostList,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {

@@ -7,12 +7,11 @@
         <v-row dense>
           <!-- 뒤로 가기 -->
           <router-link 
-            :to="{ name:'Board', 
-              params: {board_id:$route.params.board_id}}"
+            :to="flagRouterBack"
             id="back-btn"
           >
             <button id="back-btn-child">
-              보드로 돌아가기
+              돌아가기
             </button>
           </router-link>
             
@@ -84,6 +83,28 @@ export default {
     flagModify(){
       return this.$store.state.post.flagModify
     },
+    // 여기가 재사용 핵심 중 하나 입니다. 돌아가기 버튼의 포인트를 정하는 곳이에요.
+    flagRouterBack(){
+      const name = this.$route.name
+      if(name==="MarketPost"){
+        return {
+          name: "Market"
+        }
+      }else if(name==="LearnSharePost"){
+        return {
+          name: "LearnShare"
+        }
+      }else if(name==="RecruitmentPost"){
+        return {
+          name: "Recruitment"
+        }
+      }else{
+        return {
+          name:'Board', 
+          params: {board_id: this.$route.params.board_id}
+        }
+      }
+    }
   },
   watch:{
     flagComment:'fetchData',
@@ -165,9 +186,9 @@ export default {
 }
 #back-btn * {
   text-align: center;
-  margin: 0 0 10px 0;
+  margin: 0 0 10px 3px;
   height: 50px;
-  width: 180px;
+  width: 7rem;
   border: none;
   border-radius: 15px;
   color: var(--basic-color-fill);

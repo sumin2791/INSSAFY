@@ -51,7 +51,7 @@
         <!-- 수정 삭제 신고 버튼과 판매상태 정보 -->
         <div id='header-right'>
           <!-- 판매정보 부분 -->
-          <div>
+          <div v-if="flagComponent.state">
             <v-chip id="sell-state">
               판매완료
             </v-chip>
@@ -94,7 +94,7 @@
         <!-- 포스트 제목 -->
         <div id="title">
           <!-- 중고장터용(지역) -->
-          <div>
+          <div v-if="flagComponent.header">
             <v-chip 
               outlined
               pill
@@ -184,7 +184,8 @@ export default {
     Profile,
   },
   props:{
-    post:Object
+    post:Object,
+    flagComponent:Object
   },
   data() {
     return {
@@ -242,11 +243,38 @@ export default {
       this.countLike = this.post.post_like
 
     },
+    // 재사용의 핵심
     goToDetail() {
-      console.log(this.post.post_id)
+      
+      // params : {name:string, params:{board_id,post_id}}
+
+      let data = {
+        name:'',
+        params:{
+          board_id:'',
+          post_id:this.post.post_id
+        }
+      }
+      const curationName = this.$route.name
+      if(curationName!="Board"){
+        data.params.board_id = this.$store.state.curationId[curationName]
+      }else{
+        data.params.board_id = this.$route.params.board_id
+      }
+
+      if (curationName==="Market"){
+        data.name = "MarketPost"
+      }else if(curationName==="LearnShare") {
+        data.name = "LearnSharePost"
+      }else if(curationName==="Recruitment"){
+        data.name = "RecruitmentPost"
+      }
+      else{
+        data.name = "Post"
+      }
+
       // params를 이용해서 데이터를 넘겨줄 수 있다.
-      this.$router.push({ name: 'Post', params: { board_id:this.$route.params.board_id, post_id: this.post.post_id }})
-      // this.$router.push({ name: 'Post', params: {post:this.post} });
+      this.$router.push(data)
     },
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
@@ -293,7 +321,7 @@ export default {
   box-shadow: var(--basic-shadow-s) !important;
   border-radius: 15px !important;
   background-color: var(--basic-color-bg2) !important;
-  margin: 7px 0;
+  margin: 16px 0;
 }
 /* 전체 detail 담겨진 부분 */
 #post-detail {
@@ -318,6 +346,9 @@ export default {
   align-items: center;
 }
 /* 사용자 정보 클릭시 드롭다운 연결 */
+.v-menu__content{
+  transform: translate(5px,40px);
+}
 
 /* 프로필, 닉네임, 작성일  */
 #header-user-info {
@@ -360,10 +391,11 @@ export default {
 #content-go-detail {
   width: 100%;
   cursor: pointer;
+  min-height: 150px;
 }
 /* 게시글 제목 */
 #title {
-  margin: 0 0 1% 1%;
+  margin: 2% 0 2% 1%;
   display: flex;
   flex-direction: row;
   font-size: 18px;

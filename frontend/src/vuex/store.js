@@ -50,6 +50,14 @@ const state = {
 
   //가입하기 인증 문제
   problems: PROBLEMS(),
+
+  //curation Id
+  curationId:{
+    Market:34,
+    LearnShare:75,
+    Study:37,
+    Recruitment: 75
+  }
 };
 
 export default new Vuex.Store({

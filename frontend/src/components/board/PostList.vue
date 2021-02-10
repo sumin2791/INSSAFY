@@ -5,6 +5,7 @@
         v-for="(post,idx) in posts"
         :key="idx"
         :post="post"
+        :flagComponent="flagComponent"
       />
     </div>
     <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
@@ -39,15 +40,45 @@ export default {
   computed:{
     writeFlag(){
       return this.$store.state.board.writeFlag
+    },
+    // 재사용의 핵심
+    flagComponent(){
+      
+      let flag = {
+        state:false,
+        header:false
+      }
+      const curationName = this.$route.name
+      if(curationName==="Market"){
+        flag.state = true
+        flag.header = true
+        return flag
+
+      }else if(curationName==="LearnShare"){
+        flag.state = false
+        flag.header = true
+      }
+      return flag
     }
   },
   created() {
+    console.log(this.flagComponent)
     // this.create()
   },
   methods: {
+    // 재사용의 핵심
     infiniteHandler($state){
-      const BOARD_ID = Number(this.$route.params.board_id)
+      const curationName = this.$route.name
+      let BOARD_ID
+      if(curationName!="Board"){
+        BOARD_ID = this.$store.state.curationId[curationName]
+      }else{
+        BOARD_ID = this.$route.params.board_id
+      }
+      
+      
       const EACH_LEN = 6
+      
       postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId,page:this.page,size:EACH_LEN})
       .then((res)=>{
         setTimeout(()=>{

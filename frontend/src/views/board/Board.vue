@@ -36,7 +36,7 @@
         <v-row>
           <!-- 왼쪽 보드 설명 및 추가 기능 -->
           <v-col 
-              class="col-12 col-sm-4" 
+              class="col-12 col-sm-3" 
             >
             <v-sheet id="custom-container">
               <v-list color="transparent">
@@ -66,7 +66,7 @@
             </v-sheet>
           </v-col>
           <v-col
-              class="col-12 col-sm-8"  
+              class="col-12 col-sm-9"  
             >
             <PostWrite :in-board="inBoard"/>
             <PostList/>

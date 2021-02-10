@@ -51,7 +51,7 @@
         <!-- 수정 삭제 신고 버튼과 판매상태 정보 -->
         <div id='header-right'>
           <!-- 판매정보 부분 -->
-          <div>
+          <div v-if="flagComponent.state">
             <v-chip id="sell-state">
               판매완료
             </v-chip>
@@ -74,17 +74,17 @@
                 </v-btn>
               </template>
               
-              <v-list>
+              <v-list >
                 <!-- 수정 -->
                 <v-list-item-group>
-                  <v-list-item>
-                    <v-list-item-title v-if="flagWriter">
+                  <v-list-item v-if="flagWriter">
+                    <v-list-item-title>
                       <PostModify :post="post" />
                     </v-list-item-title>
                   </v-list-item>
                   <!-- 삭제 -->
-                  <v-list-item>
-                    <v-list-item-title v-if="flagWriter">
+                  <v-list-item v-if="flagWriter">
+                    <v-list-item-title>
                       삭제
                     </v-list-item-title>
                   </v-list-item>
@@ -102,25 +102,27 @@
       </div>
     
       <!-- 포스트 제목 -->
-      <div id="title">
-        <!-- 중고장터용(지역) -->
-        <div>
-          <v-chip 
-            outlined
-            pill
-            color="#695C4C"
-            class="mr-3"
-          >
-            광주
-          </v-chip>
+      <div id="body">  
+        <div id="title">
+          <!-- 중고장터용(지역) -->
+          <div v-if="flagComponent.header">
+            <v-chip 
+              outlined
+              pill
+              color="#695C4C"
+              class="mr-3"
+            >
+              광주
+            </v-chip>
+          </div>
+          <div>{{post.post_title}}</div>
         </div>
-        <div>{{post.post_title}}</div>
-      </div>
-      <!-- 게시글 내용 -->
-      <div id="description">
-        {{post.post_description}}
-        <!-- 이미지 미리보기 -->
-        <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
+        <!-- 게시글 내용 -->
+        <div id="description">
+          {{post.post_description}}
+          <!-- 이미지 미리보기 -->
+          <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
+        </div>
       </div>
 
       <!-- 게시글 관련 이미지/댓글/좋아요 들어갈 부분 -->
@@ -131,7 +133,7 @@
             <v-icon
               middle
               class="mr-1"
-            >mdi-comment-processing</v-icon>
+            >mdi-comment-outline</v-icon>
             <span>{{ commentCount }}</span>
           </div>
           <!-- 좋아요 -->
@@ -231,6 +233,25 @@ export default {
     },
     flagWriter(){
       return this.post.user_id===localStorage.userId
+    },
+    // 재사용의 핵심
+    flagComponent(){
+      
+      let flag = {
+        state:false,
+        header:false
+      }
+
+      if(this.$route.name==="MarketPost"){
+        flag.state = true
+        flag.header = true
+        return flag
+        
+      }else if(this.$route.name==="LearnShare"){
+        flag.state = false
+        flag.header = true
+      }
+      return flag
     }
   },
   watch:{
@@ -258,34 +279,34 @@ export default {
     // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
-        .then((res)=>{
-          if(res.data.message==='No Subscription'){
-            alert('구독 후에 이용가능합니다.')
-          }else{
-            this.$store.dispatch('post/postLike',this.flagLike)
-          }
-          // console.log(res)
-        })
-        .catch(err=>{
-          console.error(err)
-        })
+      .then((res)=>{
+        if(res.data.message==='No Subscription'){
+          alert('구독 후에 이용가능합니다.')
+        }else{
+          this.$store.dispatch('post/postLike',this.flagLike)
+        }
+        // console.log(res)
+      })
+      .catch(err=>{
+        console.error(err)
+      })
       
     },
 
     // user가 스크랩 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postScrap(e){
       postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
-        .then((res)=>{
-          if(res.data.message==='No Subscription'){
-            alert('구독 후에 이용가능합니다.')
-          }else{
-            this.$store.dispatch('post/postScrap') 
-          }
-            // console.log(res)
-          })
-          .catch(err=>{
-            console.error(err)
-          })
+      .then((res)=>{
+        if(res.data.message==='No Subscription'){
+          alert('구독 후에 이용가능합니다.')
+        }else{
+          this.$store.dispatch('post/postScrap') 
+        }
+          // console.log(res)
+        })
+      .catch(err=>{
+        console.error(err)
+      })
     }
   }
 }
@@ -320,6 +341,9 @@ export default {
   align-items: center;
 }
 /* 사용자 정보 클릭시 드롭다운 연결 */
+.v-menu__content{
+  transform: translate(5px,40px);
+}
 
 /* 프로필, 닉네임, 작성일  */
 #header-user-info {
@@ -358,9 +382,14 @@ export default {
   color: #fff;
   border-radius: 10%;
 }
+/* 게시글 바디*/
+#body {
+  width:100%;
+  min-height: 200px;
+}
 /* 게시글 제목 */
 #title {
-  margin: 0 0 1% 1%;
+  margin: 2% 0 2% 1%;
   display: flex;
   flex-direction: row;
   font-size: 18px;

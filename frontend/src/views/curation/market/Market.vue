@@ -77,12 +77,13 @@
             <!-- 중고장터 게시글 작성 -->
             <MarketPostWrite class="mx-4 mb-2"/>
             <!-- 중고장터 게시물 부분 -->
-            <div v-for="(post,idx) in posts" :key="idx">
+            <MarketPostList/>
+            <!-- <div v-for="(post,idx) in posts" :key="idx">
               <MarketPost class="mx-4 mb-2" :post="post"/>
-            </div>
-            <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+            </div> -->
+            <!-- <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
               <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
-            </infinite-loading>
+            </infinite-loading> -->
           </v-col>
         </v-row>
       </v-container>
@@ -95,19 +96,21 @@
 import MarketItem from "@/components/curation/market/MarketItem.vue"
 // 중고장터 게시물 작성
 import MarketPostWrite from "@/components/curation/market/MarketPostWrite.vue"
-// 중고장터 게시물
-import MarketPost from "@/components/curation/market/MarketPost.vue"
+
+// 중고장터 리스트
+import MarketPostList from "@/components/board/PostList"
 
 import * as marketApi from '@/api/market'
-import InfiniteLoading from 'vue-infinite-loading';
+// import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   name:'Market',
   components: {
     MarketItem,
     MarketPostWrite,
-    MarketPost,
-    InfiniteLoading
+    MarketPostList,
+    // MarketPost,
+    // InfiniteLoading
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
