@@ -3,11 +3,13 @@
     id="post-box"
     class="mx-2
       my-4
+      mb-2
       pa-2
       pb-4
       d-flex
       flex-column"
     color="F9F9F9"
+    @click="moveToPost"
   >
     <div
       class="img-wrap
@@ -18,14 +20,14 @@
       <div class="text">
         <!-- 삭제 버튼 -->
         <div class="align-self-end">
-          <v-btn icon color="#AA2610" @click="removeBoard()">
+          <v-btn icon color="#AA2610" @click.stop="removeBoard">
             <v-icon dark>
               mdi-close-thick
             </v-icon>
           </v-btn>
         </div>
-        <div class="board-title" @click="moveToBoard()">
-          {{ `보드 제목과 이미지 필요` }}
+        <div class="board-title">
+          {{ scrap.board_name }}
         </div>
       </div>
       <GradientGenerator class="myinfo-list" style="height: 100px" v-if="board_image == null" :radius="radius" />
@@ -44,8 +46,9 @@
         cols="3"
         id="post-date"
         class="text-overline 
+        pl-0
         text-end"
-        >{{ scrap.post_date | moment('YY. MM. DD') }}</v-col
+        >{{ scrap.post_date | moment('YY.MM.DD.') }}</v-col
       >
     </v-card-title>
 
@@ -58,7 +61,7 @@
       {{ scrap.post_description }}
     </v-card-text>
 
-    <v-card-actions>
+    <!-- <v-card-actions>
       <v-list-item class="grow">
         <v-list-item-avatar class="rounded-circle">
           <v-img class="elevation-6" alt="" :src="post.boardImg"></v-img>
@@ -74,7 +77,7 @@
           </span>
         </v-row>
       </v-list-item>
-    </v-card-actions>
+    </v-card-actions> -->
   </v-card>
 </template>
 
@@ -92,18 +95,6 @@ export default {
     return {
       board_image: null,
       radius: '15px',
-      post: {
-        writer: 'hahawhoa',
-        inBoard: '(보드 이름)모르고리즘이 알고리즘이 될 때까지',
-        boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
-        title: '(게시물제목)저희팀원들 짱이랍니다(게시물제목)저희팀원들 짱이랍니다',
-        comment:
-          '(댓글내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)',
-        date: `21.02.02`,
-        likeCount: 4,
-        commentCount: 4,
-        boardCount: 241,
-      },
     };
   },
   created() {
@@ -113,12 +104,22 @@ export default {
   },
   methods: {
     // 작성글 삭제
-    removeBoard() {
-      console.log('작성글 삭제');
+    removeBoard: function() {
+      this.$toast.open({
+        position: 'top-right',
+        duration: 1800,
+        message: `클릭하여 ${this.scrap.board_name} 스크랩 취소`,
+        type: 'error',
+        //보드 구독 취소 후 리스트에서 애니메이션으로 제거
+        onClick: () => {
+          this.$emit('delScrap', this.scrap.post_id);
+        },
+        queue: true,
+      });
     },
     // 해당 보드로 이동(상세 주소 넘겨주기)
-    moveToBoard() {
-      this.$router.push({ name: 'Board' });
+    moveToPost: function() {
+      this.$router.push(`/board/${this.scrap.board_id}/post/${this.scrap.post_id}`);
     },
   },
 };
@@ -168,6 +169,11 @@ export default {
   text-overflow: ellipsis;
   word-break: break-all;
   white-space: nowrap;
+}
+@media (max-width: 426px) {
+  #post-date {
+    font-size: 10px !important;
+  }
 }
 /* 댓글 내용 넘치는 부분 처리 */
 #post-contents {

@@ -3,11 +3,15 @@ import * as mainApi from '@/api/main';
 const INIT_FAVORITES = () => {
   return {
     board_id: -1,
+    board_name: '',
+    board_description: '',
+    board_image: null,
+    board_igmyeong: 0,
+    board_location: '',
+    board_hash: '',
+    board_date: 'YYYY-MM-DD HH:mm:ss',
     user_id: '',
-    favorite_flag: -1,
-    write_post_count: -1,
-    user_role: -1,
-    is_used: -1,
+    board_state: 0,
   };
 };
 
@@ -37,28 +41,31 @@ export default {
     favorites: INIT_FAVORITES(),
     followRank: INIT_FOLLOW_RANK(),
   },
-  getters: {
+
+  mutations: {
     //즐겨찾기
-    getFavorites(state) {
-      return state.favorites;
+    setFavorites(state, payload) {
+      state.favorites = payload;
     },
 
-    //인기보드
-    //구독자 순(팔로우 순)
-    getFollowRank(state) {
-      return state.followRank;
+    //인기
+    setFollowRank(state, payload) {
+      // state.followRank = payload.arr;
     },
   },
+
   actions: {
     //즐겨찾기 목록 요청
     async actFavorites(context, userId) {
       try {
         const res = await mainApi.getFavorites(userId);
         // console.log(res);
-        const arr = res.data.favorite;
-        context.commit('setFavorites', { arr });
+        if (res.data.status == 'SUCCESS') {
+          context.commit('setFavorites', res.data.favorite);
+        }
       } catch (e) {
         console.log(e);
+        alert('즐겨찾기 목록을 가져오는 중 문제가 발생했습니다.');
       }
     },
 
@@ -74,15 +81,17 @@ export default {
       }
     },
   },
-  mutations: {
+
+  getters: {
     //즐겨찾기
-    setFavorites(state, payload) {
-      state.favorites = payload.arr;
+    getFavorites(state) {
+      return state.favorites;
     },
 
-    //인기
-    setFollowRank(state, payload) {
-      // state.followRank = payload.arr;
+    //인기보드
+    //구독자 순(팔로우 순)
+    getFollowRank(state) {
+      return state.followRank;
     },
   },
 };

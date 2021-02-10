@@ -5,9 +5,9 @@
     <GradientGenerator id="bg-graid" radius="0px" v-if="!board_image" />
     <div class="inner">
       <div id="f-title" class="f-text b-desc">
-        <p>{{ board_name }}</p>
+        <p>{{ favorite.board_name }}</p>
       </div>
-      <p id="f-desc" class="f-text r-desc">{{ board_description }}</p>
+      <p id="f-desc" class="f-text r-desc">{{ favorite.board_description }}</p>
       <p id="f-hashtag" class="f-text hashtag l-desc">
         {{ board_hash }}
       </p>
@@ -31,30 +31,16 @@ export default {
   },
   data() {
     return {
-      board_name: '',
-      board_description: '',
       board_hash: '',
       board_image: false,
     };
   },
   created() {
-    boardApi
-      .board_detail(this.favorite.board_id)
-      .then((res) => {
-        this.board_name = res.data.boardDto.board_name;
-        this.board_description = res.data.boardDto.board_description;
-        this.board_hash = res.data.boardDto.board_hash.replaceAll('|', ' ');
-        const img = res.data.boardDto.board_image;
-        if (img != null && img != 'null' && img != '') {
-          this.board.image = img;
-        }
-        if (res.data.boardDto.board_image != 'null' && res.data.boardDto.board_image != null && res.data.boardDto.board_image != '') {
-          this.board_image = res.data.boardDto.board_image;
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    this.board_hash = this.favorite.board_hash.replaceAll('|', ' ');
+    const img = this.favorite.board_image;
+    if (img != null && img != 'null' && img != '') {
+      this.board.image = img;
+    }
   },
   methods: {},
 };

@@ -44,7 +44,7 @@ public class BambooController {
      * @param : user_id, bamboo_title, bamboo_description, bamboo_image,
      * bamboo_iframe, bamboo_header, writer_nickname
      * 
-     * @return : message
+     * @return : message, bamboo_id
      */
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> postCreate(@RequestBody Map<String, Object> param) {
@@ -60,7 +60,9 @@ public class BambooController {
             bambooDto.setBamboo_title((String) param.get("bamboo_title"));
             bambooDto.setUser_id((String) param.get("user_id"));
             bambooDto.setWriter_nickname((String) param.get("writer_nickname"));
+            bambooDto.setBamboo_image((String) param.get("bamboo_image"));
             bambooService.createBamboo(bambooDto);
+            resultMap.put("bamboo_id", bambooDto.getBamboo_id());
             resultMap.put("message", SUCCESS);
 
         } catch (Exception e) {

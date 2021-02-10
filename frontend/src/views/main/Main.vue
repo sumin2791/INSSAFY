@@ -11,8 +11,8 @@
       </svg>
       <swiper v-cloak id="f-swiper" class="swiper" :options="swiperOption" @clickSlide="clickFavorite">
         <swiper-slide v-for="(item, index) in favorites" :key="`faborite${item.board_id}/${index}`">
-          <Slide :favorite="item" v-if="item.board_state != -1" />
-          <SlideRecom :favorite="item" v-if="item.board_state == -1" />
+          <Slide :favorite="item" v-if="item.board_id != -1" />
+          <SlideRecom :favorite="item" v-if="item.board_id == -1" />
         </swiper-slide>
         <div class="swiper-pagination" slot="pagination"></div>
       </swiper>
@@ -212,41 +212,22 @@ export default {
     };
   },
   created() {
-    //mounted로 옮김 deprecated
-    // if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
-    //   this.$store.dispatch('auth/getSubBoard');
-    //   this.actFavorites(this.$store.state.auth.user.userId);
-    // }
-    // this.actFollowRank();
-  },
-  computed: {
-    ...mapGetters('main', ['getFavorites', 'getFollowRank']),
-    ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
-  },
-  mounted() {
     if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
       this.$store.dispatch('auth/getSubBoard');
       this.actFavorites(this.$store.state.auth.user.userId);
     }
     this.actFollowRank();
-    // console.log(this.getFavorites);
-    // console.log(this.getSubBoardFavoriteList);
-    // console.log(this.getSubBoardList);
-    // console.log(this.getFollowRank);
-    this.favorites = this.getFavorites;
-    console.log(this.favorites);
-    this.favorites = JSON.parse(JSON.stringify(this.getFavorites));
-    for (let index = this.favorites.length; index < 8; index++) {
-      const item = { board_state: -1 };
-      this.favorites.push(item);
-    }
+  },
+  computed: {
+    ...mapGetters('main', ['getFavorites', 'getFollowRank']),
+    ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
   },
   watch: {
     getFavorites: function() {
       this.favorites = this.getFavorites;
       // this.favorites = JSON.parse(JSON.stringify(this.getFavorites));
       for (let index = this.favorites.length; index < 8; index++) {
-        const item = { board_state: -1 };
+        const item = { board_id: -1 };
         this.favorites.push(item);
       }
     },

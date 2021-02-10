@@ -117,7 +117,7 @@ export default {
     async actDeletePost({ commit }, payload) {
       try {
         const response = await userApi.deletePost(payload);
-        console.log(response);
+        // console.log(response);
         if (response.data.message == 'success' || response.data.message == 'fail') {
           // return true;
         }
@@ -131,7 +131,7 @@ export default {
 
     //작성 댓글
     //작성 댓글 가져오기
-    async actGetComent(context) {
+    async actGetComments(context) {
       try {
         const response = await userApi.getComment(context.rootState.auth.user.userId);
         // console.log(response);
@@ -140,6 +140,20 @@ export default {
         console.log(error);
         alert('작성 댓글을 가져오는 도중 문제가 발생했습니다.');
       }
+    },
+    //작성 댓글 삭제
+    async actDelComment(context, comment_id) {
+      try {
+        const response = await userApi.deleteComment({ comment_id: comment_id, login_id: context.rootState.auth.user.userId });
+        console.log(response);
+        if (response.data.message == 'success') {
+          return true;
+        }
+      } catch (error) {
+        console.log(error);
+        alert('댓글을 삭제하는 도중 문제가 발생했습니다.');
+      }
+      return false;
     },
 
     //내 스크랩
@@ -155,6 +169,23 @@ export default {
         console.log(error);
         alert('내 스크랩 목록을 가져오는 도중 문제가 발생했습니다.');
       }
+    },
+    //스크랩 삭제용 토글
+    async actTogleScrap(context, post_id) {
+      try {
+        const response = await userApi.postScraps({
+          user_id: context.rootState.auth.user.userId,
+          post_id: post_id,
+        });
+        console.log(response);
+        if (response.data.message == 'success') {
+          return true;
+        }
+      } catch (error) {
+        console.log(error);
+        alert('스크랩 상태를 변경하는 도중 문제가 발생했습니다.');
+      }
+      return false;
     },
   },
 

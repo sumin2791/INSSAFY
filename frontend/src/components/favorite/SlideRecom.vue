@@ -5,11 +5,11 @@
     <GradientGenerator id="bg-graid" radius="0px" v-if="!board_image" />
     <div class="inner">
       <div id="f-title" class="f-text b-desc">
-        <p>{{ `츄쳔~~` }}</p>
+        <p>{{ board_name }}</p>
       </div>
       <p id="f-desc" class="f-text r-desc">{{ board_description }}</p>
       <p id="f-hashtag" class="f-text hashtag l-desc">
-        {{ `강추보드 공간메우기` }}
+        {{ board_hash }}
       </p>
     </div>
     <div id="f-option" class="t-desc-e">
@@ -31,9 +31,9 @@ export default {
   },
   data() {
     return {
-      board_name: '',
-      board_description: '',
-      board_hash: '',
+      board_name: '츄쳔~~~~',
+      board_description: '강추보드로 공간을 메우자!',
+      board_hash: '#추천 #즐겨찾기해요',
       board_image: false,
     };
   },
