@@ -1,93 +1,188 @@
 <template>
-  <v-card
-    class="mx-auto
-      my-2
-      d-flex
-      flex-column"
-    color="#F9F9F9"
-  >
-    <!-- 포스트 작성자 부분 -->
-    <v-card-title class="d-flex flex-row align-center ma-0 py-2 pb-0">
-      <v-list-item-avatar class="rounded-circle">
-        <v-img
-          class="elevation-6"
-          alt=""
-          :src="profileImg"
-        ></v-img>
-      </v-list-item-avatar>
-      <!-- 작성자이름, 작성일자 -->
-      <div class="text-caption">
-        <div>{{post.user_nickname}}</div>
-        <div>{{date}}</div>
+  <v-card id="container">
+    <div id="post-detail">
+      <!-- 포스트 디테일 헤더 부분 -->
+      <div id=header>
+        <!-- 클릭시 드롭다운 -->
+        <v-menu
+              bottom
+              left
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  depressed
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  class="px-0"
+                >
+                  <div id="header-user-info">
+                    <!-- 프로필 사진 연결하기 -->
+                    <v-avatar size="40">
+                      <Profile id="profile-image"/>
+                    </v-avatar>
+                    <!-- 작성자이름, 작성일자 -->
+                    <div id="header-info">
+                      <div>{{ post.user_nickname }}</div>
+                      <div>{{ date }}</div>
+                    </div>
+                  </div>
+                </v-btn>
+              </template>
+              
+              <v-list>
+                <!-- 프로필 보기 -->
+                <v-list-item-group>
+                  <v-list-item>
+                    <v-list-item-title>
+                      Profile 보기
+                    </v-list-item-title>
+                  </v-list-item>
+                  <!-- 메세지 보내기 -->
+                  <v-list-item>
+                    <v-list-item-title>
+                      메세지 보내기
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-menu>
+        
+        <!-- 수정 삭제 신고 버튼과 판매상태 정보 -->
+        <div id='header-right'>
+          <!-- 판매정보 부분 -->
+          <div>
+            <v-chip id="sell-state">
+              판매완료
+            </v-chip>
+          </div>
+          <!-- 수정,삭제,신고 -->
+          <div>
+            <v-menu
+              bottom
+              left
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon 
+                  x-small 
+                  fab
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon dark>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              
+              <v-list>
+                <!-- 수정 -->
+                <v-list-item-group>
+                  <!-- 신고 -->
+                  <v-list-item>
+                    <v-list-item-title>
+                      신고
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
+            </v-menu>
+          </div>
+        </div>
       </div>
-      <v-spacer></v-spacer>
-    </v-card-title>
-    
-    <div class="post-body" @click="goToDetail">
-      <!-- 포스트 제목 -->
-      <v-col
-        class="font-weight-black"
-      >{{post.post_title}}</v-col>
-      <!-- 게시글 내용 -->
-      <v-col>
-        {{post.post_description}}
-      </v-col>
+      <!-- 디테일 페이지로 들어가는 부분 -->
+      <div id="content-go-detail" @click="goToDetail">
+        <!-- 포스트 제목 -->
+        <div id="title">
+          <!-- 중고장터용(지역) -->
+          <div>
+            <v-chip 
+              outlined
+              pill
+              color="#695C4C"
+              class="mr-3"
+            >
+              광주
+            </v-chip>
+          </div>
+          <div>{{post.post_title}}</div>
+        </div>
+        <!-- 게시글 내용 -->
+        <div id="description">
+          {{post.post_description}}
+        </div>
+      </div>
+
+      <!-- 게시글 관련 이미지/댓글/좋아요 들어갈 부분 -->
+      <div id="actions">
+        <!-- 댓글 수 -->
+        <div id="bottom-comment-like">
+          <div>
+            <v-icon
+              middle
+              class="mr-1"
+            >mdi-comment-processing</v-icon>
+            <span v-if="isComment">{{ post.comment_count }}</span>
+            <span v-else>0</span>
+          </div>
+          <!-- 좋아요 -->
+          <div>
+            <button
+              @click="postLike"
+            >
+              <!-- 좋아요 중 -->
+              <v-icon
+                middle
+                v-if="flagLike"
+                color="#FFC400"
+                class="mr-1 ml-2"
+              >mdi-emoticon-excited</v-icon>
+              <!-- 좋아요 취소상태 -->
+              <v-icon
+                middle
+                v-else
+              >mdi-emoticon-neutral-outline</v-icon>
+              <span>{{ countLike }}</span>
+            </button>
+          </div>
+        </div>
+        <!-- 북마크 -->
+        <div>
+          <button
+            @click="postScrap"
+          >
+            <!-- 북마크 중 -->
+            <v-icon
+              middle
+              v-if="flagScrap"
+              color="#0B2945"
+            >mdi-bookmark</v-icon>
+            <!-- 북마크 취소상태 -->
+            <v-icon
+              middle
+              v-else
+            >mdi-bookmark-outline</v-icon>
+          </button>
+        </div>
+      </div>
     </div>
-    <!-- 게시글 관련 이미지/댓글/좋아요 들어갈 부분 -->
-    <v-card-actions id="actions">
-      <!-- 이미지 -->
-      <v-icon v-if="haveImg" middle>mdi-image</v-icon>
-      <!-- 댓글 수 -->
-      <v-icon
-        middle
-      >mdi-comment-processing</v-icon>
-      <span v-if="isComment">{{ post.comment_count }}</span>
-      <span v-else>0</span>
-      <!-- 좋아요 -->
-      <button
-        @click="postLike"
-      >
-        <!-- 좋아요 중 -->
-        <v-icon
-          middle
-          v-if="flagLike"
-          color="#FFC400"
-        >mdi-emoticon-excited</v-icon>
-        <!-- 좋아요 취소상태 -->
-        <v-icon
-          middle
-          v-else
-        >mdi-emoticon-neutral-outline</v-icon>
-        <span>{{ countLike }}</span>
-      </button>
-      <v-spacer></v-spacer>
-      <!-- 북마크 -->
-      <button
-        @click="postScrap"
-      >
-        <!-- 북마크 중 -->
-        <v-icon
-          middle
-          v-if="flagScrap"
-          color="#0B2945"
-        >mdi-bookmark</v-icon>
-        <!-- 북마크 취소상태 -->
-        <v-icon
-          middle
-          v-else
-        >mdi-bookmark-outline</v-icon>
-      </button>
-      
-    </v-card-actions>
   </v-card>
 </template>
 
 <script>
+// 프로필 이미지
+import Profile from '@/components/etc/Profile';
+
 import * as postApi from '@/api/post'
 import timeForToday from '@/plugins/timeForToday'
 
+// 스타일 적용
+import '@/assets/css/static/style.css';
+
 export default {
   name:"Post",
+  components: {
+    Profile,
+  },
   props:{
     post:Object
   },
@@ -188,15 +283,108 @@ export default {
     }
   }
 }
+
 </script>
 
 <style scoped>
-/* 이미지 여부, 댓글, 좋아요, 북마크 부분 */
-#actions * {
-  margin: 2px 2px !important;
+/* 전체 폰트 */
+#container {
+  font-family: 'Noto Sans KR', sans-serif !important;
+  box-shadow: var(--basic-shadow-s) !important;
+  border-radius: 15px !important;
+  background-color: var(--basic-color-bg2) !important;
+  margin: 7px 0;
 }
-/* 포스트 본문 클릭시 pointer 변화 */
-.post-body {
+/* 전체 detail 담겨진 부분 */
+#post-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  padding: 1% 2%;
+}
+/* 프로필 이미지 */
+#profile-image {
+  width: 100%;
+  height: 100%;
+}
+/* 전체 최상단(유저 & 판매상태 & 신고) */
+#header {
+  margin: 1%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+/* 사용자 정보 클릭시 드롭다운 연결 */
+
+/* 프로필, 닉네임, 작성일  */
+#header-user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+/* 작성자 닉네임, 작성일 */
+#header-info {
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 0.6em;
+}
+/* 닉네임 */
+#header-info > div:first-child {
+  line-height: 110%;
+  font-size: 14px;
+  font-weight: 400;
+}
+/* 작성일자 */
+#header-info > div:last-of-type {
+  line-height: 110%;
+  font-size: 12px;
+  font-weight: 300;
+}
+/* 헤더의 오른쪽 - 판매정보, 신고버튼 */
+#header-right {
+  display: flex;
+  flex-direction: row;
+}
+/* 판매정보 */
+#sell-state {
+  background-color: #0B2945 ;
+  color: #fff;
+  border-radius: 10%;
+}
+/* 게시글 링크 정보 */
+#content-go-detail {
+  width: 100%;
   cursor: pointer;
+}
+/* 게시글 제목 */
+#title {
+  margin: 0 0 1% 1%;
+  display: flex;
+  flex-direction: row;
+  font-size: 18px;
+  font-weight: 600;
+}
+/* 게시글 내용 */
+#description {
+  margin: 0 0 1% 1%;
+  font-size: 16px;
+}
+/* 댓글, 좋아요, 북마크 부분 */
+#actions {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+/* 댓글 좋아요 부분 */
+#bottom-comment-like {
+  display: flex;
+  flex-direction: row;
 }
 </style>

@@ -202,6 +202,7 @@ export default {
   background: #ebebe9 !important;
   box-shadow: 10px 10px 20px #bcbcba, 
               -10px -10px 20px #ffffff;
+  border-radius: 15px !important;
   transition: 0.3s all ease;
 }
 .btn-write:hover,

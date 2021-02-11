@@ -1,9 +1,15 @@
 <template>
-  <div class="board-description">
+  <div id="container">
     <div class="board-name-detail">
       <div class="name-setting">
         <div class="board-name">{{this.board.name}}</div>
-        <b-icon icon="gear-fill" v-if="isManager && !Edit" style="cursor:pointer" @click="btnModify"></b-icon>
+        <v-icon id="edit-icon"
+          large
+          v-if="isManager && !Edit" 
+          @click="btnModify"
+        >
+          mdi-cog
+        </v-icon>
       </div>
       <!--보드 show & edit-->
       <div class="board-detail" v-if="!Edit">{{this.board.description}}</div>
@@ -17,6 +23,7 @@
           no-resize
           clear-icon="mdi-close-circle"
           label=""
+          placeholder="보드를 설명해주세요"
           v-model="tempDescription"
           color="grey-darken-4"
         ></v-textarea>
@@ -40,8 +47,8 @@
         dense
         label="해쉬태그"
         v-model="tempHashtag"
-        class="text-h5"
-        color="grey-darken-4"
+        class="text-body2"
+        color="grey-darken-2"
         @keypress.enter="addHashtag"
       ></v-text-field>
       <div
@@ -58,6 +65,34 @@
         </v-chip>
       </div>
     </div>
+    <!-- 추가기능 추가 정보(편집) -->
+    <div id="add-func-group" v-if="Edit">
+      <div>추가기능 모음</div>
+      <div
+        id="add-func-item"
+        v-for="(func, idx) in addFuncAll"
+        :key="idx"
+      >
+        <v-checkbox
+          hide-details
+          color="#0B2945"
+          :label="func.option"
+          :value="func.option"
+          v-model="addFunc"
+        ></v-checkbox>
+        <v-tooltip right>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              id="add-func-info"
+              v-bind="attrs"
+              v-on="on"
+              color="#AA2610"
+            >mdi-information-outline</v-icon>
+          </template>
+          <span v-html="func.explain"></span>
+        </v-tooltip>
+      </div>
+    </div>
     <div class="edit-button-set" v-if="Edit">
       <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
       <button class="p-button r-desc" @click="submit">  Edit  </button>
@@ -69,6 +104,8 @@
 <script>
 import * as boardApi from '@/api/board';
 import deepClone from '@/plugins/deepClone';
+// style 적용
+import '@/assets/css/static/style.css';
 
 
 export default {
@@ -80,6 +117,7 @@ export default {
   data() {
     return {
       loading: false,
+      boardDto:{},
       board:{
         name:'',
         description:'',
@@ -91,7 +129,40 @@ export default {
       tempDescription:'',
       tempHashtags: [],
       tempHashtag:'',
+      // test 후 바꿔주기
       Edit:false,
+
+      // 현재 추가기능 목록
+      addFunc: [],
+      // 전체 추가기능 목록 (체크되어 있는지)
+      addFuncAll: [
+        {
+          option: '체크리스트',
+          state: false,
+          explain: '구성원들과 함께 간단한 <strong>할 일 목록</strong>을 만들어서 관리해보세요.<br>보드를 효율적으로 사용할 수 있게 됩니다.',
+        }, 
+        {
+          option: '캘린더',
+          state: false,
+          explain: '캘린더에 일정을 표시하여 서로의 일정을 공유하고<br> 구성원들의 <strong>스케쥴 관리를 효율적</strong>으로 할 수 있게 도와줍니다.',
+        }, 
+        {
+          option: '인기글',
+          state: false,
+          explain: '좋아요 순으로 보드 내<br>포스트의 인기글 <strong>TOP3</strong>를 보여줍니다.',
+        }, 
+        {
+          option: '투표',
+          state: false,
+          explain: '결정하기 힘든 일은 투표를 통해 확인하는 것은 어떨까요?<br>투표를 만들고 투표내 항목을 만들어 투표를 생성해보세요',
+        }, 
+        {
+          option: '랭킹',
+          state: false,
+          explain: '보드를 활발히 활동하는 유저는 누군지 확인할 수 있게<br> <strong>TOP3</strong> 활동 유저를 확인해보세요',
+        }, 
+        
+      ],
     }
   },
   created() {
@@ -110,6 +181,9 @@ export default {
 
             this.$router.push({ name: 'PageNotFound'})
           }else{
+            this.boardDto = res.data.boardDto
+
+            
             this.board.name=res.data.boardDto.board_name
             this.board.description=res.data.boardDto.board_description
             this.board.hashtags=res.data.boardDto.board_hash.split('|')
@@ -158,9 +232,19 @@ export default {
       this.Edit = !this.Edit
     },
     submit(){
-      this.board.hashtags = [this.board.hashtags, ...this.tempHashtags]
+      // this.board.hashtags = [this.board.hashtags, ...this.tempHashtags]
       this.board.description = this.tempDescription
       this.board.hashtags = deepClone(this.tempHashtags)
+      this.boardDto.board_description = this.board.description
+      this.boardDto.board_hash = this.board.hashtags.join('|')
+      boardApi.board_modify(this.boardDto,localStorage.userId)
+        .then(res=>{
+          console.log(res)
+          console.log(this.board)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
       this.cancel()
       alert(`수정!`);
     },
@@ -171,7 +255,8 @@ export default {
 
 <style scoped>
 /* 전체 description-container */
-.board-description{
+#container {
+  font-family: 'Noto Sans KR', sans-serif !important;
   display: flex;
   flex-direction: column;
   padding: 5% 10%;
@@ -285,16 +370,32 @@ export default {
 .edit-button-set{
   display: flex;
   justify-content: flex-end;
+  margin: 25px 0 0 0;
 }
 .careful-line{
   height: 30px;
 }
+/* 추가기능 항목 그룹 */
+#add-func-item {
 
-.edit-button-set{
-  display: flex;
-  justify-content: flex-end;
 }
-.careful-line{
-  height: 30px;
+/* 추가기능 항목 아이템들 */
+#add-func-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 20px 0 25px;
+}
+/* 추가기능 항목 설명 아이콘 */
+#add-func-info {
+  align-self: flex-end;
+}
+/* 편집 들어오는 버튼(아이콘) */
+#edit-icon {
+  cursor:pointer;
+  color: #0B2945;
+}
+#edit-icon:hover {
+  color: #AA2610;
 }
 </style>
