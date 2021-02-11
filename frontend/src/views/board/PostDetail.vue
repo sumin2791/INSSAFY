@@ -101,7 +101,7 @@ export default {
       }else{
         return {
           name:'Board', 
-          params: {board_id: this.$route.params.board_id}
+          params: {board_id: Number(this.$route.params.board_id)}
         }
       }
     }

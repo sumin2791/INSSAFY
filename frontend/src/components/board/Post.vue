@@ -39,7 +39,7 @@
                     </v-list-item-title>
                   </v-list-item>
                   <!-- 메세지 보내기 -->
-                  <v-list-item>
+                  <v-list-item v-if="!flagWriter">
                     <v-list-item-title>
                       메세지 보내기
                     </v-list-item-title>
@@ -74,8 +74,7 @@
                 </v-btn>
               </template>
               
-              <v-list>
-                <!-- 수정 -->
+              <v-list >
                 <v-list-item-group>
                   <!-- 신고 -->
                   <v-list-item>
@@ -116,16 +115,16 @@
       <div id="actions">
         <!-- 댓글 수 -->
         <div id="bottom-comment-like">
-          <div>
+          <div id="bottom-comment">
             <v-icon
               middle
               class="mr-1"
-            >mdi-comment-processing</v-icon>
+            >mdi-comment-outline</v-icon>
             <span v-if="isComment">{{ post.comment_count }}</span>
             <span v-else>0</span>
           </div>
           <!-- 좋아요 -->
-          <div>
+          <div id="bottom-like">
             <button
               @click="postLike"
             >
@@ -134,15 +133,16 @@
                 middle
                 v-if="flagLike"
                 color="#FFC400"
-                class="mr-1 ml-2"
+                class="mr-1"
               >mdi-emoticon-excited</v-icon>
               <!-- 좋아요 취소상태 -->
               <v-icon
                 middle
+                class="mr-1"
                 v-else
               >mdi-emoticon-neutral-outline</v-icon>
-              <span>{{ countLike }}</span>
             </button>
+            <span>{{ countLike }}</span>
           </div>
         </div>
         <!-- 북마크 -->
@@ -212,6 +212,9 @@ export default {
     isLike() {
       return Object.keys(this.post).includes('like_count')
     },
+    flagWriter(){
+      return this.post.user_id===localStorage.userId
+    },
     date(){
       let date = this.post.post_date.split('.')[0]
       date = date.split('T').join(' ')
@@ -259,7 +262,7 @@ export default {
       if(curationName!="Board"){
         data.params.board_id = this.$store.state.curationId[curationName]
       }else{
-        data.params.board_id = this.$route.params.board_id
+        data.params.board_id = Number(this.$route.params.board_id)
       }
 
       if (curationName==="Market"){
@@ -349,6 +352,9 @@ export default {
 .v-menu__content{
   transform: translate(5px,40px);
 }
+.v-list{
+  padding:0;
+}
 
 /* 프로필, 닉네임, 작성일  */
 #header-user-info {
@@ -418,5 +424,14 @@ export default {
 #bottom-comment-like {
   display: flex;
   flex-direction: row;
+}
+#bottom-comment{
+  display: flex;
+  align-items: center;
+  margin-right: 5px;
+}
+#bottom-like{
+  display: flex;
+  align-items: center;
 }
 </style>

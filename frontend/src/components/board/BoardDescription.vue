@@ -106,6 +106,7 @@ export default {
     fetchData(){
       boardApi.board_detail(this.$route.params.board_id)
         .then(res=>{
+          console.log(res)
           if(res.data.message==="NULL"){
 
             this.$router.push({ name: 'PageNotFound'})
@@ -161,6 +162,13 @@ export default {
       this.board.hashtags = [this.board.hashtags, ...this.tempHashtags]
       this.board.description = this.tempDescription
       this.board.hashtags = deepClone(this.tempHashtags)
+      boardApi.board_modify(this.board,localStorage.userId)
+      .then(res=>{
+        console.log(res)
+      })
+      .catch(err=>{
+        console.log(err)
+      })
       this.cancel()
       alert(`수정!`);
     },

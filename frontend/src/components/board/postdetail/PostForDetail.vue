@@ -39,7 +39,7 @@
                     </v-list-item-title>
                   </v-list-item>
                   <!-- 메세지 보내기 -->
-                  <v-list-item>
+                  <v-list-item v-if="!flagWriter">
                     <v-list-item-title>
                       메세지 보내기
                     </v-list-item-title>
@@ -129,7 +129,7 @@
       <div id="actions">
         <!-- 댓글 수 -->
         <div id="bottom-comment-like">
-          <div>
+          <div id="bottom-comment">
             <v-icon
               middle
               class="mr-1"
@@ -137,7 +137,7 @@
             <span>{{ commentCount }}</span>
           </div>
           <!-- 좋아요 -->
-          <div>
+          <div id="bottom-like">
             <button
               @click="postLike"
             >
@@ -146,15 +146,16 @@
                 middle
                 v-if="flagLike"
                 color="#FFC400"
-                class="mr-1 ml-2"
+                class="mr-1"
               >mdi-emoticon-excited</v-icon>
               <!-- 좋아요 취소상태 -->
               <v-icon
                 middle
+                class="mr-1"
                 v-else
               >mdi-emoticon-neutral-outline</v-icon>
-              <span>{{ countLike }}</span>
             </button>
+            <span>{{ countLike }}</span>
           </div>
         </div>
         <!-- 북마크 -->
@@ -246,7 +247,7 @@ export default {
         flag.state = true
         flag.header = true
         return flag
-        
+
       }else if(this.$route.name==="LearnShare"){
         flag.state = false
         flag.header = true
@@ -344,6 +345,9 @@ export default {
 .v-menu__content{
   transform: translate(5px,40px);
 }
+.v-list{
+  padding:0;
+}
 
 /* 프로필, 닉네임, 작성일  */
 #header-user-info {
@@ -412,5 +416,15 @@ export default {
 #bottom-comment-like {
   display: flex;
   flex-direction: row;
+  align-items: center;
+}
+#bottom-comment{
+  /* display: flex; */
+  /* align-items: center; */
+  margin-right: 5px;
+}
+#bottom-like{
+  display: flex;
+  align-items: center;
 }
 </style>

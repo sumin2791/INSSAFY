@@ -28,4 +28,8 @@ export function board_detail(board_id){
 export function subscribe(params) {
   return http.post('/board/subscribe',params)
 }
+
+export function board_modify(body,login_id) {
+  return http.put('/board/modify',body,{params:{login_id:login_id}})
+}
 // ==============

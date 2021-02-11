@@ -111,6 +111,8 @@ export default {
     return {
       title: '',
       description:'',
+      header:'',
+      state:0,
       images:[],
       titleState: null,
       descriptionState: null,
@@ -133,6 +135,8 @@ export default {
     resetModal() {
       this.title = ''
       this.description = ''
+      this.header = ''
+      this.state = 0
       this.titleState = null
       this.descriptionState = null
       this.images=[]
@@ -152,12 +156,13 @@ export default {
         return
       }
       // Push the name to submitted names
-      // this.submittedNames.push(this.name)
-      // Hide the modal manually
-      // const posts = this.$store.state.posts
-      const BOARD_ID = Number(this.$route.params.board_id)
-      // var fd = new FormData()
-      // fd.append('post_image', this.images)
+      const curationName = this.$route.name
+      let BOARD_ID
+      if(curationName!="Board"){
+        BOARD_ID = this.$store.state.curationId[curationName]
+      }else{
+        BOARD_ID = Number(this.$route.params.board_id)
+      }
 
       const postItem ={
         user_id:String(localStorage.getItem('userId')),
@@ -169,10 +174,9 @@ export default {
         post_header:'',
         post_state:0
       }
-      console.log(postItem)
-      
       postApi.create(postItem)
         .then(res=>{
+          console.log(res)
           this.$store.dispatch('board/isWriteFlag')
         })
         .catch(err=>{

@@ -84,7 +84,8 @@
             class="col-12 col-sm-8"  
           >
             <!-- 학습공유 게시글쓰기 -->
-            <LearningPostWrite class="mx-4 mb-2"/>
+            <!-- <LearningPostWrite class="mx-4 mb-2"/> -->
+            <PostWrite :in-board="inBoard"/>
             <!-- 학습공유 게시물 부분 -->
             <LearningSharePostList />
 
@@ -101,17 +102,21 @@ import LearningRank from "@/components/curation/learningshare/LearningRank.vue"
 // 학습공유 게시물
 // import LearningPost from "@/components/curation/learningshare/LearningPost.vue"
 // 학습공유 게시물 쓰기
-import LearningPostWrite from "@/components/curation/learningshare/LearningPostWrite.vue"
+// import LearningPostWrite from "@/components/curation/learningshare/LearningPostWrite.vue"
 // 학습공유 리스트
 import LearningSharePostList from "@/components/board/PostList"
+import PostWrite from '@/components/board/PostWrite'
 
 export default {
   name:'LearningShare',
   components: {
     LearningRank,
     // LearningPost,
-    LearningPostWrite,
+    // LearningPostWrite,
     LearningSharePostList,
+    PostWrite,
+  },
+  created(){
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -140,7 +145,10 @@ export default {
         // rank 1위
         speech: '저는 밥숟가락만 얹었을 뿐인데 아름다운 밤이네요!😎'
       },
-      wordcloudImg: '@/assets/images/wordcloud.jpg'
+      wordcloudImg: '@/assets/images/wordcloud.jpg',
+
+      //변수 사용할 것들
+      inBoard:true,
     }
   },
   methods: {

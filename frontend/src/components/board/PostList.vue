@@ -35,7 +35,10 @@ export default {
     InfiniteLoading
   },
   watch:{
-    writeFlag:'create'
+    writeFlag:function(){
+      this.page=0
+      location.reload();
+    }
   },
   computed:{
     writeFlag(){
@@ -62,8 +65,6 @@ export default {
     }
   },
   created() {
-    console.log(this.flagComponent)
-    // this.create()
   },
   methods: {
     // 재사용의 핵심
@@ -73,10 +74,8 @@ export default {
       if(curationName!="Board"){
         BOARD_ID = this.$store.state.curationId[curationName]
       }else{
-        BOARD_ID = this.$route.params.board_id
+        BOARD_ID = Number(this.$route.params.board_id)
       }
-      
-      
       const EACH_LEN = 6
       
       postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId,page:this.page,size:EACH_LEN})

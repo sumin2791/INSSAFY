@@ -53,10 +53,10 @@ const state = {
 
   //curation Id
   curationId:{
-    Market:34,
+    Market:76,
     LearnShare:75,
-    Study:37,
-    Recruitment: 75
+    Study:77,
+    Recruitment: 73
   }
 };
 

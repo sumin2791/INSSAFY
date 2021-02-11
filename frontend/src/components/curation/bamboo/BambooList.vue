@@ -103,7 +103,7 @@ export default {
 .bamboo-description{
   margin-top: 1rem;
   color:#f9f9f9;
-  background-color: #0B2945;
+  background-color: #0B2945 !important;
 }
 
 .rounded-bg {
