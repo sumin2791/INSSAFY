@@ -5,5 +5,5 @@ export function getFavorites(user_id) {
 }
 
 export function getFollowRank() {
-  return http.get('/getFollowRank');
+  return http.get('/main/getFollowRank');
 }

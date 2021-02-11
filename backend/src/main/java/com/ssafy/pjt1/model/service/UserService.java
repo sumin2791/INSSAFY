@@ -42,4 +42,6 @@ public interface UserService {
     public int deleteSubscribe(Map<String, String> map);
 
     public boolean quizCheck(String answer);
+
+	public void joinCuration(Map<String, Object> cMap);
 }

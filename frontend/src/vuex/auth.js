@@ -239,6 +239,11 @@ export default {
     getSubBoardFavoriteList: (state) => {
       return state.subBoard.filter((board) => board.favorite_flag == 1);
     },
+    //구독목록 리스트 내 board_id와 매개변수가 일치하면 true
+    getSubscribed: (state) => (board_id) => {
+      return state.subBoard.find((board) => board.board_id == board_id);
+    },
+
     // getSubBoardIndex: (state) => (id) => {
     //   let index = 0;
     //   state.subBoard.forEach((board) => {

@@ -16,23 +16,28 @@ const INIT_FAVORITES = () => {
 };
 
 const INIT_FOLLOW_RANK = () => {
-  return {
-    additionalProp1: {
-      board_id: -1,
-      post_date: '',
-      post_description: '',
-      post_header: '',
-      post_id: -1,
-      post_iframe: '',
-      post_image: '',
-      post_like: -1,
-      post_state: -1,
-      post_title: '',
-      user_id: '',
+  return [
+    {
+      board_id: '',
+      board_image: {},
+      board_name: '',
+      board_posts: [
+        {
+          board_id: -1,
+          post_date: '',
+          post_description: '',
+          post_header: '',
+          post_id: -1,
+          post_iframe: '',
+          post_image: '',
+          post_like: -1,
+          post_state: -1,
+          post_title: '',
+          user_id: '',
+        },
+      ],
     },
-    additionalProp2: {},
-    additionalProp3: {},
-  };
+  ];
 };
 
 export default {
@@ -50,7 +55,8 @@ export default {
 
     //인기
     setFollowRank(state, payload) {
-      // state.followRank = payload.arr;
+      state.followRank = payload;
+      console.log(state.followRank);
     },
   },
 
@@ -74,8 +80,51 @@ export default {
     async actFollowRank({ commit }) {
       try {
         const res = await mainApi.getFollowRank();
-        console.log(res);
-        commit('setFollowRank');
+        // console.log(res);
+        //키값(보드 정보) 추출
+        let keys = Object.keys(res.data);
+        for (let i = 0; i < keys.length; i++) {
+          keys[i] = keys[i].replace('{', '');
+          keys[i] = keys[i].replace('}', '');
+        }
+        //키값(보드 정보) 객체로  가공
+        let boards = [];
+        let values = Object.values(res.data);
+        for (let i = 0; i < keys.length; i++) {
+          const obj = keys[i].split(', ');
+          //객체 저장 용
+          let id,
+            name,
+            image = {};
+          for (let j = 0; j < obj.length; j++) {
+            const arr = obj[j].split('=');
+            switch (arr[0]) {
+              case 'board_id':
+                id = arr[1];
+                break;
+              case 'board_name':
+                name = arr[1];
+                break;
+              case 'board_image':
+                image = arr[1];
+                break;
+              default:
+                console.log('popular 팔로워 부분, reponse 데이터 가공 실패');
+                break;
+            }
+          }
+          //가공된 객체를 board 배열에 담기
+          boards.push({
+            board_id: id,
+            board_name: name,
+            board_image: image,
+            board_posts: values[i],
+          });
+        }
+        // console.log(res.data);
+        // console.log('보드 만든 결과');
+        // console.log(boards);
+        commit('setFollowRank', boards);
       } catch (e) {
         console.log(e);
       }

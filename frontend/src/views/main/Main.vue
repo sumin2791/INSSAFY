@@ -37,7 +37,7 @@
       </div>
       <p class="p-desc l-desc">팔로워 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
+        <BoardItem class="p-item" v-for="item in getFollowRank" :key="`popular${item.board_id}`" :item="item" />
       </div>
       <p class="p-desc l-desc">게시글 수</p>
       <div class="p-item-container">
@@ -162,11 +162,6 @@ export default {
           image: '../../assets/images/slide.jpg',
         },
       ],
-      favorite: [
-        { id: 1, name: 'slide - 1' },
-        { id: 2, name: 'slide - 2' },
-        { id: 3, name: 'slide - 3' },
-      ],
       swiperOption: {
         effect: 'coverflow',
         grabCursor: true,
@@ -235,8 +230,7 @@ export default {
   methods: {
     ...mapActions('main', ['actFavorites', 'actFollowRank']),
     clickFavorite: function(index) {
-      alert(index + ' slide clicked!');
-      this.$router.push({ name: 'Board' });
+      this.$router.push(`board/${this.getFavorites[index].board_id}`);
     },
     clickCBtn1: function() {
       this.$router.push({ name: 'StudyMain' });
