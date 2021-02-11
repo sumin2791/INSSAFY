@@ -71,13 +71,13 @@
 	</select>
 
 	<select id="getComments" parameterType="string" resultType="Map">
-		select p.post_title, c.user_id, c.comment_date, c.comment_id, c.comment_description
+		select p.post_title, c.user_id, c.comment_date, c.comment_id, c.comment_description, p.post_id, p.board_id
 		from comment c left join post p on (c.post_id=p.post_id)
 		where c.user_id=#{user_id} and c.is_used=1;
 	</select>
 
 	<select id="getPosts" parameterType="string" resultType="Map">
-		select b.board_id, post_id, b.user_id, b.board_image, post_description, post_title, b.board_name
+		select b.board_id, post_id, b.user_id, b.board_image, post_description, post_title, b.board_name, p.post_date, p.post_like
 		from board b left join post p on b.board_id=p.board_id
 		where p.user_id=#{user_id} and p.is_used=1;
 	</select>

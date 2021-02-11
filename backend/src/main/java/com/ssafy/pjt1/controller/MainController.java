@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/main")
@@ -154,7 +153,7 @@ public class MainController {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        
+
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
