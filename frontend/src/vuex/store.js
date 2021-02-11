@@ -15,6 +15,7 @@ import comment from './comment';
 import main from './main';
 import user from './user';
 import bamboo from './bamboo';
+import market from './market';
 
 Vue.use(Vuex);
 
@@ -65,5 +66,6 @@ export default new Vuex.Store({
     main,
     user,
     bamboo,
+    market
   },
 });

@@ -1,122 +1,107 @@
 <template>
-  <div class="container-box">
-    <!-- 채팅목록 보여주는 부분 -->
-    <div class="chat-list-section">
-      <h3 class="chat-title">1:1 대화목록</h3>
-      <hr color="black" width="100%">
-      <ScrapPost />
-      <ScrapPost />
-      <ScrapPost />
-      <ScrapPost />
-      <ScrapPost />
-    </div>
-    <div class="chat-message">
-      <!-- 현재 들어와 있는 채팅방 알려주는 정보 -->
-      <div class="info">
-        <div class="info-img">
-          프사
-        </div>
-        <div class="info-name">
-          닉네임
-        </div>
-      </div>
-      <hr color="black">
-      <ChatMessageLeft />
-      <ChatMessageRight />
-      <ChatMessageLeft />
-      <ChatMessageRight />
-    </div>
-  </div>
+  <v-app class="main-bg-color">
+    <v-main class="grey lighten-3">
+      <v-container
+        class="pt-8"
+      > 
+        <v-row>
+          <!-- 왼쪽 채팅방 리스트 -->
+          <v-col 
+            class="col-12 col-sm-5"
+            id="sheet" 
+          >
+            <v-sheet min-height="90vh">
+              <v-list color="transparent">
+                <!-- 채팅방 리스트 타이틀 -->
+                <div class="text-h5">채팅방 목록</div>
+                <v-divider class="my-2"></v-divider>
+                <!-- 채팅중인 대화상대 목록 -->
+                <v-col class="chat-list">
+                  <ChatRoomList />
+                  <ChatRoomList />
+                  <ChatRoomList />
+                  <ChatRoomList />
+                </v-col>
+              </v-list>
+            </v-sheet>
+          </v-col>
+          <!-- 채팅방 부분 -->
+          <v-col
+            class="col-12 col-sm-7"  
+          >
+            <v-sheet min-height="90vh">
+              <ChatRoom />
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-/* 
-일단은 왼쪽, 오른쪽 메세지로 쪼개놨지만 이를 조건문으로 변경해도 될 것 같다
-*/
-import ChatMessageRight from "./ChatMessageRight.vue"
-import ChatMessageLeft from "./ChatMessageLeft.vue"
-// 마이페이지내 스크랩한 포스트 컴포넌트가 채팅목록과 정보 유사 - 이를 사용
-import ScrapPost from "@/components/mypage/ScrapPost.vue"
+// 왼쪽 채팅 목록
+import ChatRoomList from "@/components/openchat/ChatRoomList.vue"
+// 오른쪽 채팅방 부분
+import ChatRoom from "@/components/openchat/ChatRoom.vue"
 
 export default {
-  name: "ChatPage",
+  name:'LearningShare',
   components: {
-    ChatMessageLeft,
-    ChatMessageRight,
-    ScrapPost,
+    ChatRoomList,
+    ChatRoom,
   },
+  // 뷰 인스턴스 제거될 때 resize 호출
+  beforeDestroy () {
+      if (typeof window === 'undefined') return
+
+      window.removeEventListener('resize', this.onResize, { passive: true })
+  },
+  mounted () {
+    // resize 실시해서 현재 화면 크기 확인
+    this.onResize()
+
+    window.addEventListener('resize', this.onResize, { passive: true })
+    this.filterMyStudyGroup()
+  },
+  data() {
+    return {
+      // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
+      ResponsiveSize: {
+        isMobile: false, 
+        viewSize: 0,
+      },
+      // 검색 키워드
+      searchKeyword: '',
+      // 내 스터디 목록 활성화 버튼
+      isMyStudy: false,
+      myStudyGroup: ['내 스터디 목록', '전체 스터디 목록'],
+      state: '',
+    }
+  },
+  methods: {
+    // 현재 활성화된 기기에 따라 flag 변경
+    onResize() {
+      this.ResponsiveSize.isMobile = window.innerWidth < 426;
+      this.ResponsiveSize.viewSize = window.innerWidth;
+    },
+    // 내 스터디 그룹 / 전체 스터디 그룹 전환
+    filterMyStudyGroup() {
+      if (this.isMyStudy) {
+        this.state = this.myStudyGroup[0]
+      } else {this.state = this.myStudyGroup[1]}
+    },
+  }
 }
 </script>
 
 <style scoped>
-.container-box {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border: 2px solid #000000;
-  height: 100vh;
-  margin: 1% 18%;
-  flex-wrap: wrap;
+.main-bg-color {
+  background-color: #ebebe9;
 }
-
-/* 채팅목록 화면(왼쪽) */
-.container-box .chat-list-section {
-  display:flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: pink;
-  width: 47%;
-}
-.container-box .chat-title {
-  font-size: 2rem;
-  align-self: flex-start;
-  margin: 5% 5%;
-}
-
-/* 1대1 채팅화면(오른쪽) */
-.container-box .chat-message {
-  background-color: silver;
-  width: 47%;
-}
-.chat-message .info {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-/* 채팅방 타이틀 - 누구와의 대화인지 보여주는 부분 */
-.chat-message .info {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  margin: 3%;
-}
-.chat-message .info-img {
-  display: flex;
-  justify-content: center;
-  align-self: center;
-  border: 2px solid;
-  border-radius: 50%;
-  margin: 2% 5% 2% 1%;
-  padding: 4%;
-  height: 80%;
-  width: 15%;
-}
-
-/* 모바일 웹화면 */
-@media (max-width: 425px) {
-  .container-box {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    margin: 0.5rem 0.5rem;
-  }
-  .container-box .chat-list-section {
-    width: 95%;
-  }
-  .container-box .chat-message {
-    background-color: silver;
-    width: 95%;
-  }
+.description {
+  margin: 2%;
+  padding: 10%;
+  flex-basis: 20%;
 }
 </style>

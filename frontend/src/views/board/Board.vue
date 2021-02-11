@@ -1,28 +1,81 @@
 <template>
-  <div id="board">
-    <b-container class="board">
-      <b-row>
-        <b-col sm="3" class="board-aside">
-          <BoardDescription :in-board="inBoard" :is-manager="isManager" />
-          <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
-          <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button>
-          <hr />
-          <div class="board-function">보드특수기능들</div>
-          <div class="add-board-function">보드기능 추가</div>
-        </b-col>
-        <b-col sm="9" class="board-section">
-          <div class="post-search">
-            <div>찾기</div>
+  <v-app class="main-bg-color">
+    <v-main class="grey lighten-3">
+      <v-container id="container"
+        class="pt-8"
+      >
+
+        <!-- PC에서 보여줄 curation이름과 검색 -->
+        <v-row 
+          v-if="!ResponsiveSize.isMobile"
+          no-gutters 
+          dense
+          class="d-flex 
+            flex-row 
+            justify-space-between"
+        >
+          <!-- 페이지 이름 -->
+          <div 
+            class="text-overline  text-weight-black"
+            style="font-size: 20px !important;"
+          >Board</div>
+          <!-- 검색관련 부분 -->
+          <div 
+            class="d-flex 
+              flex-row 
+              justify-flex-end"
+          >
+            <!-- 검색바 -->
+            <v-text-field
+              placeholder="검색"
+              solo
+              v-model="searchKeyword"
+            ></v-text-field>
           </div>
-          <div class="post-write">
-            <!-- <b-button variant="light">글쓰기</b-button> -->
-            <PostWrite :in-board="inBoard" />
-          </div>
-          <PostList />
-        </b-col>
-      </b-row>
-    </b-container>
-  </div>
+        </v-row>
+
+        <v-row dense>
+          <!-- 왼쪽 보드 설명 및 추가 기능 -->
+          <v-col 
+              class="col-12 col-sm-4" 
+            >
+            <v-sheet class="section-bg">
+              <v-list color="transparent">
+                <div
+                  class="d-flex
+                  flex-column
+                  justify-space-between"
+                  style="min-height: 25vh;"
+                >
+                  <!-- 보드 설명 -->
+                  <BoardDescription :in-board="inBoard" :is-manager="isManager"/>
+                  <button
+                    class="btn-subscribe b-title"
+                    @click="onSubscribe"
+                    v-if="!inBoard"
+                  >Subscribe</button>
+                  <button
+                    class="btn-subscribing b-title"
+                    @click="onSubscribe"
+                    v-if="inBoard"
+                  >Subscribing</button>
+                </div>
+              </v-list>
+              <hr>
+              <div class="board-function">보드특수기능들</div>
+              <div class="add-board-function">보드기능 추가</div>
+            </v-sheet>
+          </v-col>
+          <v-col
+              class="col-12 col-sm-8"  
+            >
+            <PostWrite :in-board="inBoard"/>
+            <PostList/>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -41,11 +94,31 @@ export default {
     PostList,
     PostWrite,
   },
+  // 뷰 인스턴스 제거될 때 resize 호출
+  beforeDestroy () {
+      if (typeof window === 'undefined') return
+
+      window.removeEventListener('resize', this.onResize, { passive: true })
+  },
+  mounted () {
+    // resize 실시해서 현재 화면 크기 확인
+    this.onResize()
+
+    window.addEventListener('resize', this.onResize, { passive: true })
+  },
   data() {
     return {
-      inBoard: '',
-      isManager: false,
-    };
+      // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
+      ResponsiveSize: {
+        isMobile: false, 
+        viewSize: 0,
+      },
+      // 검색 키워드
+      searchKeyword: '',
+      
+      inBoard:'',
+      isManager:false,
+    }
   },
   created() {
     // this.$store.dispatch('board/IsInBoard',Number(this.$route.params.board_id))
@@ -70,12 +143,14 @@ export default {
     //   return this.$store.state.board.inBoard
     // }
   },
-  methods: {
-    onSubscribe() {
-      const BOARD_ID = Number(this.$route.params.board_id);
-
-      const boards = JSON.parse(localStorage.subBoard);
-      const board = boards.filter((board) => board.board_id === Number(this.$route.params.board_id));
+  methods:{
+    // 현재 활성화된 기기에 따라 flag 변경
+    onResize() {
+      this.ResponsiveSize.isMobile = window.innerWidth < 426;
+      this.ResponsiveSize.viewSize = window.innerWidth;
+    },
+    onSubscribe(){
+      const BOARD_ID = Number(this.$route.params.board_id)
 
       const params = {
         user_id: String(localStorage.userId),
@@ -122,71 +197,59 @@ export default {
 </script>
 
 <style scoped>
-.board {
-  max-width: 1200px !important;
-  margin: 0 auto;
-  margin-top: 30px;
-  /* width:80%;
-  margin-left:10%;
-  margin-right:10%; */
+.main-bg-color {
+  background-color: #ebebe9;
 }
+#container {
 
-/* .post-write {
-  display: inline-block;
-  position:sticky;
-} */
-.post-search {
-  display: flex;
-  justify-content: flex-end;
 }
-.btn-subscribe {
-  /* position: inherit;  */
-  height: 50px;
-  width: 100%;
-  font-size: 24px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+/* 왼쪽, 오른쪽 섹션 컨테이너 */
+.section-bg {
+  background-color: var(--basic-color-bg2) !important;
+}
+/* 구독버튼 */
+.btn-subscribe{
   text-align: center;
-  background-color: #000 !important;
-  color: #fff;
+  margin: auto;
+  height: 50px;
+  width:60%;
+  border: none;
+  border-radius: 30px;
+  color: var(--basic-color-bg);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: var(--basic-color-key) !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  transition: 0.3s all ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .btn-subscribe:hover,
 .btn-subscribe:active {
-  background-color: #fff !important;
-  color: #000;
+  background-color: #ebebe9 !important;
+  color: var(--basic-color-key);
 }
-.btn-subscribing {
-  height: 50px;
-  width: 100%;
-  font-size: 24px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+.btn-subscribing{
   text-align: center;
-  /* background-color: #000 !important; */
-  color: #000;
+  margin: auto;
+  height: 50px;
+  width:60%;
+  border: none;
+  border-radius: 30px;
+  color: var(--basic-color-bg);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: var(--basic-color-fill2) !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  transition: 0.3s all ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .btn-subscribing:hover,
 .btn-subscribing:active {
-  /* background-color: #fff !important; */
-  color: #000;
-}
-
-@media screen and (max-width: 576px) {
-  .btn-subscribe {
-    width: 100%;
-    background-color: #000 !important;
-    color: #fff;
-  }
-  .btn-subscribing {
-    width: 100%;
-    /* background-color: #000 !important; */
-    color: #000;
-  }
-  .post-search {
-    display: none;
-  }
-  .add-board-function {
-    display: none;
-  }
+  background-color: var(--basic-color-bg) !important;
+  color: var(--basic-color-key);
 }
 </style>

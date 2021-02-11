@@ -1,37 +1,85 @@
 <template>
-  <div class="post">
-    <div class="post-header">
-      <div class="user-profile-img">
-        <b-avatar src="https://placekitten.com/300/300" size="4rem">유저프로필</b-avatar>
+  <v-card
+    class="mx-auto
+      my-2
+      d-flex
+      flex-column"
+    color="#F9F9F9"
+  >
+    <!-- 포스트 작성자 부분 -->
+    <v-card-title class="d-flex flex-row align-center ma-0 py-2 pb-0">
+      <v-list-item-avatar class="rounded-circle">
+        <v-img
+          class="elevation-6"
+          alt=""
+          :src="profileImg"
+        ></v-img>
+      </v-list-item-avatar>
+      <!-- 작성자이름, 작성일자 -->
+      <div class="text-caption">
+        <div>{{post.user_nickname}}</div>
+        <div>{{date}}</div>
       </div>
-      <div class="user-name-date">
-        <div>
-          <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
-            <template #button-content>
-              {{post.user_nickname}}
-            </template>
-            <b-dropdown-item href="#">Profile</b-dropdown-item>
-            <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
-            <!-- <b-dropdown-item href="#">Something else here</b-dropdown-item> -->
-          </b-dropdown>
-        </div>
-        <div class="post-date">{{date}}</div>
-      </div>
-    </div>
+      <v-spacer></v-spacer>
+    </v-card-title>
+    
     <div class="post-body" @click="goToDetail">
-      <div class="title f-text b-desc">{{post.post_title}}</div>
-      <div class="description r-desc">{{post.post_description}}</div>
+      <!-- 포스트 제목 -->
+      <v-col
+        class="font-weight-black"
+      >{{post.post_title}}</v-col>
+      <!-- 게시글 내용 -->
+      <v-col>
+        {{post.post_description}}
+      </v-col>
     </div>
-    <div class="post-footer">
-      <!-- <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon> <div v-if="isLike"> {{post.post_like}}</div><div v-else>0</div></div>
-      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> <div v-if="isLike"> {{post.post_like}}</div><div v-else>0</div></div> -->
-      <div class="post-like" @click="postLike" v-if="flagLike"><b-icon icon="emoji-smile-fill" aria-hidden="true" color="#AA2610"></b-icon>  {{countLike}}</div>
-      <div class="post-like" @click="postLike" v-if="!flagLike"><b-icon icon="emoji-smile" aria-hidden="true"></b-icon> {{countLike}}</div>
-      <div class="post-comment"><b-icon icon="chat" aria-hidden="true"></b-icon> <div v-if="isComment"> {{post.comment_count}}</div><div v-else>0</div></div>
-      <div class="post-bookmark" @click="postScrap" v-if="flagScrap"><b-icon icon="bookmark-fill" aria-hidden="true"></b-icon></div>
-      <div class="post-bookmark" @click="postScrap" v-if="!flagScrap"><b-icon icon="bookmark" aria-hidden="true"></b-icon></div>
-    </div>
-  </div>
+    <!-- 게시글 관련 이미지/댓글/좋아요 들어갈 부분 -->
+    <v-card-actions id="actions">
+      <!-- 이미지 -->
+      <v-icon v-if="haveImg" middle>mdi-image</v-icon>
+      <!-- 댓글 수 -->
+      <v-icon
+        middle
+      >mdi-comment-processing</v-icon>
+      <span v-if="isComment">{{ post.comment_count }}</span>
+      <span v-else>0</span>
+      <!-- 좋아요 -->
+      <button
+        @click="postLike"
+      >
+        <!-- 좋아요 중 -->
+        <v-icon
+          middle
+          v-if="flagLike"
+          color="#FFC400"
+        >mdi-emoticon-excited</v-icon>
+        <!-- 좋아요 취소상태 -->
+        <v-icon
+          middle
+          v-else
+        >mdi-emoticon-neutral-outline</v-icon>
+        <span>{{ countLike }}</span>
+      </button>
+      <v-spacer></v-spacer>
+      <!-- 북마크 -->
+      <button
+        @click="postScrap"
+      >
+        <!-- 북마크 중 -->
+        <v-icon
+          middle
+          v-if="flagScrap"
+          color="#0B2945"
+        >mdi-bookmark</v-icon>
+        <!-- 북마크 취소상태 -->
+        <v-icon
+          middle
+          v-else
+        >mdi-bookmark-outline</v-icon>
+      </button>
+      
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
@@ -48,6 +96,11 @@ export default {
       flagLike:false,
       flagScrap:false,
       countLike:0,
+
+      // 추후에 연결해줘야하는 부분 - 이미지(프로필 사진)
+      profileImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
+      // 추후에 연결해줘야하는 부분 - 게시글 내 이미지 포함 여부
+      haveImg: true,
     }
   },
   computed:{
@@ -138,64 +191,12 @@ export default {
 </script>
 
 <style scoped>
-.post{
-  margin:1rem 0;
-  background-color: #fff;
-  padding: 1rem;
-  border:1px #949590 solid;
-  border-radius:10px;
+/* 이미지 여부, 댓글, 좋아요, 북마크 부분 */
+#actions * {
+  margin: 2px 2px !important;
 }
-.post .post-header{
-  margin-bottom: 0.5rem;
-  display: flex;
-  flex-direction: row;
-}
-.post .post-body{
-  min-height: 150px;
+/* 포스트 본문 클릭시 pointer 변화 */
+.post-body {
   cursor: pointer;
-}
-.post .post-footer{
-  display:flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  margin-top:1rem;
-}
-.post-like{
-  display:flex;
-  align-items: center;
-  margin-left: 0.5rem;
-}
-.post-comment{
-  display:flex;
-  align-items: center;
-  margin-left: 0.5rem;
-}
-.post-bookmark{
-  margin-left:0.5rem;
-}
-.post .title{
-  font-weight: bold;
-  font-size:1.5rem;
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-}
-.user-profile-img{
-  margin-right: 0.5rem;
-}
-.user-name button{
-  padding:0;
-  color:black;
-}
-.user-name button:hover{
-  color:black;
-  text-decoration: none;
-}
-.dropdown-item{
-  padding:0 0.3rem !important;
-}
-.user-name-date{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 </style>
