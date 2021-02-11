@@ -16,6 +16,12 @@
 		)
 	</insert>
 
+	<insert id="joinCuration" parameterType="map">
+		insert into subscription values (
+		#{board_id}, #{user_id}, 0, 0, 0, 1
+		)
+	</insert>
+
 	<select id="emailCheck" parameterType="String" resultType="integer">
 		select count(*)
 		from user
