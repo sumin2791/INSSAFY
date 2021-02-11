@@ -1,7 +1,5 @@
 package com.ssafy.pjt1.model.service;
 
-import com.ssafy.pjt1.model.dto.comment.CommentDto;
-import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.mapper.UserMapper;
@@ -90,17 +88,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<CommentDto> getComments(String user_id) {
+	public List<Map<String, String>> getComments(String user_id) {
 		return sqlSession.getMapper(UserMapper.class).getComments(user_id);
 	}
 
 	@Override
-	public List<PostDto> getPosts(String user_id) {
+	public List<Map<String, String>> getPosts(String user_id) {
 		return sqlSession.getMapper(UserMapper.class).getPosts(user_id);
 	}
 
 	@Override
-	public List<PostDto> getScraps(String user_id) {
+	public List<Map<String, String>> getScraps(String user_id) {
 		return sqlSession.getMapper(UserMapper.class).getScraps(user_id);
 	}
 
@@ -119,4 +117,12 @@ public class UserServiceImpl implements UserService {
 		return sqlSession.getMapper(UserMapper.class).quizCheck(answer) == 1;
 	}
 
+	@Override
+	public void joinCuration(Map<String, Object> cMap) {
+		sqlSession.getMapper(UserMapper.class).joinCuration(cMap);
+	}
+
+	public UserDto userDtoById(String user_id) {
+		return sqlSession.getMapper(UserMapper.class).userDtoById(user_id);
+	}
 }

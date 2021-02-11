@@ -135,6 +135,16 @@ public class UserController {
 
             // DB에 authKey 업데이트
             userService.updateAuthKey(map);
+
+            // 큐레이션 보드 구독 처리
+            String user_id = userDto.getUser_id();
+            int[] curation = {73,75,76,77};
+            for (int board_id : curation) {
+                Map<String, Object> cMap = new HashMap<>();
+                cMap.put("board_id", board_id);
+                cMap.put("user_id", user_id);
+                userService.joinCuration(cMap);
+            }
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             resultMap.put("message", FAIL);
@@ -504,7 +514,7 @@ public class UserController {
         logger.info("user/getComents/user_id 호출성공");
         try {
             resultMap.put("message", SUCCESS);
-            List<CommentDto> comments = userService.getComments(user_id);
+            List<Map<String, String>> comments = userService.getComments(user_id);
             resultMap.put("comments", comments);
         } catch (Exception e) {
             resultMap.put("message", FAIL);
@@ -531,7 +541,7 @@ public class UserController {
         logger.info("user/getPosts/user_id 호출성공");
         try {
             resultMap.put("message", SUCCESS);
-            List<PostDto> posts = userService.getPosts(user_id);
+            List<Map<String, String>> posts = userService.getPosts(user_id);
             logger.info("posts", posts);
             resultMap.put("posts", posts);
             status = HttpStatus.ACCEPTED;
@@ -560,7 +570,7 @@ public class UserController {
         logger.info("user/getScraps/user_id 호출성공");
         try {
             resultMap.put("message", SUCCESS);
-            List<PostDto> scraps = userService.getScraps(user_id);
+            List<Map<String, String>> scraps = userService.getScraps(user_id);
             logger.info("scraps", scraps);
             resultMap.put("scraps", scraps);
             status = HttpStatus.ACCEPTED;
