@@ -15,7 +15,7 @@ const INIT_FAVORITES = () => {
   };
 };
 
-const INIT_FOLLOW_RANK = () => {
+const INIT_POPURAL_RANK = () => {
   return [
     {
       board_id: '',
@@ -40,11 +40,58 @@ const INIT_FOLLOW_RANK = () => {
   ];
 };
 
+const INIT_POPURAL_RANK2 = () => {
+  return [
+    {
+      post_id: -1,
+      user_id: '',
+      board_id: -1,
+      board_date: 'YYYY-MM-DD HH:mm:ss',
+      post_title: '',
+      post_description: '',
+      post_like: -1,
+      post_image: '',
+      post_iframe: '',
+      post_header: '',
+      post_state: 0,
+    },
+    {
+      post_id: -1,
+      user_id: '',
+      board_id: -1,
+      board_date: 'YYYY-MM-DD HH:mm:ss',
+      post_title: '',
+      post_description: '',
+      post_like: -1,
+      post_image: '',
+      post_iframe: '',
+      post_header: '',
+      post_state: 0,
+    },
+    {
+      post_id: -1,
+      user_id: '',
+      board_id: -1,
+      board_date: 'YYYY-MM-DD HH:mm:ss',
+      post_title: '',
+      post_description: '',
+      post_like: -1,
+      post_image: '',
+      post_iframe: '',
+      post_header: '',
+      post_state: 0,
+    },
+  ];
+};
+
 export default {
   namespaced: true,
   state: {
     favorites: INIT_FAVORITES(),
-    followRank: INIT_FOLLOW_RANK(),
+    followRank: INIT_POPURAL_RANK(),
+    postRank: INIT_POPURAL_RANK(),
+    likeRank: INIT_POPURAL_RANK2(),
+    commentRank: INIT_POPURAL_RANK2(),
   },
 
   mutations: {
@@ -56,7 +103,15 @@ export default {
     //인기
     setFollowRank(state, payload) {
       state.followRank = payload;
-      console.log(state.followRank);
+    },
+    setPostRank(state, payload) {
+      state.postRank = payload;
+    },
+    SET_LIKE_RANK(state, payload) {
+      state.likeRank = payload;
+    },
+    SET_COMMENT_RANK(state, payload) {
+      state.commentRank = payload;
     },
   },
 
@@ -81,52 +136,47 @@ export default {
       try {
         const res = await mainApi.getFollowRank();
         // console.log(res);
-        //키값(보드 정보) 추출
-        let keys = Object.keys(res.data);
-        for (let i = 0; i < keys.length; i++) {
-          keys[i] = keys[i].replace('{', '');
-          keys[i] = keys[i].replace('}', '');
-        }
-        //키값(보드 정보) 객체로  가공
-        let boards = [];
-        let values = Object.values(res.data);
-        for (let i = 0; i < keys.length; i++) {
-          const obj = keys[i].split(', ');
-          //객체 저장 용
-          let id,
-            name,
-            image = {};
-          for (let j = 0; j < obj.length; j++) {
-            const arr = obj[j].split('=');
-            switch (arr[0]) {
-              case 'board_id':
-                id = arr[1];
-                break;
-              case 'board_name':
-                name = arr[1];
-                break;
-              case 'board_image':
-                image = arr[1];
-                break;
-              default:
-                console.log('popular 팔로워 부분, reponse 데이터 가공 실패');
-                break;
-            }
-          }
-          //가공된 객체를 board 배열에 담기
-          boards.push({
-            board_id: id,
-            board_name: name,
-            board_image: image,
-            board_posts: values[i],
-          });
-        }
-        // console.log(res.data);
-        // console.log('보드 만든 결과');
-        // console.log(boards);
+        const boards = makeBoard(res.data);
         commit('setFollowRank', boards);
       } catch (e) {
         console.log(e);
+        alert('인기보드(구독자 순) 목록 요청 중 문제가 발생했습니다.');
+      }
+    },
+    //게시글 순 목록 요청
+    async actPostRank({ commit }) {
+      try {
+        const response = await mainApi.getPostRank();
+        // console.log(response);
+        const boards = makeBoard(response.data);
+        // console.log(boards);
+        commit('setPostRank', boards);
+      } catch (error) {
+        console.log(error);
+        alert('인기보드(게시글 순) 목록 요청 중 문제가 발생했습니다.');
+      }
+    },
+
+    //좋아요 순 목록 요청
+    async actLikeRank({ commit }) {
+      try {
+        const response = await mainApi.getLikeRank();
+        console.log(response);
+        commit('SET_LIKE_RANK', response.data.like);
+      } catch (error) {
+        console.log(error);
+        alert('인기글(좋아요 순) 목록 요청 중 문제가 발생했습니다.');
+      }
+    },
+    //댓글 순 목록 요청
+    async actCommentRank({ commit }) {
+      try {
+        const response = await mainApi.getCommentRank();
+        console.log(response);
+        commit('SET_COMMENT_RANK', response.data.postComment);
+      } catch (error) {
+        console.log(error);
+        alert('인기글(댓글 순) 목록 요청 중 문제가 발생했습니다.');
       }
     },
   },
@@ -137,10 +187,68 @@ export default {
       return state.favorites;
     },
 
-    //인기보드
+    //인기-보드
     //구독자 순(팔로우 순)
     getFollowRank(state) {
       return state.followRank;
     },
+    //게시글 순
+    getPostsRank(state) {
+      return state.postRank;
+    },
+
+    //인기-글
+    //좋아요 순
+    getLikeRank(state) {
+      return state.likeRank;
+    },
+    getCommentRank(state) {
+      return state.commentRank;
+    },
   },
 };
+
+//키값에 value로 사용될 값이 오는 request를 board객체 배열로 가공하는 함수
+function makeBoard(data) {
+  //키값(보드 정보) 추출
+  let keys = Object.keys(data);
+  for (let i = 0; i < keys.length; i++) {
+    keys[i] = keys[i].replace('{', '');
+    keys[i] = keys[i].replace('}', '');
+  }
+  //키값(보드 정보) 객체로  가공
+  let boards = [];
+  let values = Object.values(data);
+  for (let i = 0; i < keys.length; i++) {
+    const obj = keys[i].split(', ');
+    //객체 저장 용
+    let id,
+      name,
+      image = {};
+    for (let j = 0; j < obj.length; j++) {
+      const arr = obj[j].split('=');
+      switch (arr[0]) {
+        case 'board_id':
+          id = arr[1];
+          break;
+        case 'board_name':
+          name = arr[1];
+          break;
+        case 'board_image':
+          image = arr[1];
+          break;
+        default:
+          console.log('popular 팔로워 부분, reponse 데이터 가공 실패');
+          break;
+      }
+    }
+    //가공된 객체를 board 배열에 담기
+    boards.push({
+      board_id: id,
+      board_name: name,
+      board_image: image,
+      board_posts: values[i],
+    });
+  }
+  return boards;
+}

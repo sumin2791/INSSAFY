@@ -84,9 +84,13 @@ export default {
       localStorage.subBoard = JSON.stringify(responseSubBoard.data.boards);
       state.subBoard = INIT_SUB_BOARD();
     },
-    //구독목록 새로고침,
+    //구독목록 새로고침, local -> vuex
     setSubBoardRefresh(state) {
       state.subBoard = INIT_SUB_BOARD();
+    },
+    //구독목록 새로 고침, vuex -> local
+    setSubBoardRefresh2(state) {
+      localStorage.subBoard = JSON.stringify(state.subBoard);
     },
 
     updateUser(state, payload) {
@@ -148,7 +152,6 @@ export default {
         // 구독 보드 리스트도 가져오기
         const responseSubBoard = await userApi.getSubBoard(this.state.auth.user.userId);
         // console.log('구독보드리스트 결과:');
-        // console.log(responseSubBoard);
         context.commit('SET_SUBSCRIBE_BOARD', responseSubBoard);
         return responseSubBoard;
       } catch (e) {

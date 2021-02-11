@@ -38,8 +38,8 @@ export default {
   created() {
     this.board_hash = this.favorite.board_hash.replaceAll('|', ' ');
     const img = this.favorite.board_image;
-    if (img != null && img != 'null' && img != '') {
-      this.board.image = img;
+    if (img != undefined && img != null && img != 'null' && img != '') {
+      this.board_image = img;
     }
   },
   methods: {},

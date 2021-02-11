@@ -1,7 +1,5 @@
 package com.ssafy.pjt1.model.service;
 
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -9,15 +7,11 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
 
 import lombok.NoArgsConstructor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +27,6 @@ import java.util.Date;
 public class S3Service {
     private AmazonS3 s3Client;
 
-    public static final Logger logger = LoggerFactory.getLogger(S3Service.class);
     @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
 
@@ -73,26 +66,11 @@ public class S3Service {
 
         ByteArrayInputStream byteArrayIs = new ByteArrayInputStream(bytes);
 
-        logger.info("bucket!!!!!!! "+bucket);
-        logger.info("key!!!!!!! "+sb.toString());
+        // PutObjectRequest putObjReq = new PutObjectRequest(bucketName, key, byteArrayIs, objMeta);
+        // s3client.putObject(putObjReq);
+
         s3Client.putObject(new PutObjectRequest(bucket, sb.toString(), byteArrayIs, objMeta)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, sb.toString()).toString();
     }
-
-    public void delete(String url) throws IOException {
-        try {
-            String key = url.substring(51);
-            //Delete 객체 생성
-            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(this.bucket, key);
-            //Delete
-            this.s3Client.deleteObject(deleteObjectRequest);
-
-        } catch (AmazonServiceException e) {
-            e.printStackTrace();
-        } catch (SdkClientException e) {
-            e.printStackTrace();
-        }
-    }
-    
 }

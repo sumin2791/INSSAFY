@@ -1,5 +1,3 @@
-import { getPostList } from '@/api/post';
-import axios from 'axios';
 import * as userApi from '../api/user';
 
 //initialized
@@ -85,7 +83,7 @@ export default {
         alert('즐겨찾기 수정 작업 중 문제가 발생했습니다.');
       }
     },
-    //보드 구독 취소
+    //보드 구독 취소{board_id, user_id}
     async putDeleteSub({ commit }, payload) {
       try {
         const response = await userApi.putDeleteSub(payload);

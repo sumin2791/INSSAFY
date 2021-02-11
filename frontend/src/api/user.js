@@ -19,7 +19,7 @@ export function putMyInfo(member) {
 export function putFavorite(payload) {
   return http.put('/account/user/favorite', payload);
 }
-
+//구독보드 구독 취소
 export function putDeleteSub(payload) {
   return http.put(`/account/user/deleteSub?board_id=${payload.board_id}&user_id=${payload.user_id}`);
 }

@@ -135,16 +135,6 @@ public class UserController {
 
             // DB에 authKey 업데이트
             userService.updateAuthKey(map);
-
-            // 큐레이션 보드 구독 처리
-            String user_id = userDto.getUser_id();
-            int[] curation = {73,75,76,77};
-            for (int board_id : curation) {
-                Map<String, Object> cMap = new HashMap<>();
-                cMap.put("board_id", board_id);
-                cMap.put("user_id", user_id);
-                userService.joinCuration(cMap);
-            }
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             resultMap.put("message", FAIL);

@@ -111,7 +111,7 @@
 			<artifactId>jackson-core</artifactId>
 			<version>2.12.0</version>
 		</dependency>
-		
+
 		<!--Multipart File Up&Download -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -128,9 +128,9 @@
 		<!-- 아마존 s3 -->
 		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
 		<dependency>
-		<groupId>com.amazonaws</groupId>
-		<artifactId>aws-java-sdk-s3</artifactId>
-		<version>1.11.699</version>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.11.699</version>
 		</dependency>
 
 		<dependency>
@@ -147,6 +147,12 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-aws-autoconfigure</artifactId>
 			<version>1.2.1.RELEASE</version>
+		</dependency>
+		<!-- 웹 소켓-->
+		<!--웹소켓 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 
 	</dependencies>

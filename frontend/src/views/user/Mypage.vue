@@ -383,6 +383,10 @@ export default {
           });
           // this.subBoardList.splice(deleteIndex, 1);
           this.$delete(this.subBoardList, deleteIndex);
+          this.$delete(this.$store.state.auth.subBoard, deleteIndex);
+
+          //vuex에 있는 데이터 localStorge에 동기화
+          this.$store.commit('auth/setSubBoardRefresh2');
         }
       });
     },

@@ -5,24 +5,24 @@
       <div id="pi0" :class="{ aheader: active == 0 }">
         <div id="pi-bg1" class="pi-bg" />
         <div class="pi-order b-title">1st</div>
-        <div class="pi-count t-desc-e">{{ items[0].count }}</div>
+        <div class="pi-count t-desc-e">{{ count }}</div>
       </div>
       <div id="pi1" :class="{ aheader: active == 1 }">
         <div id="pi-bg2" class="pi-bg" />
         <div class="pi-order b-title">2nd</div>
-        <div class="pi-count t-desc-e">{{ items[1].count }}</div>
+        <div class="pi-count t-desc-e">{{ count }}</div>
       </div>
       <div id="pi2" :class="{ aheader: active == 2 }">
         <div id="pi-bg3" class="pi-bg" />
         <div class="pi-order b-title">3rd</div>
-        <div class="pi-count t-desc-e">{{ items[2].count }}</div>
+        <div class="pi-count t-desc-e">{{ count }}</div>
       </div>
     </div>
     <div id="title">
       <div id="pi-p-container">
-        <p class="pi-p l-desc" :class="{ atitle: active == 0 }" @click="clickTitle0">{{ items[0].postTitle }}</p>
-        <p class="pi-p l-desc" :class="{ atitle: active == 1 }" @click="clickTitle1">{{ items[1].postTitle }}</p>
-        <p class="pi-p l-desc" :class="{ atitle: active == 2 }" @click="clickTitle2">{{ items[2].postTitle }}</p>
+        <p class="pi-p l-desc" :class="{ atitle: active == 0 }" @click="clickTitle0">{{ title[0] }}</p>
+        <p class="pi-p l-desc" :class="{ atitle: active == 1 }" @click="clickTitle1">{{ title[1] }}</p>
+        <p class="pi-p l-desc" :class="{ atitle: active == 2 }" @click="clickTitle2">{{ title[2] }}</p>
       </div>
     </div>
   </div>
@@ -32,12 +32,22 @@
 export default {
   name: 'PostItme',
   props: {
+    type: String,
     items: Array,
   },
   data() {
     return {
       active: 0,
+      count: 0,
+      title: ['', '', ''],
     };
+  },
+  created() {
+    for (let i = 0; i < this.items.length; i++) {
+      if (this.items[i] != null) {
+        this.title[i] = this.items[i].post_title;
+      }
+    }
   },
   mounted() {
     //1초마다 반전시킴
@@ -47,13 +57,13 @@ export default {
   },
   methods: {
     clickTitle0: function() {
-      this.$router.push({ name: 'Post' });
+      this.$router.push(`/board/${this.items[0].board_id}/post/${this.items[0].post_id}`);
     },
     clickTitle1: function() {
-      this.$router.push({ name: 'Post' });
+      this.$router.push(`/board/${this.items[1].board_id}/post/${this.items[1].post_id}`);
     },
     clickTitle2: function() {
-      this.$router.push({ name: 'Post' });
+      this.$router.push(`/board/${this.items[2].board_id}/post/${this.items[2].post_id}`);
     },
   },
 };

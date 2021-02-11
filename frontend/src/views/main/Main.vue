@@ -37,11 +37,11 @@
       </div>
       <p class="p-desc l-desc">팔로워 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="item in getFollowRank" :key="`popular${item.board_id}`" :item="item" />
+        <BoardItem class="p-item" v-for="item in getFollowRank" :key="`p-subs${item.board_id}`" :item="item" />
       </div>
       <p class="p-desc l-desc">게시글 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
+        <BoardItem class="p-item" v-for="item in getPostsRank" :key="`p-posts${item.board_id}`" :item="item" />
       </div>
       <div id="sub-title-container">
         <p class="p-desc l-desc">좋아요 수</p>
@@ -49,9 +49,9 @@
       </div>
       <div id="p-item-container2">
         <p class="p-desc l-desc mobile">좋아요 수</p>
-        <PostItem class="p-item2" :items="popular2.like" />
+        <PostItem v-cloak class="p-item2" :items="getLikeRank" :type="`like`" />
         <p class="p-desc l-desc mobile">댓글 수</p>
-        <PostItem class="p-item2" :items="popular2.comment" />
+        <PostItem v-cloak class="p-item2" :items="getCommentRank" :type="`comment`" />
       </div>
     </div>
   </div>
@@ -91,77 +91,6 @@ export default {
         position: 'bottom-right',
         padding: '1rem',
       },
-      popular2: {
-        like: [
-          {
-            baordName: '여행',
-            count: 100,
-            postTitle: '좋아요 많은 게시글 제목',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img1.jpg',
-          },
-          {
-            baordName: '여행',
-            count: 60,
-            postTitle: '좋아요 많은 게시글 제목2',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img2.jpg',
-          },
-          {
-            baordName: '여행',
-            count: 40,
-            postTitle: '좋아요 많은 게시글 제목3',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img3.jpg',
-          },
-        ],
-        comment: [
-          {
-            baordName: '여행',
-            count: 100,
-            postTitle: '코멘트 많은 게시글 제목1',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img1.jpg',
-          },
-          {
-            baordName: '여행',
-            count: 80,
-            postTitle: '코멘트 많은 게시글 제목2',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img2.jpg',
-          },
-          {
-            baordName: '여행',
-            count: 60,
-            postTitle: '코멘트 많은 게시글 제목3',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img3.jpg',
-          },
-        ],
-      },
-      popular: [
-        {
-          type: 'Custom',
-          boardName: '여행',
-          follower: '609',
-          postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
-          image: '../../assets/images/slide.jpg',
-        },
-        {
-          type: 'Custom',
-          boardName: '여행',
-          follower: '609',
-          postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
-          image: '../../assets/images/slide.jpg',
-        },
-        {
-          type: 'Custom',
-          boardName: '여행',
-          follower: '609',
-          postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
-          image: '../../assets/images/slide.jpg',
-        },
-      ],
       swiperOption: {
         effect: 'coverflow',
         grabCursor: true,
@@ -212,11 +141,15 @@ export default {
       this.actFavorites(this.$store.state.auth.user.userId);
     }
     this.actFollowRank();
+    this.actPostRank();
+    this.actLikeRank();
+    this.actCommentRank();
   },
   computed: {
-    ...mapGetters('main', ['getFavorites', 'getFollowRank']),
+    ...mapGetters('main', ['getFavorites', 'getFollowRank', 'getPostsRank', 'getLikeRank', 'getCommentRank']),
     ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
   },
+  mounted() {},
   watch: {
     getFavorites: function() {
       this.favorites = this.getFavorites;
@@ -228,7 +161,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('main', ['actFavorites', 'actFollowRank']),
+    ...mapActions('main', ['actFavorites', 'actFollowRank', 'actPostRank', 'actLikeRank', 'actCommentRank']),
     clickFavorite: function(index) {
       this.$router.push(`board/${this.getFavorites[index].board_id}`);
     },

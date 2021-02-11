@@ -29,7 +29,7 @@
         </div>
         <div id="follow-togle">
           <b-icon id="f-icon" icon="heart-fill" aria-hidden="true" />
-          <b-icon id="f-icon-active" :class="{ clear: !followState }" icon="heart-fill" @click="clickFollow" aria-hidden="true" />
+          <b-icon id="f-icon-active" :class="{ clear: !subState }" icon="heart-fill" @click="clickFollow" aria-hidden="true" />
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@
 <script>
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 import 'swiper/css/swiper.css';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
   name: 'BoardItem',
@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-      followState: Boolean,
+      subState: false,
       swiperOption2: {
         effect: 'coverflow',
         coverflowEffect: {
@@ -83,16 +83,21 @@ export default {
     };
   },
   mounted() {
-    if (this.getSubscribed(this.item.board_id) != null) {
-      this.btnState = true;
+    if (this.getSubscribed(this.item.board_id)) {
+      this.subState = true;
     } else {
-      this.btnState = false;
+      this.subState = false;
     }
+    // console.log(this.$store.getters['auth/getSubBoardList']);
+    // console.log(this.getSubscribed(this.item.board_id));
   },
   computed: {
+    ...mapState('auth', ['subBoard']),
     ...mapGetters('auth', ['getSubscribed']),
   },
   methods: {
+    ...mapActions('user', ['putDeleteSub']),
+    ...mapActions('board', ['actPostSubscribe']),
     clickHeader: function() {
       this.$router.push(`/board/${this.item.board_id}`);
     },
@@ -101,11 +106,42 @@ export default {
       this.$router.push(`/board/${this.item.board_id}/post/${this.item.board_posts[index].post_id}`);
     },
     clickFollow: function() {
-      this.followState = !this.followState;
-      this.$toast.open({
-        message: 'follow!',
-        type: 'default',
-      });
+      if (this.subState) {
+        this.putDeleteSub({
+          user_id: this.$store.state.auth.user.userId,
+          board_id: Number(this.item.board_id),
+        }).then((result) => {
+          //서버에서 잘 삭제될 경우 data 관리
+          if (result) {
+            const deleteIndex = this.subBoard.findIndex((board) => {
+              return board.board_id == this.item.board_id;
+            });
+            // this.subBoardList.splice(deleteIndex, 1);
+            this.$delete(this.subBoard, deleteIndex);
+            //localstorage에 동기화
+            this.$store.commit('auth/setSubBoardRefresh2');
+
+            //토스트 알림
+            this.$toast.open({
+              message: `${this.item.board_name} 보드 구독 취소`,
+              type: 'warning',
+            });
+            this.subState = !this.subState;
+          } else {
+            alert('구독 취소 중에 문제가 발생했습니다.');
+          }
+        });
+      } else {
+        this.actPostSubscribe(Number(this.item.board_id)).then((result) => {
+          if (result) {
+            this.$toast.open({
+              message: `${this.item.board_name} 보드 구독 중`,
+              type: 'success',
+            });
+            this.subState = !this.subState;
+          }
+        });
+      }
     },
   },
 };

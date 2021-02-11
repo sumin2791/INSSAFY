@@ -16,12 +16,6 @@
 		)
 	</insert>
 
-	<insert id="joinCuration" parameterType="map">
-		insert into subscription values (
-		#{board_id}, #{user_id}, 0, 0, 0, 1
-		)
-	</insert>
-
 	<select id="emailCheck" parameterType="String" resultType="integer">
 		select count(*)
 		from user
@@ -110,5 +104,12 @@
 		select count(*)
 		from quiz
 		where quiz_answer like #{answer}
+	</select>
+
+	<!-- id로 객체 받기-->
+	<select id="userDtoById" parameterType="string" resultType="UserDto">
+		select *
+		from user
+		where user_id = #{user_id}
 	</select>
 </mapper>

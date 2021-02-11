@@ -3,18 +3,10 @@
     <b-container class="board">
       <b-row>
         <b-col sm="3" class="board-aside">
-          <BoardDescription :in-board="inBoard" :is-manager="isManager"/>
-          <button
-            class="btn-subscribe b-title"
-            @click="onSubscribe"
-            v-if="!inBoard"
-          >Subscribe</button>
-          <button
-            class="btn-subscribing b-title"
-            @click="onSubscribe"
-            v-if="inBoard"
-          >Subscribing</button>
-          <hr>
+          <BoardDescription :in-board="inBoard" :is-manager="isManager" />
+          <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
+          <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button>
+          <hr />
           <div class="board-function">보드특수기능들</div>
           <div class="add-board-function">보드기능 추가</div>
         </b-col>
@@ -24,9 +16,9 @@
           </div>
           <div class="post-write">
             <!-- <b-button variant="light">글쓰기</b-button> -->
-            <PostWrite :in-board="inBoard"/>
+            <PostWrite :in-board="inBoard" />
           </div>
-          <PostList/>
+          <PostList />
         </b-col>
       </b-row>
     </b-container>
@@ -34,16 +26,16 @@
 </template>
 
 <script>
-import BoardDescription from '@/components/board/BoardDescription.vue'
+import BoardDescription from '@/components/board/BoardDescription.vue';
 
-import PostWrite from '@/components/board/PostWrite.vue'
-import PostList from '@/components/board/PostList.vue'
+import PostWrite from '@/components/board/PostWrite.vue';
+import PostList from '@/components/board/PostList.vue';
 
 //board api
 import * as boardApi from '@/api/board';
 
 export default {
-  name:'Board',
+  name: 'Board',
   components: {
     BoardDescription,
     PostList,
@@ -51,25 +43,25 @@ export default {
   },
   data() {
     return {
-      inBoard:'',
-      isManager:false,
-    }
+      inBoard: '',
+      isManager: false,
+    };
   },
   created() {
     // this.$store.dispatch('board/IsInBoard',Number(this.$route.params.board_id))
     // 구독했는 지 파악하기 : inBoard
-    const BOARD_ID = Number(this.$route.params.board_id)
-    const boards = JSON.parse(localStorage.subBoard)
-    const boardIds = boards.map(e => {
-      return e.board_id
+    const BOARD_ID = Number(this.$route.params.board_id);
+    const boards = this.$store.getters['auth/getSubBoardList'];
+    const boardIds = boards.map((e) => {
+      return e.board_id;
     });
-    this.inBoard = boardIds.includes(BOARD_ID)
+    this.inBoard = boardIds.includes(BOARD_ID);
 
     // 구독했다면 관리자인가? 아님 그냥 유저인가? : isManager
-    if(this.inBoard){
-      const idx = boards.findIndex(board => board.board_id===BOARD_ID)
-      if(boards[idx].user_role==1){
-        this.isManager=true
+    if (this.inBoard) {
+      const idx = boards.findIndex((board) => board.board_id === BOARD_ID);
+      if (boards[idx].user_role == 1) {
+        this.isManager = true;
       }
     }
   },
@@ -78,60 +70,62 @@ export default {
     //   return this.$store.state.board.inBoard
     // }
   },
-  methods:{
-    onSubscribe(){
-      const BOARD_ID = Number(this.$route.params.board_id)
+  methods: {
+    onSubscribe() {
+      const BOARD_ID = Number(this.$route.params.board_id);
 
-      const boards = JSON.parse(localStorage.subBoard)
-      const board = boards.filter(board => board.board_id===Number(this.$route.params.board_id))
-      
+      const boards = JSON.parse(localStorage.subBoard);
+      const board = boards.filter((board) => board.board_id === Number(this.$route.params.board_id));
+
       const params = {
-        user_id:String(localStorage.userId),
-        board_id:BOARD_ID,
-        user_role:0,
-      }
-      boardApi.subscribe(params)
-        .then(res => {
-          console.log(res)
-          if (res.data.message==='fail'){
-            return
-          }else{
-            this.inBoard = !this.inBoard
-            
+        user_id: String(localStorage.userId),
+        board_id: BOARD_ID,
+        user_role: 0,
+      };
+      boardApi
+        .subscribe(params)
+        .then((res) => {
+          // console.log(res);
+          if (res.data.message === 'fail') {
+            return;
+          } else {
+            this.inBoard = !this.inBoard;
+
             // localStorage 수정해주는 부분
-            if(board.length>0){
+            if (board.length > 0) {
               // 보드가 있네? 그럼 구독 해지!
-              const idx = boards.findIndex(board => board.board_id===Number(this.$route.params.board_id))
-              boards.splice(idx,1)
-            }else{
+              const idx = boards.findIndex((board) => board.board_id === Number(this.$route.params.board_id));
+              boards.splice(idx, 1);
+            } else {
               // 보드가 없었어. 그러면 바로 구독하면 돼!
               boards.push({
-                board_id:Number(this.$route.params.board_id),
+                board_id: Number(this.$route.params.board_id),
                 user_id: localStorage.userId,
-                favorite_flag:0,
+                favorite_flag: 0,
                 write_post_count: 0,
-                is_used:0,
-                user_role: 0
-              })
+                is_used: 0,
+                user_role: 0,
+              });
             }
-            localStorage.subBoard = JSON.stringify(boards)
+            localStorage.subBoard = JSON.stringify(boards);
+            //localStorage에 있는 데이터 vuex에 동기화
+            this.$store.commit('auth/setSubBoardRefresh');
           }
         })
-        .catch(err=>{
-          console.log(err)
-        })
-      return
-    }
-  }
-}
+        .catch((err) => {
+          console.log(err);
+        });
+      return;
+    },
+  },
+};
 </script>
 
 <style scoped>
-
-.board{
+.board {
   max-width: 1200px !important;
   margin: 0 auto;
-  margin-top:30px;
+  margin-top: 30px;
   /* width:80%;
   margin-left:10%;
   margin-right:10%; */
@@ -141,16 +135,16 @@ export default {
   display: inline-block;
   position:sticky;
 } */
-.post-search{
+.post-search {
   display: flex;
   justify-content: flex-end;
 }
-.btn-subscribe{
+.btn-subscribe {
   /* position: inherit;  */
   height: 50px;
-  width:100%;
+  width: 100%;
   font-size: 24px;
-  margin-top: 10px; 
+  margin-top: 10px;
   margin-bottom: 10px;
   text-align: center;
   background-color: #000 !important;
@@ -161,15 +155,15 @@ export default {
   background-color: #fff !important;
   color: #000;
 }
-.btn-subscribing{
+.btn-subscribing {
   height: 50px;
-  width:100%;
+  width: 100%;
   font-size: 24px;
-  margin-top: 10px; 
+  margin-top: 10px;
   margin-bottom: 10px;
   text-align: center;
   /* background-color: #000 !important; */
-  color: #000 ;
+  color: #000;
 }
 .btn-subscribing:hover,
 .btn-subscribing:active {
@@ -177,21 +171,21 @@ export default {
   color: #000;
 }
 
-@media screen and (max-width:576px){
-  .btn-subscribe{
+@media screen and (max-width: 576px) {
+  .btn-subscribe {
     width: 100%;
     background-color: #000 !important;
     color: #fff;
   }
-  .btn-subscribing{
+  .btn-subscribing {
     width: 100%;
     /* background-color: #000 !important; */
     color: #000;
   }
-  .post-search{
-    display:none;
+  .post-search {
+    display: none;
   }
-  .add-board-function{
+  .add-board-function {
     display: none;
   }
 }

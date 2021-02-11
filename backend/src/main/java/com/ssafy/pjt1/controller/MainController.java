@@ -19,12 +19,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -141,7 +139,7 @@ public class MainController {
      * @return : message, imgPath
      */
     @PostMapping("/image")
-    public ResponseEntity<Map<String, Object>> imageUpload(MultipartFile file) throws IOException {
+    public ResponseEntity<Map<String, Object>> execWrite(MultipartFile file) throws IOException {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("bamboo/image 호출성공");
@@ -155,32 +153,6 @@ public class MainController {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return new ResponseEntity<Map<String, Object>>(resultMap, status);
-    }
-
-    /*
-     * 기능: 이미지 삭제
-     * 
-     * developer: 윤수민
-     * 
-     * @param : url
-     * 
-     * @return : message, imgPath
-     */
-    @DeleteMapping("/imageDelete")
-    public ResponseEntity<Map<String, Object>> imageUpload(@RequestParam(value = "url") String url) throws IOException {
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = HttpStatus.ACCEPTED;
-        logger.info("bamboo/imageUpload 호출성공");
-        try {
-            s3Service.delete(url);
-            resultMap.put("message", SUCCESS);
-        } catch (Exception e) {
-            logger.error("실패", e);
-            resultMap.put("message", FAIL);
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-        
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 }
