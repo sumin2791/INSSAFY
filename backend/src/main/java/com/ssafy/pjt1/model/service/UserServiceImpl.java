@@ -1,7 +1,5 @@
 package com.ssafy.pjt1.model.service;
 
-import com.ssafy.pjt1.model.dto.comment.CommentDto;
-import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.mapper.UserMapper;
@@ -124,4 +122,7 @@ public class UserServiceImpl implements UserService {
 		sqlSession.getMapper(UserMapper.class).joinCuration(cMap);
 	}
 
+	public UserDto userDtoById(String user_id) {
+		return sqlSession.getMapper(UserMapper.class).userDtoById(user_id);
+	}
 }
