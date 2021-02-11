@@ -9,23 +9,10 @@
       <svg id="f-star" class="mobile-only" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" />
       </svg>
-      <swiper id="f-swiper" class="swiper" :options="swiperOption" @clickSlide="clickFavorite">
-        <swiper-slide v-for="(item, index) in getFavorites" v-bind:key="`faborite${index}`">
-          <div class="frame">
-            <p id="f-type" class="r-title">큐레이션? 커스텀?</p>
-            <div class="bg-image"></div>
-            <div class="inner">
-              <div id="f-title" class="f-text b-desc">제목 없음</div>
-              <p id="f-desc" class="f-text r-desc">설명없음</p>
-              <p id="f-hashtag" class="f-text hashtag l-desc">
-                해시태그 없음
-              </p>
-            </div>
-            <div id="f-option" class="t-desc-e">
-              <p>new</p>
-              <p>{{ item.write_post_count }}</p>
-            </div>
-          </div>
+      <swiper v-cloak id="f-swiper" class="swiper" :options="swiperOption" @clickSlide="clickFavorite">
+        <swiper-slide v-for="(item, index) in favorites" :key="`faborite${item.board_id}/${index}`">
+          <Slide :favorite="item" v-if="item.board_id != -1" />
+          <SlideRecom :favorite="item" v-if="item.board_id == -1" />
         </swiper-slide>
         <div class="swiper-pagination" slot="pagination"></div>
       </swiper>
@@ -50,11 +37,11 @@
       </div>
       <p class="p-desc l-desc">팔로워 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
+        <BoardItem class="p-item" v-for="item in getFollowRank" :key="`p-subs${item.board_id}`" :item="item" />
       </div>
       <p class="p-desc l-desc">게시글 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="(item, index) in popular" :key="`popular${index}`" :item="item" />
+        <BoardItem class="p-item" v-for="item in getPostsRank" :key="`p-posts${item.board_id}`" :item="item" />
       </div>
       <div id="sub-title-container">
         <p class="p-desc l-desc">좋아요 수</p>
@@ -62,9 +49,9 @@
       </div>
       <div id="p-item-container2">
         <p class="p-desc l-desc mobile">좋아요 수</p>
-        <PostItem class="p-item2" :items="popular2.like" />
+        <PostItem v-cloak class="p-item2" :items="getLikeRank" :type="`like`" />
         <p class="p-desc l-desc mobile">댓글 수</p>
-        <PostItem class="p-item2" :items="popular2.comment" />
+        <PostItem v-cloak class="p-item2" :items="getCommentRank" :type="`comment`" />
       </div>
     </div>
   </div>
@@ -85,6 +72,9 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'Main',
   components: {
+    //slide
+    Slide: () => import('@/components/favorite/Slide'),
+    SlideRecom: () => import('@/components/favorite/SlideRecom'),
     //vue-awesome-swiper
     Swiper,
     SwiperSlide,
@@ -95,102 +85,12 @@ export default {
   },
   data() {
     return {
+      favorites: [],
       options: {
         width: '400px',
         position: 'bottom-right',
         padding: '1rem',
       },
-      popular2: {
-        like: [
-          {
-            baordName: '여행',
-            count: 100,
-            postTitle: '좋아요 많은 게시글 제목',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img1.jpg',
-          },
-          {
-            baordName: '여행',
-            count: 60,
-            postTitle: '좋아요 많은 게시글 제목2',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img2.jpg',
-          },
-          {
-            baordName: '여행',
-            count: 40,
-            postTitle: '좋아요 많은 게시글 제목3',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img3.jpg',
-          },
-        ],
-        comment: [
-          {
-            baordName: '여행',
-            count: 100,
-            postTitle: '코멘트 많은 게시글 제목1',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img1.jpg',
-          },
-          {
-            baordName: '여행',
-            count: 80,
-            postTitle: '코멘트 많은 게시글 제목2',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img2.jpg',
-          },
-          {
-            baordName: '여행',
-            count: 60,
-            postTitle: '코멘트 많은 게시글 제목3',
-            postId: 'post 이동을 위한 id값',
-            image: '../../assets/images/img3.jpg',
-          },
-        ],
-      },
-      popular: [
-        {
-          type: 'Custom',
-          boardName: '여행',
-          follower: '609',
-          postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
-          image: '../../assets/images/slide.jpg',
-        },
-        {
-          type: 'Custom',
-          boardName: '여행',
-          follower: '609',
-          postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
-          image: '../../assets/images/slide.jpg',
-        },
-        {
-          type: 'Custom',
-          boardName: '여행',
-          follower: '609',
-          postTitle: ['겨울에는 역시 스키장!', '겨울에는 호떡', '겨울에는 호빵', '겨울에는 눈썰매', '코로나 ㅠㅠ'],
-          image: '../../assets/images/slide.jpg',
-        },
-      ],
-      list: function() {
-        var list = [];
-        for (let index = 1; index <= 10; index++) {
-          var item = {
-            id: index,
-            type: 'curation',
-            title: '보드명',
-            description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
-            hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
-            count: 100,
-          };
-          list.push(item);
-        }
-        return list;
-      },
-      favorite: [
-        { id: 1, name: 'slide - 1' },
-        { id: 2, name: 'slide - 2' },
-        { id: 3, name: 'slide - 3' },
-      ],
       swiperOption: {
         effect: 'coverflow',
         grabCursor: true,
@@ -241,22 +141,29 @@ export default {
       this.actFavorites(this.$store.state.auth.user.userId);
     }
     this.actFollowRank();
+    this.actPostRank();
+    this.actLikeRank();
+    this.actCommentRank();
   },
   computed: {
-    ...mapGetters('main', ['getFavorites', 'getFollowRank']),
+    ...mapGetters('main', ['getFavorites', 'getFollowRank', 'getPostsRank', 'getLikeRank', 'getCommentRank']),
     ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
   },
-  mounted() {
-    // console.log(this.getFavorites);
-    // console.log(this.getSubBoardFavoriteList);
-    // console.log(this.getSubBoardList);
-    // console.log(this.getFollowRank);
+  mounted() {},
+  watch: {
+    getFavorites: function() {
+      this.favorites = this.getFavorites;
+      // this.favorites = JSON.parse(JSON.stringify(this.getFavorites));
+      for (let index = this.favorites.length; index < 8; index++) {
+        const item = { board_id: -1 };
+        this.favorites.push(item);
+      }
+    },
   },
   methods: {
-    ...mapActions('main', ['actFavorites', 'actFollowRank']),
+    ...mapActions('main', ['actFavorites', 'actFollowRank', 'actPostRank', 'actLikeRank', 'actCommentRank']),
     clickFavorite: function(index) {
-      alert(index + ' slide clicked!');
-      this.$router.push({ name: 'Board' });
+      this.$router.push(`board/${this.getFavorites[index].board_id}`);
     },
     clickCBtn1: function() {
       this.$router.push({ name: 'StudyMain' });
@@ -346,98 +253,6 @@ p {
   content: '';
   display: block;
   padding-bottom: 130%;
-}
-.frame {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: var(--basic-color-fill);
-}
-.bg-image {
-  position: absolute;
-  z-index: 0;
-  width: 90%;
-  height: calc(100% - 80px);
-  margin: 0 5%;
-  color: #fff;
-  background-image: url('../../assets/images/slide.jpg');
-  background-position: center bottom;
-  background-size: cover;
-  /* box-shadow: var(--basic-shadow-s); */
-  /* filter: brightness(0.9); */
-}
-.inner {
-  position: relative;
-  z-index: 1;
-  width: 90%;
-  height: calc(100% - 80px);
-  margin: 0 auto;
-  background: #00000033;
-}
-
-#f-type {
-  color: var(--basic-color-fill3);
-  text-align: center;
-  padding: 11px 0 11px;
-  width: 100%;
-  font-size: 13px;
-}
-#f-title {
-  font-size: 20px;
-  text-align: center;
-  /* position: absolute;
-  z-index: 0 !important; */
-  display: inline-block;
-  width: auto;
-  padding: 4px 30px;
-  margin-top: 15%;
-  margin-left: calc(-5% - 1px);
-  box-shadow: var(--basic-shadow-b);
-  background-color: var(--basic-color-new);
-}
-#f-desc {
-  margin: 5% 20px 10%;
-  font-size: 14px;
-  line-height: 20px;
-  max-height: 40px;
-  overflow: hidden;
-  display: -webkit-box;
-  word-break: break-all;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-#f-hashtag {
-  font-size: 12px;
-  line-height: 14px;
-  margin: 15px 20px 0px;
-  max-height: 28px;
-  text-align: center;
-  overflow: hidden;
-  display: -webkit-box;
-  word-break: break-all;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-.f-text {
-  color: #fff;
-}
-.hashtag {
-}
-#f-option {
-  font-size: 13px;
-  color: var(--basic-color-bg);
-  margin-top: 8px;
-  margin-left: -15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  width: 100%;
-}
-#f-option p:first-child {
-  transform: translate(10px, -8px);
-  letter-spacing: -1px;
-  font-weight: 900;
-  color: #ff0000cc;
 }
 
 /*-------------------------------------------------- */
