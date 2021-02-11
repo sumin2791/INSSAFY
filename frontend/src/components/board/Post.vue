@@ -52,7 +52,13 @@
         <div id='header-right'>
           <!-- 판매정보 부분 -->
           <div v-if="flagComponent.state">
-            <v-chip id="sell-state">
+            <v-chip v-if="this.post.post_state===0" id="state-sale">
+              판매중
+            </v-chip>
+            <v-chip v-else-if="this.post.post_state===1" id="state-book">
+              예약중
+            </v-chip>
+            <v-chip  v-else id="state-complete">
               판매완료
             </v-chip>
           </div>
@@ -100,7 +106,7 @@
               color="#695C4C"
               class="mr-3"
             >
-              광주
+              {{this.post.post_header}}
             </v-chip>
           </div>
           <div>{{post.post_title}}</div>
@@ -388,8 +394,18 @@ export default {
   flex-direction: row;
 }
 /* 판매정보 */
-#sell-state {
+#state-sale {
   background-color: #0B2945 ;
+  color: #fff;
+  border-radius: 10%;
+}
+#state-book {
+  background-color: #aa2610 ;
+  color: #fff;
+  border-radius: 10%;
+}
+#state-complete {
+  background-color: #f9f9f9 ;
   color: #fff;
   border-radius: 10%;
 }

@@ -35,32 +35,21 @@
         <v-row dense>
           
           <!-- 왼쪽 학습공유 설명 부분 -->
-          <v-col 
-            class="col-12 col-sm-4" 
-          >
-            <v-sheet>
-              <!-- 학습공유 설명 부분 -->
+          <v-col class="col-12 col-sm-4">
+            <div id="description" class="rounded-bg container-description">
+              <h4 class="b-desc">학습공유</h4>
+              <p class="l-desc">
+                오늘의 학습 내용<br />
+                함께 나누고픈 내용 공유
+              </p>
+            </div>
+            <div id="description" class="rounded-bg container-description">
               <v-list color="transparent">
-                <!-- 학습공유 설명 부분 -->
-                <div
-                  class="d-flex
-                  flex-column
-                  justify-space-between"
-                  style="min-height: 25vh;"
-                >
-                  <!-- 내 정보 타이틀 -->
-                  <div class="text-h5">학습공유</div>
-                  <div class="text-start pa-1 ma-auto">
-                    오늘의 학습 내용<br>함께 나누고픈 내용 공유
-                  </div>
-                </div>
-                <!-- ranking 부분 -->
-                <v-divider class="my-2"></v-divider>
                 <v-list-item>RANK</v-list-item>
-                <v-col>
-                  <LearningRank />
-                </v-col>
-                <!-- ranking 1위의 한마디 -->
+                  <v-col>
+                    <LearningRank />
+                  </v-col>
+                  <!-- ranking 1위의 한마디 -->
                 <v-list-item>RANK 1위의 한마디</v-list-item>
                 <v-col class="font-weight-black text-center">
                   "{{ first.speech }}"
@@ -68,16 +57,16 @@
                 <v-col class="text-end text-caption">
                   -{{ first.nickName }}-
                 </v-col>
-                <!-- 워드 클라우드 부분 -->
-                <v-divider class="my-2"></v-divider>
-                <v-list-item>워드 클라우드 부분</v-list-item>
+              </v-list>
+            </div>
+            <div id="description" class="rounded-bg container-description">
+              <v-list-item>워드 클라우드 부분</v-list-item>
                 <v-col class="d-flex justify-center">
                   <v-avatar size="200">
                     <v-img src="@/assets/images/wordcloud.jpg"></v-img>
                   </v-avatar>
                 </v-col>
-              </v-list>
-            </v-sheet>
+            </div>
           </v-col>
           <!-- 오른쪽 학습공유 본문 부분 -->
           <v-col
@@ -169,5 +158,11 @@ export default {
   margin: 2%;
   padding: 10%;
   flex-basis: 20%;
+}
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
 }
 </style>
