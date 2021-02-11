@@ -173,4 +173,24 @@ public class BoardServiceImpl implements BoardService {
 		return sqlSession.getMapper(BoardMapper.class).getSearchCnt(keyword);
 	}
 
+	@Override
+	public Map<String, Object> boardFunc(int board_id) {
+		return sqlSession.getMapper(BoardMapper.class).boardFunc(board_id);
+	}
+
+	@Override
+	public void addChecklist(Map<String, Object> map2) {
+		sqlSession.getMapper(BoardMapper.class).addChecklist(map2);
+	}
+
+	@Override
+	public void addCalendar(Map<String, Object> map2) {
+		sqlSession.getMapper(BoardMapper.class).addCalendar(map2);
+	}
+
+	@Override
+	public void addVote(Map<String, Object> map2) {
+		sqlSession.getMapper(BoardMapper.class).addVote(map2);
+	}
+
 }

@@ -107,49 +107,49 @@
 	<update id="deleteBoard" parameterType="int">
 		update board
 		set is_used = 0
-		where board_id=#{board_id}
+		where board_id=#{board_id};
 	</update>
 
 	<select id="detailBoard" parameterType="int" resultType="BoardDto">
 		select *
 		from board 
-		where board_id = #{board_id} and is_used = 1
+		where board_id = #{board_id} and is_used = 1;
 	</select>
 
 	<update id="deleteBoardAll" parameterType="int">
 		update add_function
 		set is_used = 0
-		where board_id=#{board_id}
+		where board_id=#{board_id};
 	</update>
 
 	<update id="deleteSubscription" parameterType="int">
 		update subscription
 		set is_used = 0
-		where board_id=#{board_id}
+		where board_id=#{board_id};
 	</update>
 
 	<update id="deletePostAll" parameterType="int">
 		update post
 		set is_used = 0
-		where board_id=#{board_id}
+		where board_id=#{board_id};
 	</update>
 
 	<update id="deleteCalendar" parameterType="int">
 		update calendar_item
 		set is_used = 0
-		where board_id=#{board_id}
+		where board_id=#{board_id};
 	</update>
 
 	<update id="deleteCheckList" parameterType="int">
 		update check_list_item
 		set is_used = 0
-		where board_id=#{board_id}
+		where board_id=#{board_id};
 	</update>
 
 	<update id="deleteVote" parameterType="int">
 		update vote
 		set is_used = 0
-		where board_id=#{board_id}
+		where board_id=#{board_id};
 	</update>
 
 	<select id="getVoteList" parameterType="int" resultType="int">
@@ -202,5 +202,29 @@
 		or board_hash like concat('%',#{keyword} ,'%') )
 		and is_used = 1 and board_state = 0;
 	</select>
+
+	<select id="boardFunc" parameterType="int" resultType="map">
+		select checklist_flag, calendar_flag, vote_flag
+		from add_function
+		where is_used = 1 and board_id = #{board_id};
+	</select>
+
+	<update id="addChecklist" parameterType="map">
+		update add_function
+		set checklist_flag = #{option}
+		where board_id=#{board_id};
+	</update>
+
+	<update id="addCalendar" parameterType="map">
+		update add_function
+		set calendar_flag = #{option}
+		where board_id=#{board_id};
+	</update>
+
+	<update id="addVote" parameterType="map">
+		update add_function
+		set vote_flag = #{option}
+		where board_id=#{board_id};
+	</update>
 
 </mapper>
