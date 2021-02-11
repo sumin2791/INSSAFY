@@ -119,4 +119,9 @@ public class UserServiceImpl implements UserService {
 		return sqlSession.getMapper(UserMapper.class).quizCheck(answer) == 1;
 	}
 
+	@Override
+	public void joinCuration(Map<String, Object> cMap) {
+		sqlSession.getMapper(UserMapper.class).joinCuration(cMap);
+	}
+
 }
