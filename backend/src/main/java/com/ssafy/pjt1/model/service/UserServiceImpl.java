@@ -118,6 +118,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void joinCuration(Map<String, Object> cMap) {
+		sqlSession.getMapper(UserMapper.class).joinCuration(cMap);
+	}
+
 	public UserDto userDtoById(String user_id) {
 		return sqlSession.getMapper(UserMapper.class).userDtoById(user_id);
 	}

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.chat.ChatMessage;
 import com.ssafy.pjt1.model.service.chat.ChatService;
 
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Slf4j
 @RestController
 @RequestMapping("/chat")
-public class Chatcontroller {
+public class ChatController {
     private static final String SUCCESS = "success";
     private static final String FAIL = "fail";
 
@@ -39,6 +40,8 @@ public class Chatcontroller {
 
     @Autowired
     private SimpMessagingTemplate simpleMessageTemplate;
+
+    private ObjectMapper objMapper;
 
     /*
      * 기능: 상대방과 중복된 방이 있는지 확인하고 없으면 방을 만든다
@@ -95,10 +98,16 @@ public class Chatcontroller {
     public ResponseEntity<Map<String, Object>> getRoomList(@RequestParam("user_id") String user_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
+        objMapper = new ObjectMapper();
         try {
-
+            List<Map<String, Object>> roomList = chatService.getRoomList(user_id);
+            resultMap.put("roomInfo", roomList);
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
         } catch (Exception e) {
-
+            log.error("getRoomList: {}", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
@@ -108,13 +117,13 @@ public class Chatcontroller {
      * 
      * developer: 문진환
      * 
-     * @param : user_id, user_id(상대방)
+     * @param : int startNUm, int endNum, string room_id
      * 
-     * @return : room_id
+     * @return : message
      */
     @ApiOperation(value = "방에 입장 하고나서 메시지 리스트 출력")
     @PostMapping(value = "/enterRoom")
-    public ResponseEntity<Map<String, Object>> checkDupl(@RequestParam("startNUm") int startNUm,
+    public ResponseEntity<Map<String, Object>> readMessage(@RequestParam("startNUm") int startNUm,
             @RequestParam("endNUm") int endNum, @RequestParam("room_id") String room_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -132,6 +141,15 @@ public class Chatcontroller {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    /*
+     * 기능: 클라이언트 쪽에서 보낸 메세지를 받음
+     * 
+     * developer: 문진환
+     * 
+     * @param :
+     * 
+     * @return :
+     */
     @MessageMapping("/receive")
     public void greeting(ChatMessage message) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
