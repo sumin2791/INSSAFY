@@ -3,10 +3,13 @@ package com.ssafy.pjt1.model.service.chat;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.chat.ChatMessage;
 import com.ssafy.pjt1.model.dto.user.UserDto;
@@ -14,7 +17,6 @@ import com.ssafy.pjt1.model.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -39,10 +41,11 @@ public class ChatServiceImpl implements ChatService {
     public List<ChatMessage> getMessage(int startNum, int endNum, String room_id) throws IOException {
         String key = "message::" + room_id;
         listOps = redisTemplate.opsForList();
-
+        objMapper = new ObjectMapper();
         List<String> str = listOps.range(key, startNum, endNum);
         List<ChatMessage> list = new ArrayList<>();
         for (String json : str) {
+            log.info(">>>>>>>>>>>getMessage{}", json);
             list.add(objMapper.readValue(json, ChatMessage.class));
         }
         return list;
@@ -63,10 +66,25 @@ public class ChatServiceImpl implements ChatService {
 
     // 채팅방 갖고오기
     @Override
-    public void getRoomList(String user_id) {
+    public List<Map<String, Object>> getRoomList(String user_id) throws JsonMappingException, JsonProcessingException {
         listOps = redisTemplate.opsForList();
         objMapper = new ObjectMapper();
-
+        String key = "roomInfo::" + user_id;
+        Long size = (Long) listOps.size(key);
+        List<String> roomListString = listOps.range(key, 0, size);
+        Map<String, Object> roomMapList = new HashMap<>();
+        List<Map<String, Object>> roomListObject = new LinkedList<>();
+        for (String str : roomListString) {
+            // 스트링을 객체로 변환
+            roomMapList = objMapper.readValue(str, Map.class);
+            Object room_id = roomMapList.get("roomId");
+            String recentMsg = getRecentMessage((String) room_id);
+            log.info("msg:{}", room_id);
+            roomMapList.put("recentMsg", recentMsg);
+            // 객체를 리스트에 저장
+            roomListObject.add(roomMapList);
+        }
+        return roomListObject;
     }
 
     // 방 만들기
@@ -90,6 +108,21 @@ public class ChatServiceImpl implements ChatService {
         listOps.leftPush("roomInfo::" + user_id, infoString);
         listOps.leftPush("roomInfo::" + opp_id, infoString);
         return uid;
+    }
+
+    @Override
+    public String getRecentMessage(String room_id) throws JsonMappingException, JsonProcessingException {
+        String key = "message::" + room_id;
+        listOps = redisTemplate.opsForList();
+        objMapper = new ObjectMapper();
+        List<String> str = listOps.range(key, 0, 0);
+        String res = "";
+        // 길이가 0인 경우
+        if (str.size() != 0) {
+            ChatMessage chat = objMapper.readValue(str.get(0), ChatMessage.class);
+            res = chat.getMsg();
+        }
+        return res;
     }
 
 }

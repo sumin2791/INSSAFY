@@ -3,7 +3,6 @@ package com.ssafy.pjt1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,10 +75,11 @@ public class RedistTest {
     @Test
     public void opsList() throws JsonProcessingException {
         mapper = new ObjectMapper();
-
-        // listOps = redisTemplate.opsForList();
-        // List<ChatMessage> list = listOps.range("key", 0, 10);
-        // log.info("msg:{}", list.size());
+        ListOperations<String, String> listOps = redisTemplate.opsForList();
+        listOps.leftPush("key", "0");
+        listOps.leftPush("key", "1");
+        listOps.leftPush("key", "2");
+        log.info(">>>>>>>>>>{}", listOps.range("key", 0, 1));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class RedistTest {
         ListOperations<String, String> listOps = redisTemplate.opsForList();
         String str = mapper.writeValueAsString(chat);
         listOps.leftPush("key", str);
-        log.info("msg:{}", listOps.range("key", 0, 1));
+        log.info("msg:{}", listOps.range("key", 0, 0));
         log.info("테스트:{}", str);
 
     }
@@ -99,5 +99,12 @@ public class RedistTest {
     public void getMessage() throws IOException {
         String room_id = "c1287b25-e9b3-4e55-9d56-b6c3c6c3072e";
         List<ChatMessage> list = chatService.getMessage(0, 3, room_id);
+    }
+
+    @Test
+    public void getRecent() {
+        String room_id = "14c51daf-ea99-4b63-9e6a-102e21303ff2";
+        String str = chatService.getRecentMessage(room_id);
+        log.info("값:{}", str);
     }
 }
