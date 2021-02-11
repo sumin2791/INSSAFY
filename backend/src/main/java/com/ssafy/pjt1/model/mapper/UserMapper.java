@@ -42,4 +42,6 @@ public interface UserMapper {
     public int deleteSubscribe(Map<String, String> map);
 
     public int quizCheck(String answer);
+
+    public UserDto userDtoById(String user_id);
 }

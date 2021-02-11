@@ -3,15 +3,14 @@ package com.ssafy.pjt1.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import com.ssafy.pjt1.model.dto.chat.ChatMessage;
 import com.ssafy.pjt1.model.service.chat.ChatService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -33,7 +32,7 @@ public class Chatcontroller {
     private static final String FAIL = "fail";
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private ChatService chatService;
@@ -60,17 +59,14 @@ public class Chatcontroller {
         ListOperations<String, String> listOps = redisTemplate.opsForList();
         log.info("my:{}, opp_id:{}", my_id, opp_id);
         try {
-            // 중복체크해서 방이 없으면 만들기
+            // 중복체크
             String id1 = my_id + "/" + opp_id;
             String id2 = opp_id + "/" + my_id;
             if (setOps.isMember("check", id1) == false && setOps.isMember("check", id2) == false) {
                 setOps.add("check", id1);
                 setOps.add("check", id2);
-                String uid = UUID.randomUUID().toString();
-                // 방 생성하기
-                // 내 방과, 상대방 방을 동시에 생성
-                listOps.leftPush("roomId::" + my_id, uid);
-                listOps.leftPush("roomId::" + opp_id, uid);
+                // 방 만들기
+                String uid = chatService.makeRoom(my_id, opp_id);
                 resultMap.put("roomId", uid);
                 resultMap.put("message", SUCCESS);
             } else {// 있으면 못 만듬
@@ -81,6 +77,28 @@ public class Chatcontroller {
             log.info("error:{}", e);
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 내 체팅방 리스트를 출력
+     * 
+     * developer: 문진환
+     * 
+     * @param : user_id, user_id(상대방)
+     * 
+     * @return : room_id
+     */
+    @ApiOperation(value = "내 채팅방 리스트를 출력")
+    @PostMapping(value = "/getRoomList")
+    public ResponseEntity<Map<String, Object>> getRoomList(@RequestParam("user_id") String user_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+
+        } catch (Exception e) {
+
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
@@ -114,7 +132,7 @@ public class Chatcontroller {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
-    @MessageMapping("/send")
+    @MessageMapping("/receive")
     public void greeting(ChatMessage message) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;

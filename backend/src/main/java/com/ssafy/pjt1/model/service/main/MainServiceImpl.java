@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
-import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.mapper.MainMapper;
 import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.post.PostService;
@@ -64,8 +63,10 @@ public class MainServiceImpl implements MainService {
         Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
         for (String board_id : set) {
             // db조회 객체 top3 얻음
-            resultMap.put(boardService.getBoardInfo(board_id),
-                    sqlSession.getMapper(MainMapper.class).getRecentFive(board_id));
+            Map<String, String> boardInfo = boardService.getBoardInfo(board_id);
+            if (boardInfo != null) {// null이 아닐때만 랭크에 넣어줌
+                resultMap.put(boardInfo, sqlSession.getMapper(MainMapper.class).getRecentFive(board_id));
+            }
         }
         // boardFollowRank캐시에 넣기
         ObjectMapper mapper = new ObjectMapper();// jackson 라이브러리
@@ -76,7 +77,7 @@ public class MainServiceImpl implements MainService {
             valueOps.set("boardFollowRank", msg);
             // logger.info(valueOps.get("followRank"));
         } catch (JsonProcessingException e) {
-            logger.error("msg", e);
+            logger.error("updateSubscriptionCache", e);
         }
     }
 
@@ -96,8 +97,10 @@ public class MainServiceImpl implements MainService {
         Map<Map<String, String>, List<PostDto>> resultMap = new HashMap<>();
         for (String board_id : set) {
             // db조회 객체 top3 얻음
-            resultMap.put(boardService.getBoardInfo(board_id),
-                    sqlSession.getMapper(MainMapper.class).getRecentFive(board_id));
+            Map<String, String> boardInfo = boardService.getBoardInfo(board_id);
+            if (boardInfo != null) {// null이 아닐때만 랭크에 넣어줌
+                resultMap.put(boardInfo, sqlSession.getMapper(MainMapper.class).getRecentFive(board_id));
+            }
         }
         // boardPostRank캐시에 넣기
         ObjectMapper mapper = new ObjectMapper();
@@ -107,7 +110,7 @@ public class MainServiceImpl implements MainService {
             // logger.info("캐시:{}", msg);
             valueOps.set("boardPostRank", msg);
         } catch (JsonProcessingException e) {
-            logger.error("msg", e);
+            logger.error("updatePostSort", e);
         }
     }
 
@@ -142,7 +145,7 @@ public class MainServiceImpl implements MainService {
             valueOps.set("postLikeRank", msg);
             valueOps.set("postCommentRank", msg2);
         } catch (JsonProcessingException e) {
-            logger.error("msg", e);
+            logger.error("updatePostLikeSor", e);
         }
     }
 

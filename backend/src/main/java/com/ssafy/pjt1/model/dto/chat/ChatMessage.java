@@ -11,7 +11,6 @@ public class ChatMessage {
     private String room_id;
     private String user_id;
     private String opp_id;
-    private String user_nickname;
     private String msg;
     private String date;
 }

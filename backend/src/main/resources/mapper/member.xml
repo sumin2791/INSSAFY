@@ -105,4 +105,11 @@
 		from quiz
 		where quiz_answer like #{answer}
 	</select>
+
+	<!-- id로 객체 받기-->
+	<select id="userDtoById" parameterType="string" resultType="UserDto">
+		select *
+		from user
+		where user_id = #{user_id}
+	</select>
 </mapper>

@@ -10,4 +10,8 @@ public interface ChatService {
     public List<ChatMessage> getMessage(int startNum, int endNum, String room_id) throws IOException;
 
     public void insertMessage(ChatMessage message) throws IOException;
+
+    public void getRoomList(String user_id);
+
+    public String makeRoom(String user_id, String opp_id) throws IOException;
 }

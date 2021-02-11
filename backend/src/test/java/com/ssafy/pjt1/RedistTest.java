@@ -2,10 +2,15 @@ package com.ssafy.pjt1;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.chat.ChatMessage;
+import com.ssafy.pjt1.model.service.chat.ChatService;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -16,8 +21,6 @@ import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
-
-import jdk.internal.org.jline.utils.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,7 +31,10 @@ public class RedistTest {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
-    private ListOperations listOps;
+    private ObjectMapper mapper;
+
+    @Autowired
+    private ChatService chatService;
 
     @Test
     public void zSetTest() {
@@ -68,9 +74,30 @@ public class RedistTest {
     }
 
     @Test
-    public void opsList() {
-        listOps = redisTemplate.opsForList();
-        List<ChatMessage> list = listOps.range("key", 0, 10);
-        log.info("msg:{}", list.size());
+    public void opsList() throws JsonProcessingException {
+        mapper = new ObjectMapper();
+
+        // listOps = redisTemplate.opsForList();
+        // List<ChatMessage> list = listOps.range("key", 0, 10);
+        // log.info("msg:{}", list.size());
+    }
+
+    @Test
+    public void service() throws IOException {
+        ChatMessage chat = new ChatMessage("room1", "user1", "opp1", "안녕하세요", "aaa");
+        // chatService.insertMessage(chat);
+        mapper = new ObjectMapper();
+        ListOperations<String, String> listOps = redisTemplate.opsForList();
+        String str = mapper.writeValueAsString(chat);
+        listOps.leftPush("key", str);
+        log.info("msg:{}", listOps.range("key", 0, 1));
+        log.info("테스트:{}", str);
+
+    }
+
+    @Test
+    public void getMessage() throws IOException {
+        String room_id = "c1287b25-e9b3-4e55-9d56-b6c3c6c3072e";
+        List<ChatMessage> list = chatService.getMessage(0, 3, room_id);
     }
 }
