@@ -64,7 +64,7 @@
                 </v-list-item>
                 <!-- 비밀번호 변경 부분 -->
                 <PasswordChange />
-
+                <AccountDelete v-if="myInfo.myInfoEdit" />
                 <v-divider class="my-2"></v-divider>
                 <!-- 이동 탭 부분 -->
                 <v-list-item-group
@@ -173,6 +173,7 @@
                 </div>
                 <!-- 비밀번호 변경 부분 -->
                 <PasswordChange />
+                <AccountDelete v-if="myInfo.myInfoEdit" />
 
                 <v-divider class="my-2"></v-divider>
 
@@ -228,8 +229,9 @@
                 <v-divider></v-divider>
                 <MyComment
                   v-for="comment in getGetComments"
-                  :key="`${comment.post_id}/${comment.comment_id}`"
+                  :key="comment.comment_id"
                   :comment="comment"
+                  @delComment="delComment"
                   class="pa-2 ani-hover"
                 />
               </div>
@@ -243,7 +245,7 @@
                   >스크랩한 글</v-card-title
                 >
                 <v-divider></v-divider>
-                <ScrapPost />
+                <ScrapPost v-for="scrap in getScraps" :key="scrap.post_id" :scrap="scrap" class="pa-2 ani-hover" @delScrap="delScrap" />
               </div>
             </v-sheet>
           </v-col>
@@ -254,43 +256,21 @@
 </template>
 
 <script>
-// 내 작성글
-import MyPost from '@/components/mypage/MyPost.vue';
-// 내 댓글
-import MyComment from '@/components/mypage/MyComment.vue';
-// 내 스크랩한 글
-import ScrapPost from '@/components/mypage/ScrapPost.vue';
-// 비밀번호 변경
-import PasswordChange from '@/components/mypage/PasswordChange';
-
-import * as userApi from '@/api/user';
 import Profile from '@/components/etc/Profile';
+import PasswordChange from '@/components/mypage/PasswordChange';
 import { mapGetters, mapActions } from 'vuex';
-import Subscription from '@/components/mypage/Subscription.vue';
 
 export default {
   name: 'mypage',
   components: {
-    // 구독중인 보드
-    Subscription: () => import('@/components/mypage/Subscription'),
-    MyPost,
-    MyComment,
-    ScrapPost,
-    PasswordChange,
     Profile,
-  },
-  // 뷰 인스턴스 제거될 때 resize 호출
-  beforeDestroy() {
-    if (typeof window === 'undefined') return;
+    PasswordChange,
+    AccountDelete: () => import('@/components/mypage/AccountDelete'),
 
-    window.removeEventListener('resize', this.onResize, { passive: true });
-  },
-  // resize 실시해서 현재 화면 크기 확인
-  mounted() {
-    this.onResize();
-    this.fetchData();
-    this.subBoardList = this.getSubBoardList;
-    window.addEventListener('resize', this.onResize, { passive: true });
+    Subscription: () => import('@/components/mypage/Subscription'),
+    MyPost: () => import('@/components/mypage/MyPost'),
+    MyComment: () => import('@/components/mypage/MyComment'),
+    ScrapPost: () => import('@/components/mypage/ScrapPost'),
   },
   data() {
     return {
@@ -310,37 +290,39 @@ export default {
         ['mdi-bookmark-multiple', '내 스크랩', 3],
       ],
       // 내 정보 부분
-      myInfo: {
-        nickname: '김싸피',
-        email: 'ssafy@ssafy.com',
-        location: '광주',
-        generation: '4',
-        image: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
-        // 내 정보 edit 버튼 클릭 flag
-        myInfoEdit: false,
-        // 내 정보 지역, 기수 변경 정보
-        options: {
-          location: ['서울', '대전', '구미', '광주'],
-          generation: ['4', '3', '2', '1'],
-        },
-      },
+      myInfo: {},
       //구독 보드 리스트
       subBoardList: [],
     };
   },
+  // 뷰 인스턴스 제거될 때 resize 호출
+  beforeDestroy() {
+    if (typeof window === 'undefined') return;
+
+    window.removeEventListener('resize', this.onResize, { passive: true });
+  },
+  // resize 실시해서 현재 화면 크기 확인
+  mounted() {
+    this.onResize();
+    this.fetchData();
+    window.addEventListener('resize', this.onResize, { passive: true });
+
+    this.getSubBoard();
+    this.subBoardList = this.getSubBoardList;
+    this.getPosts();
+    this.actGetComments();
+    this.actScraps();
+  },
   created() {
     this.getMyInfo();
-    this.getSubBoard();
-    this.getPosts();
-    this.$store.dispatch('user/actGetComent');
   },
   computed: {
     ...mapGetters('auth', ['getsMyInfo', 'getSubBoardList']),
-    ...mapGetters('user', ['getsPosts', 'getGetComments']),
+    ...mapGetters('user', ['getsPosts', 'getGetComments', 'getScraps']),
   },
   methods: {
-    ...mapActions('auth', ['getMyInfo', 'putMyinfo', 'getSubBoard']),
-    ...mapActions('user', ['putDeleteSub', 'getPosts', 'actDeletePost']),
+    ...mapActions('auth', ['getMyInfo', 'putMyinfo', 'getSubBoard', 'actDelComment']),
+    ...mapActions('user', ['putDeleteSub', 'getPosts', 'actDeletePost', 'actGetComments', 'actDelComment', 'actScraps', 'actTogleScrap']),
     clickProfile: function() {},
     // 내 정보보기
     fetchData() {
@@ -401,6 +383,10 @@ export default {
           });
           // this.subBoardList.splice(deleteIndex, 1);
           this.$delete(this.subBoardList, deleteIndex);
+          this.$delete(this.$store.state.auth.subBoard, deleteIndex);
+
+          //vuex에 있는 데이터 localStorge에 동기화
+          this.$store.commit('auth/setSubBoardRefresh2');
         }
       });
     },
@@ -414,6 +400,28 @@ export default {
             return post.post_id == post_id;
           });
           this.$delete(this.getsPosts, deleteIndex);
+        }
+      });
+    },
+    delComment(comment_id) {
+      this.actDelComment(comment_id).then((result) => {
+        if (result) {
+          const deleteIndex = this.getGetComments.findIndex((comment) => {
+            return comment.comment_id == comment_id;
+          });
+          this.$delete(this.getGetComments, deleteIndex);
+        }
+      });
+    },
+    delScrap(post_id) {
+      console.log(post_id);
+      this.actTogleScrap(post_id).then((result) => {
+        if (result) {
+          const deleteIndex = this.getScraps.findIndex((scrap) => {
+            return scrap.post_id == post_id;
+          });
+          console.log(this.getScraps[deleteIndex]);
+          this.$delete(this.getScraps, deleteIndex);
         }
       });
     },

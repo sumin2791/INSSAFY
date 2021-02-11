@@ -3,17 +3,27 @@
     id="post-box"
     class="mx-2
       mt-4
+      mb-2
       px-2
       py-0
       d-flex
       flex-column"
     color="F9F9F9"
+    @click="moveToPost"
   >
+    <!-- 삭제 버튼 -->
+    <div class="align-self-end mt-1" style="position:absolute;">
+      <v-btn icon color="#AA2610" @click.stop="removeComment">
+        <v-icon dark class="ml-1">
+          mdi-close-thick
+        </v-icon>
+      </v-btn>
+    </div>
     <!-- 댓글 내용 -->
     <v-card-text
       id="post-contents"
       class="font-weight-bold
-        py-0 pl-auto mt-5"
+        py-0 px-2 mt-5"
     >
       {{ comment.comment_description }}
     </v-card-text>
@@ -42,17 +52,18 @@
       <v-col
         cols="9"
         id="post-title"
-        class="font-weight-black
+        class="text-overline 
           pt-0"
-        >{{ `보드 제목 없어요` }}</v-col
+        >{{ comment.post_title }}</v-col
       >
       <v-col
         cols="3"
         id="post-date"
         class="text-overline 
           text-end
+          pl-0
           pt-0"
-        >{{ comment.comment_date }}
+        >{{ comment.comment_date | moment('YY.MM.DD.') }}
       </v-col>
     </v-card-title>
   </v-card>
@@ -66,27 +77,27 @@ export default {
   },
   data() {
     return {
-      post: {
-        inBoard: '(보드 이름)모르고리즘이 알고리즘이 될 때까지',
-        boardImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
-        title: '(게시물제목)저희팀원들 짱이랍니다(게시물제목)저희팀원들 짱이랍니다',
-        comment:
-          '(댓글내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)(게시물내용)다 똑똑박사들인가? 왜케 잘 하지...? 나만 잘하면 되겠다 :)',
-        date: `21.02.02`,
-        likeCount: 4,
-        commentCount: 4,
-        boardCount: 241,
-      },
+      post: {},
     };
   },
   methods: {
     // 작성글 삭제
-    removeBoard() {
-      console.log('작성글 삭제');
+    removeComment() {
+      this.$toast.open({
+        position: 'top-right',
+        duration: 1800,
+        message: `클릭하여 ${this.board_name}에 작성한 댓글 삭제`,
+        type: 'error',
+        //보드 구독 취소 후 리스트에서 애니메이션으로 제거
+        onClick: () => {
+          this.$emit('delComment', this.comment.comment_id);
+        },
+        queue: true,
+      });
     },
-    // 해당 보드로 이동(상세 주소 넘겨주기)
-    moveToBoard() {
-      this.$router.push({ name: 'Board' });
+    // 해당 post로 이동(상세 주소 넘겨주기)
+    moveToPost() {
+      this.$router.push(`/board/${this.comment.board_id}/post/${this.comment.post_id}`);
     },
   },
 };
@@ -129,6 +140,7 @@ export default {
 #post-title {
   width: 100%;
   font-size: 14px;
+  text-align: end;
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-all;
@@ -137,10 +149,17 @@ export default {
 /* 날짜 넘치는 부분 처리 */
 #post-date {
   width: 100%;
+  font-size: 100px im !important;
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-all;
   white-space: nowrap;
+}
+@media (max-width: 426px) {
+  #post-date,
+  #post-title {
+    font-size: 10px !important;
+  }
 }
 /* 댓글 내용 넘치는 부분 처리 */
 #post-contents {
