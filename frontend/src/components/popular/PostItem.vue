@@ -3,19 +3,22 @@
     <!-- <div id="pi-bg1" class="pi-bg" :style="{backgroundImage: `url(${items[0].image})`}"/> -->
     <div id="header">
       <div id="pi0" :class="{ aheader: active == 0 }">
-        <div id="pi-bg1" class="pi-bg" />
+        <div id="pi-bg1" class="pi-bg" :class="{ none: !image[0] }" />
+        <GradientGenerator class="pi-bg" :class="{ none: image[0] }" />
         <div class="pi-order b-title">1st</div>
-        <div class="pi-count t-desc-e">{{ count }}</div>
+        <div class="pi-count t-desc-e">{{ count[0] }}</div>
       </div>
       <div id="pi1" :class="{ aheader: active == 1 }">
-        <div id="pi-bg2" class="pi-bg" />
+        <div id="pi-bg2" class="pi-bg" :class="{ none: !image[1] }" />
+        <GradientGenerator class="pi-bg" :class="{ none: image[1] }" />
         <div class="pi-order b-title">2nd</div>
-        <div class="pi-count t-desc-e">{{ count }}</div>
+        <div class="pi-count t-desc-e">{{ count[1] }}</div>
       </div>
       <div id="pi2" :class="{ aheader: active == 2 }">
-        <div id="pi-bg3" class="pi-bg" />
+        <div id="pi-bg3" class="pi-bg" :class="{ none: !image[2] }" />
+        <GradientGenerator class="pi-bg" :class="{ none: image[2] }" />
         <div class="pi-order b-title">3rd</div>
-        <div class="pi-count t-desc-e">{{ count }}</div>
+        <div class="pi-count t-desc-e">{{ count[2] }}</div>
       </div>
     </div>
     <div id="title">
@@ -29,7 +32,9 @@
 </template>
 
 <script>
+import GradientGenerator from '../etc/GradientGenerator.vue';
 export default {
+  components: { GradientGenerator },
   name: 'PostItme',
   props: {
     type: String,
@@ -38,14 +43,23 @@ export default {
   data() {
     return {
       active: 0,
-      count: 0,
+      count: [0, 0, 0],
       title: ['', '', ''],
+      image: [false, false, false],
     };
   },
   created() {
+    //null 우회를 위한 local 변수화
     for (let i = 0; i < this.items.length; i++) {
       if (this.items[i] != null) {
         this.title[i] = this.items[i].post_title;
+        if (this.items[i].board_image != null && this.items.board_image != '' && this.items.board_image != 'null') {
+          this.image[i] = this.items[i].board_image;
+        }
+        //type 별 수치
+        if (this.type === 'like') {
+          this.count[i] = this.items[i].post_like;
+        }
       }
     }
   },
@@ -70,6 +84,9 @@ export default {
 </script>
 
 <style scoped>
+.none {
+  display: none !important;
+}
 #wrap {
   position: relative;
 }
@@ -98,7 +115,7 @@ export default {
 #pi-bg1 {
   width: 100%;
   height: 100%;
-  background-image: url(../../assets/images/img1.jpg);
+  background-image: url('../../assets/images/img1.jpg');
   background-position: center;
   filter: brightness(0.8);
   background-size: cover;
@@ -106,7 +123,7 @@ export default {
 #pi-bg2 {
   width: 100%;
   height: 100%;
-  background-image: url(../../assets/images/img2.jpg);
+  background-image: url('../../assets/images/img2.jpg');
   background-position: center;
   filter: brightness(0.8);
   background-size: cover;
@@ -114,7 +131,7 @@ export default {
 #pi-bg3 {
   width: 100%;
   height: 100%;
-  background-image: url(../../assets/images/img3.jpg);
+  background-image: url('../../assets/images/img3.jpg');
   background-position: center;
   filter: brightness(0.8);
   background-size: cover;

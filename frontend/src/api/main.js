@@ -25,3 +25,8 @@ export function getLikeRank() {
 export function getCommentRank() {
   return http.get('/main/getCommentRank');
 }
+
+//suggest 배열을 만들 최신보드 16개 가져오기
+export function getNewBoard() {
+  return http.get(`/board/getBoards?page=1&size=16&sort=new`);
+}
