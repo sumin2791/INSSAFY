@@ -244,21 +244,13 @@ export default {
     },
     //구독목록 리스트 내 board_id와 매개변수가 일치하면 true
     getSubscribed: (state) => (board_id) => {
-      return state.subBoard.find((board) => board.board_id == board_id);
+      const found = state.subBoard.find((board) => board.board_id == board_id);
+      if (found != null) {
+        return true;
+      } else {
+        return false;
+      }
     },
-
-    // getSubBoardIndex: (state) => (id) => {
-    //   let index = 0;
-    //   state.subBoard.forEach((board) => {
-    //     if (board.baord_id == id) {
-    //       return this.index;
-    //     } else {
-    //       index++;
-    //     }
-    //     return -1;
-    //   });
-    //   return index;
-    // },
 
     //이미지 null이면 기본 링크 반환
     getUserImage(state) {

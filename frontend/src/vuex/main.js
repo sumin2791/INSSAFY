@@ -83,6 +83,13 @@ const INIT_POPURAL_RANK2 = () => {
     },
   ];
 };
+const INIT_HEART_BTNS = () => {
+  return {
+    board_id1: false,
+    baord_id2: false,
+    board_id3: false,
+  };
+};
 
 export default {
   namespaced: true,
@@ -92,6 +99,8 @@ export default {
     postRank: INIT_POPURAL_RANK(),
     likeRank: INIT_POPURAL_RANK2(),
     commentRank: INIT_POPURAL_RANK2(),
+    subHeartBtns: INIT_HEART_BTNS(),
+    postHeartBtns: INIT_HEART_BTNS(),
   },
 
   mutations: {
@@ -113,6 +122,26 @@ export default {
     SET_COMMENT_RANK(state, payload) {
       state.commentRank = payload;
     },
+
+    //하트 버튼 클릭(같은 보드가 중복 노출될 경우 함께동작 로직 구현)
+    SET_SUB_HEART_BTNS(state, payload) {
+      state.subHeartBtns = payload;
+    },
+    SET_POST_HEART_BTNS(state, payload) {
+      state.postHeartBtns = payload;
+    },
+    CLICK_SUB_HEART_BTNS(state, payload) {
+      state.subHeartBtns[payload.board_id] = !payload.state;
+      if (state.postHeartBtns.hasOwnProperty(payload.board_id)) {
+        state.postHeartBtns[payload.board_id] = !payload.state;
+      }
+    },
+    CLICK_POST_HEART_BTNS(state, payload) {
+      state.postHeartBtns[payload.board_id] = !payload.state;
+      if (state.subHeartBtns.hasOwnProperty(payload.board_id)) {
+        state.subHeartBtns[payload.board_id] = !payload.state;
+      }
+    },
   },
 
   actions: {
@@ -132,25 +161,37 @@ export default {
 
     //인기보드
     //구독자 순 목록 요청
-    async actFollowRank({ commit }) {
+    async actFollowRank(context) {
       try {
         const res = await mainApi.getFollowRank();
         // console.log(res);
         const boards = makeBoard(res.data);
-        commit('setFollowRank', boards);
+        context.commit('setFollowRank', boards);
+        console.log(context);
+        //하트 버튼 세팅
+        let payload = {};
+        boards.forEach((el) => {
+          payload[el.board_id] = context.rootGetters['auth/getSubscribed'](el.board_id);
+        });
+        context.commit('SET_SUB_HEART_BTNS', payload);
       } catch (e) {
         console.log(e);
         alert('인기보드(구독자 순) 목록 요청 중 문제가 발생했습니다.');
       }
     },
     //게시글 순 목록 요청
-    async actPostRank({ commit }) {
+    async actPostRank(context) {
       try {
         const response = await mainApi.getPostRank();
         // console.log(response);
         const boards = makeBoard(response.data);
-        // console.log(boards);
-        commit('setPostRank', boards);
+        context.commit('setPostRank', boards);
+        //하트 버튼 세팅
+        let payload = {};
+        boards.forEach((el) => {
+          payload[el.board_id] = context.rootGetters['auth/getSubscribed'](el.board_id);
+        });
+        context.commit('SET_POST_HEART_BTNS', payload);
       } catch (error) {
         console.log(error);
         alert('인기보드(게시글 순) 목록 요청 중 문제가 발생했습니다.');
@@ -179,6 +220,16 @@ export default {
         alert('인기글(댓글 순) 목록 요청 중 문제가 발생했습니다.');
       }
     },
+
+    async actNewBoards() {
+      try {
+        const response = await mainApi.getNewBoard();
+        // console.log(response.data.boardList);
+        return response.data.boardList;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 
   getters: {
@@ -204,6 +255,14 @@ export default {
     },
     getCommentRank(state) {
       return state.commentRank;
+    },
+
+    //heart 버튼
+    getSubHeartBtns: (state) => (board_id) => {
+      return state.subHeartBtns[board_id];
+    },
+    getPostHeartBtns: (state) => (board_id) => {
+      return state.postHeartBtns[board_id];
     },
   },
 };

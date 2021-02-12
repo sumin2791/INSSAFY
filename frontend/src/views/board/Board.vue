@@ -166,6 +166,7 @@ export default {
               });
             }
             localStorage.subBoard = JSON.stringify(boards);
+            this.$store.commit('auth/setSubBoardRefresh');
           }
         })
         .catch((err) => {
