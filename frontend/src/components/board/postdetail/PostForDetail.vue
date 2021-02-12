@@ -127,7 +127,9 @@
         <div id="description">
           {{post.post_description}}
           <!-- 이미지 미리보기 -->
-          <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
+        </div>
+        <div id="description-image">
+          <img v-if="post.post_image" :src="post.post_image" alt="이미지 미리보기...">
         </div>
       </div>
 
@@ -444,6 +446,10 @@ export default {
 /* 게시글 내용 */
 #description {
   margin: 0 0 1% 1%;
+  font-size: 16px;
+}
+#description-image {
+  margin: 0 auto 1% auto;
   font-size: 16px;
 }
 /* 댓글, 좋아요, 북마크 부분 */

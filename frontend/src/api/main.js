@@ -30,3 +30,17 @@ export function getCommentRank() {
 export function getNewBoard() {
   return http.get(`/board/getBoards?page=1&size=16&sort=new`);
 }
+
+
+//사진업로드
+export function imageUpload(file){
+  return http.post('/main/image',file,{
+    headers: {"Content-Type": "multipart/form-data",
+    }
+  });
+}
+
+//이미지 수정 및 삭제
+export function imageDelete(file){
+  return
+}

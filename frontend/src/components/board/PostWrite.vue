@@ -166,6 +166,7 @@
 
 <script>
 import * as postApi from '@/api/post';
+import {imageUpload} from '@/api/main'
 
 export default {
   name:'PostWrite',
@@ -223,6 +224,7 @@ export default {
     onChangeImages(e) {
         console.log(e.target.files)
         const file = e.target.files[0];
+        this.images = file
         this.imageUrl = URL.createObjectURL(file);
     },
     titleCheckFormValidity() {
@@ -251,7 +253,7 @@ export default {
       this.locationState = null
       this.location.selected = null
 
-      this.images=[]
+      this.images=null
       this.imageUrl=''
     },
     handleOk(bvModalEvt) {
@@ -260,7 +262,7 @@ export default {
       // Trigger submit handler
       this.handleSubmit()
     },
-    handleSubmit() {
+    async handleSubmit() {
       // Exit when the form isn't valid
       if (!this.titleCheckFormValidity() ) {
         return
@@ -280,14 +282,14 @@ export default {
         BOARD_ID = Number(this.$route.params.board_id)
       }
 
-        // 재사용을 위해 들어오는 데이터에 따라
-        if(this.location.selected!=null){
-          this.header = this.location.selected
-        }
+      // 재사용을 위해 들어오는 데이터에 따라
+      if(this.location.selected!=null){
+        this.header = this.location.selected
+      }
 
 
 
-      const postItem ={
+      let postItem ={
         user_id:String(localStorage.getItem('userId')),
         board_id:BOARD_ID,
         post_title:this.title, 
@@ -297,17 +299,28 @@ export default {
         post_header:this.header,
         post_state:0
       }
-
-
-      postApi.create(postItem)
-        .then(res=>{
-          console.log(res)
-          this.$store.dispatch('board/isWriteFlag')
-        })
-        .catch(err=>{
+      try{
+        if(this.images!=null){
+          let fd = new FormData();
+          fd.append('file',this.images)
           
-          console.log(`post 생성 실패 ${err}`)
-        })
+          const responseUpload = await imageUpload(fd)
+          console.log(responseUpload)
+          postItem.post_image = String(responseUpload.data.imgPath)
+        }
+  
+        await postApi.create(postItem)
+          .then(res=>{
+            console.log(res)
+            console.log('글작성')
+            this.$store.dispatch('board/isWriteFlag')
+          })
+          .catch(err=>{
+            console.log(`post 생성 실패 ${err}`)
+          })        
+      }catch(err){
+        console.log(err)
+      }
 
       this.$nextTick(() => {
         this.$bvModal.hide('modal-post')

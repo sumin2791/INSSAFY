@@ -123,6 +123,11 @@
       <div id="actions">
         <!-- 댓글 수 -->
         <div id="bottom-comment-like">
+          <!-- <v-icon
+            middle
+            class="mr-1"
+            v-if="post.post_image"
+          >mdi-image-filter</v-icon> -->
           <div id="bottom-comment">
             <v-icon
               middle
@@ -224,9 +229,7 @@ export default {
       return this.post.user_id===localStorage.userId
     },
     date(){
-      let date = this.post.post_date.split('.')[0]
-      date = date.split('T').join(' ')
-      return timeForToday(date)
+      return timeForToday(this.post.post_date)
     }
   },
   mounted() {
