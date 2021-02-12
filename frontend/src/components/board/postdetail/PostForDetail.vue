@@ -51,7 +51,7 @@
         <!-- 수정 삭제 신고 버튼과 판매상태 정보 -->
         <div id='header-right'>
           <!-- 판매정보 부분 -->
-          <div v-if="flagComponent.state">
+          <div v-if="flagComponent.state" @click="changeState">
             <v-chip v-if="this.post.post_state===0" id="state-sale">
               판매중
             </v-chip>
@@ -111,7 +111,7 @@
       <div id="body">  
         <div id="title">
           <!-- 중고장터용(지역) -->
-          <div v-if="flagComponent.header">
+          <div v-if="flagComponent.headerMarket">
             <v-chip 
               outlined
               pill
@@ -246,17 +246,18 @@ export default {
       
       let flag = {
         state:false,
-        header:false
+        headerMarket:false,
+        headerLearnShare:false,
       }
 
       if(this.$route.name==="MarketPost"){
         flag.state = true
-        flag.header = true
+        flag.headerMarket = true
         return flag
 
       }else if(this.$route.name==="LearnShare"){
         flag.state = false
-        flag.header = true
+        flag.headerLearnShare = true
       }
       return flag
     },
@@ -313,6 +314,31 @@ export default {
         })
       .catch(err=>{
         console.error(err)
+      })
+    },
+
+    // 판매상태 변경
+    changeState(){
+      if(this.post.user_id!=localStorage.userId){
+        return
+      }
+
+      let sellState
+      if(this.post.post_state===0){
+        sellState=1
+      }else if(this.post.post_state===1){
+        sellState=-1
+      }else{
+        sellState=0
+      }
+
+      postApi.modifyState(this.post.post_id,sellState,localStorage.userId)
+      .then(res=>{
+        console.log(res)
+        this.$store.dispatch('post/isModifyFlag')
+      })
+      .catch(err=>{
+        console.log(err)
       })
     }
   }
@@ -399,7 +425,7 @@ export default {
 }
 #state-complete {
   background-color: #f9f9f9 ;
-  color: #fff;
+  color: #000;
   border-radius: 10%;
 }
 /* 게시글 바디*/

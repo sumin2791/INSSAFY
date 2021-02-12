@@ -57,10 +57,12 @@
               <v-list color="transparent">
                 <!-- 중고장터 설명 부분 -->
                 <!-- 관심 품목 부분 -->
-                <v-list-item>관심품목</v-list-item>
-                <v-col>
+                <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>관심품목 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+                <b-collapse id="item-collapse">
+                  <v-col>
                   <MarketItem />
                 </v-col>
+                </b-collapse>
               </v-list>
             </div>
           </v-col>
@@ -190,5 +192,9 @@ export default {
   margin: 0px 0 20px;
   padding: 10px;
   box-shadow: var(--basic-shadow-w);
+}
+#scrap-item{
+  text-decoration: none;
+  color:#000;
 }
 </style>

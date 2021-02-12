@@ -49,7 +49,7 @@
             </v-menu>
         
         <!-- 수정 삭제 신고 버튼과 판매상태 정보 -->
-        <div id='header-right'>
+        <div id='header-right' class="mr-3">
           <!-- 판매정보 부분 -->
           <div v-if="flagComponent.state">
             <v-chip v-if="this.post.post_state===0" id="state-sale">
@@ -63,7 +63,7 @@
             </v-chip>
           </div>
           <!-- 수정,삭제,신고 -->
-          <div>
+          <!-- <div>
             <v-menu
               bottom
               left
@@ -82,7 +82,6 @@
               
               <v-list >
                 <v-list-item-group>
-                  <!-- 신고 -->
                   <v-list-item>
                     <v-list-item-title>
                       신고
@@ -91,15 +90,18 @@
                 </v-list-item-group>
               </v-list>
             </v-menu>
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- 디테일 페이지로 들어가는 부분 -->
       <div id="content-go-detail" @click="goToDetail">
         <!-- 포스트 제목 -->
+        <div class="detail-header" v-if="flagComponent.headerLearnShare">
+          학습공유 헤더들..
+        </div>
         <div id="title">
           <!-- 중고장터용(지역) -->
-          <div v-if="flagComponent.header">
+          <div v-if="flagComponent.headerMarket">
             <v-chip 
               outlined
               pill
@@ -406,7 +408,7 @@ export default {
 }
 #state-complete {
   background-color: #f9f9f9 ;
-  color: #fff;
+  color: #000;
   border-radius: 10%;
 }
 /* 게시글 링크 정보 */
@@ -415,11 +417,15 @@ export default {
   cursor: pointer;
   min-height: 150px;
 }
+.detail-header{
+  transform: translate(10px,15px);
+}
 /* 게시글 제목 */
 #title {
   margin: 2% 0 2% 1%;
   display: flex;
   flex-direction: row;
+  align-items: center;
   font-size: 18px;
   font-weight: 600;
 }
