@@ -39,7 +39,7 @@ public class ChatServiceImpl implements ChatService {
     // 메시지 다 갖고오기
     @Override
     public List<ChatMessage> getMessage(int startNum, int endNum, String room_id) throws IOException {
-        String key = "message::" + room_id;
+        String key = "message:" + room_id;
         listOps = redisTemplate.opsForList();
         objMapper = new ObjectMapper();
         List<String> str = listOps.range(key, startNum, endNum);
@@ -54,7 +54,7 @@ public class ChatServiceImpl implements ChatService {
     // 메시지 저장
     @Override
     public void insertMessage(ChatMessage message) throws IOException {
-        String key = "message::" + message.getRoom_id();
+        String key = "message:" + message.getRoom_id();
         listOps = redisTemplate.opsForList();
         log.info("key:{}", key);
         log.info("messages:{}", message.getMsg());
@@ -69,7 +69,7 @@ public class ChatServiceImpl implements ChatService {
     public List<Map<String, Object>> getRoomList(String user_id) throws JsonMappingException, JsonProcessingException {
         listOps = redisTemplate.opsForList();
         objMapper = new ObjectMapper();
-        String key = "roomInfo::" + user_id;
+        String key = "roomInfo:" + user_id;
         Long size = (Long) listOps.size(key);
         List<String> roomListString = listOps.range(key, 0, size);
         Map<String, Object> roomMapList = new HashMap<>();
@@ -105,14 +105,14 @@ public class ChatServiceImpl implements ChatService {
         // 채팅방에 넣기
         String infoString = objMapper.writeValueAsString(roomInfo);
         log.info("info:{}", infoString);
-        listOps.leftPush("roomInfo::" + user_id, infoString);
-        listOps.leftPush("roomInfo::" + opp_id, infoString);
+        listOps.leftPush("roomInfo:" + user_id, infoString);
+        listOps.leftPush("roomInfo:" + opp_id, infoString);
         return uid;
     }
 
     @Override
     public String getRecentMessage(String room_id) throws JsonMappingException, JsonProcessingException {
-        String key = "message::" + room_id;
+        String key = "message:" + room_id;
         listOps = redisTemplate.opsForList();
         objMapper = new ObjectMapper();
         List<String> str = listOps.range(key, 0, 0);

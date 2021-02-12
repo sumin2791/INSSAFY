@@ -121,8 +121,9 @@ public class MainServiceImpl implements MainService {
         String key = "postLikeSort";
         String key2 = "postCommentSort";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
-        // postSort캐시에서 top3 뽑기
+        // 좋아요 top3
         Set<String> set = zset.reverseRange(key, 0, 2);// board_id 얻어옴
+        // 댓글수 top3
         Set<String> commentSet = zset.reverseRange(key2, 0, 2);
         List<PostDto> postLikeList = new LinkedList<>();
         List<PostDto> postCommList = new LinkedList<>();
