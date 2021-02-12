@@ -49,17 +49,18 @@ export default {
       
       let flag = {
         state:false,
-        header:false
+        headerMarket:false,
+        headerLearnShare:false,
       }
       const curationName = this.$route.name
       if(curationName==="Market"){
         flag.state = true
-        flag.header = true
+        flag.headerMarket = true
         return flag
 
       }else if(curationName==="LearnShare"){
         flag.state = false
-        flag.header = true
+        flag.headerLearnShare = true
       }
       return flag
     }
@@ -76,7 +77,7 @@ export default {
       }else{
         BOARD_ID = Number(this.$route.params.board_id)
       }
-      const EACH_LEN = 6
+      const EACH_LEN = 4
       
       postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId,page:this.page,size:EACH_LEN})
       .then((res)=>{
@@ -95,18 +96,7 @@ export default {
       })
       .catch(err=>{console.log(err)})
   },
-  create(){
-    const BOARD_ID = Number(this.$route.params.board_id)
-    postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId,page:0,size:5})
-      .then(res=>{
-        console.log(res)
-        this.posts = res.data.postList
-      })
-      .catch(err=>{
-        console.log('에러!')
-        console.log(err)
-      })
-    }
+  
   }
 }
 </script>

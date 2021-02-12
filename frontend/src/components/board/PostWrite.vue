@@ -23,6 +23,24 @@
       v-if="inBoard"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
+        <!--학습공유에서만 쓰는 헤더-->
+        <div class="form-row" v-if="flagBoard==='LearnShare'">
+          <b-form-group
+            label-for="title-input"
+            invalid-feedback="title is required"
+            :state="titleState"
+            class="col-12"
+          >
+            <b-form-input
+              id="title-input"
+              placeholder="제목"
+              v-model="title"
+              :state="titleState"
+              required
+            ></b-form-input>
+          </b-form-group>
+        </div>
+        <!-- 마켓에서만 쓰는 지역-제목 form-->
         <div class="form-row" v-if="flagBoard==='Market'">
           <b-form-group
             label-for="location-input"
@@ -32,8 +50,8 @@
           >
             <b-form-select
               id="location-input"
-              v-model="selected"
-              :options="options"
+              v-model="location.selected"
+              :options="location.options"
               :state="locationState"
               required
             >
@@ -57,7 +75,8 @@
             ></b-form-input>
           </b-form-group>
         </div>
-        <div class="form-row" v-if="flagBoard==='others'">
+        <!-- 범용적인 제목 form-->
+        <div class="form-row" v-if="flagBoard==='Others'">
           <b-form-group
             label-for="title-input"
             invalid-feedback="title is required"
@@ -161,14 +180,23 @@ export default {
       titleState: null,
       descriptionState: null,
       locationState:null,
-      selected:null,
-      options:[
-        {value:'전체',text:'전체'},
-        {value:'서울',text:'서울'},
-        {value:'대전',text:'대전'},
-        {value:'광주',text:'광주'},
-        {value:'구미',text:'구미'},
-      ]
+      
+      location:{
+        selected:null,
+        options:[
+          {value:'전체',text:'전체'},
+          {value:'서울',text:'서울'},
+          {value:'대전',text:'대전'},
+          {value:'광주',text:'광주'},
+          {value:'구미',text:'구미'},
+        ]
+      },
+      learnshare:{
+        selected:null,
+        options:[
+
+        ]
+      }
     }
   },
   props:{
@@ -179,10 +207,10 @@ export default {
       const boardName = this.$route.name
       if(boardName==="Market"){
         return "Market"
-      }else if(boardName==="learnShare"){
-        return "learnShare"
+      }else if(boardName==="LearnShare"){
+        return "LearnShare"
       }else if(boardName){
-        return "others"
+        return "Others"
       }
       return ''
     }
@@ -221,7 +249,7 @@ export default {
       this.descriptionState = null
       
       this.locationState = null
-      this.selected = null
+      this.location.selected = null
 
       this.images=[]
       this.imageUrl=''
@@ -253,8 +281,8 @@ export default {
       }
 
         // 재사용을 위해 들어오는 데이터에 따라
-        if(this.selected!=null){
-          this.header = this.selected
+        if(this.location.selected!=null){
+          this.header = this.location.selected
         }
 
 
