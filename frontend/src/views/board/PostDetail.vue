@@ -1,12 +1,19 @@
 <template>
-  <v-app class="main-bg-color">
-    <v-main class="grey lighten-3">
+  <v-app id="main-bg">
+    <v-main>
       <v-container id="container"
         class="pt-8"
       >
         <v-row dense>
           <!-- 뒤로 가기 -->
-          <router-link :to="{ name:'Board', params: {board_id:$route.params.board_id}}"><b-icon icon="chevron-compact-left" aria-hidden="true"></b-icon>Board</router-link>
+          <router-link 
+            :to="flagRouterBack"
+            id="back-btn"
+          >
+            <button id="back-btn-child">
+              돌아가기
+            </button>
+          </router-link>
             
         </v-row>        
         <v-row dense>
@@ -23,26 +30,21 @@
               color="#F9F9F9"
             >
             <!-- 입력창 부분 -->
-            <v-row dense>
-              <v-col class="col-sm-10">
+            <v-spacer></v-spacer>
+            <div id="input">
                 <v-text-field
                   solo
                   dense
                   id="comment"
-                  class="ml-3"
                   v-model="comment"
                   @keypress.enter="createComment"
                 >
                 </v-text-field>
-              </v-col>
-              <v-col class="col-sm-2">
                 <v-btn
                   @click="createComment"
-                  class="pr-0"
-                >한마디!
+                ><v-icon>mdi-send</v-icon>
                 </v-btn>
-              </v-col>
-            </v-row>
+            </div>
               <CommentList :comments="comments"/>
             </v-card>
           </v-col>
@@ -81,6 +83,28 @@ export default {
     flagModify(){
       return this.$store.state.post.flagModify
     },
+    // 여기가 재사용 핵심 중 하나 입니다. 돌아가기 버튼의 포인트를 정하는 곳이에요.
+    flagRouterBack(){
+      const name = this.$route.name
+      if(name==="MarketPost"){
+        return {
+          name: "Market"
+        }
+      }else if(name==="LearnSharePost"){
+        return {
+          name: "LearnShare"
+        }
+      }else if(name==="RecruitmentPost"){
+        return {
+          name: "Recruitment"
+        }
+      }else{
+        return {
+          name:'Board', 
+          params: {board_id: Number(this.$route.params.board_id)}
+        }
+      }
+    }
   },
   watch:{
     flagComment:'fetchData',
@@ -152,53 +176,40 @@ export default {
 </script>
 
 <style scoped>
-.board{
-  max-width: 1024px !important;
-  margin: 0 auto;
+/* 전체 메인 배경색 */
+#main-bg {
+  background-color: #ebebe9 !important;
 }
-header{
-  display:flex !important;
-  width: 100%;
-  flex-direction: column;
+/* 뒤로가기 버튼 */
+#back-btn {
+  all: unset !important;
 }
-header a{
-  font-size:2rem;
-  text-decoration: none;
-}
-section {
-  margin:0 2%;
-  width:96%;
-}
-.comment-set{
+#back-btn * {
+  text-align: center;
+  margin: 0 0 10px 3px;
+  height: 50px;
+  width: 7rem;
+  border: none;
+  border-radius: 15px;
+  color: var(--basic-color-fill);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: var(--basic-color-bg) !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  transition: 0.3s all ease;
   display: flex;
-  margin-bottom: 1rem;
+  justify-content: center;
+  align-items: center;
 }
-#comment {
-  width:90%;
-  border: 1px solid #949590 ;
-  border-radius: 1rem;
-  height: 2.5rem;
-  padding:0.1rem 1rem
+
+#back-btn *:hover,
+#back-btn *:active {
+  background-color: var(--basic-color-fill3) !important;
+  color: var(--basic-color-bg);
 }
-.btn-submit {
-  padding:0.1rem 1rem;
-  margin: 0 auto;
-  font-size:0.8em;
-  border-radius: 1rem;
-  border: solid 1px #000;
-  transition: color 0.3s, background-color 0.3s ease;
-}
-.btn-submit:hover,
-.btn-submit:active {
-  background-color: #000 !important;
-  color: #fff;
-}
-@media screen and (max-width:576px){
-  #comment{
-    width:100%;
-  }
-  .btn-submit{
-    display: none;
-  }
+/* 댓글 입력 부분 */
+#input {
+  display: flex;
+  flex-direction: row;
 }
 </style>

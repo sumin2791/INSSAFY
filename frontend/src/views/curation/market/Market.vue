@@ -46,43 +46,39 @@
           <v-col 
             class="col-12 col-sm-4" 
           >
-            <v-sheet>
-              <!-- 중고장터 설명 부분 -->
+            <div id="description" class="rounded-bg container-description">
+              <h4 class="b-desc">중고장터</h4>
+              <p class="l-desc">
+                내겐 필요없는 물건이<br />
+                누군가에겐 꼭 필요하다면?
+              </p>
+            </div>
+            <div id="description" class="rounded-bg container-description">
               <v-list color="transparent">
                 <!-- 중고장터 설명 부분 -->
-                <div
-                  class="d-flex
-                  flex-column
-                  justify-space-between"
-                >
-                  <!-- 내 정보 타이틀 -->
-                  <div class="text-h5">중고장터</div>
-                  <div class="text-start pa-1 ma-auto">
-                    내겐 필요없는 물건이<br> 누군가에겐 꼭 필요하다면?
-                  </div>
-                </div>
                 <!-- 관심 품목 부분 -->
-                <v-divider class="my-2"></v-divider>
                 <v-list-item>관심품목</v-list-item>
                 <v-col>
                   <MarketItem />
                 </v-col>
               </v-list>
-            </v-sheet>
+            </div>
           </v-col>
           <!-- 오른쪽 중고장터 본문 부분 -->
           <v-col
             class="col-12 col-sm-8"  
           >
             <!-- 중고장터 게시글 작성 -->
-            <MarketPostWrite class="mx-4 mb-2"/>
+            <!-- <MarketPostWrite class="mx-4 mb-2"/> -->
+            <PostWrite :in-board="inBoard"/>
             <!-- 중고장터 게시물 부분 -->
-            <div v-for="(post,idx) in posts" :key="idx">
+            <MarketPostList/>
+            <!-- <div v-for="(post,idx) in posts" :key="idx">
               <MarketPost class="mx-4 mb-2" :post="post"/>
-            </div>
-            <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+            </div> -->
+            <!-- <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
               <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
-            </infinite-loading>
+            </infinite-loading> -->
           </v-col>
         </v-row>
       </v-container>
@@ -94,20 +90,26 @@
 // 관심 품목 등록 리스트
 import MarketItem from "@/components/curation/market/MarketItem.vue"
 // 중고장터 게시물 작성
-import MarketPostWrite from "@/components/curation/market/MarketPostWrite.vue"
-// 중고장터 게시물
-import MarketPost from "@/components/curation/market/MarketPost.vue"
+// import MarketPostWrite from "@/components/curation/market/MarketPostWrite.vue"
+
+// 중고장터 리스트
+import MarketPostList from "@/components/board/PostList"
+//글작성
+import PostWrite from '@/components/board/PostWrite'
+
 
 import * as marketApi from '@/api/market'
-import InfiniteLoading from 'vue-infinite-loading';
+// import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   name:'Market',
   components: {
     MarketItem,
-    MarketPostWrite,
-    MarketPost,
-    InfiniteLoading
+    // MarketPostWrite,
+    MarketPostList,
+    PostWrite,
+    // MarketPost,
+    // InfiniteLoading
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -135,7 +137,8 @@ export default {
       // 검색 키워드
       searchKeyword: '',
       posts:[],
-      page:0
+      page:0,
+      inBoard:true,
     }
   },
   methods: {
@@ -144,26 +147,26 @@ export default {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
       this.ResponsiveSize.viewSize = window.innerWidth;
     },
-    infiniteHandler($state){
-      const EACH_LEN = 5
-      marketApi.getSaleList({board_id:34,login_id:localStorage.userId,page:this.page,size:EACH_LEN})
-      .then((res)=>{
-        console.log(res)
-        setTimeout(()=>{
-          if(res.data.postList){
-            this.posts = this.posts.concat(res.data.postList);
-            this.page += 1;
-            $state.loaded();
-            if(res.data.postList.length / EACH_LEN <1){
-              $state.complete();
-            }
-          }else{
-            $state.complete();
-          }
-        },1000);
-      })
-      .catch(err=>{console.log(err)})
-    },
+    // infiniteHandler($state){
+    //   const EACH_LEN = 5
+    //   marketApi.getSaleList({board_id:34,login_id:localStorage.userId,page:this.page,size:EACH_LEN})
+    //   .then((res)=>{
+    //     console.log(res)
+    //     setTimeout(()=>{
+    //       if(res.data.postList){
+    //         this.posts = this.posts.concat(res.data.postList);
+    //         this.page += 1;
+    //         $state.loaded();
+    //         if(res.data.postList.length / EACH_LEN <1){
+    //           $state.complete();
+    //         }
+    //       }else{
+    //         $state.complete();
+    //       }
+    //     },1000);
+    //   })
+    //   .catch(err=>{console.log(err)})
+    // },
   }
 }
 </script>
@@ -181,5 +184,11 @@ export default {
   margin: 2%;
   padding: 10%;
   flex-basis: 20%;
+}
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
 }
 </style>

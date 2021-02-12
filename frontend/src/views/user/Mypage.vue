@@ -6,7 +6,8 @@
           <!-- 모바일 화면 -->
           <!-- 좌측 내 정보 부분 -->
           <v-col cols="12" v-if="ResponsiveSize.isMobile">
-            <v-sheet class="custom-container">
+            <v-card color="#fcfcfc"
+              id="custom-container">
               <v-list color="transparent">
                 <!-- 내 정보 부분 -->
                 <v-list-item
@@ -103,13 +104,14 @@
                   </v-list-item>
                 </v-list-item-group>
               </v-list>
-            </v-sheet>
+            </v-card>
           </v-col>
 
           <!-- PC화면 -->
           <!-- 좌측 내 정보 부분 -->
           <v-col sm="3" v-else>
-            <v-sheet class="custom-container">
+            <v-sheet color="#fcfcfc"
+              id="custom-container">
               <v-list color="transparent">
                 <div
                   color="grey 
@@ -192,7 +194,11 @@
           </v-col>
 
           <v-col sm="9">
-            <v-sheet min-height="85vh" class="pa-2 custom-container">
+            <v-sheet min-height="85vh"
+              color="#fcfcfc"
+              id="custom-container" 
+              class="pa-2"
+            >
               <!-- 내 구독보드 -->
               <div v-if="mobileTap[0]">
                 <v-card-title
@@ -447,10 +453,10 @@ export default {
   background-color: var(--basic-color-key);
   box-shadow: 0 0 4px #000000;
 }
-.custom-container {
+#custom-container {
   box-shadow: var(--basic-shadow-s) !important;
   border-radius: 15px !important;
-  background-color: var(--basic-color-bg2);
+  background-color: var(--basic-color-bg2) !important;
 }
 .ani-hover {
   transition: transform 0.5s ease;

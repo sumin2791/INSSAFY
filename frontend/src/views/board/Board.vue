@@ -67,6 +67,7 @@ import * as boardApi from '@/api/board';
 // 스타일 적용
 import '@/assets/css/static/style.css';
 
+
 export default {
   name: 'Board',
   components: {

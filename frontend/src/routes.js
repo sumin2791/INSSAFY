@@ -97,20 +97,20 @@ export default [
 
   // Curation board
   {
-    path: '/curation/bamboo',
+    path: '/bamboo',
     name: 'BambooForest',
     component: BambooForest,
   },
   {
-    path: '/curation/learningshare',
+    path: '/learningshare',
     name: 'LearnShare',
     component: LearnShare,
   },
-  // 학습공유 테스트
   {
-    path: '/curation/learningshare/test',
-    name: 'LearnShareTest',
-    component: LearnShareTest,
+    path: '/learningshare/:post_id(\\d+)',
+    name: 'LearnSharePost',
+    component: PostDetail,
+    props: true,
   },
   {
     path: '/curation/main/study',
@@ -123,20 +123,26 @@ export default [
     component: Study,
   },
   {
-    path: '/curation/market',
+    path: '/market',
     name: 'Market',
     component: Market,
   },
   {
-    path: '/curation/market/:post_id(\\d+)',
+    path: '/market/:post_id(\\d+)',
     name: 'MarketPost',
     component: PostDetail,
     props: true,
   },
   {
-    path: '/curation/recruitment',
+    path: '/recruitment',
     name: 'Recruitment',
     component: Recruitment,
+  },
+  {
+    path: '/Recruitment/:post_id(\\d+)',
+    name: 'RecruitmentPost',
+    component: PostDetail,
+    props: true,
   },
 
   // board

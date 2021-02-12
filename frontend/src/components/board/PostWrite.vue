@@ -23,19 +23,56 @@
       v-if="inBoard"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
-        <b-form-group
-          label-for="title-input"
-          invalid-feedback="title is required"
-          :state="titleState"
-        >
-          <b-form-input
-            id="title-input"
-            placeholder="제목"
-            v-model="title"
+        <div class="form-row" v-if="flagBoard==='Market'">
+          <b-form-group
+            label-for="location-input"
+            invalid-feedback="지역을 선택해주세요"
+            :state="locationState"
+           class="col-12 col-sm-3 mb-0"
+          >
+            <b-form-select
+              id="location-input"
+              v-model="selected"
+              :options="options"
+              :state="locationState"
+              required
+            >
+              <template #first>
+                <b-form-select-option :value="null" disabled>-- 지역을 선택해주세요 --</b-form-select-option>
+              </template>
+            </b-form-select>
+          </b-form-group>
+          <b-form-group
+            label-for="title-input"
+            invalid-feedback="title is required"
             :state="titleState"
-            required
-          ></b-form-input>
-        </b-form-group>
+            class="col-sm-9 col-12"
+          >
+            <b-form-input
+              id="title-input"
+              placeholder="제목"
+              v-model="title"
+              :state="titleState"
+              required
+            ></b-form-input>
+          </b-form-group>
+        </div>
+        <div class="form-row" v-if="flagBoard==='others'">
+          <b-form-group
+            label-for="title-input"
+            invalid-feedback="title is required"
+            :state="titleState"
+            class="col-12"
+          >
+            <b-form-input
+              id="title-input"
+              placeholder="제목"
+              v-model="title"
+              :state="titleState"
+              required
+            ></b-form-input>
+          </b-form-group>
+        </div>
         <b-form-group
           label-for="description-input"
           invalid-feedback="description is required"
@@ -53,14 +90,13 @@
         </b-form-group>
         <b-form-group
           label-for="multiple-media"
-          disabled
         >
           <b-form-file 
-            disabled
             id="multiple-media"
             v-model="images"
             placeholder="Choose a file or drop it here..."
             browse-text='🖼'
+            @change="onChangeImages"
           >
           <!--card-image-->
             <template slot="file-name" slot-scope="{ names }">
@@ -71,6 +107,13 @@
             </template>
           </b-form-file>
         </b-form-group>
+        <div v-if="imageUrl" class="image-section">
+          <b-img
+              :src="imageUrl"
+              style="max-width: 10rem;"
+          ></b-img>
+          <b-icon class="deleteImg" @click="deleteImage" icon="x-circle-fill" aria-hidden="true"></b-icon>
+        </div>
       </form>
       <template #modal-footer="{ok}">
         <!-- Emulate built in modal footer ok and cancel button actions -->
@@ -111,31 +154,77 @@ export default {
     return {
       title: '',
       description:'',
+      header:'전체',
+      state:0,
       images:[],
+      imageUrl:null,
       titleState: null,
       descriptionState: null,
+      locationState:null,
+      selected:null,
+      options:[
+        {value:'전체',text:'전체'},
+        {value:'서울',text:'서울'},
+        {value:'대전',text:'대전'},
+        {value:'광주',text:'광주'},
+        {value:'구미',text:'구미'},
+      ]
     }
   },
   props:{
     inBoard:Boolean
   },
+  computed:{
+    flagBoard() {
+      const boardName = this.$route.name
+      if(boardName==="Market"){
+        return "Market"
+      }else if(boardName==="learnShare"){
+        return "learnShare"
+      }else if(boardName){
+        return "others"
+      }
+      return ''
+    }
+  },
   methods: {
+    deleteImage(){
+      this.imageUrl = null
+      this.images=[]
+    },
+    onChangeImages(e) {
+        console.log(e.target.files)
+        const file = e.target.files[0];
+        this.imageUrl = URL.createObjectURL(file);
+    },
     titleCheckFormValidity() {
-      const valid = this.$refs.form.checkValidity()
+      const valid = this.title.length >1 && this.title.length <28 ? true : false
       this.titleState = valid
       return valid
     },
     descriptionCheckFormValidity() {
-      const valid = this.$refs.form.checkValidity()
+      const valid = this.description.length > 1 && this.description.length < 1000 ? true : false
       this.descriptionState = valid
       return valid
     },
+    // locationCheckFormValidity() {
+    //   const valid = this.header!='' ? true : false
+    //   this.locationState = valid
+    //   return valid
+    // },
     resetModal() {
       this.title = ''
       this.description = ''
+      this.header = '전체'
+      this.state = 0
       this.titleState = null
       this.descriptionState = null
+      
+      this.locationState = null
+      this.selected = null
+
       this.images=[]
+      this.imageUrl=''
     },
     handleOk(bvModalEvt) {
       // Prevent modal from closing
@@ -151,13 +240,24 @@ export default {
       if (!this.descriptionCheckFormValidity()) {
         return
       }
+      // if (!this.locationCheckFormValidity()) {
+      //   return
+      // }
       // Push the name to submitted names
-      // this.submittedNames.push(this.name)
-      // Hide the modal manually
-      // const posts = this.$store.state.posts
-      const BOARD_ID = Number(this.$route.params.board_id)
-      // var fd = new FormData()
-      // fd.append('post_image', this.images)
+      const curationName = this.$route.name
+      let BOARD_ID
+      if(curationName!="Board"){
+        BOARD_ID = this.$store.state.curationId[curationName]
+      }else{
+        BOARD_ID = Number(this.$route.params.board_id)
+      }
+
+        // 재사용을 위해 들어오는 데이터에 따라
+        if(this.selected!=null){
+          this.header = this.selected
+        }
+
+
 
       const postItem ={
         user_id:String(localStorage.getItem('userId')),
@@ -166,13 +266,14 @@ export default {
         post_description:this.description,
         post_image:'',
         post_iframe:'',
-        post_header:'',
+        post_header:this.header,
         post_state:0
       }
-      console.log(postItem)
-      
+
+
       postApi.create(postItem)
         .then(res=>{
+          console.log(res)
           this.$store.dispatch('board/isWriteFlag')
         })
         .catch(err=>{
@@ -189,6 +290,14 @@ export default {
 </script>
 
 <style scoped>
+.image-section{
+  display: flex;
+  /* align-items: baseline; */
+}
+.deleteImg{
+  transform: translate(-5px,0);
+  cursor: pointer;
+}
 /* 글쓰기 (모달-진입)버튼 */
 .btn-write {
   position: sticky;
@@ -202,6 +311,7 @@ export default {
   background: #ebebe9 !important;
   box-shadow: 10px 10px 20px #bcbcba, 
               -10px -10px 20px #ffffff;
+  border-radius: 15px !important;
   transition: 0.3s all ease;
 }
 .btn-write:hover,

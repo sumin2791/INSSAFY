@@ -19,6 +19,5 @@ export default function timeForToday(value) {
   if (betweenTimeDay < 8) {
       return `${betweenTimeDay}일전`;
   }
-
-  return `${timeValue.getFullYear}-${timeValue.getMonth}-${timeValue.getDay}`;
+  return `${timeValue.getFullYear()}-${timeValue.getMonth()}-${timeValue.getDay()}`;
 }
