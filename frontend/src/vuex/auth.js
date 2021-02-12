@@ -264,15 +264,15 @@ export default {
     getGenerationColor(state) {
       switch (state.user.generation) {
         case '1':
-          return 'solid 4px #1d80dd';
+          return '#1d80dd';
         case '2':
-          return 'solid 4px #fcff55';
+          return '#fcff55';
         case '3':
-          return 'solid 4px #f1a248';
+          return '#f1a248';
         case '4':
-          return 'solid 4px #61d1be';
+          return '#61d1be';
         default:
-          return 'solid 4px #fff';
+          return '#fff';
       }
     },
     getsMyInfo(state) {

@@ -1,6 +1,6 @@
 <template>
   <div id="wrap" @click="clickProfile">
-    <div id="default-image" class="image" v-if="!getUserImage" :style="{ border: `${getGenerationColor}` }" />
+    <div id="default-image" class="image" v-if="!getUserImage" :style="{ borderColor: `${getGenerationColor}` }" />
     <div class="image" v-if="getUserImage" :style="{ backgroundImage: `url(${getUserImage})`, border: `${getGenerationColor}` }" />
   </div>
 </template>
@@ -32,6 +32,13 @@ export default {
 }
 #default-image {
   background-image: url('../../assets/images/default_profile.jpg');
+  border-style: solid;
+  border-width: 3px;
+  transition: border 0.5s ease;
+}
+#default-image:hover,
+#default-image:active {
+  border-width: 6px !important;
 }
 .image {
   width: 100%;
