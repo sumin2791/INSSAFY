@@ -8,7 +8,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
-import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.service.S3Service;
 import com.ssafy.pjt1.model.service.main.MainService;
 
@@ -180,7 +179,7 @@ public class MainController {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        
+
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 }

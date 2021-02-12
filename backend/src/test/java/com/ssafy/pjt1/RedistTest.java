@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -37,27 +39,17 @@ public class RedistTest {
 
     @Test
     public void zSetTest() {
-        String key = "test";
+        String key = "addFunc:";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
-        zset.add(key, "a", 1);
-        zset.add(key, "b", 2);
-        zset.add(key, "c", 3);
-        // zset.add(key, "d", 4);
-        // zset.add(key, "e", 5);
-        zset.incrementScore(key, "b", 2);
-        logger.info("msg: {}", zset.range(key, 0, 2));
-    }
-
-    @Test
-    public void repository() {
-        String key = "test";
-        // CommentNumDto dto = new CommentNumDto("abc", "1");
-        // repo.save(dto);
-        // CommentNumDto dtos = repo.findById("abc").orElse(null);
-        // ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
-        // zset.add(key, "abc", Integer.valueOf(dtos.getNum()));
-        // // logger.info("객체: {}", dtos.getNum());
-        // logger.info("객체: {}", zset.reverseRange(key, 0, 0));
+        zset.add(key + "userRan:" + "study", "park", 1);
+        zset.add(key + "userRan:" + "study", "moon", 2);
+        zset.add(key + "userRan:" + "study", "kim", 3);
+        zset.add(key + "userRan:" + "game", "b", 2);
+        zset.add(key + "userRan:" + "movie", "c", 3);
+        // zset.incrementScore(key, "b", 2);
+        // logger.info("msg: {}", zset.range(key, 0, 2));
+        // log.info(">>>>>>>>zset: {}", Math.round(zset.score(key, "b")));
+        log.info(">>>user Rank:{}", zset.reverseRange(key + "userRan:study", 0, 1));
     }
 
     @Test
@@ -106,5 +98,28 @@ public class RedistTest {
         String room_id = "14c51daf-ea99-4b63-9e6a-102e21303ff2";
         // String str = chatService.getRecentMessage(room_id);
         // log.info("값:{}", str);
+    }
+
+    @Test
+    public void sendPush() {
+        ListOperations<String, String> listOps = redisTemplate.opsForList();
+        String key = "push:" + "moon:" + "opp";
+
+        // listOps.leftPush("push:" + "moon:" + "opp", "true");
+        // listOps.leftPush("push:" + "moon:" + "aaa", "true");
+        // listOps.leftPush("push:" + "moon:" + "bbb", "true");
+
+        Set<String> set = redisTemplate.keys("push:moon*");
+        for (String k : set) {
+            log.info("msg:{}", k);
+        }
+        // RedisOperations<String, String> redis = listOps.getOperations();
+        // redis.keys("push:moon");
+
+    }
+
+    @Test
+    public void addFunc() {
+
     }
 }

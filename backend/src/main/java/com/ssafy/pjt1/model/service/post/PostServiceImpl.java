@@ -6,6 +6,7 @@ import java.util.Map;
 import com.ssafy.pjt1.model.dto.comment.CommentDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.mapper.PostMapper;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service;
 public class PostServiceImpl implements PostService {
 
 	@Autowired
+	private RedisService redisService;
+
+	@Autowired
 	private SqlSession sqlSession;
 
 	public static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
@@ -24,6 +28,8 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void createPost(PostDto postDto) {
 		sqlSession.getMapper(PostMapper.class).createPost(postDto);
+		///////////////////////////////////////////////// post등록시 redisDto에 저장
+		redisService.boardPostSortSet(String.valueOf(postDto.getBoard_id()));
 	}
 
 	@Override
@@ -35,7 +41,7 @@ public class PostServiceImpl implements PostService {
 	public int postModify(PostDto postDto) {
 		return sqlSession.getMapper(PostMapper.class).postModify(postDto);
 	}
-	
+
 	@Override
 	public int stateModify(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).stateModify(map);
@@ -43,6 +49,8 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public int postDelete(int post_id) {
+		// boardPostDto의 redis 안에 value값 1감소
+		redisService.boardPostSortSetDecrease(post_id);
 		return sqlSession.getMapper(PostMapper.class).postDelete(post_id);
 	}
 
@@ -95,6 +103,8 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void plusCount(int post_id) {
 		sqlSession.getMapper(PostMapper.class).plusCount(post_id);
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 저장
+		redisService.PostLikeSortSet(post_id);
 	}
 
 	@Override
@@ -105,6 +115,8 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void minusCount(int post_id) {
 		sqlSession.getMapper(PostMapper.class).minusCount(post_id);
+		//// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 싫어요 1 감소
+		redisService.postLikeDecrease(post_id);
 	}
 
 	@Override
@@ -179,7 +191,9 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public int isWriter(Map<String, Object> map) {
-		return sqlSession.getMapper(PostMapper.class).isWriter(map);
+		int res = sqlSession.getMapper(PostMapper.class).isWriter(map);
+
+		return res;
 	}
 
 	@Override
