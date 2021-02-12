@@ -84,9 +84,13 @@ export default {
       localStorage.subBoard = JSON.stringify(responseSubBoard.data.boards);
       state.subBoard = INIT_SUB_BOARD();
     },
-    //구독목록 새로고침,
+    //구독목록 새로고침, local -> vuex
     setSubBoardRefresh(state) {
       state.subBoard = INIT_SUB_BOARD();
+    },
+    //구독목록 새로 고침, vuex -> local
+    setSubBoardRefresh2(state) {
+      localStorage.subBoard = JSON.stringify(state.subBoard);
     },
 
     updateUser(state, payload) {
@@ -148,7 +152,6 @@ export default {
         // 구독 보드 리스트도 가져오기
         const responseSubBoard = await userApi.getSubBoard(this.state.auth.user.userId);
         // console.log('구독보드리스트 결과:');
-        // console.log(responseSubBoard);
         context.commit('SET_SUBSCRIBE_BOARD', responseSubBoard);
         return responseSubBoard;
       } catch (e) {
@@ -177,7 +180,7 @@ export default {
     async putMyinfo({ commit }, member) {
       try {
         const response = await userApi.putMyInfo(member);
-        console.log(response);
+        // console.log(response);
         if (response.data.message == 'SUCCESS') {
           commit('updateUser', member);
           return true;
@@ -239,18 +242,15 @@ export default {
     getSubBoardFavoriteList: (state) => {
       return state.subBoard.filter((board) => board.favorite_flag == 1);
     },
-    // getSubBoardIndex: (state) => (id) => {
-    //   let index = 0;
-    //   state.subBoard.forEach((board) => {
-    //     if (board.baord_id == id) {
-    //       return this.index;
-    //     } else {
-    //       index++;
-    //     }
-    //     return -1;
-    //   });
-    //   return index;
-    // },
+    //구독목록 리스트 내 board_id와 매개변수가 일치하면 true
+    getSubscribed: (state) => (board_id) => {
+      const found = state.subBoard.find((board) => board.board_id == board_id);
+      if (found != null) {
+        return true;
+      } else {
+        return false;
+      }
+    },
 
     //이미지 null이면 기본 링크 반환
     getUserImage(state) {
@@ -264,15 +264,15 @@ export default {
     getGenerationColor(state) {
       switch (state.user.generation) {
         case '1':
-          return 'solid 4px #1d80dd';
+          return '#1d80dd';
         case '2':
-          return 'solid 4px #fcff55';
+          return '#fcff55';
         case '3':
-          return 'solid 4px #f1a248';
+          return '#f1a248';
         case '4':
-          return 'solid 4px #61d1be';
+          return '#61d1be';
         default:
-          return 'solid 4px #fff';
+          return '#fff';
       }
     },
     getsMyInfo(state) {

@@ -216,7 +216,7 @@ public class PostController {
      * 
      * @return : message
      */
-    @DeleteMapping("/delete/{post_id}")
+    @DeleteMapping("/delete/{post_id}/{login_id}")
     public ResponseEntity<Map<String, Object>> postDelete(@PathVariable("post_id") int post_id,
             @PathVariable("login_id") String login_id) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -227,9 +227,9 @@ public class PostController {
             map.put("post_id", post_id);
             map.put("login_id", login_id);
             if (postService.isWriter(map) != 0) {
-                if (postService.postDelete(post_id) == 1) {
-                    // boardPostDto의 redis 안에 value값 1감소
-                    redisService.boardPostSortSetDecrease(post_id);
+                // boardPostDto의 redis 안에 value값 1감소
+                redisService.boardPostSortSetDecrease(post_id);
+                if (postService.postDelete(post_id) >= 1) {
                     // postService.deleteScrapAll(post_id);
                     // postService.deleteLikeAll(post_id);
                     // postService.deleteCommentAll(post_id);

@@ -413,8 +413,11 @@ public class BoardController {
             BoardDto boardDto = boardService.detailBoard(board_id);
             if (boardDto != null) {
                 int board_count = boardService.getBoardCount(board_id);
+                Map<String, Object> map = new HashMap<>();
+                map = boardService.boardFunc(board_id);
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
+                resultMap.put("board_function", map);
                 resultMap.put("message", SUCCESS);
             } else {
                 resultMap.put("message", "NULL");
@@ -426,4 +429,48 @@ public class BoardController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
+
+    /*
+     * 기능: 추가 기능 수정
+     * 
+     * developer: 윤수민
+     * 
+     * @param : board_id, function, login_id, option( 0: 삭제, 1: 추가)
+     * 
+     * @return : message
+     */
+    @PutMapping("/modifyFunction")
+    public ResponseEntity<Map<String, Object>> modifyFunction(@RequestParam(value = "board_id") int board_id,
+    @RequestParam(value = "function") String function, @RequestParam(value = "login_id") String login_id,
+    @RequestParam(value = "option") int option) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("/board/modifyFunction 호출 성공");
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id", board_id);
+            map.put("login_id", login_id);
+            if (boardService.isManager(map) != 0) {
+                Map<String, Object> map2 = new HashMap<>();
+                map2.put("board_id", board_id);
+                map2.put("option", option);
+                if(function.equals("checklist")){
+                    boardService.addChecklist(map2);
+                }else if(function.equals("calendar")){
+                    boardService.addCalendar(map2);
+                }else if(function.equals("vote")){
+                    boardService.addVote(map2);
+                }
+                resultMap.put("message", SUCCESS);
+            } else {
+                resultMap.put("message", PERMISSION);
+            }
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("수정 실패", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
 }

@@ -2,12 +2,13 @@
   <v-card
     id="post-box"
     class="mx-2
-      my-4
+      mt-4
+      mb-2
       pb-0
       d-flex
       flex-column"
     color="F9F9F9"
-    @click="moveToBoard"
+    @click="moveToPost"
   >
     <div
       class="img-wrap
@@ -25,7 +26,7 @@
           </v-btn>
         </div>
         <div class="board-title">
-          {{ `보드 이름, 보드 이미지가 필요` }}
+          {{ post.board_name }}
         </div>
       </div>
       <GradientGenerator class="myinfo-list" style="height: 100px" v-if="board_image == null" :radius="radius" />
@@ -44,8 +45,9 @@
         cols="3"
         id="post-date"
         class="text-overline 
+          pl-0
           text-end"
-        >{{ post.post_date | moment('YY.MM.DD') }}</v-col
+        >{{ post.post_date | moment('YY.MM.DD.') }}</v-col
       >
     </v-card-title>
 
@@ -59,22 +61,22 @@
     </v-card-text>
     <v-card-actions>
       <v-list-item class="grow">
-        <v-list-item-content>
+        <!-- <v-list-item-content>
           <v-list-item-title>
             <v-icon>
               mdi-account-group
             </v-icon>
             {{ `?` }}
           </v-list-item-title>
-        </v-list-item-content>
+        </v-list-item-content> -->
 
         <!-- 포스트 좋아요/댓글 수 -->
         <v-row align="center" justify="end">
           <span style="float:right;">
             <v-icon small> mdi-thumb-up </v-icon>
             {{ post.post_like }}
-            <v-icon small> mdi-comment-processing </v-icon>
-            {{ `?` }}
+            <!-- <v-icon small> mdi-comment-processing </v-icon>
+            {{ `?` }} -->
           </span>
         </v-row>
       </v-list-item>
@@ -114,9 +116,9 @@ export default {
         queue: true,
       });
     },
-    // 해당 보드로 이동(상세 주소 넘겨주기)
-    moveToBoard() {
-      this.$router.push({ name: 'Board' });
+    // 해당 post로 이동(상세 주소 넘겨주기)
+    moveToPost() {
+      this.$router.push(`/board/${this.post.board_id}/post/${this.post.post_id}`);
     },
   },
 };
@@ -167,6 +169,11 @@ export default {
   text-overflow: ellipsis;
   word-break: break-all;
   white-space: nowrap;
+}
+@media (max-width: 426px) {
+  #post-date {
+    font-size: 10px !important;
+  }
 }
 /* 댓글 내용 넘치는 부분 처리 */
 #post-contents {

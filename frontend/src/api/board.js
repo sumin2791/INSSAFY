@@ -1,7 +1,7 @@
 import http from './http';
 
-export function board_create(board){
-  return http.post('/board/create',board)
+export function board_create(board) {
+  return http.post('/board/create', board);
 }
 
 export function get_boards(params){
@@ -17,16 +17,16 @@ export function get_boards(params){
   })
 }
 
-export function board_detail(board_id){
+export function board_detail(board_id) {
   return http.get('/board/detail', {
-    params:{
-      board_id:board_id
-    }
-  })
+    params: {
+      board_id: board_id,
+    },
+  });
 }
 
-export function subscribe(params) {
-  return http.post('/board/subscribe',params)
+export function subscribe(payload) {
+  return http.post('/board/subscribe', payload);
 }
 
 export function board_modify(body,login_id) {
