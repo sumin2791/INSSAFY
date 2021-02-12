@@ -65,4 +65,10 @@
 		order by i.vote_item_id;
 	</select>
 
+	<select id="getBoardVote" parameterType="int" resultType="int">
+		select vote_id
+		from vote
+		where board_id = #{board_id} and is_used = 1;
+	</select>
+
 </mapper>
