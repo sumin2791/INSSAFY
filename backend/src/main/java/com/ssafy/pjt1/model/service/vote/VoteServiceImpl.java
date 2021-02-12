@@ -68,6 +68,11 @@ public class VoteServiceImpl implements VoteService {
         sqlSession.getMapper(VoteMapper.class).voteDeleteAll(vote_id);
     }
 
+    @Override
+    public List<Integer> getBoardVote(int board_id) {
+        return sqlSession.getMapper(VoteMapper.class).getBoardVote(board_id);
+    }
+
 
 }
 
