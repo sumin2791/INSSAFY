@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.chat.ChatMessage;
 import com.ssafy.pjt1.model.service.chat.ChatService;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -18,9 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,19 +38,22 @@ public class RedistTest {
     @Autowired
     private ChatService chatService;
 
+    @Autowired
+    private RedisService redisService;
+
     @Test
     public void zSetTest() {
         String key = "addFunc:";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
-        zset.add(key + "userRan:" + "study", "park", 1);
-        zset.add(key + "userRan:" + "study", "moon", 2);
-        zset.add(key + "userRan:" + "study", "kim", 3);
-        zset.add(key + "userRan:" + "game", "b", 2);
-        zset.add(key + "userRan:" + "movie", "c", 3);
+        // zset.add(key + "userRan:" + "study", "park", 1);
+        // zset.add(key + "userRan:" + "study", "moon", 2);
+        // zset.add(key + "userRan:" + "study", "kim", 3);
+        // zset.add(key + "userRan:" + "game", "b", 8);
+        // zset.add(key + "userRan:" + "movie", "c", 10);
         // zset.incrementScore(key, "b", 2);
         // logger.info("msg: {}", zset.range(key, 0, 2));
         // log.info(">>>>>>>>zset: {}", Math.round(zset.score(key, "b")));
-        log.info(">>>user Rank:{}", zset.reverseRange(key + "userRan:study", 0, 1));
+        log.info(">>>user Rank:{}", zset.reverseRange(key + "userRan*:*", 0, 1));
     }
 
     @Test
@@ -88,19 +92,6 @@ public class RedistTest {
     }
 
     @Test
-    public void getMessage() throws IOException {
-        String room_id = "c1287b25-e9b3-4e55-9d56-b6c3c6c3072e";
-        List<ChatMessage> list = chatService.getMessage(0, 3, room_id);
-    }
-
-    @Test
-    public void getRecent() {
-        String room_id = "14c51daf-ea99-4b63-9e6a-102e21303ff2";
-        // String str = chatService.getRecentMessage(room_id);
-        // log.info("값:{}", str);
-    }
-
-    @Test
     public void sendPush() {
         ListOperations<String, String> listOps = redisTemplate.opsForList();
         String key = "push:" + "moon:" + "opp";
@@ -120,6 +111,8 @@ public class RedistTest {
 
     @Test
     public void addFunc() {
-
+        // redisService.increaseUserRank(59, 71);
+        ValueOperations valOps = redisTemplate.opsForValue();
+        valOps.append("add:id:value", "hello");
     }
 }

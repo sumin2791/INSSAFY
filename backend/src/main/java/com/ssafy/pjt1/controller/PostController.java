@@ -328,17 +328,17 @@ public class PostController {
                 if (count == 0) {
                     logger.info("좋아요 클릭");
                     postService.like(map2);
-                    postService.plusCount(post_id);
+                    postService.plusCount(post_id, board_id);
                 } else {
                     int count2 = postService.isUnLiked(map2);
                     if (count2 == 0) {
                         // 전에 좋아요한 이력이 있지만 현재는 아닌 경우
                         postService.updateLike(map2);
-                        postService.plusCount(post_id);
+                        postService.plusCount(post_id, board_id);
                     } else {
                         logger.info("좋아요 삭제");
                         postService.unlike(map2);
-                        postService.minusCount(post_id);
+                        postService.minusCount(post_id, board_id);
 
                     }
                 }

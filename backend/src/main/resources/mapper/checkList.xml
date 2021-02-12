@@ -15,7 +15,7 @@
 
     <update id="updateCheckLsit" parameterType="CheckListItemDto">
         update check_list_item set check_list_item_done=#{check_list_item_done}, check_list_item_description=#{check_list_item_description}
-        where check_list_item_id = #{check_list_item_id} and is_used = 0;
+        where check_list_item_id = #{check_list_item_id} and is_used = 1;
     </update>
 
     <update id="deleteCheckList" parameterType="String">

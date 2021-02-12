@@ -101,10 +101,12 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void plusCount(int post_id) {
+	public void plusCount(int post_id, int board_id) {
 		sqlSession.getMapper(PostMapper.class).plusCount(post_id);
 		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 저장
 		redisService.PostLikeSortSet(post_id);
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 추가기능 유저랭킹
+		redisService.increaseUserRank(post_id, board_id);
 	}
 
 	@Override
@@ -113,10 +115,12 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void minusCount(int post_id) {
+	public void minusCount(int post_id, int board_id) {
 		sqlSession.getMapper(PostMapper.class).minusCount(post_id);
 		//// >>>>>>>>>>>>>>>>>>>>>>>>>>>redis chache서버에 싫어요 1 감소
 		redisService.postLikeDecrease(post_id);
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>> 추가기능 유저랭킹 감소
+		redisService.decreaseUserRank(post_id, board_id);
 	}
 
 	@Override

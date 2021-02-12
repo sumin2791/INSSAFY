@@ -1,6 +1,16 @@
 package com.ssafy.pjt1.model.service.redis;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.post.PostDto;
+import com.ssafy.pjt1.model.dto.user.UserDto;
+import com.ssafy.pjt1.model.service.UserService;
 import com.ssafy.pjt1.model.service.comment.CommentService;
 import com.ssafy.pjt1.model.service.post.PostService;
 
@@ -8,9 +18,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class RedisService {
     private static final Logger logger = LoggerFactory.getLogger(RedisService.class);
@@ -22,6 +37,10 @@ public class RedisService {
 
     @Autowired
     private CommentService commentService;
+
+    private ZSetOperations zset;
+
+    private UserService userService;
 
     /*
      * 기능: 회원삭제시 관련된 보드 삭제
@@ -142,5 +161,68 @@ public class RedisService {
         // logger.info(">>>>>>>>>>>>>>>>post_id:{}", post_id);
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         zset.incrementScore(sortkey, post_id, -1);
+    }
+
+    public void increaseUserRank(int post_id, int board_id) {
+        zset = redisTemplate.opsForZSet();
+        String boardId = String.valueOf(board_id);
+        String key = "func:" + "userRank:" + boardId;
+        PostDto post = postService.getPostById(post_id);
+        zset.incrementScore(key, post.getUser_id(), 1);
+    }
+
+    // 싫어요 눌러서 유저랭킹 감소
+    public void decreaseUserRank(int post_id, int board_id) {
+        zset = redisTemplate.opsForZSet();
+        String boardId = String.valueOf(board_id);
+        String key = "func:" + "userRank:" + boardId;
+        PostDto post = postService.getPostById(post_id);
+        zset.incrementScore(key, post.getUser_id(), -1);
+    }
+
+    // 1분마다 랭킹 update - 유저랭킹, 게시물 랭킹
+    @Scheduled(fixedDelay = 60000)
+    public void updateAddFuncRank() throws JsonProcessingException {
+        log.info("추가 기능 Redis update(1분)");
+        zset = redisTemplate.opsForZSet();
+        ValueOperations valOps = redisTemplate.opsForValue();
+        Set<String> keys = redisTemplate.keys("func:userRank:*");
+        valOps = redisTemplate.opsForValue();
+        ObjectMapper mapper = new ObjectMapper();
+        // 게시판 마다 돌리기
+        for (String key : keys) {
+            // top3 user갖고 오기
+
+            Long size = zset.size(key);
+
+            List<Map<String, String>> list = new ArrayList<>();
+            if (size >= 2) {
+                size = Long.valueOf(2);
+            } else {
+                for (int i = 0; i < 3; i++) {
+                    Map<String, String> noCont = new HashMap<>();
+                    noCont.put("nickName", "null");
+                    noCont.put("score", "null");
+                    list.add(noCont);
+                }
+                String noContent = mapper.writeValueAsString(list);
+                valOps.append("sortSet:" + key, noContent);
+                continue;
+            }
+            // 적어도 보드에 3명 이상 글을 써야함
+            Set<String> top3Id = zset.reverseRange(key, 0, size);
+            // 아이디로 객체 갖고오기
+            if (top3Id != null) {
+                for (String id : top3Id) {
+                    UserDto dto = userService.userDtoById(id);
+                    Map<String, String> userMap = new HashMap<>();
+                    userMap.put("nickName", dto.getUser_nickname());
+                    userMap.put("score", Math.round(zset.score(key, id)) + "");
+                    list.add(userMap);
+                }
+                String listString = mapper.writeValueAsString(list);
+                valOps.append("sortSet:" + key, listString);
+            }
+        }
     }
 }
