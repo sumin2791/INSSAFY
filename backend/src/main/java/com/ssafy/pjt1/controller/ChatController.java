@@ -165,7 +165,9 @@ public class ChatController {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
+        // 상대에게 알림 보내기
+        // simpleMessageTemplate.convertAndSend("/topic/notice/" + opp_id, message);
+        // 상대에게 메세지 보내기
         simpleMessageTemplate.convertAndSend("/topic/" + roomId + "/" + opp_id, message);
     }
-
 }
