@@ -56,7 +56,7 @@ public class StudyController {
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("post/getPostList 호출성공");
         try {
-            int totalCnt = postService.getTotalPostCnt(37);
+            int totalCnt = postService.getTotalPostCnt(77);
             if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
             else if(totalCnt>page*size) resultMap.put("isLastPage","true");
             else resultMap.put("isLastPage","No data");

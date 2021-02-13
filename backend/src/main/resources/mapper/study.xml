@@ -19,7 +19,7 @@
 			  where is_used = 1
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
-		where p.board_id = 37 and p.is_used = 1
+		where p.board_id = 77 and p.is_used = 1
 		order by p.post_date desc
 		limit #{start}, #{size};
 	</select>
