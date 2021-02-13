@@ -137,6 +137,7 @@ public class MainServiceImpl implements MainService {
             PostDto postDto = postService.getPostById(Integer.valueOf(post_id));
             postmap.put("post_id", String.valueOf(postDto.getPost_id()));
             postmap.put("post_title", postDto.getPost_title());
+            postmap.put("board_id", String.valueOf(postDto.getBoard_id()));
             postmap.put("comment_count", String.valueOf(Math.round(zset.score("postCommentSort", post_id))));
             postCommList.add(postmap);
         }
