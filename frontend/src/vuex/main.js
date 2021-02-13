@@ -167,7 +167,7 @@ export default {
         // console.log(res);
         const boards = makeBoard(res.data);
         context.commit('setFollowRank', boards);
-        console.log(context);
+        // console.log(context);
         //하트 버튼 세팅
         let payload = {};
         boards.forEach((el) => {

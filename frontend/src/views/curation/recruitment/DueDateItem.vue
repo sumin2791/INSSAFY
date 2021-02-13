@@ -1,40 +1,111 @@
 <template>
-  <div class="container-box-item">
-    <!-- 채용일정 제목 -->
-    <div class="post-info">
-    SSAFY 실습코치(FE)(제목)
-    </div>
+  <div id="container-box-item">
     <!-- D-day, 마감일시 -->
-    <div class="date-info">
-      <button>D-20</button>
-      <div>21.02.27</div>
+    <div id="date-info" :class="{ impend: dday > -10 }">
+      <span id="i-span" class="b-desc-e">D{{ dday }}</span>
+    </div>
+    <!-- 채용일정 제목 -->
+    <div id="post-info">
+      <p id="i-title" class="m-desc">SSAFY 실습코치(FE)(제목)</p>
+      <p id="i-date" class="l-desc">{{ date | moment('YY.MM.DD.') }}</p>
     </div>
   </div>
 </template>
 
 <script>
+import moment from 'moment';
 export default {
-  name: "DueDateItem",
-}
+  name: 'DueDateItem',
+  data() {
+    return {
+      date: '2021-02-18',
+      dday: '',
+    };
+  },
+  created() {
+    //d-day 구하기
+    let today = moment();
+    let target = moment(this.date, 'YYYY-MM-DD HH:mm');
+    this.dday = Math.floor(moment.duration(today.diff(target)).asDays());
+  },
+};
 </script>
 
 <style scoped>
-.container-box-item {
+#container-box-item {
+  padding: 8px;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  border: 1px solid;
+  align-items: stretch;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: var(--basic-shadow-c);
 }
-.container-box-item .post-info {
-  display: flex;
-  border: 1px dotted;
-  flex-basis: 60%;
-}
-.container-box-item .date-info {
+
+#post-info {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border: 1px dotted;
+  margin: 0 10px 0;
+  flex-basis: 100%;
+}
+#i-title {
+  padding: 0;
+  width: 100%;
+  margin: 0;
+  font-size: 20px;
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+#i-date {
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+}
+#date-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 0px;
+  padding: 10px;
+  font-size: 20px;
+  color: #fff;
+  border-radius: 10px;
+  background-color: #949590;
+  box-shadow: 0 0 1px rgb(148, 149, 144, 0.6), 0 0 2px rgba(148, 149, 144, 0.747), 0 0 4px rgba(148, 149, 144, 0.548),
+    0 0 12px rgba(148, 149, 144, 0.541);
+  transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+}
+.impend {
+  background-color: rgb(255, 43, 43) !important;
+  box-shadow: 0 0 1px rgba(255, 107, 107, 0.644), 0 0 2px rgba(255, 107, 107, 0.747), 0 0 4px rgba(255, 84, 84, 0.548),
+    0 0 12px rgba(255, 42, 42, 0.541) !important;
+}
+#i-span {
+  font-size: 18px;
+  opacity: 0;
+  display: inline-block;
+  visibility: hidden;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+#container-box-item:hover #date-info {
+  width: 100px;
+}
+#container-box-item:hover #i-span {
+  visibility: visible;
+  opacity: 1;
+}
+@media (hover: none) {
+  #date-info {
+    width: 100px;
+  }
+  #i-span {
+    visibility: visible;
+    opacity: 1;
+  }
 }
 </style>

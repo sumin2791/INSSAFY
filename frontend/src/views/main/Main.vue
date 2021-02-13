@@ -20,11 +20,11 @@
     <div id="curation-container">
       <p id="c-title" class="b-title">Curation</p>
       <div id="c-list" class="l-desc">
-        <button class="c-btn real-shadow-box" @click="clickCBtn1">스터디</button>
-        <button class="c-btn real-shadow-box" @click="clickCBtn2">학습공유</button>
-        <button class="c-btn real-shadow-box" @click="clickCBtn3">채용일정</button>
-        <button class="c-btn real-shadow-box" @click="clickCBtn4">중고장터</button>
-        <button class="c-btn real-shadow-box" @click="clickCBtn5">대나무숲</button>
+        <button class="c-btn newmorphism" @click="clickCBtn1">스터디</button>
+        <button class="c-btn newmorphism" @click="clickCBtn2">학습공유</button>
+        <button class="c-btn newmorphism" @click="clickCBtn3">채용일정</button>
+        <button class="c-btn newmorphism" @click="clickCBtn4">중고장터</button>
+        <button class="c-btn newmorphism" @click="clickCBtn5">대나무숲</button>
       </div>
     </div>
     <div id="popular-container" class="m-top">
@@ -153,6 +153,7 @@ export default {
   mounted() {
     this.actNewBoards().then((result) => {
       const boards = result;
+      console.log(boards);
       for (let i = 0; i < boards.length; i++) {
         if (!this.$store.getters['auth/getSubscribed'](boards[i].board_id)) {
           //suggest에 사용할 보드 추가
@@ -335,17 +336,14 @@ p {
   width: 100px;
   height: 50px;
   font-weight: 700;
-  color: var(--basic-color-fill3);
-  text-shadow: 0 0px 1px var(--basic-color-fill3);
   margin-left: 15px;
   border: none;
   border-radius: 30px;
-  background: #ebebe9;
-  box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff;
-  transition: 0.3s all ease;
+  transition: all 0.6s ease !important;
 }
 .c-btn:hover,
-c-btn:active {
+.c-btn:active {
+  background: #ebebe9;
   background: linear-gradient(145deg, #d4d4d2, #fbfbf9);
   box-shadow: 10px 10px 20px #b3b3b1, -10px -10px 20px #ffffff;
 }

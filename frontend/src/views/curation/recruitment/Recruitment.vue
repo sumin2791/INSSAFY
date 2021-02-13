@@ -16,9 +16,9 @@
       </div>
       <!-- 임박한 채용보기 -->
       <div id="due-date" class="rounded-bg container">
-        임박한 채용일정 보여줄 리스트
-        <DueDateItem />
-        <DueDateItem />
+        <p class="b-desc">임박한 채용일정</p>
+        <DueDateItem class="date-item" />
+        <DueDateItem class="date-item" />
       </div>
     </div>
     <div id="center-post">
@@ -33,10 +33,14 @@
       <div class="create-post">
         <button>게시글 작성 버튼</button>
       </div>
-      <!-- 각각의 게시글 들어갈 부분 -->
-      <!-- <Post class="post-list" /> -->
+      <!-- 각각의 게시글 들어갈 부분
+      <Post class="post-list" />
+      <Post class="post-list" />
+      <Post class="post-list" />
+      <Post class="post-list" />
+      <Post class="post-list" /> -->
     </div>
-    <CalendarDialog />
+    <CalendarDialog :type="'채용일정'" />
   </div>
 </template>
 <script>
@@ -44,7 +48,6 @@
 // import Post from '@/components/board/Post.vue';
 import DueDateItem from '@/views/curation/recruitment/DueDateItem.vue';
 import CalendarSpan from '@/components/etc/CalendarSpan';
-import CalendarDialog from '@/components/etc/CalendarDialog';
 
 export default {
   name: 'Recruitment',
@@ -52,7 +55,7 @@ export default {
     // Post,
     DueDateItem,
     CalendarSpan,
-    CalendarDialog,
+    CalendarDialog: () => import('@/components/etc/CalendarDialog'),
   },
   methods: {
     click: function() {
@@ -104,6 +107,9 @@ export default {
 /* 스터디 보드 설명 */
 #description {
 }
+.date-item {
+  margin: 10px 0 0;
+}
 
 /* 오른쪽 */
 #center-post {
@@ -119,8 +125,8 @@ export default {
   margin-top: 116px;
   overflow: hidden;
   width: 100%;
-  height: 500px;
-  min-height: 400px;
+  height: 650px;
+  min-height: 650px;
   box-shadow: var(--basic-shadow-w);
 }
 /* 검색창 */
