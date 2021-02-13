@@ -53,7 +53,8 @@ public class BoardController {
      * developer: 윤수민
      * 
      * @param : user_id, board_name, board_description, board_location,
-     * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag, board_state
+     * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag,
+     * board_state
      * 
      * @return : message, board_id
      */
@@ -85,6 +86,7 @@ public class BoardController {
             map2.put("checklist_flag", (int) param.get("checklist_flag"));
             map2.put("calendar_flag", (int) param.get("calendar_flag"));
             map2.put("vote_flag", (int) param.get("vote_flag"));
+            // map2.put("user_rank_flag", (int) param.get("user_rank_flag"));
             boardService.addFunction(map2);
 
             resultMap.put("board_id", boardDto.getBoard_id());
@@ -259,19 +261,22 @@ public class BoardController {
      */
     @GetMapping("/getBoards")
     public ResponseEntity<Map<String, Object>> getBoards(@RequestParam(value = "sort") String sort,
-    @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/getBoards 호출 성공");
 
         try {
             int totalCnt = boardService.getTotalCnt();
-            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
-            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
-            else resultMap.put("isLastPage","No data");
+            if (totalCnt > (page + 1) * size)
+                resultMap.put("isLastPage", "false");
+            else if (totalCnt > page * size)
+                resultMap.put("isLastPage", "true");
+            else
+                resultMap.put("isLastPage", "No data");
 
             Map<String, Object> map = new HashMap<>();
-            map.put("start", page*size);
+            map.put("start", page * size);
             map.put("size", size);
             List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
@@ -302,20 +307,23 @@ public class BoardController {
      */
     @GetMapping("/searchBoard")
     public ResponseEntity<Map<String, Object>> searchBoard(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword,
-            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/searchBoard 호출 성공");
         try {
             int totalCnt = boardService.getSearchCnt(keyword);
-            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
-            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
-            else resultMap.put("isLastPage","No data");
-            logger.info("!!!!!cnt: "+totalCnt);
+            if (totalCnt > (page + 1) * size)
+                resultMap.put("isLastPage", "false");
+            else if (totalCnt > page * size)
+                resultMap.put("isLastPage", "true");
+            else
+                resultMap.put("isLastPage", "No data");
+            logger.info("!!!!!cnt: " + totalCnt);
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
-            map.put("start", page*size);
+            map.put("start", page * size);
             map.put("size", size);
             List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
@@ -441,8 +449,8 @@ public class BoardController {
      */
     @PutMapping("/modifyFunction")
     public ResponseEntity<Map<String, Object>> modifyFunction(@RequestParam(value = "board_id") int board_id,
-    @RequestParam(value = "function") String function, @RequestParam(value = "login_id") String login_id,
-    @RequestParam(value = "option") int option) {
+            @RequestParam(value = "function") String function, @RequestParam(value = "login_id") String login_id,
+            @RequestParam(value = "option") int option) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/modifyFunction 호출 성공");
@@ -454,11 +462,11 @@ public class BoardController {
                 Map<String, Object> map2 = new HashMap<>();
                 map2.put("board_id", board_id);
                 map2.put("option", option);
-                if(function.equals("checklist")){
+                if (function.equals("checklist")) {
                     boardService.addChecklist(map2);
-                }else if(function.equals("calendar")){
+                } else if (function.equals("calendar")) {
                     boardService.addCalendar(map2);
-                }else if(function.equals("vote")){
+                } else if (function.equals("vote")) {
                     boardService.addVote(map2);
                 }
                 resultMap.put("message", SUCCESS);

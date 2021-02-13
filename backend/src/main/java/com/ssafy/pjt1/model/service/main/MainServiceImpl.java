@@ -126,14 +126,19 @@ public class MainServiceImpl implements MainService {
         // 댓글수 top3
         Set<String> commentSet = zset.reverseRange(key2, 0, 2);
         List<PostDto> postLikeList = new LinkedList<>();
-        List<PostDto> postCommList = new LinkedList<>();
+        List<Map<String, String>> postCommList = new LinkedList<>();
         for (String post_id : set) {
             // db조회 객체 top3 얻음
             postLikeList.add(postService.getPostById(Integer.valueOf(post_id)));
         }
         for (String post_id : commentSet) {
             // db조회 객체 top3 얻음
-            postCommList.add(postService.getPostById(Integer.valueOf(post_id)));
+            Map<String, String> postmap = new HashMap<>();
+            PostDto postDto = postService.getPostById(Integer.valueOf(post_id));
+            postmap.put("post_id", String.valueOf(postDto.getPost_id()));
+            postmap.put("post_title", postDto.getPost_title());
+            postmap.put("comment_count", String.valueOf(Math.round(zset.score("postCommentSort", post_id))));
+            postCommList.add(postmap);
         }
         // boardPostRank캐시에 넣기
         ObjectMapper mapper = new ObjectMapper();

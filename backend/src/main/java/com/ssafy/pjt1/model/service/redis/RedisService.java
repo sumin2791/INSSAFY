@@ -206,7 +206,7 @@ public class RedisService {
                     list.add(noCont);
                 }
                 String noContent = mapper.writeValueAsString(list);
-                valOps.append("sortSet:" + key, noContent);
+                valOps.set("sortSet:" + key, noContent);
                 continue;
             }
             // 적어도 보드에 3명 이상 글을 써야함
@@ -221,7 +221,7 @@ public class RedisService {
                     list.add(userMap);
                 }
                 String listString = mapper.writeValueAsString(list);
-                valOps.append("sortSet:" + key, listString);
+                valOps.set("sortSet:" + key, listString);
             }
         }
     }
