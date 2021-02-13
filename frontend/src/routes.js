@@ -118,9 +118,10 @@ export default [
     component: StudyMain,
   },
   {
-    path: '/curation/study/part',
+    path: '/study/:board_id(\\d+)',
     name: 'Study',
     component: Study,
+    props:true,
   },
   {
     path: '/market',

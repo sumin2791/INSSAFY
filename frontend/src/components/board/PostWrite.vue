@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button v-b-modal.modal-post class="btn-write">글쓰기</b-button>
+    <b-button v-b-modal.modal-post class="btn-write">{{writeName}}</b-button>
     <b-modal id="modal-post" title="Info" v-if="!inBoard" ok-only>
       <p class="my-4">구독하시면 글을 작성할 수 있어요😊</p>
       <template #modal-footer="{ok}">
@@ -14,7 +14,7 @@
       id="modal-post"
       ref="modal"
       size="xl"
-      title="Post"
+      title="글쓰기"
       no-close-on-backdrop
       ok-only
       @show="resetModal"
@@ -214,6 +214,14 @@ export default {
         return "Others"
       }
       return ''
+    },
+    writeName(){
+      const what = this.$route.name
+      if(what==='StudyMain'){
+        return '스터디홍보'
+      }else{
+        return '글쓰기'
+      }
     }
   },
   methods: {

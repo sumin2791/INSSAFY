@@ -52,8 +52,7 @@
                 내겐 필요없는 물건이<br />
                 누군가에겐 꼭 필요하다면?
               </p>
-            </div>
-            <div id="description" class="rounded-bg container-description">
+              <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
                 <!-- 중고장터 설명 부분 -->
                 <!-- 관심 품목 부분 -->

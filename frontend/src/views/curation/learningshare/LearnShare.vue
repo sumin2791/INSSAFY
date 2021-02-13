@@ -42,8 +42,7 @@
                 오늘의 학습 내용<br />
                 함께 나누고픈 내용 공유
               </p>
-            </div>
-            <div id="description" class="rounded-bg container-description">
+              <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
                 <v-list-item>RANK</v-list-item>
                   <v-col>
@@ -58,14 +57,13 @@
                   -{{ first.nickName }}-
                 </v-col>
               </v-list>
-            </div>
-            <div id="description" class="rounded-bg container-description">
+              <v-divider class="my-2"></v-divider>
               <v-list-item>워드 클라우드 부분</v-list-item>
-                <v-col class="d-flex justify-center">
-                  <v-avatar size="200">
-                    <v-img src="@/assets/images/wordcloud.jpg"></v-img>
-                  </v-avatar>
-                </v-col>
+              <v-col class="d-flex justify-center">
+                <v-avatar size="200">
+                  <v-img src="@/assets/images/wordcloud.jpg"></v-img>
+                </v-avatar>
+              </v-col>
             </div>
           </v-col>
           <!-- 오른쪽 학습공유 본문 부분 -->
