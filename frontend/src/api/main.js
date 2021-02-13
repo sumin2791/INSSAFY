@@ -41,6 +41,10 @@ export function imageUpload(file){
 }
 
 //이미지 수정 및 삭제
-export function imageDelete(file){
-  return
+export function imageDelete(url){
+  return http.delete('/main/imageDelete',{
+    params:{
+      url
+    }
+  })
 }

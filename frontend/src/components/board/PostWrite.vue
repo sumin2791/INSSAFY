@@ -126,9 +126,9 @@
             </template>
           </b-form-file>
         </b-form-group>
-        <div v-if="imageUrl" class="image-section">
+        <div v-if="previewImgUrl" class="image-section">
           <b-img
-              :src="imageUrl"
+              :src="previewImgUrl"
               style="max-width: 10rem;"
           ></b-img>
           <b-icon class="deleteImg" @click="deleteImage" icon="x-circle-fill" aria-hidden="true"></b-icon>
@@ -177,7 +177,7 @@ export default {
       header:'전체',
       state:0,
       images:[],
-      imageUrl:null,
+      previewImgUrl:null,
       titleState: null,
       descriptionState: null,
       locationState:null,
@@ -218,14 +218,14 @@ export default {
   },
   methods: {
     deleteImage(){
-      this.imageUrl = null
+      this.previewImgUrl = null
       this.images=[]
     },
     onChangeImages(e) {
         console.log(e.target.files)
         const file = e.target.files[0];
-        this.images = file
-        this.imageUrl = URL.createObjectURL(file);
+        this.images.push(file)
+        this.previewImgUrl = URL.createObjectURL(file);
     },
     titleCheckFormValidity() {
       const valid = this.title.length >1 && this.title.length <28 ? true : false
@@ -253,8 +253,8 @@ export default {
       this.locationState = null
       this.location.selected = null
 
-      this.images=null
-      this.imageUrl=''
+      this.images=[]
+      this.previewImgUrl=null
     },
     handleOk(bvModalEvt) {
       // Prevent modal from closing
@@ -300,7 +300,7 @@ export default {
         post_state:0
       }
       try{
-        if(this.images!=null){
+        if(this.images.length!=0){
           let fd = new FormData();
           fd.append('file',this.images)
           
@@ -311,8 +311,6 @@ export default {
   
         await postApi.create(postItem)
           .then(res=>{
-            console.log(res)
-            console.log('글작성')
             this.$store.dispatch('board/isWriteFlag')
           })
           .catch(err=>{

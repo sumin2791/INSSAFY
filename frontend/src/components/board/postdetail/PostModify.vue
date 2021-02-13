@@ -107,9 +107,9 @@
             </template>
           </b-form-file>
         </b-form-group>
-        <div v-if="tempImageUrl" class="image-section">
+        <div v-if="tempPreviewImgUrl" class="image-section">
           <b-img
-              :src="tempImageUrl"
+              :src="tempPreviewImgUrl"
               style="max-width: 10rem;"
           ></b-img>
           <b-icon class="deleteImg" @click="deleteImage" icon="x-circle-fill" aria-hidden="true"></b-icon>
@@ -150,8 +150,8 @@
 
 <script>
 import * as postApi from '@/api/post';
-
 import deepClone from '@/plugins/deepClone'
+import {imageUpload,imageDelete} from '@/api/main';
 
 export default {
   name:'ModifyForm',
@@ -163,7 +163,7 @@ export default {
       tempTitle: '',
       tempDescription:'',
       tempImages:[],
-      tempImageUrl:null,
+      tempPreviewImgUrl:null,
       
       titleState: null,
       descriptionState: null,
@@ -196,13 +196,13 @@ export default {
   },
   methods: {
     deleteImage(){
-      this.tempImageUrl = null
+      this.tempPreviewImgUrl = null
       this.tempImages=[]
     },
     onChangeImages(e) {
         const file = e.target.files[0];
-        this.tempImages = file
-        this.tempImageUrl = URL.createObjectURL(file);
+        this.tempImages.push(file)
+        this.tempPreviewImgUrl = URL.createObjectURL(file);
     },
     titleCheckFormValidity() {
       const valid = this.$refs.form.checkValidity()
@@ -218,7 +218,7 @@ export default {
       this.tempTitle = this.post.post_title
       this.tempDescription = this.post.post_description
       this.location.selected = this.post.post_header
-      this.tempImageUrl = this.post.post_image
+      this.tempPreviewImgUrl = this.post.post_image
 
       this.titleState = null
       this.descriptionState = null
@@ -231,7 +231,7 @@ export default {
       // Trigger submit handler
       this.handleSubmit()
     },
-    handleSubmit() {
+    async handleSubmit() {
       // Exit when the form isn't valid
       if (!this.titleCheckFormValidity() ) {
         return
@@ -257,21 +257,50 @@ export default {
       postItem.post_title = this.tempTitle
       postItem.post_description = this.tempDescription
       postItem.post_header = this.location.selected
-      postItem.post_image = this.tempImageUrl
-
-      const login_id = localStorage.userId
-
+      console.log('여기')
       console.log(postItem)
-      postApi.modify({postItem,login_id})
-        .then(res=>{
-          console.log('post 편집')
-          this.$store.dispatch('post/isModifyFlag')
-        })
-        .catch(err=>{
-          
-          console.log(`post 편집 실패`)
-        })
+      console.log('여기')
 
+      
+      try{
+        console.log(postItem)
+        // 이미지 a -> 이미지 b로 바꾸기
+        if(postItem.post_image!='' && postItem.post_image != this.tempPreviewImgUrl){
+          await imageDelete(postItem.post_image)
+          .then(res=>{
+            console.log('이미지 삭제 완료!')
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        }
+        if(this.tempImages.length!=0){
+          let fd = new FormData();
+          fd.append('file',this.tempImages)
+          
+          const responseUpload = await imageUpload(fd)
+          postItem.post_image = String(responseUpload.data.imgPath)
+        }else{
+          postItem.post_image = ''
+          
+        }
+
+        const login_id = localStorage.userId
+        await postApi.modify({postItem,login_id})
+          .then(res=>{
+            console.log('post 편집')
+            this.$store.dispatch('post/isModifyFlag')
+          })
+          .catch(err=>{
+            
+            console.log(`post 편집 실패`)
+          })
+
+      }catch(err){
+        console.log('에러발생')
+        console.log(err)
+      }
+      
       this.$nextTick(() => {
         this.$bvModal.hide('modal-post')
       })
@@ -281,6 +310,14 @@ export default {
 </script>
 
 <style scoped>
+.image-section{
+  display: flex;
+  /* align-items: baseline; */
+}
+.deleteImg{
+  transform: translate(-5px,0);
+  cursor: pointer;
+}
 .modal-footer{
   display: flex;
 }
