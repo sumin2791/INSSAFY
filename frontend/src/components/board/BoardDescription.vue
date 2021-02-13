@@ -129,7 +129,7 @@ export default {
       tempDescription:'',
       tempHashtags: [],
       tempHashtag:'',
-      // test 후 바꿔주기
+      
       Edit:false,
 
       // 현재 추가기능 목록
@@ -168,6 +168,7 @@ export default {
   created() {
     this.fetchData()
     this.tempDescription = this.board.description
+    console.log(this.isManager)
   },
   watch:{
     '$route':'fetchData',
@@ -374,10 +375,6 @@ export default {
 }
 .careful-line{
   height: 30px;
-}
-/* 추가기능 항목 그룹 */
-#add-func-item {
-
 }
 /* 추가기능 항목 아이템들 */
 #add-func-item {

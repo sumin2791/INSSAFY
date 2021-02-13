@@ -32,15 +32,15 @@
         <!-- 보드 생성 버튼 -->
         <div>
           <v-btn
-            color="brown darken-1"
+            id="create-btn"
             @click="goToCreateBoard()"
           >
             <v-icon
-              color="#fff"
+              color="#AA2610"
             >
               mdi-plus
             </v-icon>
-            <div class="text-white">보드 만들기</div>
+            <div class="text-btn">보드 만들기</div>
           </v-btn>
         </div>
       </div>
@@ -123,5 +123,31 @@ export default {
 .search-result-board {
   flex-basis: 19.5%;
   border: 3px dotted #000000;
+}
+/* 보드 만들기 버튼 */
+#create-btn {
+  position: sticky;
+  text-align: center;
+  margin: auto;
+  height: 50px;
+  width:100%;
+  border: none;
+  color: var(--basic-color-fill);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: #ebebe9 !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  border-radius: 15px !important;
+  transition: 0.3s all ease;
+}
+#create-btn:hover,
+#create-btn:active,
+#create-btn:focus {
+  color: #ebebe9 !important;    
+  background-color: var(--basic-color-bg2) !important;
+}
+/* 보드 생성 버튼 */
+.text-btn {
+  color: #AA2610;
 }
 </style>

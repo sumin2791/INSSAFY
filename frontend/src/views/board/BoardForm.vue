@@ -94,15 +94,33 @@
           </v-col>
           <!-- 추가 기능 -->
           <v-col>
-            <b-form-group label="추가기능(optional)" v-slot="{ ariaDescribedby }">
-              <b-form-checkbox-group
-                id="checkbox-group-1"
-                v-model="selected"
-                :options="options.f"
-                :aria-describedby="ariaDescribedby"
-                name="flavour-1"
-              ></b-form-checkbox-group>
-            </b-form-group>
+            <!-- 추가기능 추가 정보(편집) -->
+            <div id="add-func-group">
+              <div>추가기능 모음</div>
+              <div
+                id="add-func-item"
+                v-for="(func, idx) in addFuncAll"
+                :key="idx"
+              >
+                <v-checkbox
+                  hide-details
+                  color="#0B2945"
+                  :label="func.option"
+                  :value="func.option"
+                ></v-checkbox>
+                <v-tooltip right>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon
+                      id="add-func-info"
+                      v-bind="attrs"
+                      v-on="on"
+                      color="#AA2610"
+                    >mdi-information-outline</v-icon>
+                  </template>
+                  <span v-html="func.explain"></span>
+                </v-tooltip>
+              </div>
+            </div>
           </v-col>
         </v-col>
       </v-row>
@@ -141,16 +159,37 @@ export default {
       location:'',
       selected: [],
       options: {
-        f:[
-          {text:'인기글',value:'popular',disabled:false},
-          {text:'랭킹',value:'rank',disabled:false},
-          {text:'체크리스트',value:'checklist',disabled:true},
-          {text:'달력',value:'calender',disabled:true},
-          {text:'투표',value:'vate',disabled:true},
-        ],
         location: ['서울', '대전', '구미', '광주'],
         ikmyeong:false,
       },
+      // 전체 추가기능 목록 (체크되어 있는지)
+      addFuncAll: [
+        {
+          option: '체크리스트',
+          state: false,
+          explain: '구성원들과 함께 간단한 <strong>할 일 목록</strong>을 만들어서 관리해보세요.<br>보드를 효율적으로 사용할 수 있게 됩니다.',
+        }, 
+        {
+          option: '캘린더',
+          state: false,
+          explain: '캘린더에 일정을 표시하여 서로의 일정을 공유하고<br> 구성원들의 <strong>스케쥴 관리를 효율적</strong>으로 할 수 있게 도와줍니다.',
+        }, 
+        {
+          option: '인기글',
+          state: false,
+          explain: '좋아요 순으로 보드 내<br>포스트의 인기글 <strong>TOP3</strong>를 보여줍니다.',
+        }, 
+        {
+          option: '투표',
+          state: false,
+          explain: '결정하기 힘든 일은 투표를 통해 확인하는 것은 어떨까요?<br>투표를 만들고 투표내 항목을 만들어 투표를 생성해보세요',
+        }, 
+        {
+          option: '랭킹',
+          state: false,
+          explain: '보드를 활발히 활동하는 유저는 누군지 확인할 수 있게<br> <strong>TOP3</strong> 활동 유저를 확인해보세요',
+        }, 
+      ],
     }
   },
   methods: {
@@ -207,5 +246,16 @@ export default {
 /* 전체 메인 배경색 */
 .main-bg-color {
   background-color: #ebebe9;
+}
+/* 추가기능 항목 아이템들 */
+#add-func-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 20px 0 25px;
+}
+/* 추가기능 항목 설명 아이콘 */
+#add-func-info {
+  align-self: flex-end;
 }
 </style>

@@ -62,7 +62,10 @@
               </v-list>
             </v-sheet>
             <!-- 체크리스트 보여주는 부분 -->
-            <CheckList />
+            <!-- 조건 체크일 때만 보여주기 달기 -->
+            <CheckList 
+              :is-manager="isManager"
+            />
           </v-col>
           <v-col
               class="col-12 col-sm-8"  
