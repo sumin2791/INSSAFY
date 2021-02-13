@@ -126,10 +126,9 @@
         <!-- 게시글 내용 -->
         <div id="description">
           {{post.post_description}}
-          <!-- 이미지 미리보기 -->
         </div>
-        <div id="description-image">
-          <img v-if="post.post_image" :src="post.post_image" alt="이미지 미리보기...">
+        <div>
+          <img  id="description-image" v-if="post.post_image" :src="post.post_image" alt="이미지 미리보기...">
         </div>
       </div>
 
@@ -451,6 +450,7 @@ export default {
 #description-image {
   margin: 0 auto 1% auto;
   font-size: 16px;
+  max-width: 80%;
 }
 /* 댓글, 좋아요, 북마크 부분 */
 #actions {
