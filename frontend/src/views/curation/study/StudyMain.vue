@@ -35,31 +35,19 @@
         <v-row dense>
           
           <!-- 왼쪽 스터디 설명 부분 -->
-          <v-col 
-            class="col-12 col-sm-4" 
-          >
-            <v-sheet>
-              <!-- 스터디 설명 부분 -->
+          <v-col class="col-12 col-sm-4">
+            <div id="description" class="rounded-bg container-description">
+              <h4 class="b-desc">스터디</h4>
+              <p class="l-desc">
+                스터디원을 구해서<br />
+                같이 공부해보는 건 어떨까요?
+              </p>
+            </div>
+            <div id="description" class="rounded-bg container-description">
               <v-list color="transparent">
-                <!-- 스터디 설명 부분 -->
-                <div
-                  class="d-flex
-                  flex-column
-                  justify-space-between"
-                  style="min-height: 25vh;"
-                >
-                  <!-- 내 정보 타이틀 -->
-                  <div class="text-h5">스터디</div>
-                  <div class="text-start pa-1 ma-auto">
-                    스터디원을 구해서<br>같이 공부해보는 건 어떨까요?
-                  </div>
-                </div>
-                <!-- StudyGroup 부분 -->
-                <v-divider class="my-2"></v-divider>
-                <v-list>
-                  <v-list-item>스터디 목록</v-list-item>
+                <v-list-item>내 스터디 목록</v-list-item>
                   <!-- 스터디 목록 활성화 버튼 -->
-                  <v-list-item>
+                  <!-- <v-list-item>
                     <v-switch
                       v-model="isMyStudy"
                       inset
@@ -67,16 +55,15 @@
                       :label="`${state}`"
                       @click="filterMyStudyGroup()"
                     ></v-switch>
-                  </v-list-item>
+                  </v-list-item> -->
                   <v-col>
                     <StudyGroup />
                     <StudyGroup />
                     <StudyGroup />
                     <StudyGroup />
                   </v-col>
-                </v-list>
               </v-list>
-            </v-sheet>
+            </div>
           </v-col>
           <!-- 오른쪽 스터디 본문 부분 -->
           <v-col
@@ -145,11 +132,11 @@ export default {
       this.ResponsiveSize.viewSize = window.innerWidth;
     },
     // 내 스터디 그룹 / 전체 스터디 그룹 전환
-    filterMyStudyGroup() {
-      if (this.isMyStudy) {
-        this.state = this.myStudyGroup[0]
-      } else {this.state = this.myStudyGroup[1]}
-    },
+    // filterMyStudyGroup() {
+    //   if (this.isMyStudy) {
+    //     this.state = this.myStudyGroup[0]
+    //   } else {this.state = this.myStudyGroup[1]}
+    // },
   }
 }
 </script>
@@ -162,5 +149,11 @@ export default {
   margin: 2%;
   padding: 10%;
   flex-basis: 20%;
+}
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
 }
 </style>

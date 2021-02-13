@@ -257,33 +257,34 @@ export default {
       postItem.post_title = this.tempTitle
       postItem.post_description = this.tempDescription
       postItem.post_header = this.location.selected
-      console.log('여기')
-      console.log(postItem)
-      console.log('여기')
 
       
       try{
         console.log(postItem)
         // 이미지 a -> 이미지 b로 바꾸기
-        if(postItem.post_image!='' && postItem.post_image != this.tempPreviewImgUrl){
+        if((postItem.post_image!='' && postItem.post_image != this.tempPreviewImgUrl) || this.tempPreviewImgUrl===null){
           await imageDelete(postItem.post_image)
           .then(res=>{
             console.log('이미지 삭제 완료!')
+
           })
           .catch(err=>{
             console.log(err)
           })
         }
+
         if(this.tempImages.length!=0){
           let fd = new FormData();
           fd.append('file',this.tempImages)
           
           const responseUpload = await imageUpload(fd)
           postItem.post_image = String(responseUpload.data.imgPath)
-        }else{
-          postItem.post_image = ''
-          
         }
+        else if(postItem.post_image!=this.tempPreviewImgUrl || this.tempPreviewImgUrl===null){
+          postItem.post_image = ''
+        }
+          
+        // }
 
         const login_id = localStorage.userId
         await postApi.modify({postItem,login_id})

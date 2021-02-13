@@ -113,7 +113,7 @@ export default [
     props: true,
   },
   {
-    path: '/curation/main/study',
+    path: '/study/main',
     name: 'StudyMain',
     component: StudyMain,
   },
