@@ -201,9 +201,7 @@ public class RedisService {
             // 아이디로 객체 갖고오기
             if (top3Id != null) {
                 for (String id : top3Id) {
-                    log.info("id 들어옴 {}", id);
                     UserDto dto = userService.userDtoById(id);
-                    log.info(">>>>>>>test {}", dto.getUser_id());
                     Map<String, String> userMap = new HashMap<>();
                     userMap.put("nickName", dto.getUser_nickname());
                     userMap.put("score", Math.round(zset.score(key, id)) + "");

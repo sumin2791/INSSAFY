@@ -46,7 +46,6 @@ public class AddFunctionController {
             String key = "sortSet:func:userRank:" + String.valueOf(board_id);
             String top3UserInfo = (String) valOps.get(key);
             List<Map<String, String>> user = mapper.readValue(top3UserInfo, List.class);
-            log.info(">>>>>>getUserRank{}", user);
             resultMap.put("message", SUCCESS);
             resultMap.put("topUsers", user);
         } catch (Exception e) {
