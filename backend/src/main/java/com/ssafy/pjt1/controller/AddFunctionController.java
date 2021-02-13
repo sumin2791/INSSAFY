@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,6 +35,7 @@ public class AddFunctionController {
     @Autowired
     private UserService userService;
 
+    @ApiOperation(value = "유저랭킹", notes = "보드마다 유저 랭킹 보여주기(좋아요를 많이 받은 순서)")
     @GetMapping("/getUserRank")
     public ResponseEntity<Map<String, Object>> getUserRank(@RequestParam("board_id") int board_id) {
         Map<String, Object> resultMap = new HashMap<>();

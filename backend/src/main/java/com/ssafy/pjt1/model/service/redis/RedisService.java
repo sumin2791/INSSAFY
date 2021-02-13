@@ -40,6 +40,7 @@ public class RedisService {
 
     private ZSetOperations zset;
 
+    @Autowired
     private UserService userService;
 
     /*
@@ -196,25 +197,13 @@ public class RedisService {
             Long size = zset.size(key);
 
             List<Map<String, String>> list = new ArrayList<>();
-            if (size >= 2) {
-                size = Long.valueOf(2);
-            } else {
-                for (int i = 0; i < 3; i++) {
-                    Map<String, String> noCont = new HashMap<>();
-                    noCont.put("nickName", "null");
-                    noCont.put("score", "null");
-                    list.add(noCont);
-                }
-                String noContent = mapper.writeValueAsString(list);
-                valOps.set("sortSet:" + key, noContent);
-                continue;
-            }
-            // 적어도 보드에 3명 이상 글을 써야함
-            Set<String> top3Id = zset.reverseRange(key, 0, size);
+            Set<String> top3Id = zset.reverseRange(key, 0, 2);
             // 아이디로 객체 갖고오기
             if (top3Id != null) {
                 for (String id : top3Id) {
+                    log.info("id 들어옴 {}", id);
                     UserDto dto = userService.userDtoById(id);
+                    log.info(">>>>>>>test {}", dto.getUser_id());
                     Map<String, String> userMap = new HashMap<>();
                     userMap.put("nickName", dto.getUser_nickname());
                     userMap.put("score", Math.round(zset.score(key, id)) + "");

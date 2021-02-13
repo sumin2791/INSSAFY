@@ -3,6 +3,7 @@ package com.ssafy.pjt1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +11,8 @@ import java.util.UUID;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.chat.ChatMessage;
+import com.ssafy.pjt1.model.dto.user.UserDto;
+import com.ssafy.pjt1.model.service.UserService;
 import com.ssafy.pjt1.model.service.chat.ChatService;
 import com.ssafy.pjt1.model.service.redis.RedisService;
 
@@ -41,6 +44,9 @@ public class RedistTest {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private UserService userService;
+
     @Test
     public void zSetTest() {
         String key = "addFunc:";
@@ -53,7 +59,7 @@ public class RedistTest {
         // zset.incrementScore(key, "b", 2);
         // logger.info("msg: {}", zset.range(key, 0, 2));
         // log.info(">>>>>>>>zset: {}", Math.round(zset.score(key, "b")));
-        log.info(">>>user Rank:{}", zset.reverseRange(key + "userRan*:*", 0, 1));
+        log.info(">>>>>>>>zSetTest {}", zset.range("func:userRank:77", 0, 2));
     }
 
     @Test
@@ -111,8 +117,14 @@ public class RedistTest {
 
     @Test
     public void addFunc() {
-        // redisService.increaseUserRank(59, 71);
-        ValueOperations valOps = redisTemplate.opsForValue();
-        valOps.append("add:id:value", "hello");
+        redisService.increaseUserRank(124, 77);// 포스트 아이디, 보드아이디
+
+    }
+
+    @Test
+    public void RedisServiceTest() throws JsonProcessingException {
+        redisService.updateAddFuncRank();
+        // UserDto dto = userService.userDtoById("e4wqD1X2l0Zu8");
+        // log.info(">>>>>>>{}", dto.getUser_nickname());
     }
 }
