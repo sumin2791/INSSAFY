@@ -40,13 +40,13 @@ public interface PostService {
 
 	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
-	public List<PostDto> searchPostNew(Map<String, Object> map);
+	public List<Map<String, Object>> searchPostNew(Map<String, Object> map);
 
-	public List<PostDto> searchPostPopular(Map<String, Object> map);
+	public List<Map<String, Object>> searchPostPopular(Map<String, Object> map);
 
-	public List<PostDto> boardPostNew(Map<String, Object> map);
+	public List<Map<String, Object>> boardPostNew(Map<String, Object> map);
 
-	public List<PostDto> boardPostPopular(Map<String, Object> map);
+	public List<Map<String, Object>> boardPostPopular(Map<String, Object> map);
 
 	public int isUnLiked(Map<String, Object> map);
 
@@ -64,11 +64,13 @@ public interface PostService {
 
 	public List<Map<String, Object>> getSalesList(Map<String, Object> map);
 
-	public List<PostDto> marketPostNew(Map<String, Object> map);
+	public List<Map<String, Object>> marketPostNew(Map<String, Object> map);
 
-	public List<PostDto> marketPostPopular(Map<String, Object> map);
+	public List<Map<String, Object>> marketPostPopular(Map<String, Object> map);
 
 	public String getWriterName(String user_id);
+	
+	public String getWriterImage(String user_id);
 
 	public int isWriter(Map<String, Object> map);
 
