@@ -31,7 +31,7 @@
 	</select>
 
 	<select id="getStudyInfo" parameterType="int" resultType="map">
-		select b.board_name, b.board_description, c.board_count
+		select b.board_name, b.board_description, b.board_id, b.board_image, c.board_count
 		from board as b
 		left outer join
 		(select board_id, count(board_id) as board_count
@@ -44,7 +44,7 @@
 	</select>
 
 	<select id="getAllList" parameterType="map" resultType="map">
-		select b.board_name, b.board_description, c.board_count
+		select b.board_name, b.board_description, b.board_id, b.board_image, c.board_count
 		from board as b
 		left outer join
 		(select board_id, count(board_id) as board_count
