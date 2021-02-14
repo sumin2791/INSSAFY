@@ -399,4 +399,23 @@
 		and is_used = 1 and post_state = 0;
 	</select>
 
+	<select id="getHeaderByID" parameterType="int" resultType="string">
+		select post_header
+		from post
+		where post_id = #{post_id};
+	</select>
+
+	<select id="getBoardState" parameterType="int" resultType="int">
+		select board_state
+		from board
+		where board_id = #{board_id};
+	</select>
+
+	<select id="getBoardStateById" parameterType="int" resultType="int">
+		select b.board_state
+		from board as b join post as p
+		on b.board_id = p.board_id
+		where p.post_id = #{post_id};
+	</select>
+
 </mapper>
