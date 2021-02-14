@@ -1,12 +1,12 @@
 <template>
   <div id="container-box-item">
     <!-- D-day, 마감일시 -->
-    <div id="date-info" :class="{ impend: dday > -10 }">
-      <span id="i-span" class="b-desc-e">D{{ dday }}</span>
+    <div id="date-info" :class="{ impend: dday > -1 }">
+      <span id="i-span" class="b-desc-e">{{ label }}</span>
     </div>
     <!-- 채용일정 제목 -->
     <div id="post-info">
-      <p id="i-title" class="m-desc">SSAFY 실습코치(FE)(제목)</p>
+      <p id="i-title" class="m-desc">{{ event.name }}</p>
       <p id="i-date" class="l-desc">{{ date | moment('YY.MM.DD.') }}</p>
     </div>
   </div>
@@ -16,17 +16,21 @@
 import moment from 'moment';
 export default {
   name: 'DueDateItem',
+  props: {
+    event: Object,
+  },
   data() {
     return {
-      date: '2021-02-18',
       dday: '',
+      label: '',
     };
   },
   created() {
     //d-day 구하기
     let today = moment();
-    let target = moment(this.date, 'YYYY-MM-DD HH:mm');
+    let target = moment(this.event.start, 'YYYY-MM-DD HH:mm:ss');
     this.dday = Math.floor(moment.duration(today.diff(target)).asDays());
+    this.dday === 0 ? (this.label = 'NOW') : (this.label = `D${this.dday}`);
   },
 };
 </script>

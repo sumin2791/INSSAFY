@@ -17,13 +17,12 @@
       <!-- 임박한 채용보기 -->
       <div id="due-date" class="rounded-bg container">
         <p class="b-desc">임박한 채용일정</p>
-        <DueDateItem class="date-item" />
-        <DueDateItem class="date-item" />
+        <DueDateItem v-for="(event, index) in deadlines" :key="event.id + '/' + index" :event="event" class="date-item" />
       </div>
     </div>
     <div id="center-post">
       <!-- 캘린더 들어가는 부분 -->
-      <CalendarSpan id="study-calendar" class="rounded-bg" />
+      <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="'채용일정'" />
 
       <!-- 검색 돋보기 아이콘 -->
       <div class="search-bar">
@@ -40,14 +39,14 @@
       <Post class="post-list" />
       <Post class="post-list" /> -->
     </div>
-    <CalendarDialog :type="'채용일정'" />
+    <CalendarDialog :boardName="'채용일정'" />
   </div>
 </template>
 <script>
 // 스터디 홍보글 게시물
 // import Post from '@/components/board/Post.vue';
 import DueDateItem from '@/views/curation/recruitment/DueDateItem.vue';
-import CalendarSpan from '@/components/etc/CalendarSpan';
+import CalendarSpan from '@/components/calendar/CalendarSpan';
 
 export default {
   name: 'Recruitment',
@@ -55,7 +54,15 @@ export default {
     // Post,
     DueDateItem,
     CalendarSpan,
-    CalendarDialog: () => import('@/components/etc/CalendarDialog'),
+    CalendarDialog: () => import('@/components/calendar/CalendarDialog'),
+  },
+  created() {
+    this.$store.dispatch('calendar/actGetDeadline');
+  },
+  computed: {
+    deadlines() {
+      return this.$store.state.calendar.deadlines;
+    },
   },
   methods: {
     click: function() {

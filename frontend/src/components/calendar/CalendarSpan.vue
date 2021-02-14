@@ -55,6 +55,9 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'CalendarSpan',
+  props: {
+    boardName: String,
+  },
   data() {
     return {
       dateOpen: false,
@@ -69,6 +72,9 @@ export default {
       dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
       menu: false,
     };
+  },
+  created() {
+    this.$store.dispatch('calendar/actGetEvents', this.boardName);
   },
   computed: {
     computedDateFormatted() {

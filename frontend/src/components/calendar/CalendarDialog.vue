@@ -96,7 +96,7 @@ import { mapState } from 'vuex';
 export default {
   name: 'CalendarDialog',
   props: {
-    type: String,
+    boardName: String,
   },
   data() {
     return {
@@ -138,7 +138,7 @@ export default {
         });
       } else {
         if (this.startTimer && this.endTime) this.event.hasTime = true;
-        this.$store.dispatch('calendar/actAddEvent', { event: this.event, type: this.type }).then((result) => {
+        this.$store.dispatch('calendar/actAddEvent', { event: this.event, boardName: this.boardName }).then((result) => {
           if (result) {
             this.$toast.open({
               message: '일정이 등록되었습니다.',
