@@ -349,7 +349,6 @@ export default {
 .btn-write {
   position: sticky;
   text-align: center;
-  margin: auto;
   height: 50px;
   width:100%;
   border: none;

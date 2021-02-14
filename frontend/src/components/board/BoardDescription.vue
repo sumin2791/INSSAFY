@@ -59,8 +59,13 @@
       </div>
     </div>
     <div class="edit-button-set" v-if="Edit">
-      <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
-      <button class="p-button r-desc" @click="submit">  Edit  </button>
+      <div>
+        <p class="r-desc delete-button" @click="boardDelete">삭제</p>
+      </div>
+      <div>
+        <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
+        <button class="p-button r-desc" @click="submit">  Edit  </button>
+      </div>
     </div>
     <div class="careful-line"></div>
   </div>
@@ -68,6 +73,7 @@
 
 <script>
 import * as boardApi from '@/api/board';
+import {imageDelete} from '@/api/main';
 import deepClone from '@/plugins/deepClone';
 
 
@@ -81,12 +87,14 @@ export default {
     return {
       loading: false,
       board:{
+        id:'',
         name:'',
         description:'',
         hashtags:[],
         subscribe_count:0,
         location:'',
         igmyeong:'',
+        image:''
       },
       tempDescription:'',
       tempHashtags: [],
@@ -111,6 +119,7 @@ export default {
 
             this.$router.push({ name: 'PageNotFound'})
           }else{
+            this.board.id = res.data.boardDto.board_id
             this.board.name=res.data.boardDto.board_name
             this.board.description=res.data.boardDto.board_description
             this.board.hashtags=res.data.boardDto.board_hash.split('|')
@@ -120,9 +129,10 @@ export default {
             this.board.location=res.data.boardDto.board_location
             this.board.igmyeong=res.data.boardDto.board_igmyeong
             this.board.subscribe_count = res.data.board_count
-
             this.tempDescription = res.data.boardDto.board_description
             this.tempHashtags = deepClone(this.board.hashtags)
+            this.image = res.data.boardDto.board_image
+            this.$emit('board-image',res.data.boardDto.board_image)
           }
         })
         .catch(err=>{
@@ -172,6 +182,37 @@ export default {
       this.cancel()
       alert(`수정!`);
     },
+
+    //보드삭제
+    async boardDelete(){
+      if(!this.isManager){
+        return
+      }
+
+      try{
+        if(this.board.image!=''){
+          await imageDelete(this.board.image)
+          .then(res=>{
+            console.log('이미지 삭제 완료!')
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        }
+  
+        await boardApi.board_delete(Number(this.board.id),localStorage.userId)
+        .then(res=>{
+          console.log('보드 삭제')
+          this.$router.push({name:'Main'})
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }catch(err){
+        console.log('PostForDetail- 보드 삭제 에러')
+        console.log(err)
+      }
+    }
   }
 
 }
@@ -292,17 +333,17 @@ export default {
 
 .edit-button-set{
   display: flex;
-  justify-content: flex-end;
+  justify-content:space-between;
+  align-items: center;
+}
+.delete-button{
+  cursor: pointer;
+  margin:0;
+  text-decoration: none;
+  color:#aa2610;
 }
 .careful-line{
   height: 30px;
 }
 
-.edit-button-set{
-  display: flex;
-  justify-content: flex-end;
-}
-.careful-line{
-  height: 30px;
-}
 </style>

@@ -4,6 +4,7 @@
       <v-container id="container" class="pt-8">
         <!-- PC에서 보여줄 curation이름과 검색 -->
         <v-row
+          id="board-header"
           v-if="!ResponsiveSize.isMobile"
           no-gutters
           class="d-flex 
@@ -35,7 +36,7 @@
                   style="min-height: 25vh;"
                 >
                   <!-- 보드 설명 -->
-                  <BoardDescription :in-board="inBoard" :is-manager="isManager" />
+                  <BoardDescription :in-board="inBoard" :is-manager="isManager"  @board-image="boardImage"/>
                   <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
                   <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button>
                 </div>
@@ -46,8 +47,13 @@
             </v-sheet>
           </v-col>
           <v-col class="col-12 col-sm-9">
-            <PostWrite :in-board="inBoard" />
-            <PostList />
+            <v-sheet min-height="85vh"
+              id="custom-container" 
+              class="pa-2"
+            >
+              <PostWrite :in-board="inBoard" />
+              <PostList />
+            </v-sheet>
           </v-col>
         </v-row>
       </v-container>
@@ -99,6 +105,7 @@ export default {
 
       inBoard: '',
       isManager: false,
+      boardimg:''
     };
   },
   created() {
@@ -118,6 +125,12 @@ export default {
         this.isManager = true;
       }
     }
+
+    if(this.boardimg!=''){
+      console.log(this.boardimg)
+      const header = document.querySelector('#board-header')
+      header.style.background=`url(${this.boardimg})` 
+    }
   },
   computed: {
     // inBoard() {
@@ -125,6 +138,14 @@ export default {
     // }
   },
   methods: {
+    boardImage(boardimg){
+      this.boardimg = boardimg
+      if(this.boardimg!=null){
+        const header = document.querySelector('#board-header')
+        header.style.minHeight = "250px"
+        header.style.background=`url(${this.boardimg})`
+      }
+    },
     // 현재 활성화된 기기에 따라 flag 변경
     onResize() {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
@@ -235,5 +256,8 @@ export default {
 .btn-subscribing:active {
   background-color: var(--basic-color-bg) !important;
   color: var(--basic-color-key);
+}
+#custom-container{
+  background-color:var(--basic-color-bg2) !important;
 }
 </style>

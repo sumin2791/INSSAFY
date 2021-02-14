@@ -89,7 +89,7 @@
                     </v-list-item-title>
                   </v-list-item>
                   <!-- 삭제 -->
-                  <v-list-item v-if="flagWriter">
+                  <v-list-item v-if="flagWriter" @click="postDelete">
                     <v-list-item-title>
                       삭제
                     </v-list-item-title>
@@ -195,6 +195,7 @@ import PostModify from '@/components/board/postdetail/PostModify'
 import Profile from '@/components/etc/Profile';
 
 import * as postApi from '@/api/post'
+import {imageDelete} from '@/api/main';
 import timeForToday from '@/plugins/timeForToday'
 
 // 스타일 적용
@@ -341,6 +342,39 @@ export default {
       .catch(err=>{
         console.log(err)
       })
+    },
+
+    // 포스트 삭제
+    async postDelete(){
+      if(this.post.user_id!=localStorage.userId){
+        return
+      }
+      // 이미지가 있다면 이미지 삭제후 삭제!
+      // 이미지가 없다면 그냥 삭제!
+      try{
+        if(this.post.post_image!=''){
+          await imageDelete(this.post.post_image)
+          .then(res=>{
+            console.log('이미지 삭제 완료!')
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        }
+  
+        await postApi.post_delete(Number(this.post.post_id),localStorage.userId)
+        .then(res=>{
+          console.log('포스트 삭제')
+          this.$router.push({name:'Board',params:{board_id:this.post.board_id}})
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }catch(err){
+        console.log('PostForDetail- 포스트 삭제 에러')
+        console.log(err)
+      }
+
     }
   }
 }

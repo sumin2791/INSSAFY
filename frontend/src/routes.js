@@ -168,6 +168,7 @@ export default [
     path: '/board/:board_id(\\d+)',
     name: 'Board',
     component: Board,
+    props: true,
   },
   {
     path: '/board/:board_id(\\d+)/post/:post_id(\\d+)',

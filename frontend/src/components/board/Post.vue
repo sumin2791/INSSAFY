@@ -1,5 +1,5 @@
 <template>
-  <v-card id="container">
+  <v-card id="container"  class="pa-2 ani-hover">
     <div id="post-detail">
       <!-- 포스트 디테일 헤더 부분 -->
       <div id=header>
@@ -34,7 +34,7 @@
                 <!-- 프로필 보기 -->
                 <v-list-item-group>
                   <v-list-item>
-                    <v-list-item-title>
+                    <v-list-item-title @click="goToProfile">
                       Profile 보기
                     </v-list-item-title>
                   </v-list-item>
@@ -320,16 +320,19 @@ export default {
     },
     postScrap(){
       postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
-        .then((res)=>{
-          if(res.data.message==='No Subscription'){
-            alert('구독 후에 이용 가능합니다')
-          }else{
-            this.flagScrap = !this.flagScrap
-          }
-        })
-        .catch((err)=>{
-          console.log(err)
-        })
+      .then((res)=>{
+        if(res.data.message==='No Subscription'){
+          alert('구독 후에 이용 가능합니다')
+        }else{
+          this.flagScrap = !this.flagScrap
+        }
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+    },
+    goToProfile(){
+      console.log(this.post.user_id)
     }
   }
 }
@@ -342,8 +345,8 @@ export default {
   font-family: 'Noto Sans KR', sans-serif !important;
   box-shadow: var(--basic-shadow-s) !important;
   border-radius: 15px !important;
-  background-color: var(--basic-color-bg2) !important;
-  margin: 16px 0;
+  /* background-color: var(--basic-color-bg2) !important; */
+  margin: 16px 10px;
 }
 /* 전체 detail 담겨진 부분 */
 #post-detail {
@@ -466,5 +469,11 @@ export default {
 #bottom-like{
   display: flex;
   align-items: center;
+}
+.ani-hover {
+  transition: transform 0.5s ease;
+}
+.ani-hover:hover {
+  transform: scale(1.01);
 }
 </style>
