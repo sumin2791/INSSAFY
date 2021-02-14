@@ -65,6 +65,13 @@
             <!-- 조건 체크일 때만 보여주기 달기 -->
             <CheckList 
               :is-manager="isManager"
+              v-if="isCheck"
+            />
+            <VoteList 
+              v-if="isVote"
+            />
+            <UserRank 
+              v-if="isRank"
             />
           </v-col>
           <v-col
@@ -93,6 +100,10 @@ import '@/assets/css/static/style.css';
 
 // 체크리스트
 import CheckList from '@/components/addfunc/CheckList'
+// 투표
+import VoteList from "@/components/addfunc/VoteList"
+// 유저랭킹
+import UserRank from "@/components/addfunc/UserRank"
 
 export default {
   name:'Board',
@@ -100,7 +111,9 @@ export default {
     BoardDescription,
     PostList,
     PostWrite,
-    CheckList
+    CheckList,
+    VoteList,
+    UserRank,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -145,11 +158,26 @@ export default {
         this.isManager=true
       }
     }
+    // 추가기능 정보 vuex 저장
+    this.fetchData()
   },
   computed: {
     // inBoard() {
     //   return this.$store.state.board.inBoard
     // }
+    // 추가기능 체크
+    isCheck() {
+      return this.$store.state.addfunc.isCheckList
+    },
+    isCalendar() {
+      return this.$store.state.addfunc.isCalendar
+    },
+    isVote() {
+      return this.$store.state.addfunc.isVote
+    },
+    isRank() {
+      return this.$store.state.addfunc.isRank
+    },
   },
   methods:{
     // 현재 활성화된 기기에 따라 flag 변경
@@ -198,8 +226,20 @@ export default {
         .catch(err=>{
           console.log(err)
         })
-      return
-    }
+    },
+    // 추가기능 flag 정보 가져오기
+    fetchData() {
+      boardApi.board_detail(this.$route.params.board_id)
+        .then(res => {
+          const addfunc = res.data.board_function
+          // 추가기능 여부 갱신
+          this.$store.dispatch('addfunc/isUsed', addfunc);
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    },
+
   }
 }
 </script>

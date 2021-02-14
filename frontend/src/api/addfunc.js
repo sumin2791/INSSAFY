@@ -1,5 +1,9 @@
 import http from './http';
 
+// 보드에 달린 추가기능 수정 및 삭제
+export function modifyAddFunction(params) {
+  return http.put('/board/modifyFunction', {}, {params})
+}
 // 체크리스트 생성
 export function checkListCreate(params) {
   return http.post('/CheckList/create', params)

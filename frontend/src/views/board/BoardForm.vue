@@ -96,7 +96,7 @@
           <v-col>
             <!-- 추가기능 추가 정보(편집) -->
             <div id="add-func-group">
-              <div>추가기능 모음</div>
+              <div>추가기능</div>
               <div
                 id="add-func-item"
                 v-for="(func, idx) in addFuncAll"
@@ -106,7 +106,7 @@
                   hide-details
                   color="#0B2945"
                   :label="func.option"
-                  :value="func.option"
+                  v-model="func.state"
                 ></v-checkbox>
                 <v-tooltip right>
                   <template v-slot:activator="{ on, attrs }">
@@ -121,6 +121,7 @@
                 </v-tooltip>
               </div>
             </div>
+            <div><button @click="checkAddFunc">test</button></div>
           </v-col>
         </v-col>
       </v-row>
@@ -148,6 +149,9 @@ import * as boardApi from '@/api/board';
 
 export default {
   name:"BoardForm",
+  watch: {
+    addFuncAll:'checkAddFunc'
+  },
   data() {
     return {
       switch1: true,
@@ -174,11 +178,11 @@ export default {
           state: false,
           explain: '캘린더에 일정을 표시하여 서로의 일정을 공유하고<br> 구성원들의 <strong>스케쥴 관리를 효율적</strong>으로 할 수 있게 도와줍니다.',
         }, 
-        {
-          option: '인기글',
-          state: false,
-          explain: '좋아요 순으로 보드 내<br>포스트의 인기글 <strong>TOP3</strong>를 보여줍니다.',
-        }, 
+        // {
+        //   option: '인기글',
+        //   state: false,
+        //   explain: '좋아요 순으로 보드 내<br>포스트의 인기글 <strong>TOP3</strong>를 보여줍니다.',
+        // }, 
         {
           option: '투표',
           state: false,
@@ -193,6 +197,10 @@ export default {
     }
   },
   methods: {
+    // 추가기능 test
+    checkAddFunc() {
+      console.log(this.addFuncAll)
+    },
     addHashtag() {
       if(this.hashtags.length===5){
         alert('해쉬태그는 5개 이하만 가능합니다.')
@@ -213,9 +221,14 @@ export default {
         board_location: '전체',
         board_igmyeong: 0,
         board_hash:this.hashtags.join('|'),
-        checklist_flag:0,
-        calendar_flag:0,
-        vote_flag:0,
+        // 추가기능 삽입 추가
+        checklist_flag:(this.addFuncAll[0].state ? 1 : 0),
+        calendar_flag:(this.addFuncAll[1].state ? 1 : 0),
+        // // 인기글 현재 없으니 주석처리
+        // popular_post_flag:(this.addFuncAll[2].state ? 1 : 0),
+        // // 랭킹 현재 연결 없으니 주석처리
+        // rank_flag:(this.addFuncAll[4].state ? 1 : 0),
+        vote_flag:(this.addFuncAll[3].state ? 1 : 0),
         board_state:0
       };
       boardApi.board_create(board).then(response => {

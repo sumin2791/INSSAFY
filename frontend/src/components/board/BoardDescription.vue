@@ -77,8 +77,7 @@
           hide-details
           color="#0B2945"
           :label="func.option"
-          :value="func.option"
-          v-model="addFunc"
+          v-model="func.state"
         ></v-checkbox>
         <v-tooltip right>
           <template v-slot:activator="{ on, attrs }">
@@ -106,6 +105,8 @@ import * as boardApi from '@/api/board';
 import deepClone from '@/plugins/deepClone';
 // style 적용
 import '@/assets/css/static/style.css';
+// 추가기능 api
+import * as addFuncApi from '@/api/addfunc';
 
 
 export default {
@@ -132,31 +133,35 @@ export default {
       
       Edit:false,
 
-      // 현재 추가기능 목록
-      addFunc: [],
-      // 전체 추가기능 목록 (체크되어 있는지)
+      // 전체 추가기능 목록 (체크되어 있는지) - 추가기능 수정 - title 추가
       addFuncAll: [
         {
+          title: 'checklist',
           option: '체크리스트',
           state: false,
           explain: '구성원들과 함께 간단한 <strong>할 일 목록</strong>을 만들어서 관리해보세요.<br>보드를 효율적으로 사용할 수 있게 됩니다.',
         }, 
         {
+          title: 'calendar',
           option: '캘린더',
           state: false,
           explain: '캘린더에 일정을 표시하여 서로의 일정을 공유하고<br> 구성원들의 <strong>스케쥴 관리를 효율적</strong>으로 할 수 있게 도와줍니다.',
         }, 
+        // 인기글 주석처리
+        // {
+        //   option: '인기글',
+        //   state: false,
+        //   explain: '좋아요 순으로 보드 내<br>포스트의 인기글 <strong>TOP3</strong>를 보여줍니다.',
+        // }, 
         {
-          option: '인기글',
-          state: false,
-          explain: '좋아요 순으로 보드 내<br>포스트의 인기글 <strong>TOP3</strong>를 보여줍니다.',
-        }, 
-        {
+          title: 'vote',
           option: '투표',
           state: false,
           explain: '결정하기 힘든 일은 투표를 통해 확인하는 것은 어떨까요?<br>투표를 만들고 투표내 항목을 만들어 투표를 생성해보세요',
         }, 
+        // 랭킹 수정 요청 연결하기
         {
+          title: 'rank',
           option: '랭킹',
           state: false,
           explain: '보드를 활발히 활동하는 유저는 누군지 확인할 수 있게<br> <strong>TOP3</strong> 활동 유저를 확인해보세요',
@@ -197,6 +202,25 @@ export default {
 
             this.tempDescription = res.data.boardDto.board_description
             this.tempHashtags = deepClone(this.board.hashtags)
+            // 추가기능 연결
+            const addCheck = res.data.board_function
+
+            // 1. 체크리스트 연결
+            if (addCheck.checklist_flag) {
+              this.addFuncAll[0].state = true
+            }
+            // 2. 캘린더 연결
+            if (addCheck.calendar_flag) {
+              this.addFuncAll[1].state = true
+            }
+            // 3. 투표 연결
+            if (addCheck.vote_flag) {
+              this.addFuncAll[2].state = true
+            }
+            // // 4. 유저 랭킹
+            // if (addCheck.vote_flag) {
+            //   this.addFuncAll[3].state = true
+            // }
           }
         })
         .catch(err=>{
@@ -241,11 +265,37 @@ export default {
       boardApi.board_modify(this.boardDto,localStorage.userId)
         .then(res=>{
           console.log(res)
-          console.log(this.board)
         })
         .catch(err=>{
           console.log(err)
         })
+      // 추가기능 요청 api 하나로 연결되어 있어서 이를 반복문으로 처리 - 랭킹 빼고 일단
+      const addFuncState = {}
+      for ( let idx = 0; idx < this.addFuncAll.length - 1; ++idx) {
+ 
+      // 추가기능 편집 및 삭제 - 캘린더, 체크리스트, 투표
+      const params = {
+        board_id: Number(this.$route.params.board_id),
+        login_id: localStorage.getItem('userId'),
+        function: this.addFuncAll[idx].title,
+        option:(this.addFuncAll[idx].state ? 1 : 0),      
+      }
+      // vuex 연결
+      const title = this.addFuncAll[idx].title + '_flag'
+      // 동적 키 할당
+      addFuncState[title] = params.option
+  
+      addFuncApi.modifyAddFunction(params)
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+      }
+      // vuex 반영
+      this.$store.dispatch('addfunc/isUsed', addFuncState);
+
       this.cancel()
       alert(`수정!`);
     },
