@@ -30,8 +30,12 @@ public class PostServiceImpl implements PostService {
 		sqlSession.getMapper(PostMapper.class).createPost(postDto);
 		///////////////////////////////////////////////// post등록시 redisDto에 저장
 		redisService.boardPostSortSet(String.valueOf(postDto.getBoard_id()));
-		// post_header 기술 스택 redis 1씩 증가
-		redisService.postTechStackPlus(String.valueOf(postDto.getPost_header()));
+		int board_state = sqlSession.getMapper(PostMapper.class).getBoardState(postDto.getBoard_id());
+		if(board_state==5){
+			logger.info("redis에 기술스택 추가");
+			// post_header 기술 스택 redis 1씩 증가
+			redisService.postTechStackPlus(String.valueOf(postDto.getPost_header()));
+		}
 	}
 
 	@Override
@@ -41,11 +45,15 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public int postModify(PostDto postDto) {
-		// 기존 기술 스택 redis 1씩 감소
-		String post_header = sqlSession.getMapper(PostMapper.class).getHeaderByID(postDto.getPost_id());
-		redisService.postTechStackMinus(post_header);
-		// 수정한 기술 스택 redis 1씩 증가
-		redisService.postTechStackPlus(String.valueOf(postDto.getPost_header()));
+		int board_state = sqlSession.getMapper(PostMapper.class).getBoardState(postDto.getBoard_id());
+		if(board_state==5){
+			logger.info("redis에 기술스택 수정");
+			// 기존 기술 스택 redis 1씩 감소
+			String post_header = sqlSession.getMapper(PostMapper.class).getHeaderByID(postDto.getPost_id());
+			redisService.postTechStackMinus(post_header);
+			// 수정한 기술 스택 redis 1씩 증가
+			redisService.postTechStackPlus(String.valueOf(postDto.getPost_header()));
+		}
 		return sqlSession.getMapper(PostMapper.class).postModify(postDto);
 	}
 
@@ -58,9 +66,13 @@ public class PostServiceImpl implements PostService {
 	public int postDelete(int post_id) {
 		// boardPostDto의 redis 안에 value값 1감소
 		redisService.boardPostSortSetDecrease(post_id);
-		// post_header 기술 스택 redis 1씩 감소
-		String post_header = sqlSession.getMapper(PostMapper.class).getHeaderByID(post_id);
-		redisService.postTechStackMinus(post_header);
+		int board_state = sqlSession.getMapper(PostMapper.class).getBoardStateById(post_id);
+		if(board_state==5){
+			logger.info("redis에 기술스택 감소");
+			// post_header 기술 스택 redis 1씩 감소
+			String post_header = sqlSession.getMapper(PostMapper.class).getHeaderByID(post_id);
+			redisService.postTechStackMinus(post_header);
+		}
 		return sqlSession.getMapper(PostMapper.class).postDelete(post_id);
 	}
 

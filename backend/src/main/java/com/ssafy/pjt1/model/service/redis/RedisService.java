@@ -2,6 +2,7 @@ package com.ssafy.pjt1.model.service.redis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -232,7 +233,7 @@ public class RedisService {
     /*
      * 기능: post삭제 시 redis techStack -1 감소
      * 
-     * developer: 문진환
+     * developer: 윤수민
      */
     public void postTechStackMinus(String post_header) {
         post_header = post_header.replace("#","");
@@ -244,5 +245,28 @@ public class RedisService {
             zset.incrementScore(sortkey, String.valueOf(techStack_name), -1);
         }
     }
+
+    /*
+     * 기능: 기술스택 데이터 리스트
+     * 
+     * developer: 윤수민
+     */
+	public List<Map<String, Object>> getWordData() {
+        String key = "techStack";
+        ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+        Set<String> range = zSetOps.range(key, 0, 33);
+        Iterator<String> iter = range.iterator();
+        List<Map<String, Object>> list = new ArrayList<>(range.size());
+        while (iter.hasNext()) {
+            String value = iter.next();
+            Map<String, Object> map = new HashMap<>();
+            Double d = zSetOps.score(key, value);
+            int score = Integer.parseInt(String.valueOf(Math.round(d)));
+            map.put("name",value);
+            map.put("score",score);
+            list.add(map);
+        }
+        return list;
+	}
 
 }

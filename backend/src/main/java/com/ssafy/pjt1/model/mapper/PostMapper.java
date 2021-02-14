@@ -88,4 +88,8 @@ public interface PostMapper {
 	public String getWriterImage(String user_id);
 
 	public String getHeaderByID(int post_id);
+
+	public int getBoardState(int board_id);
+
+	public int getBoardStateById(int post_id);
 }

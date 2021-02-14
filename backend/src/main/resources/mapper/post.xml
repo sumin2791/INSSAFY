@@ -405,4 +405,17 @@
 		where post_id = #{post_id};
 	</select>
 
+	<select id="getBoardState" parameterType="int" resultType="int">
+		select board_state
+		from board
+		where board_id = #{board_id};
+	</select>
+
+	<select id="getBoardStateById" parameterType="int" resultType="int">
+		select b.board_state
+		from board as b join post as p
+		on b.board_id = p.board_id
+		where p.post_id = #{post_id};
+	</select>
+
 </mapper>
