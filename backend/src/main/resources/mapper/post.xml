@@ -399,4 +399,10 @@
 		and is_used = 1 and post_state = 0;
 	</select>
 
+	<select id="getHeaderByID" parameterType="int" resultType="string">
+		select post_header
+		from post
+		where post_id = #{post_id};
+	</select>
+
 </mapper>

@@ -86,4 +86,6 @@ public interface PostMapper {
 	public int getAllSearchPostCnt(String keyword);
 
 	public String getWriterImage(String user_id);
+
+	public String getHeaderByID(int post_id);
 }

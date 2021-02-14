@@ -212,4 +212,37 @@ public class RedisService {
             }
         }
     }
+
+     /*
+     * 기능: post 작성 시 redis techStack + 1
+     * 
+     * developer: 윤수민
+     */
+    public void postTechStackPlus(String post_header) {
+        post_header = post_header.replace("#","");
+        post_header = post_header.replace("|","#");
+        String[] list = post_header.split("#");
+        String sortkey = "techStack";
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        for (String techStack_name : list) {
+            zset.incrementScore(sortkey, String.valueOf(techStack_name), 1);
+        }
+    }
+
+    /*
+     * 기능: post삭제 시 redis techStack -1 감소
+     * 
+     * developer: 문진환
+     */
+    public void postTechStackMinus(String post_header) {
+        post_header = post_header.replace("#","");
+        post_header = post_header.replace("|","#");
+        String[] list = post_header.split("#");
+        String sortkey = "techStack";
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        for (String techStack_name : list) {
+            zset.incrementScore(sortkey, String.valueOf(techStack_name), -1);
+        }
+    }
+
 }
