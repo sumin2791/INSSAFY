@@ -110,6 +110,7 @@ public class ChatServiceImpl implements ChatService {
         return uid;
     }
 
+    // 마지막 메세지를 갖고오기.
     @Override
     public String getRecentMessage(String room_id) throws JsonMappingException, JsonProcessingException {
         String key = "message:" + room_id;
