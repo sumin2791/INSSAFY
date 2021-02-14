@@ -139,22 +139,22 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> searchPostNew(Map<String, Object> map) {
+	public List<Map<String, Object>> searchPostNew(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).searchPostNew(map);
 	}
 
 	@Override
-	public List<PostDto> searchPostPopular(Map<String, Object> map) {
+	public List<Map<String, Object>> searchPostPopular(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).searchPostPopular(map);
 	}
 
 	@Override
-	public List<PostDto> boardPostNew(Map<String, Object> map) {
+	public List<Map<String, Object>> boardPostNew(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).boardPostNew(map);
 	}
 
 	@Override
-	public List<PostDto> boardPostPopular(Map<String, Object> map) {
+	public List<Map<String, Object>> boardPostPopular(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).boardPostPopular(map);
 	}
 
@@ -179,18 +179,24 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> marketPostNew(Map<String, Object> map) {
+	public List<Map<String, Object>> marketPostNew(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).marketPostNew(map);
 	}
 
 	@Override
-	public List<PostDto> marketPostPopular(Map<String, Object> map) {
+	public List<Map<String, Object>> marketPostPopular(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).marketPostPopular(map);
 	}
 
 	@Override
 	public String getWriterName(String user_id) {
 		return sqlSession.getMapper(PostMapper.class).getWriterName(user_id);
+	}
+
+	
+	@Override
+	public String getWriterImage(String user_id) {
+		return sqlSession.getMapper(PostMapper.class).getWriterImage(user_id);
 	}
 
 	@Override

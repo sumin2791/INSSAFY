@@ -19,7 +19,7 @@
 			  where is_used = 1
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
-		where p.board_id = 37 and p.is_used = 1
+		where p.board_id = 77 and p.is_used = 1
 		order by p.post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -31,7 +31,7 @@
 	</select>
 
 	<select id="getStudyInfo" parameterType="int" resultType="map">
-		select b.board_name, b.board_description, c.board_count
+		select b.board_name, b.board_description, b.board_id, b.board_image, c.board_count
 		from board as b
 		left outer join
 		(select board_id, count(board_id) as board_count
@@ -44,7 +44,7 @@
 	</select>
 
 	<select id="getAllList" parameterType="map" resultType="map">
-		select b.board_name, b.board_description, c.board_count
+		select b.board_name, b.board_description, b.board_id, b.board_image, c.board_count
 		from board as b
 		left outer join
 		(select board_id, count(board_id) as board_count
