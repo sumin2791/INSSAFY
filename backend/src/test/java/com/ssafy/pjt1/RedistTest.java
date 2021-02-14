@@ -21,11 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.core.ZSetOperations;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,93 +36,11 @@ public class RedistTest {
 
     private ObjectMapper mapper;
 
-    @Autowired
-    private ChatService chatService;
-
-    @Autowired
-    private RedisService redisService;
-
-    @Autowired
-    private UserService userService;
-
     @Test
-    public void zSetTest() {
-        String key = "addFunc:";
-        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
-        // zset.add(key + "userRan:" + "study", "park", 1);
-        // zset.add(key + "userRan:" + "study", "moon", 2);
-        // zset.add(key + "userRan:" + "study", "kim", 3);
-        // zset.add(key + "userRan:" + "game", "b", 8);
-        // zset.add(key + "userRan:" + "movie", "c", 10);
-        // zset.incrementScore(key, "b", 2);
-        // logger.info("msg: {}", zset.range(key, 0, 2));
-        // log.info(">>>>>>>>zset: {}", Math.round(zset.score(key, "b")));
-        log.info(">>>>>>>>zSetTest {}", zset.range("func:userRank:77", 0, 2));
-    }
-
-    @Test
-    public void Setops() {
-        String uid = UUID.randomUUID().toString();
-        log.info(uid);
-        SetOperations<String, String> setOps = redisTemplate.opsForSet();
-        setOps.add("checkId", "moonkim");
-        setOps.add("checkId", "kimmoon");
-        assertEquals(true, setOps.isMember("checkId", "moonkim"));
-        log.info("msg: {}", setOps.isMember("checkId", "kkk"));
-        log.info("결과나옴");
-    }
-
-    @Test
-    public void opsList() throws JsonProcessingException {
-        mapper = new ObjectMapper();
-        ListOperations<String, String> listOps = redisTemplate.opsForList();
-        listOps.leftPush("key", "0");
-        listOps.leftPush("key", "1");
-        listOps.leftPush("key", "2");
-        log.info(">>>>>>>>>>{}", listOps.range("key", 0, 1));
-    }
-
-    @Test
-    public void service() throws IOException {
-        ChatMessage chat = new ChatMessage("room1", "user1", "opp1", "안녕하세요", "aaa");
-        // chatService.insertMessage(chat);
-        mapper = new ObjectMapper();
-        ListOperations<String, String> listOps = redisTemplate.opsForList();
-        String str = mapper.writeValueAsString(chat);
-        listOps.leftPush("key", str);
-        log.info("msg:{}", listOps.range("key", 0, 0));
-        log.info("테스트:{}", str);
-
-    }
-
-    @Test
-    public void sendPush() {
-        ListOperations<String, String> listOps = redisTemplate.opsForList();
-        String key = "push:" + "moon:" + "opp";
-
-        // listOps.leftPush("push:" + "moon:" + "opp", "true");
-        // listOps.leftPush("push:" + "moon:" + "aaa", "true");
-        // listOps.leftPush("push:" + "moon:" + "bbb", "true");
-
-        Set<String> set = redisTemplate.keys("push:moon*");
-        for (String k : set) {
-            log.info("msg:{}", k);
-        }
-        // RedisOperations<String, String> redis = listOps.getOperations();
-        // redis.keys("push:moon");
-
-    }
-
-    @Test
-    public void addFunc() {
-        redisService.increaseUserRank(124, 77);// 포스트 아이디, 보드아이디
-
-    }
-
-    @Test
-    public void RedisServiceTest() throws JsonProcessingException {
-        redisService.updateAddFuncRank();
-        // UserDto dto = userService.userDtoById("e4wqD1X2l0Zu8");
-        // log.info(">>>>>>>{}", dto.getUser_nickname());
+    public void valOpsTest() {
+        ValueOperations<String, String> valOps = redisTemplate.opsForValue();
+        String key = "notice:moon:kim";
+        // valOps.set(key, "1");
+        valOps.increment(key, 1);
     }
 }
