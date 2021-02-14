@@ -44,20 +44,12 @@
               </p>
               <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
-                <v-list-item>내 스터디 목록</v-list-item>
-                  <!-- 스터디 목록 활성화 버튼 -->
-                  <!-- <v-list-item>
-                    <v-switch
-                      v-model="isMyStudy"
-                      inset
-                      color="#0B2945"
-                      :label="`${state}`"
-                      @click="filterMyStudyGroup()"
-                    ></v-switch>
-                  </v-list-item> -->
+                <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>내 스터디 목록 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+                <b-collapse visible id="item-collapse">
                   <v-col v-for="(group,idx) in myStudyGroup" :key="idx">
-                    <StudyGroup :group="group"/>
+                    <MyStudyGroup :group="group"/>
                   </v-col>
+                </b-collapse>
               </v-list>
             </div>
           </v-col>
@@ -65,14 +57,17 @@
           <v-col class="col-12 col-sm-8">
             <div class="main-header">
               <div class="flagPromoList">
-                <b-form-checkbox v-model="flagPromoList" name="check-button" switch>
-                  <p v-if="!flagPromoList" style="margin:0;">모집글</p>
-                  <p v-if="flagPromoList" style="margin:0;">전체 스터디</p>
-                </b-form-checkbox>
+                <v-switch
+                      v-model="flagPromoList"
+                      inset
+                      color="#0B2945"
+                      :label="`${state}`"
+                      @click="filterMyStudyGroup()"
+                    ></v-switch>
               </div>
               <div class="btnWrite" v-if="!flagPromoList"><PostWrite :in-board="inBoard"/></div>
               <div class="btnWrite" v-if="flagPromoList">
-                <b-button class="btn-write">스터디 만들기</b-button>
+                <b-button class="btn-write" @click="goToCreateBoard">스터디 만들기</b-button>
               </div>
             </div>
             <!-- 스터디 게시글쓰기 -->
@@ -97,7 +92,8 @@
 // 스터디 홍보 게시물 쓰기
 // import StudyPostWrite from "@/components/curation/study/StudyPostWrite.vue"
 // 스터디 내 그룹
-import StudyGroup from "@/components/curation/study/StudyGroup.vue"
+// import StudyGroup from "@/components/curation/study/StudyGroup.vue"
+import MyStudyGroup from "@/components/curation/study/MyStudyGroup.vue"
 
 
 
@@ -112,7 +108,8 @@ export default {
   components: {
     // StudyPost,
     // StudyPostWrite,
-    StudyGroup,
+    // StudyGroup,
+    MyStudyGroup,
     StudyPromotionPostList,
     AllGroupList,
     PostWrite,
@@ -159,8 +156,9 @@ export default {
       // 내 스터디 목록 활성화 버튼
       isMyStudy: false,
       myStudyGroup: {},
-      state: '',
+      state: '홍보 목록',
       flagPromoList:false,
+      flagPromoGroup: ['스터디 목록','홍보 목록'],
       inBoard:true,
     }
   },
@@ -171,11 +169,14 @@ export default {
       this.ResponsiveSize.viewSize = window.innerWidth;
     },
     // 내 스터디 그룹 / 전체 스터디 그룹 전환
-    // filterMyStudyGroup() {
-    //   if (this.isMyStudy) {
-    //     this.state = this.myStudyGroup[0]
-    //   } else {this.state = this.myStudyGroup[1]}
-    // },
+    filterMyStudyGroup() {
+      if (this.flagPromoList) {
+        this.state = this.flagPromoGroup[0]
+      } else {this.state = this.flagPromoGroup[1]}
+    },
+    goToCreateBoard() {
+      return this.$router.push({ name: 'StudyGroupForm' });
+    },
   }
 }
 </script>
@@ -196,10 +197,16 @@ export default {
   box-shadow: var(--basic-shadow-w);
 }
 
+#scrap-item{
+  text-decoration: none;
+  color:#000;
+}
+
 /* 오른쪽 section*/
 .main-header{
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .flagPromoList{
   display: flex;

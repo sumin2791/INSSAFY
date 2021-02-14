@@ -36,52 +36,28 @@
         <v-row dense>
           
           <!-- 왼쪽 스터디 설명 부분 -->
-          <v-col 
-            class="col-12 col-sm-4" 
-          >
-            <v-sheet>
-              <!-- 스터디 설명 부분 -->
+          <v-col class="col-12 col-sm-3">
+            <div id="description" class="rounded-bg container-description">
+              <h4 class="b-desc">{{groupDto.board_name}}</h4>
+              <p class="l-desc">
+                {{groupDto.board_description}}
+              </p>
+              <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
-                <!-- 스터디 설명 부분 -->
-                <div
-                  class="d-flex
-                  flex-column
-                  justify-space-between"
-                  style="min-height: 25vh;"
-                >
-                  <!-- 해당 스터디 타이틀 -->
-                  <div class="text-h5">{{ studyInfo.studyTitle }}</div>
-                  <div class="text-start pa-1 ma-auto">
-                    {{ studyInfo.studyDescription }}
-                  </div>
-                </div>
-                <!-- StudyGroup 부분 -->
-                <v-divider class="my-2"></v-divider>
-                <v-list>
-                  <v-list-item>스터디 목록</v-list-item>
-                  <!-- 스터디 목록 활성화 버튼 -->
-                  <v-list-item>
-                    <v-switch
-                      v-model="isMyStudy"
-                      inset
-                      color="#0B2945"
-                      :label="`${state}`"
-                      @click="filterMyStudyGroup()"
-                    ></v-switch>
-                  </v-list-item>
-                  <v-col>
-                    <StudyGroup />
-                    <StudyGroup />
-                    <StudyGroup />
-                    <StudyGroup />
+                <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>내 스터디 목록 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+                <b-collapse visible id="item-collapse">
+                  <v-col v-for="(group,idx) in myStudyGroup" :key="idx">
+                    <MyStudyGroup :group="group"/>
                   </v-col>
-                </v-list>
+                </b-collapse>
               </v-list>
-            </v-sheet>
+            </div>
+
+            
           </v-col>
           <!-- 오른쪽 스터디 본문 부분 -->
           <v-col
-            class="col-12 col-sm-8"  
+            class="col-12 col-sm-9"  
           >
             <!-- 달력 추가기능 선택시 들어갈 부분 -->
             <div id="center-post">
@@ -90,11 +66,13 @@
             </div>
             <CalendarDialog />
             <!-- 스터디 게시글쓰기 -->
-            <StudyPostWrite class="mx-4 mb-2"/>
+            
+            <PostWrite class="mt-3" :in-board="inBoard"/>
+            <GroupPostList />
             <!-- 스터디 게시물 부분 -->
-            <StudyPost class="mx-4 mb-2"/>
-            <StudyPost class="mx-4 mb-2"/>
-            <StudyPost class="mx-4 mb-2"/> 
+            <!-- <StudyPost class="mx-4 mb-2"/> -->
+            <!-- <StudyPost class="mx-4 mb-2"/> -->
+            <!-- <StudyPost class="mx-4 mb-2"/>  -->
           </v-col>
         </v-row>
       </v-container>
@@ -104,24 +82,49 @@
 
 <script>
 // 스터디 홍보 게시물
-import StudyPost from "@/components/curation/study/StudyPost.vue"
+// import StudyPost from "@/components/curation/study/StudyPost.vue"
 // 스터디 홍보 게시물 쓰기
-import StudyPostWrite from "@/components/curation/study/StudyPostWrite.vue"
+// import StudyPostWrite from "@/components/curation/study/StudyPostWrite.vue"
 // 스터디 내 그룹
-import StudyGroup from "@/components/curation/study/StudyGroup.vue"
+// import StudyGroup from "@/components/curation/study/StudyGroup.vue"
 // 캘린더 추가기능 추가시 넣을 부분
 import StudyCalendarSpan from '@/components/curation/study/StudyCalendarSpan.vue';
 import CalendarDialog from '@/components/etc/CalendarDialog';
 
+import MyStudyGroup from "@/components/curation/study/MyStudyGroup.vue"
+import PostWrite from '@/components/board/PostWrite'
+import GroupPostList from "@/components/board/PostList"
+
+import * as studyApi from "@/api/study"
+import * as boardApi from '@/api/board';
+
 export default {
-  name:'LearningShare',
+  name:'StudyGroupMain',
   components: {
-    StudyPost,
-    StudyPostWrite,
-    StudyGroup,
+    // StudyPost,
+    // StudyPostWrite,
+    // StudyGroup,
     // 캘린더 부분
     StudyCalendarSpan,
     CalendarDialog,
+    MyStudyGroup,
+    PostWrite,
+    GroupPostList,
+  },
+  watch:{
+  },
+  created(){
+    //왼쪽 스터디 디테일 가져오기
+    this.getStudyDetail()
+    
+    // 왼쪽에 내 스터디 목록 가져오기
+    this.getMyStudyGroup()
+
+    // 구독했는 지 파악하기 : inBoard
+    this.isInBoard()
+
+    
+    
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -134,7 +137,6 @@ export default {
     this.onResize()
 
     window.addEventListener('resize', this.onResize, { passive: true })
-    this.filterMyStudyGroup()
   },
   data() {
     return {
@@ -145,16 +147,14 @@ export default {
       },
       // 검색 키워드
       searchKeyword: '',
-      // 내 스터디 목록 활성화 버튼
-      isMyStudy: false,
-      myStudyGroup: ['내 스터디 목록', '전체 스터디 목록'],
-      state: '',
-      // 내 스터디 정보 부분
-      studyInfo: {
-        studyTitle: '알고리즘 스터디',
-        studyDescription: '알고리즘 스터디 바닥부터 가즈아',
-      },
+      
+      inBoard:'',
+      myStudyGroup: {},
+      groupDto:{}
     }
+  },
+  computed:{
+    
   },
   methods: {
     // 현재 활성화된 기기에 따라 flag 변경
@@ -162,16 +162,43 @@ export default {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
       this.ResponsiveSize.viewSize = window.innerWidth;
     },
-    // 내 스터디 그룹 / 전체 스터디 그룹 전환
-    filterMyStudyGroup() {
-      if (this.isMyStudy) {
-        this.state = this.myStudyGroup[0]
-      } else {this.state = this.myStudyGroup[1]}
-    },
     // study main으로 이동
     goMainStudy() {
       this.$router.push({ name: 'StudyMain' });
     },
+    getMyStudyGroup(){
+      studyApi.getMyGroupList(localStorage.userId)
+      .then(res=>{
+        const group = res.data.studyList.filter((group) => {
+          if(group!=null){
+            return group
+          }
+        })
+        this.myStudyGroup = group
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    },
+    isInBoard(){
+      const BOARD_ID = Number(this.$route.params.board_id);
+      const boards = JSON.parse(localStorage.subBoard);
+      const boardIds = boards.map((e) => {
+        return e.board_id;
+      });
+      this.inBoard = boardIds.includes(BOARD_ID);
+    },
+    getStudyDetail(){
+      boardApi.board_detail(this.$route.params.board_id)
+      .then(res=>{
+        console.log(res)
+        this.groupDto = res.data.boardDto
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    }
+    
   }
 }
 </script>
@@ -189,6 +216,17 @@ export default {
   margin: 2%;
   padding: 10%;
   flex-basis: 20%;
+}
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
+}
+
+#scrap-item{
+  text-decoration: none;
+  color:#000;
 }
 
 /* calendar 내용 */

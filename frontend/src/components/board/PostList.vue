@@ -38,7 +38,11 @@ export default {
     writeFlag:function(){
       this.page=0
       location.reload();
-    }
+    },
+    re:function(){
+      this.page=0
+      location.reload();
+    },
   },
   computed:{
     writeFlag(){
@@ -63,6 +67,9 @@ export default {
         flag.headerLearnShare = true
       }
       return flag
+    },
+    re(){
+      return this.$route.params.board_id
     }
   },
   created() {
@@ -72,13 +79,18 @@ export default {
     infiniteHandler($state){
       const curationName = this.$route.name
       let BOARD_ID
-      if(curationName!="Board"){
-        BOARD_ID = this.$store.state.curationId[curationName]
-      }else{
+      if(curationName==="Board" || curationName==="Study"){
+
         BOARD_ID = Number(this.$route.params.board_id)
+      }else{
+        BOARD_ID = this.$store.state.curationId[curationName]
+
       }
+      // if(curationName!="Board" && curationName!="Study"){
+      // }else{
+      // }
       const EACH_LEN = 4
-      
+
       postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId,page:this.page,size:EACH_LEN})
       .then((res)=>{
         setTimeout(()=>{
@@ -94,7 +106,9 @@ export default {
           }
         },1000);
       })
-      .catch(err=>{console.log(err)})
+      .catch(err=>{
+        console.log(err)
+      })
   },
   
   }

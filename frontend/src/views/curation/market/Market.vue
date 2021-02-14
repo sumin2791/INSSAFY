@@ -57,7 +57,7 @@
                 <!-- 중고장터 설명 부분 -->
                 <!-- 관심 품목 부분 -->
                 <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>관심품목 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
-                <b-collapse id="item-collapse">
+                <b-collapse visible id="item-collapse">
                   <v-col>
                   <MarketItem />
                 </v-col>

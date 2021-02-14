@@ -284,7 +284,7 @@ export default {
       // Push the name to submitted names
       const curationName = this.$route.name
       let BOARD_ID
-      if(curationName!="Board"){
+      if(curationName!="Board" && curationName!="Study"){
         BOARD_ID = this.$store.state.curationId[curationName]
       }else{
         BOARD_ID = Number(this.$route.params.board_id)

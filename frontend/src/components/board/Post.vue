@@ -270,11 +270,15 @@ export default {
         }
       }
       const curationName = this.$route.name
-      if(curationName!="Board"){
-        data.params.board_id = this.$store.state.curationId[curationName]
-      }else{
+      console.log(curationName)
+      if(curationName==="Board" || curationName==="Study"){
         data.params.board_id = Number(this.$route.params.board_id)
+      }else{
+        data.params.board_id = this.$store.state.curationId[curationName]
       }
+      // if(curationName!="Board" && curationName!="Study"){
+      // }else{
+      // }
 
       if (curationName==="Market"){
         data.name = "MarketPost"
@@ -282,6 +286,10 @@ export default {
         data.name = "LearnSharePost"
       }else if(curationName==="Recruitment"){
         data.name = "RecruitmentPost"
+      }else if(curationName==="StudyMain"){
+        data.name = "StudyMainPost"
+      }else if(curationName === "Study"){
+        data.name = "StudyGroupPost"
       }
       else{
         data.name = "Post"

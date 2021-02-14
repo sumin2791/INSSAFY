@@ -10,29 +10,29 @@
           text-center
           font-weight-black"
         style="font-size: 24px !important;"
-      >보드 생성하기</div>
+      >스터디 생성하기</div>
       <v-row no-gutters dense>
         <!-- (PC기준)왼쪽 -->
         <v-col 
           class="col-12 col-sm-8">
           <!-- 보드 이름 -->
           <v-col>
-            <div class="my-2">보드 이름</div>
+            <div class="my-2">스터디 이름</div>
             <v-text-field
-              placeholder="보드이름을 작성해주세요"
+              placeholder="스터디이름을 작성해주세요"
               solo
               v-model="title"
             ></v-text-field>
           </v-col>
           <!-- 보드 설명 -->
           <v-col>
-            <div class="my-2">보드 설명</div>
+            <div class="my-2">스터디 설명</div>
             <v-textarea
               filled
               solo
               rows="4"
               row-height="30"
-              placeholder="보드에 대한 설명을 적어보세요"
+              placeholder="스터디에 대한 설명을 적어보세요"
               v-model="description"
               class="description"
             ></v-textarea>
@@ -75,14 +75,6 @@
               placeholder="대표 이미지 선택하기"
             ></v-file-input>
           </v-col>
-          <!-- 익명 여부 -->
-          <v-col>
-            <div class="my-2">익명성 여부</div>
-            <b-form-checkbox v-model="options.ikmyeong" name="check-button" switch>
-              <p v-if="!options.ikmyeong" style="margin:0; text-decoration:line-through;">익명 보드</p>
-              <b v-if="options.ikmyeong">익명 보드</b>
-            </b-form-checkbox>
-          </v-col>
           <!-- 지역 정보 -->
           <v-col>
             <v-select
@@ -91,18 +83,6 @@
               label="지역"
               solo
             ></v-select>
-          </v-col>
-          <!-- 추가 기능 -->
-          <v-col>
-            <b-form-group label="추가기능(optional)" v-slot="{ ariaDescribedby }">
-              <b-form-checkbox-group
-                id="checkbox-group-1"
-                v-model="selected"
-                :options="options.f"
-                :aria-describedby="ariaDescribedby"
-                name="flavour-1"
-              ></b-form-checkbox-group>
-            </b-form-group>
           </v-col>
         </v-col>
       </v-row>
@@ -118,7 +98,7 @@
           @click="onCreate()"
 
         >
-          보드 만들기
+          스터디 만들기
         </v-btn>
       </v-row>
     </v-container>
@@ -172,13 +152,12 @@ export default {
         board_name: this.title,
         board_description: this.description,
         board_location: '전체',
-        board_igmyeong: 0,
-        board_image:'',
         board_hash:this.hashtags.join('|'),
+        board_igmyeong: 0,
         checklist_flag:0,
         calendar_flag:0,
         vote_flag:0,
-        board_state:0
+        board_state:3
       };
       boardApi.board_create(board).then(response => {
         console.log(response.data);
@@ -192,9 +171,7 @@ export default {
           write_post_count:0
         })
         localStorage.subBoard = JSON.stringify(subBoard)
-        alert('게시판 보드 생성')
-        
-        this.$router.push({name:'Board',params:{board_id:response.data.board_id}})
+        this.$router.push({name:'Study',params:{board_id:response.data.board_id}})
       }).catch(error => {
         console.log(error);
         alert("보드 생성에 실패하였습니다.");
