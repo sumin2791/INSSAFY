@@ -154,7 +154,7 @@ public class StudyController {
      * 
      * developer: 윤수민
      * 
-     * @param : pa
+     * @param : 
      * 
      * @return : message, defaultWords
      * 
@@ -167,6 +167,63 @@ public class StudyController {
         try {
             List<Map<String, Object>> defaultWords = redisService.getWordData();
             resultMap.put("defaultWords", defaultWords);          
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 스터디 가입 요청
+     * 
+     * developer: 윤수민
+     * 
+     * @param : user_id, board_id
+     * 
+     * @return : message
+     */
+    @PostMapping("/request")
+    public ResponseEntity<Map<String, Object>> studyRequest(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("board/subscribe 호출성공");
+
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id", (String) param.get("user_id"));
+            map.put("board_id", (int) param.get("board_id"));
+
+            studyService.request(map);
+            resultMap.put("message", SUCCESS);
+
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 스터디 가입 요청 리스트
+     * 
+     * developer: 윤수민
+     * 
+     * @param : board_id
+     * 
+     * @return : message, list
+     * 
+     */
+    @GetMapping("/requestList")
+    public ResponseEntity<Map<String, Object>> getRequestList(@RequestParam(value = "board_id") int board_id){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("study/wordCloud 호출성공");
+        try {
+            List<Map<String, Object>> list = studyService.getRequestList(board_id);
+            resultMap.put("list", list);          
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);

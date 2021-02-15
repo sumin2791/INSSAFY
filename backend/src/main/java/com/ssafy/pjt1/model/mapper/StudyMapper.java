@@ -18,4 +18,8 @@ public interface StudyMapper {
 
 	public int getTotalCnt();
 
+	public void request(Map<String, Object> map);
+
+	public List<Map<String, Object>> getRequestList(int board_id);
+
 }
