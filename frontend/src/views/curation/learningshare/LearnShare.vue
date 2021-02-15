@@ -37,18 +37,19 @@
           <!-- 왼쪽 학습공유 설명 부분 -->
           <v-col class="col-12 col-sm-4">
             <div id="description" class="rounded-bg container-description">
+              <!--curation 설명-->
               <h4 class="b-desc">학습공유</h4>
               <p class="l-desc">
                 오늘의 학습 내용<br />
                 함께 나누고픈 내용 공유
               </p>
+              <!-- rank-->
               <v-divider class="my-2"></v-divider>
-              <v-list color="transparent">
-                <v-list-item>RANK</v-list-item>
-                  <v-col>
-                    <LearningRank />
-                  </v-col>
-                  <!-- ranking 1위의 한마디 -->
+              <v-list-item><a id="scrap-item" v-b-toggle href="#rank-collapse" @click.prevent>RANK <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+              <b-collapse visible id="rank-collapse">
+                <v-col>
+                  <LearningRank />
+                </v-col>
                 <v-list-item>RANK 1위의 한마디</v-list-item>
                 <v-col class="font-weight-black text-center">
                   "{{ first.speech }}"
@@ -56,22 +57,22 @@
                 <v-col class="text-end text-caption">
                   -{{ first.nickName }}-
                 </v-col>
-              </v-list>
+              </b-collapse>
+              <!--워드클라우드-->
               <v-divider class="my-2"></v-divider>
-              <v-list-item>워드 클라우드 부분</v-list-item>
-              <v-col class="d-flex justify-center p-0">
-                <wordcloud
-                  :data="defaultWords"
-                  nameKey="name"
-                  valueKey="value"
-                  color="Category10"
-                  :margin="wordcloudmargin"
-                  :wordClick="wordClickHandler">
-                </wordcloud>
-                <!-- <v-avatar size="200">
-                  <v-img src="@/assets/images/wordcloud.jpg"></v-img>
-                </v-avatar> -->
-              </v-col>
+              <v-list-item><a id="scrap-item" v-b-toggle href="#wordcloud-collapse" @click.prevent>WordCloud <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+              <b-collapse visible id="wordcloud-collapse">
+                <v-col class="d-flex justify-center p-0">
+                  <wordcloud
+                    :data="defaultWords"
+                    nameKey="name"
+                    valueKey="value"
+                    color="Category10"
+                    :margin="wordcloudmargin"
+                    :wordClick="wordClickHandler">
+                  </wordcloud>
+                </v-col>
+              </b-collapse>
             </div>
           </v-col>
           <!-- 오른쪽 학습공유 본문 부분 -->
@@ -142,7 +143,7 @@ export default {
   data() {
     return {
       defaultWords:[],
-      wordcloudmargin:{top: 10, right: 10, bottom: 10, left: 10 },
+      wordcloudmargin:{top: 15, right: 15, bottom: 15, left: 15 },
       // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
       ResponsiveSize: {
         isMobile: false, 
@@ -189,5 +190,9 @@ export default {
   margin: 0px 0 20px;
   padding: 10px;
   box-shadow: var(--basic-shadow-w);
+}
+#scrap-item{
+  text-decoration: none;
+  color:#000;
 }
 </style>
