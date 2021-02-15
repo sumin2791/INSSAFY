@@ -102,6 +102,7 @@ public class ChatServiceImpl implements ChatService {
         roomInfo.put("roomId", uid);// 방 번호
         roomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
         roomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
+        roomInfo.put("opp_id", opp_id);// 상대방 아이디
         // 채팅방에 넣기
         String infoString = objMapper.writeValueAsString(roomInfo);
         log.info("info:{}", infoString);
