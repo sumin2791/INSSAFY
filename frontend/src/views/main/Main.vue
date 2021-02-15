@@ -153,7 +153,6 @@ export default {
   mounted() {
     this.actNewBoards().then((result) => {
       const boards = result;
-      console.log(boards);
       for (let i = 0; i < boards.length; i++) {
         if (!this.$store.getters['auth/getSubscribed'](boards[i].board_id)) {
           //suggest에 사용할 보드 추가

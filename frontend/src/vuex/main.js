@@ -202,7 +202,7 @@ export default {
     async actLikeRank({ commit }) {
       try {
         const response = await mainApi.getLikeRank();
-        console.log(response);
+        // console.log(response);
         commit('SET_LIKE_RANK', response.data.like);
       } catch (error) {
         console.log(error);
@@ -213,7 +213,7 @@ export default {
     async actCommentRank({ commit }) {
       try {
         const response = await mainApi.getCommentRank();
-        console.log(response);
+        // console.log(response);
         commit('SET_COMMENT_RANK', response.data.postComment);
       } catch (error) {
         console.log(error);
@@ -281,9 +281,7 @@ function makeBoard(data) {
   for (let i = 0; i < keys.length; i++) {
     const obj = keys[i].split(', ');
     //객체 저장 용
-    let id,
-      name,
-      image = {};
+    let id, name, image;
     for (let j = 0; j < obj.length; j++) {
       const arr = obj[j].split('=');
       switch (arr[0]) {
@@ -294,7 +292,7 @@ function makeBoard(data) {
           name = arr[1];
           break;
         case 'board_image':
-          image = arr[1];
+          if (arr[1] != null && arr[1] != 'null' && arr[1] != '') image = arr[1];
           break;
         default:
           console.log('popular 팔로워 부분, reponse 데이터 가공 실패');
