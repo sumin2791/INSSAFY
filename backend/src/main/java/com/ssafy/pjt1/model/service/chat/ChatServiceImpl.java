@@ -98,7 +98,7 @@ public class ChatServiceImpl implements ChatService {
         log.info("들어옴");
         // 방 생성하기
         // 내 방과, 상대방 방을 동시에 생성
-
+        UserDto myDto = userService.userDtoById(user_id);
         UserDto oppDto = userService.userDtoById(opp_id);
         Map<String, Object> myRoomInfo = new HashMap<>();
         myRoomInfo.put("roomId", uid);// 방 번호
@@ -107,8 +107,8 @@ public class ChatServiceImpl implements ChatService {
         myRoomInfo.put("opp_id", opp_id);// 상대방 아이디
         Map<String, Object> oppRoomInfo = new HashMap<>();
         oppRoomInfo.put("roomId", uid);// 방 번호
-        oppRoomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
-        oppRoomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
+        oppRoomInfo.put("opp_nickName", myDto.getUser_nickname());// 상대방 닉네임
+        oppRoomInfo.put("opp_img", myDto.getUser_image());// 상대방 이미지
         oppRoomInfo.put("opp_id", user_id);// 상대방 아이디
         // 채팅방에 넣기
         String myRoomInfoStr = objMapper.writeValueAsString(myRoomInfo);
