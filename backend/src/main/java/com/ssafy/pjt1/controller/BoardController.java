@@ -86,6 +86,7 @@ public class BoardController {
             map2.put("checklist_flag", (int) param.get("checklist_flag"));
             map2.put("calendar_flag", (int) param.get("calendar_flag"));
             map2.put("vote_flag", (int) param.get("vote_flag"));
+            map2.put("user_rank_flag", (int) param.get("user_rank_flag"));
             // map2.put("user_rank_flag", (int) param.get("user_rank_flag"));
             boardService.addFunction(map2);
 
@@ -433,6 +434,7 @@ public class BoardController {
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
                 resultMap.put("board_function", map);
+
                 resultMap.put("message", SUCCESS);
             } else {
                 resultMap.put("message", "NULL");
@@ -475,6 +477,8 @@ public class BoardController {
                     boardService.addCalendar(map2);
                 } else if (function.equals("vote")) {
                     boardService.addVote(map2);
+                } else if (function.equals("userRank")) {
+                    boardService.addUserRank(map2);
                 }
                 resultMap.put("message", SUCCESS);
             } else {

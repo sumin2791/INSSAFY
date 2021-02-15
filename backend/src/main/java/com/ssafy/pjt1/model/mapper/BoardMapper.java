@@ -80,4 +80,6 @@ public interface BoardMapper {
 	public void addCalendar(Map<String, Object> map2);
 
 	public void addVote(Map<String, Object> map2);
+
+	public void addFUserRank(Map<String, Object> map2);
 }

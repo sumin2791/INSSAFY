@@ -1,20 +1,6 @@
 package com.ssafy.pjt1;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.pjt1.model.dto.chat.ChatMessage;
-import com.ssafy.pjt1.model.dto.user.UserDto;
-import com.ssafy.pjt1.model.service.UserService;
-import com.ssafy.pjt1.model.service.chat.ChatService;
-import com.ssafy.pjt1.model.service.redis.RedisService;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

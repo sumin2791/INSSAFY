@@ -40,7 +40,7 @@ public class AddFunctionController {
     public ResponseEntity<Map<String, Object>> getUserRank(@RequestParam("board_id") int board_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        ValueOperations valOps = redisTemplate.opsForValue();
+        ValueOperations<String, String> valOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
         try {
             String key = "sortSet:func:userRank:" + String.valueOf(board_id);
