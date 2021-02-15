@@ -21,4 +21,6 @@ public interface StudyService {
 
 	public void requestProcess(Map<String, Object> map);
 
+	public void secession(Map<String, Object> map);
+
 }

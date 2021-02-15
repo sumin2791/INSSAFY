@@ -59,4 +59,9 @@ public class StudyServiceImpl implements StudyService {
 		sqlSession.getMapper(StudyMapper.class).requestProcess(map);
 	}
 
+	@Override
+	public void secession(Map<String, Object> map) {
+		sqlSession.getMapper(StudyMapper.class).secession(map);
+	}
+
 }
