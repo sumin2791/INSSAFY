@@ -81,6 +81,8 @@ public class ChatServiceImpl implements ChatService {
             String recentMsg = getRecentMessage((String) room_id);
             log.info("msg:{}", room_id);
             roomMapList.put("recentMsg", recentMsg);
+            // 상대 id도 저장
+
             // 객체를 리스트에 저장
             roomListObject.add(roomMapList);
         }
@@ -96,18 +98,23 @@ public class ChatServiceImpl implements ChatService {
         log.info("들어옴");
         // 방 생성하기
         // 내 방과, 상대방 방을 동시에 생성
-        Map<String, Object> roomInfo = new HashMap<>();
+
         UserDto oppDto = userService.userDtoById(opp_id);
-        log.info("dto:{}", oppDto.getUser_email());
-        roomInfo.put("roomId", uid);// 방 번호
-        roomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
-        roomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
-        roomInfo.put("opp_id", opp_id);// 상대방 아이디
+        Map<String, Object> myRoomInfo = new HashMap<>();
+        myRoomInfo.put("roomId", uid);// 방 번호
+        myRoomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
+        myRoomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
+        myRoomInfo.put("opp_id", opp_id);// 상대방 아이디
+        Map<String, Object> oppRoomInfo = new HashMap<>();
+        oppRoomInfo.put("roomId", uid);// 방 번호
+        oppRoomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
+        oppRoomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
+        oppRoomInfo.put("opp_id", user_id);// 상대방 아이디
         // 채팅방에 넣기
-        String infoString = objMapper.writeValueAsString(roomInfo);
-        log.info("info:{}", infoString);
-        listOps.leftPush("roomInfo:" + user_id, infoString);
-        listOps.leftPush("roomInfo:" + opp_id, infoString);
+        String myRoomInfoStr = objMapper.writeValueAsString(myRoomInfo);
+        String oppRoomInfoStr = objMapper.writeValueAsString(oppRoomInfo);
+        listOps.leftPush("roomInfo:" + user_id, myRoomInfoStr);
+        listOps.leftPush("roomInfo:" + opp_id, oppRoomInfoStr);
         return uid;
     }
 

@@ -86,7 +86,7 @@ public class BoardController {
             map2.put("checklist_flag", (int) param.get("checklist_flag"));
             map2.put("calendar_flag", (int) param.get("calendar_flag"));
             map2.put("vote_flag", (int) param.get("vote_flag"));
-            // map2.put("user_rank_flag", (int) param.get("user_rank_flag"));
+            map2.put("user_rank_flag", (int) param.get("user_rank_flag"));
             boardService.addFunction(map2);
 
             resultMap.put("board_id", boardDto.getBoard_id());
