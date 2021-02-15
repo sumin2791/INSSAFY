@@ -117,8 +117,17 @@ export default {
     open(date) {
       this.$store.commit('calendar/OPEN_CALENDAR_DIALOG', date);
     },
-    showEvent() {},
-    moreEvent() {},
+    showEvent({ event }) {
+      this.$store.commit('calendar/OPEN_EVENT_DETAIL_DIALOG', event);
+    },
+    moreEvent({ date }) {
+      this.type = 'day';
+      this.date = date;
+      this.$toast.open({
+        message: '하루 일정으로 변경되었습니다.',
+        type: 'default',
+      });
+    },
   },
 };
 </script>

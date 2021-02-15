@@ -14,3 +14,13 @@ export function postCalendarCreate(payload) {
 export function getDeadline() {
   return http.get('/calendar/deadline');
 }
+
+//일정 삭제
+export function putCalendarDelete(calendar_item_id) {
+  return http.put(`/calendar/delete?calendar_item_id=${calendar_item_id}`);
+}
+
+//일정 수정
+export function putCalendarUpdate(payload) {
+  return http.put('/calendar/update', payload);
+}

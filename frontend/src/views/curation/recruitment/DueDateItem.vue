@@ -7,7 +7,7 @@
     <!-- 채용일정 제목 -->
     <div id="post-info">
       <p id="i-title" class="m-desc">{{ event.name }}</p>
-      <p id="i-date" class="l-desc">{{ date | moment('YY.MM.DD.') }}</p>
+      <p id="i-date" class="l-desc">{{ event.start | moment('YY.MM.DD.') }}</p>
     </div>
   </div>
 </template>
@@ -30,7 +30,7 @@ export default {
     let today = moment();
     let target = moment(this.event.start, 'YYYY-MM-DD HH:mm:ss');
     this.dday = Math.floor(moment.duration(today.diff(target)).asDays());
-    this.dday === 0 ? (this.label = 'NOW') : (this.label = `D${this.dday}`);
+    this.dday === 0 ? (this.label = 'NOW') : this.dday > 0 ? (this.label = `D+${this.dday}`) : (this.label = `D${this.dday}`);
   },
 };
 </script>

@@ -40,6 +40,8 @@
       <Post class="post-list" /> -->
     </div>
     <CalendarDialog :boardName="'채용일정'" />
+    <DetailDialog />
+    <ModifyDialog :boardName="'채용일정'" />
   </div>
 </template>
 <script>
@@ -55,6 +57,8 @@ export default {
     DueDateItem,
     CalendarSpan,
     CalendarDialog: () => import('@/components/calendar/CalendarDialog'),
+    DetailDialog: () => import('@/components/calendar/DetailDialog'),
+    ModifyDialog: () => import('@/components/calendar/ModifyDialog'),
   },
   created() {
     this.$store.dispatch('calendar/actGetDeadline');
@@ -66,7 +70,7 @@ export default {
   },
   methods: {
     click: function() {
-      alert('dd');
+      console.log('까꿍~');
     },
   },
 };

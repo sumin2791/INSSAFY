@@ -1,94 +1,94 @@
 <template>
-  <v-dialog max-width="600px" v-model="dialogState" transition="dialog-bottom-transition" @input="close">
-    <v-card id="wrap">
-      <v-card-title>
-        <h3 id="title">일정 추가</h3>
-      </v-card-title>
-      <v-card-text>
-        <v-form class="px-3" ref="form">
-          <!-- <v-text-field label="일정" v-model="event.title" prepend-icon="mdi-folder-marker" :rules="titleRules"></v-text-field>
-          <v-textarea label="상세설명" v-model="event.content" prepend-icon="mdi-pencil" :rules="descRules"></v-textarea> -->
-          <v-text-field label="일정" v-model="event.title" prepend-icon="mdi-folder-marker"></v-text-field>
-          <v-textarea label="상세설명" v-model="event.content" prepend-icon="mdi-pencil"></v-textarea>
-          <v-row>
-            <v-col cols="6" class="pb-0">
-              <v-menu>
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    slot="activator"
-                    label="시작일"
-                    readonly
-                    prepend-icon="mdi-calendar-month"
-                    v-on="on"
-                    :value="event.startDate"
-                    class=""
-                  ></v-text-field>
-                </template>
-                <v-app style="height:290px; overflow:hidden;">
-                  <v-date-picker no-title v-model="event.startDate"></v-date-picker>
-                </v-app>
-              </v-menu>
-            </v-col>
-            <v-col cols="6" class="pb-0">
-              <v-menu :close-on-content-click="false" v-model="startTimer" offset-y>
-                <template v-slot:activator="{ on }">
-                  <v-text-field label="시작 시간" readonly :value="event.startTime" prepend-icon="mdi-timer" v-on="on"></v-text-field>
-                </template>
-                <v-app style="height:460px; overflow:hidden;">
-                  <v-time-picker v-if="startTimer" v-model="event.startTime">
-                    <v-btn class="mx-auto" @click="selectTime">선택 </v-btn>
-                  </v-time-picker>
-                </v-app>
-              </v-menu>
-            </v-col>
-          </v-row>
+  <v-app>
+    <v-dialog content-class="round" overlay-opacity="0" max-width="600px" v-model="dialogState" transition="dialog-bottom-transition" @input="close">
+      <v-card id="wrap">
+        <v-card-title>
+          <h3 id="title">일정 추가</h3>
+        </v-card-title>
+        <v-card-text>
+          <v-form class="px-3" ref="form">
+            <v-text-field label="일정" v-model="event.name" prepend-icon="mdi-folder-marker"></v-text-field>
+            <v-textarea label="상세설명" v-model="event.content" prepend-icon="mdi-pencil"></v-textarea>
+            <v-row>
+              <v-col cols="6" class="pb-0">
+                <v-menu>
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      slot="activator"
+                      label="시작일"
+                      readonly
+                      prepend-icon="mdi-calendar-month"
+                      v-on="on"
+                      :value="event.startDate"
+                      class=""
+                    ></v-text-field>
+                  </template>
+                  <v-app style="height:290px; overflow:hidden;">
+                    <v-date-picker no-title v-model="event.startDate"></v-date-picker>
+                  </v-app>
+                </v-menu>
+              </v-col>
+              <v-col cols="6" class="pb-0">
+                <v-menu :close-on-content-click="false" v-model="startTimer" offset-y>
+                  <template v-slot:activator="{ on }">
+                    <v-text-field label="시작 시간" readonly :value="event.startTime" prepend-icon="mdi-timer" v-on="on"></v-text-field>
+                  </template>
+                  <v-app style="height:460px; overflow:hidden;">
+                    <v-time-picker v-if="startTimer" v-model="event.startTime">
+                      <v-btn class="mx-auto" @click="selectTime">선택 </v-btn>
+                    </v-time-picker>
+                  </v-app>
+                </v-menu>
+              </v-col>
+            </v-row>
 
-          <v-row>
-            <v-col cols="6" class="pt-0">
-              <v-menu>
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    slot="activator"
-                    label="종료일"
-                    readonly
-                    prepend-icon="mdi-calendar-month"
-                    v-on="on"
-                    :value="event.endDate"
-                    class=""
-                  ></v-text-field>
-                </template>
-                <v-app style="height:290px; overflow:hidden;">
-                  <v-date-picker no-title v-model="event.endDate" :allowed-dates="allowedDates"></v-date-picker>
-                </v-app>
-              </v-menu>
-            </v-col>
-            <v-col cols="6" class="pt-0">
-              <v-menu :close-on-content-click="false" v-model="endTimer" offset-y>
-                <template v-slot:activator="{ on }">
-                  <v-text-field label="종료 시간" readonly :value="event.endTime" prepend-icon="mdi-timer" v-on="on"></v-text-field>
-                </template>
+            <v-row>
+              <v-col cols="6" class="pt-0">
+                <v-menu>
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      slot="activator"
+                      label="종료일"
+                      readonly
+                      prepend-icon="mdi-calendar-month"
+                      v-on="on"
+                      :value="event.endDate"
+                      class=""
+                    ></v-text-field>
+                  </template>
+                  <v-app style="height:290px; overflow:hidden;">
+                    <v-date-picker no-title v-model="event.endDate" :allowed-dates="allowedDates"></v-date-picker>
+                  </v-app>
+                </v-menu>
+              </v-col>
+              <v-col cols="6" class="pt-0">
+                <v-menu :close-on-content-click="false" v-model="endTimer" offset-y>
+                  <template v-slot:activator="{ on }">
+                    <v-text-field label="종료 시간" readonly :value="event.endTime" prepend-icon="mdi-timer" v-on="on"></v-text-field>
+                  </template>
 
-                <v-app style="height:460px; overflow:hidden;">
-                  <v-time-picker v-if="endTimer" v-model="event.endTime">
-                    <v-btn class="mx-auto" @click="selectTime">선택 </v-btn>
-                  </v-time-picker>
-                </v-app>
-              </v-menu>
-            </v-col>
-          </v-row>
+                  <v-app style="height:460px; overflow:hidden;">
+                    <v-time-picker v-if="endTimer" v-model="event.endTime">
+                      <v-btn class="mx-auto" @click="selectTime">선택 </v-btn>
+                    </v-time-picker>
+                  </v-app>
+                </v-menu>
+              </v-col>
+            </v-row>
 
-          <div class="text-center" style="margin-bottom: 10px;">
-            <v-btn text class="primary white--text mx-2 mt-3 bottom-btn newmorphism m-desc" @click="close">
-              <span style="color:var(--basic-color-new);">취소</span>
-            </v-btn>
-            <v-btn text class="primary white--text mx-2 mt-3 bottom-btn newmorphism m-desc" @click="submit">
-              <span style="color:var(--basic-color-key);">추가</span>
-            </v-btn>
-          </div>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+            <div class="text-center" style="margin-bottom: 10px;">
+              <v-btn text class="primary white--text mx-2 mt-3 bottom-btn newmorphism m-desc" @click="close">
+                <span style="color:var(--basic-color-new);">취소</span>
+              </v-btn>
+              <v-btn text class="primary white--text mx-2 mt-3 bottom-btn newmorphism m-desc" @click="submit">
+                <span style="color:var(--basic-color-key);">추가</span>
+              </v-btn>
+            </div>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+  </v-app>
 </template>
 
 <script>
@@ -100,7 +100,7 @@ export default {
   },
   data() {
     return {
-      dialogState: null,
+      dialogState: false,
       startTimer: false,
       endTimer: false,
       // titleMax: 16,
@@ -120,7 +120,7 @@ export default {
     event: {
       deep: true,
       handler() {
-        if (this.event.startTime != '' && this.event.endTime != '') {
+        if (this.event.startTime != undefined && this.event.endTime != undefined && this.event.startTime != '' && this.event.endTime != '') {
           this.event.hasTime = true;
         }
       },
@@ -131,7 +131,7 @@ export default {
   },
   methods: {
     submit() {
-      if (this.event.title === '' || this.event.endDate === '') {
+      if (this.event.name === '' || this.event.endDate === '') {
         this.$toast.open({
           message: '일정을 작성한 뒤 다시 시도해주십시오.',
           type: 'warning',
@@ -164,6 +164,11 @@ export default {
 };
 </script>
 
+<style>
+.round {
+  border-radius: 15px;
+}
+</style>
 <style scoped>
 #wrap {
   background-color: var(--basic-color-bg) !important;

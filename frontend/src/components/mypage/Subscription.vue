@@ -130,7 +130,6 @@ export default {
         duration: 1800,
         message: `클릭하여 ${this.board_name} 보드 구독 취소`,
         type: 'error',
-        //보드 구독 취소 후 리스트에서 애니메이션으로 제거
         onClick: () => {
           this.$emit('delSub', this.board.board_id);
         },
