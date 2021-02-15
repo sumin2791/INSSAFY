@@ -62,7 +62,7 @@
       <div>
         <!-- <p class="r-desc delete-button" @click="boardDelete">삭제</p> -->
         <p class="r-desc delete-button" v-b-modal.modal-delete>삭제</p>
-        <b-modal id="modal-delete" title="🗑" @ok="boardDelete">
+        <b-modal id="modal-delete" title="🗑" centered @ok="boardDelete">
           <p class="my-4">보드를 삭제하시겠어요?</p>
           <template #modal-footer="{ok}">
             <b-button variant="delete" @click="ok()">
