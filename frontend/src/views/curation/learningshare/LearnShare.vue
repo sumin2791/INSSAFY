@@ -59,10 +59,18 @@
               </v-list>
               <v-divider class="my-2"></v-divider>
               <v-list-item>워드 클라우드 부분</v-list-item>
-              <v-col class="d-flex justify-center">
-                <v-avatar size="200">
+              <v-col class="d-flex justify-center p-0">
+                <wordcloud
+                  :data="defaultWords"
+                  nameKey="name"
+                  valueKey="value"
+                  color="Category10"
+                  :margin="wordcloudmargin"
+                  :wordClick="wordClickHandler">
+                </wordcloud>
+                <!-- <v-avatar size="200">
                   <v-img src="@/assets/images/wordcloud.jpg"></v-img>
-                </v-avatar>
+                </v-avatar> -->
               </v-col>
             </div>
           </v-col>
@@ -94,6 +102,10 @@ import LearningRank from "@/components/curation/learningshare/LearningRank.vue"
 import LearningSharePostList from "@/components/board/PostList"
 import PostWrite from '@/components/board/PostWrite'
 
+//워드클라우드
+import wordcloud from 'vue-wordcloud'
+import * as learnshareApi from '@/api/study'
+
 export default {
   name:'LearningShare',
   components: {
@@ -102,8 +114,18 @@ export default {
     // LearningPostWrite,
     LearningSharePostList,
     PostWrite,
+    wordcloud,
   },
   created(){
+    learnshareApi.getWordCloud()
+    .then(res=>{
+      res.data.defaultWords.forEach(element => {
+        this.defaultWords.push({name:element.name,value:element.score})
+      });
+    })
+    .catch(err=>{
+      console.log(err)
+    })
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -119,6 +141,8 @@ export default {
   },
   data() {
     return {
+      defaultWords:[],
+      wordcloudmargin:{top: 10, right: 10, bottom: 10, left: 10 },
       // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
       ResponsiveSize: {
         isMobile: false, 
@@ -144,6 +168,9 @@ export default {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
       this.ResponsiveSize.viewSize = window.innerWidth;
     },
+    wordClickHandler(name, value, vm) {
+      console.log('wordClickHandler', name, value, vm);
+    }
   }
 }
 </script>
