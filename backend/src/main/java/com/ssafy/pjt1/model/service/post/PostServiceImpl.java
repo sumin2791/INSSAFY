@@ -30,6 +30,12 @@ public class PostServiceImpl implements PostService {
 		sqlSession.getMapper(PostMapper.class).createPost(postDto);
 		///////////////////////////////////////////////// post등록시 redisDto에 저장
 		redisService.boardPostSortSet(String.valueOf(postDto.getBoard_id()));
+		int board_state = sqlSession.getMapper(PostMapper.class).getBoardState(postDto.getBoard_id());
+		if(board_state==5){
+			logger.info("redis에 기술스택 추가");
+			// post_header 기술 스택 redis 1씩 증가
+			redisService.postTechStackPlus(String.valueOf(postDto.getPost_header()));
+		}
 	}
 
 	@Override
@@ -39,6 +45,15 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public int postModify(PostDto postDto) {
+		int board_state = sqlSession.getMapper(PostMapper.class).getBoardState(postDto.getBoard_id());
+		if(board_state==5){
+			logger.info("redis에 기술스택 수정");
+			// 기존 기술 스택 redis 1씩 감소
+			String post_header = sqlSession.getMapper(PostMapper.class).getHeaderByID(postDto.getPost_id());
+			redisService.postTechStackMinus(post_header);
+			// 수정한 기술 스택 redis 1씩 증가
+			redisService.postTechStackPlus(String.valueOf(postDto.getPost_header()));
+		}
 		return sqlSession.getMapper(PostMapper.class).postModify(postDto);
 	}
 
@@ -51,6 +66,13 @@ public class PostServiceImpl implements PostService {
 	public int postDelete(int post_id) {
 		// boardPostDto의 redis 안에 value값 1감소
 		redisService.boardPostSortSetDecrease(post_id);
+		int board_state = sqlSession.getMapper(PostMapper.class).getBoardStateById(post_id);
+		if(board_state==5){
+			logger.info("redis에 기술스택 감소");
+			// post_header 기술 스택 redis 1씩 감소
+			String post_header = sqlSession.getMapper(PostMapper.class).getHeaderByID(post_id);
+			redisService.postTechStackMinus(post_header);
+		}
 		return sqlSession.getMapper(PostMapper.class).postDelete(post_id);
 	}
 
@@ -139,22 +161,22 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> searchPostNew(Map<String, Object> map) {
+	public List<Map<String, Object>> searchPostNew(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).searchPostNew(map);
 	}
 
 	@Override
-	public List<PostDto> searchPostPopular(Map<String, Object> map) {
+	public List<Map<String, Object>> searchPostPopular(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).searchPostPopular(map);
 	}
 
 	@Override
-	public List<PostDto> boardPostNew(Map<String, Object> map) {
+	public List<Map<String, Object>> boardPostNew(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).boardPostNew(map);
 	}
 
 	@Override
-	public List<PostDto> boardPostPopular(Map<String, Object> map) {
+	public List<Map<String, Object>> boardPostPopular(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).boardPostPopular(map);
 	}
 
@@ -179,18 +201,24 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> marketPostNew(Map<String, Object> map) {
+	public List<Map<String, Object>> marketPostNew(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).marketPostNew(map);
 	}
 
 	@Override
-	public List<PostDto> marketPostPopular(Map<String, Object> map) {
+	public List<Map<String, Object>> marketPostPopular(Map<String, Object> map) {
 		return sqlSession.getMapper(PostMapper.class).marketPostPopular(map);
 	}
 
 	@Override
 	public String getWriterName(String user_id) {
 		return sqlSession.getMapper(PostMapper.class).getWriterName(user_id);
+	}
+
+	
+	@Override
+	public String getWriterImage(String user_id) {
+		return sqlSession.getMapper(PostMapper.class).getWriterImage(user_id);
 	}
 
 	@Override

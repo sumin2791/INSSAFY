@@ -18,4 +18,14 @@ public interface StudyMapper {
 
 	public int getTotalCnt();
 
+	public void request(Map<String, Object> map);
+
+	public List<Map<String, Object>> getRequestList(int board_id);
+
+	public void requestProcess(Map<String, Object> map);
+
+	public void secession(Map<String, Object> map);
+
+	public void reSubscription(Map<String, Object> map);
+
 }

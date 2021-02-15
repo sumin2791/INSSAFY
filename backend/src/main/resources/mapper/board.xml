@@ -18,7 +18,7 @@
 
 	<insert id="addFunction" parameterType="map">
 		insert into add_function values (
-		#{board_id}, #{checklist_flag}, #{calendar_flag}, #{vote_flag}, 1
+		#{board_id}, #{checklist_flag}, #{calendar_flag}, #{vote_flag}, #{user_rank_flag}, 1
 		)
 	</insert>
 
@@ -204,7 +204,7 @@
 	</select>
 
 	<select id="boardFunc" parameterType="int" resultType="map">
-		select checklist_flag, calendar_flag, vote_flag
+		select checklist_flag, calendar_flag, vote_flag, user_rank_flag
 		from add_function
 		where is_used = 1 and board_id = #{board_id};
 	</select>

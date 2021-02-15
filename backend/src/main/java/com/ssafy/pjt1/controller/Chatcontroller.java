@@ -1,17 +1,22 @@
 package com.ssafy.pjt1.controller;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.chat.ChatMessage;
+import com.ssafy.pjt1.model.dto.user.UserDto;
+import com.ssafy.pjt1.model.service.UserService;
 import com.ssafy.pjt1.model.service.chat.ChatService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -23,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Slf4j
@@ -41,7 +48,12 @@ public class ChatController {
     @Autowired
     private SimpMessagingTemplate simpleMessageTemplate;
 
+    @Autowired
+    private UserService userService;
+
     private ObjectMapper objMapper;
+
+    private ValueOperations<String, String> valOps;
 
     /*
      * 기능: 상대방과 중복된 방이 있는지 확인하고 없으면 방을 만든다
@@ -127,7 +139,11 @@ public class ChatController {
             @RequestParam("endNUm") int endNum, @RequestParam("room_id") String room_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
+        // id 받고나서 초기화하기
+        valOps = redisTemplate.opsForValue();
+        // String key = "notice:" + user_id + ":" + opp_id;
         try {
+            // valOps.set(key, "0");
             List<ChatMessage> list = chatService.getMessage(startNUm, endNum, room_id);
             log.info("메시지 출력");
             resultMap.put("msgList", list);
@@ -156,18 +172,60 @@ public class ChatController {
         HttpStatus status = HttpStatus.ACCEPTED;
         String roomId = message.getRoom_id();
         String opp_id = message.getOpp_id();
+        String user_id = message.getUser_id();
+        valOps = redisTemplate.opsForValue();
+        String key = "notice:" + user_id + ":" + opp_id;
         try {
+            // valOps.increment(key, 1);
+            // simpleMessageTemplate.convertAndSend("/notice/" + opp_id, message);
             chatService.insertMessage(message);
-            resultMap.put("message", SUCCESS);
             status = HttpStatus.ACCEPTED;
+            resultMap.put("message", SUCCESS);
+            simpleMessageTemplate.convertAndSend("/message/" + roomId + "/" + opp_id, message);
         } catch (Exception e) {
             log.info("error:{}", e);
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        // 상대에게 알림 보내기
-        // simpleMessageTemplate.convertAndSend("/topic/notice/" + opp_id, message);
-        // 상대에게 메세지 보내기
-        simpleMessageTemplate.convertAndSend("/topic/" + roomId + "/" + opp_id, message);
+    }
+
+    /*
+     * 기능: notice 갖고오기
+     * 
+     * developer: 문진환
+     * 
+     * param: user_id(String)
+     * 
+     * return notices
+     */
+    @ApiOperation(value = "notice 갖고오기")
+    @GetMapping(value = "/notice/{user_id}")
+    public ResponseEntity<Map<String, Object>> getNotice(@PathVariable String user_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String key = "notice:" + user_id + ":*";
+        Set<String> keys = redisTemplate.keys(key);
+        valOps = redisTemplate.opsForValue();
+        List<Object> list = new LinkedList<>();
+        try {
+            // 나에게 보낸 사람들을 모두 조회
+            for (String pattern : keys) {
+                // {count : val, opp_name: "moon"} 이런 형태로 리스트에 저장
+                Map<String, Object> res = new HashMap<>();
+                String[] opp_ids = pattern.split(":");
+                UserDto oppUserDto = userService.userDtoById(opp_ids[2]);
+                res.put("count", valOps.get(pattern));
+                res.put("opp_name", oppUserDto.getUser_nickname());
+                list.add(res);
+            }
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
+            resultMap.put("notices", list);
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            log.error("getNotice error: {}", e);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 }

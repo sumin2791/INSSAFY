@@ -2,6 +2,7 @@ package com.ssafy.pjt1.model.service.redis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,7 @@ public class RedisService {
 
     private ZSetOperations zset;
 
+    @Autowired
     private UserService userService;
 
     /*
@@ -196,21 +198,7 @@ public class RedisService {
             Long size = zset.size(key);
 
             List<Map<String, String>> list = new ArrayList<>();
-            if (size >= 2) {
-                size = Long.valueOf(2);
-            } else {
-                for (int i = 0; i < 3; i++) {
-                    Map<String, String> noCont = new HashMap<>();
-                    noCont.put("nickName", "null");
-                    noCont.put("score", "null");
-                    list.add(noCont);
-                }
-                String noContent = mapper.writeValueAsString(list);
-                valOps.set("sortSet:" + key, noContent);
-                continue;
-            }
-            // 적어도 보드에 3명 이상 글을 써야함
-            Set<String> top3Id = zset.reverseRange(key, 0, size);
+            Set<String> top3Id = zset.reverseRange(key, 0, 2);
             // 아이디로 객체 갖고오기
             if (top3Id != null) {
                 for (String id : top3Id) {
@@ -225,4 +213,60 @@ public class RedisService {
             }
         }
     }
+
+     /*
+     * 기능: post 작성 시 redis techStack + 1
+     * 
+     * developer: 윤수민
+     */
+    public void postTechStackPlus(String post_header) {
+        post_header = post_header.replace("#","");
+        post_header = post_header.replace("|","#");
+        String[] list = post_header.split("#");
+        String sortkey = "techStack";
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        for (String techStack_name : list) {
+            zset.incrementScore(sortkey, String.valueOf(techStack_name), 1);
+        }
+    }
+
+    /*
+     * 기능: post삭제 시 redis techStack -1 감소
+     * 
+     * developer: 윤수민
+     */
+    public void postTechStackMinus(String post_header) {
+        post_header = post_header.replace("#","");
+        post_header = post_header.replace("|","#");
+        String[] list = post_header.split("#");
+        String sortkey = "techStack";
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        for (String techStack_name : list) {
+            zset.incrementScore(sortkey, String.valueOf(techStack_name), -1);
+        }
+    }
+
+    /*
+     * 기능: 기술스택 데이터 리스트
+     * 
+     * developer: 윤수민
+     */
+	public List<Map<String, Object>> getWordData() {
+        String key = "techStack";
+        ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+        Set<String> range = zSetOps.range(key, 0, 33);
+        Iterator<String> iter = range.iterator();
+        List<Map<String, Object>> list = new ArrayList<>(range.size());
+        while (iter.hasNext()) {
+            String value = iter.next();
+            Map<String, Object> map = new HashMap<>();
+            Double d = zSetOps.score(key, value);
+            int score = Integer.parseInt(String.valueOf(Math.round(d)));
+            map.put("name",value);
+            map.put("score",score);
+            list.add(map);
+        }
+        return list;
+	}
+
 }

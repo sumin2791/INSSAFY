@@ -293,7 +293,6 @@ const getEventsTransfer = (arr) => {
       transfer.start = check.start;
       transfer.end = check.end;
     }
-    console.log(transfer);
     payload.push(transfer);
   });
   return payload;

@@ -20,13 +20,13 @@
         update calendar_item
         set calendar_item_title = #{calendar_item_title}, calendar_item_description = #{calendar_item_description}, 
         calendar_item_datetime_start = #{calendar_item_datetime_start}, calendar_item_datetime_end = #{calendar_item_datetime_end}
-        where calendar_item_id = #{calendar_item_id} and is_used = 1;
+        where calendar_item_id = #{calendar_item_id}  and is_used = 1;
     </update>
 
     <update id="deleteCalendar" parameterType="string">
         update calendar_item
         set is_used = 0
-        where calendar_item_id = #{calendar_item_id} and is_used = 1;
+        where calendar_item_id = #{calendar_item_id}  and is_used = 1;
     </update>
 
     <select id="getDeadline" resultType="CalendarItemDto">

@@ -86,7 +86,7 @@ public class BoardController {
             map2.put("checklist_flag", (int) param.get("checklist_flag"));
             map2.put("calendar_flag", (int) param.get("calendar_flag"));
             map2.put("vote_flag", (int) param.get("vote_flag"));
-            // map2.put("user_rank_flag", (int) param.get("user_rank_flag"));
+            map2.put("user_rank_flag", (int) param.get("user_rank_flag"));
             boardService.addFunction(map2);
 
             resultMap.put("board_id", boardDto.getBoard_id());
@@ -126,6 +126,7 @@ public class BoardController {
                 boardService.subscribe(map);
                 /////////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
                 redisService.boardFollowSortSet(board_id);
+                resultMap.put("message", SUCCESS);
             } else {
                 int count2 = boardService.isUnSubscribed(map);
                 if (count2 == 0) {
@@ -133,16 +134,21 @@ public class BoardController {
                     boardService.updateSubscribe(map);
                     /////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
                     redisService.boardFollowSortSet(board_id);
+                    resultMap.put("message", SUCCESS);
                 } else {
                     logger.info("구독 해지");
                     // 관리자 아닐 경우 구독 해지
                     boardService.unsubscribe(map);
                     ///////////////////////////////////////////// 구독 해지시 redis에서 follower수 -1 감소
                     redisService.boardFollowSortSetDecrease(String.valueOf(board_id));
+                    resultMap.put("message", SUCCESS);
                 }
             }
 
-            resultMap.put("message", SUCCESS);
+            if ((int) param.get("user_role") == 1) {
+                resultMap.put("message", "관리자는 구독취소 불가");
+            }
+
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -426,6 +432,7 @@ public class BoardController {
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
                 resultMap.put("board_function", map);
+
                 resultMap.put("message", SUCCESS);
             } else {
                 resultMap.put("message", "NULL");
@@ -468,6 +475,8 @@ public class BoardController {
                     boardService.addCalendar(map2);
                 } else if (function.equals("vote")) {
                     boardService.addVote(map2);
+                } else if (function.equals("userRank")) {
+                    boardService.addUserRank(map2);
                 }
                 resultMap.put("message", SUCCESS);
             } else {
