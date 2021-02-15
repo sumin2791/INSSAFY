@@ -97,7 +97,9 @@
       <div id="content-go-detail" @click="goToDetail">
         <!-- 포스트 제목 -->
         <div class="detail-header" v-if="flagComponent.headerLearnShare">
-          학습공유 헤더들..
+          <v-chip id="skill" v-for="(h,idx) in skill" :key="idx">
+            {{h}}
+          </v-chip>
         </div>
         <div id="title">
           <!-- 중고장터용(지역) -->
@@ -230,6 +232,12 @@ export default {
     },
     date(){
       return timeForToday(this.post.post_date)
+    },
+    skill(){
+      if(this.post.post_header!='전체'){
+        return this.post.post_header.split('|')
+      }
+      return []
     }
   },
   mounted() {
@@ -433,7 +441,14 @@ export default {
   min-height: 150px;
 }
 .detail-header{
-  transform: translate(10px,15px);
+  transform: translate(10px,10px);
+}
+#skill{
+  font-size:14px;
+  height: 20px;
+  margin-right: 5px;
+  color: #f9f9f9;
+  background: #0B2945;
 }
 /* 게시글 제목 */
 #title {

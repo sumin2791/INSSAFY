@@ -42,6 +42,7 @@ export default {
     re:function(){
       this.page=0
       location.reload();
+      // this.infiniteHandler()
     },
   },
   computed:{
@@ -77,6 +78,7 @@ export default {
   methods: {
     // 재사용의 핵심
     infiniteHandler($state){
+      console.log($state)
       const curationName = this.$route.name
       let BOARD_ID
       if(curationName==="Board" || curationName==="Study"){

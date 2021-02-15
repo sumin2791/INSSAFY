@@ -51,7 +51,7 @@
               <button class="btn-subscribe b-title" @click="onSubscribe">Subscribe</button>
               <button class="btn-Checking b-title" @click="onSubscribe">Checking</button>
               <button class="btn-subscribing b-title" @click="onSubscribe">Subscribing</button>
-              <v-divider class="my-2"></v-divider>
+              <v-divider class="my-2" v-if="isManager"></v-divider>
               <v-list color="transparent" v-if="isManager">
                 <v-list-item class="mb-3"><a id="scrap-item" v-b-toggle href="#check-collapse" @click.prevent>신청목록<b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
                 <b-collapse id="check-collapse">

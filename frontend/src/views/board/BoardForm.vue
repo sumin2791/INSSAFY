@@ -183,6 +183,7 @@ export default {
         checklist_flag:0,
         calendar_flag:0,
         vote_flag:0,
+        user_rank_flag:0,
         board_state:0
       };
       try{

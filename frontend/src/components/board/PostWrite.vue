@@ -1,15 +1,17 @@
 <template>
   <div>
     <b-button v-b-modal.modal-post class="btn-write">{{writeName}}</b-button>
+
+    <!-- 구독한 사람만 쓸 수 있다고 알림 -->
     <b-modal id="modal-post" title="Info" v-if="!inBoard" ok-only>
       <p class="my-4">구독하시면 글을 작성할 수 있어요😊</p>
       <template #modal-footer="{ok}">
-        <!-- Emulate built in modal footer ok and cancel button actions -->
         <b-button variant="submit" @click="ok()">
           오키
         </b-button>
       </template>
     </b-modal>
+    <!-- 글쓰기 form-->
     <b-modal
       id="modal-post"
       ref="modal"
@@ -25,6 +27,61 @@
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <!--학습공유에서만 쓰는 헤더-->
         <div class="form-row" v-if="flagBoard==='LearnShare'">
+          <b-form-group label="" label-for="tags-with-dropdown" style="width:100%" class="mb-0">
+            <b-form-tags id="tags-with-dropdown" v-model="learnshare.value" no-outer-focus class="mb-2">
+              <template v-slot="{ tags, disabled, addTag, removeTag }">
+                <ul v-if="tags.length > 0" class="list-inline d-inline-block mb-2">
+                  <li v-for="tag in tags" :key="tag" class="list-inline-item">
+                    <b-form-tag
+                      @remove="removeTag(tag)"
+                      :title="tag"
+                      :disabled="disabled"
+                      variant="info"
+                      style="background:#0B2945"
+                    >{{ tag }}</b-form-tag>
+                  </li>
+                </ul>
+
+                <b-dropdown id="skillset" size="sm" variant="outline-secondary" block menu-class="w-100">
+                  <template #button-content id="choose-skills">
+                    <b-icon icon="tag-fill"></b-icon> Choose Skills
+                  </template>
+                  <b-dropdown-form @submit.stop.prevent="() => {}">
+                    <b-form-group
+                      label="Search"
+                      label-for="tag-search-input"
+                      label-cols-md="auto"
+                      class="mb-0"
+                      label-size="sm"
+                      :description="searchDesc"
+                      :disabled="disabled"
+                    >
+                      <b-form-input
+                        v-model="learnshare.search"
+                        id="tag-search-input"
+                        type="search"
+                        size="sm"
+                        autocomplete="off"
+                      ></b-form-input>
+                    </b-form-group>
+                  </b-dropdown-form>
+                  <b-dropdown-divider></b-dropdown-divider>
+                  <b-dropdown-item-button
+                    v-for="option in availableOptions"
+                    :key="option"
+                    @click="onOptionClick({ option, addTag })"
+                    
+                  >
+                    {{ option }}
+                  </b-dropdown-item-button>
+                  <b-dropdown-text v-if="availableOptions.length === 0">
+                    There are no tags available to select
+                  </b-dropdown-text>
+                </b-dropdown>
+              </template>
+            </b-form-tags>
+          </b-form-group>
+          <!-- 제목 -->
           <b-form-group
             label-for="title-input"
             invalid-feedback="title is required"
@@ -92,6 +149,8 @@
             ></b-form-input>
           </b-form-group>
         </div>
+
+        <!-- 공통 form -->
         <b-form-group
           label-for="description-input"
           invalid-feedback="description is required"
@@ -193,11 +252,31 @@ export default {
         ]
       },
       learnshare:{
-        selected:null,
+        value: [],
+        search:'',
         options:[
-
+          'HTML','Java','JavaScript','PHP','Python','ES6','CSS','C++','Ruby',
+          'MySQL','PostreSQL','MongoDB','MariaDB','React','JQuery','Vue.js','AngularJS',
+          'Node.js','SpringBoot','Spring','Django',
+          'AmazonS3','AmazonEC2',
+          'Git','Docker','Postman','NGINX','Jira','Ubuntu','Jenkins','Redis','Firebase','ApacheTomcat'
         ]
-      }
+      },
+      koreanoptions:[
+        {korean:'에이치티엠엘',en:'HTML'},{korean:'자바',en:'Java'},{korean:'자바스크립트',en:'JavaScript'},{korean:'피에이치피',en:'PHP'},{korean:'파이썬',en:'Python'},{korean:'씨에스에스',en:'CSS'},
+        {korean:'씨쁠쁠',en:'C++'},{korean:'루비',en:'Ruby'},{korean:'마이에스큐엘',en:'MySQL'},{korean:'몽고디비',en:'MongoDB'},{korean:'마리아디비',en:'MariaDB'},{korean:'포스트그레스큐엘',en:'PostgreSQL'},
+        {korean:'리엑트',en:'React'},{korean:'제이쿼리',en:'JQuery'},{korean:'뷰제이에스',en:'Vue.js'},{korean:'앵귤러제이에스',en:'AngularJS'},{korean:'노드제이에스',en:'Node.js'},{korean:'스프링부트',en:'SpringBoot'},
+        {korean:'스프링',en:'Spring'},{korean:'장고',en:'Django'},{korean:'아마존에쓰3',en:'AmazonS3'},{korean:'아마존이씨투',en:'AmazonEC2'},{korean:'깃',en:'Git'},{korean:'도커',en:'Docker'},
+        {korean:'포스트맨',en:'Postman'},{korean:'엔진엑스',en:'NGINX'},{korean:'지라',en:'Jira'},{korean:'우분투',en:'Ubuntu'},{korean:'젠킨스',en:'Jenkins'},{korean:'레디스',en:'Redis'},
+        {korean:'파이어베이스',en:'Firebase'},{korean:'아파치톰캣',en:'ApacheTomcat'}
+      ]
+        // 에이치티엠엘:'HTML',자바:'Java',자바스크립트:'JavaScript',피에이치피:'PHP',파이썬:'Python',씨에스에스:'CSS',씨쁠쁠:'C++',루비:'Ruby',
+        // 마이에스큐엘:'MySQL',몽고디비:'MongoDB',마리아디비:'MariaDB',포스트그레스큐엘:'PostgreSQL',
+        // 리엑트:'React',제이쿼리:'JQuery',뷰제이에스:'Vue.js',앵귤러제이에스:'AngularJS',
+        // 노드제이에스:'Node.js',스프링부트:'SpringBoot',스프링:'Spring',장고:'Django',
+        // 아마존에쓰3:'AmazonS3',아마존이씨투:'AmazonEC2',
+        // 깃:'Git',도커:'Docker',포스트맨:'Postman',엔진엑스:'NGINX',지라:'Jira',우분투:'Ubuntu',젠킨스:'Jenkins',레디스:'Redis',파이어베이스:'Firebase',아파치톰캣:'ApacheTomcat'
+      
     }
   },
   props:{
@@ -222,9 +301,49 @@ export default {
       }else{
         return '글쓰기'
       }
-    }
+    },
+
+    // 학습공유 스킬 form 관련
+    criteria() {
+      // Compute the search criteria
+      return this.learnshare.search.trim().toLowerCase()
+    },
+    availableOptions() {
+      const criteria = this.criteria
+      // Filter out already selected options
+      const options = this.learnshare.options.filter(opt => this.learnshare.value.indexOf(opt) === -1)
+
+      //한글
+      const koreanoptions = this.koreanoptions.filter(opt => this.learnshare.value.indexOf(opt.korean) === -1)
+
+      if (criteria) {
+        const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+        if(korean.test(criteria)){
+          const result = koreanoptions.filter(opt => opt.korean.toLowerCase().indexOf(criteria) > -1);
+          
+          return result.map(r => r.en)
+        }
+        // Show only options that match criteria
+        return options.filter(opt => opt.toLowerCase().indexOf(criteria) > -1);
+      }
+      // Show all options available
+      return options
+    },
+    searchDesc() {
+      if (this.learnshare.criteria && this.availableOptions.length === 0) {
+        return 'There are no tags matching your search criteria'
+      }
+      return ''
+      }
   },
   methods: {
+    // 학습공유 스킬 form 관련
+    onOptionClick({ option, addTag }) {
+      addTag(option)
+      this.search = ''
+    }
+    ,
+    // 이미지
     deleteImage(){
       this.previewImgUrl = null
       this.images=[]
@@ -291,8 +410,13 @@ export default {
       }
 
       // 재사용을 위해 들어오는 데이터에 따라
+      // 중고장터의 경우 header에 지역을 입력
       if(this.location.selected!=null){
         this.header = this.location.selected
+      }
+      // 학습공유의 경우 header에 기술스택을 입력
+      if(this.learnshare.value.length!=0){
+        this.header = this.learnshare.value.join('|')
       }
 
 
@@ -384,5 +508,13 @@ export default {
     background-color: #000 !important;
     color: #fff;
   }
+}
+#skillset /deep/ .dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-toggle:hover{
+  color:#000 !important;
 }
 </style>
