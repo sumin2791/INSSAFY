@@ -290,7 +290,13 @@ export default {
         ['mdi-bookmark-multiple', '내 스크랩', 3],
       ],
       // 내 정보 부분
-      myInfo: {},
+      myInfo: {
+        myInfoEdit: false,
+        options: {
+          location: ['서울', '대전', '구미', '광주'],
+          generation: ['4', '3', '2', '1'],
+        },
+      },
       //구독 보드 리스트
       subBoardList: [],
     };
@@ -369,6 +375,8 @@ export default {
           this.fetchData();
         });
       }
+      console.log(this.myInfo);
+      console.log(this.myInfo.myInfoEdit);
       this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit;
     },
     deleteSub(board_id) {

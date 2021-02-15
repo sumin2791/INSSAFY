@@ -108,7 +108,6 @@ export default {
     async login(context, { email, password }) {
       try {
         const response = await authApi.login(email, password);
-        console.log(response);
         //로그인 성공 && 인증 완료
         if (response.data.message === 'SUCCESS') {
           context.commit('setUser', {
@@ -250,7 +249,6 @@ export default {
 
     //이미지 null이면 기본 링크 반환
     getUserImage(state) {
-      console.log(state.user.image);
       const userImage = state.user.image;
       if (userImage == null || userImage == 'null' || userImage == '') {
         return null;
