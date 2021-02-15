@@ -38,10 +38,28 @@
           <!-- 왼쪽 스터디 설명 부분 -->
           <v-col class="col-12 col-sm-3">
             <div id="description" class="rounded-bg container-description">
-              <h4 class="b-desc">{{groupDto.board_name}}</h4>
-              <p class="l-desc">
-                {{groupDto.board_description}}
-              </p>
+              <div class="board-name-detail">
+                <h4 class="b-desc">{{groupDto.board_name}}</h4>
+                <p class="l-desc board-detail">
+                  {{groupDto.board_description}}
+                </p>
+              </div>
+              <!-- <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">가입신청</button>
+              <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
+              <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button> -->
+              <!---->
+              <button class="btn-subscribe b-title" @click="onSubscribe">Subscribe</button>
+              <button class="btn-Checking b-title" @click="onSubscribe">Checking</button>
+              <button class="btn-subscribing b-title" @click="onSubscribe">Subscribing</button>
+              <v-divider class="my-2"></v-divider>
+              <v-list color="transparent" v-if="isManager">
+                <v-list-item class="mb-3"><a id="scrap-item" v-b-toggle href="#check-collapse" @click.prevent>신청목록<b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+                <b-collapse id="check-collapse">
+                  <div class="p-1" v-for="(group,idx) in myStudyGroup" :key="idx">
+                    <CheckList :group="group"/>
+                  </div>
+                </b-collapse>
+              </v-list>
               <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
                 <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>내 스터디 목록 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
@@ -92,6 +110,7 @@ import StudyCalendarSpan from '@/components/curation/study/StudyCalendarSpan.vue
 import CalendarDialog from '@/components/etc/CalendarDialog';
 
 import MyStudyGroup from "@/components/curation/study/MyStudyGroup.vue"
+import CheckList from "@/components/curation/study/CheckList.vue"
 import PostWrite from '@/components/board/PostWrite'
 import GroupPostList from "@/components/board/PostList"
 
@@ -108,6 +127,7 @@ export default {
     StudyCalendarSpan,
     CalendarDialog,
     MyStudyGroup,
+    CheckList,
     PostWrite,
     GroupPostList,
   },
@@ -154,7 +174,18 @@ export default {
     }
   },
   computed:{
-    
+    isManager(){
+      const boards = JSON.parse(localStorage.subBoard);
+      const BOARD_ID = Number(this.$route.params.board_id);
+
+      if (this.inBoard) {
+        const idx = boards.findIndex((board) => board.board_id === BOARD_ID);
+        if (boards[idx].user_role == 1) {
+          return true;
+        }
+      }
+      return false;
+    }
   },
   methods: {
     // 현재 활성화된 기기에 따라 flag 변경
@@ -197,7 +228,53 @@ export default {
       .catch(err=>{
         console.log(err)
       })
-    }
+    },
+    // 스터디보드 신청 확인
+    onSubscribe() {
+      const BOARD_ID = Number(this.$route.params.board_id);
+
+      const boards = JSON.parse(localStorage.subBoard);
+      const board = boards.filter((board) => board.board_id === Number(this.$route.params.board_id));
+
+      const params = {
+        user_id: String(localStorage.userId),
+        board_id: BOARD_ID,
+        user_role: 0,
+      };
+      boardApi
+        .subscribe(params)
+        .then((res) => {
+          console.log(res);
+          if (res.data.message === 'fail') {
+            return;
+          } else {
+            this.inBoard = !this.inBoard;
+
+            // localStorage 수정해주는 부분
+            if (board.length > 0) {
+              // 보드가 있네? 그럼 구독 해지!
+              const idx = boards.findIndex((board) => board.board_id === Number(this.$route.params.board_id));
+              boards.splice(idx, 1);
+            } else {
+              // 보드가 없었어. 그러면 바로 구독하면 돼!
+              boards.push({
+                board_id: Number(this.$route.params.board_id),
+                user_id: localStorage.userId,
+                favorite_flag: 0,
+                write_post_count: 0,
+                is_used: 0,
+                user_role: 0,
+              });
+            }
+            localStorage.subBoard = JSON.stringify(boards);
+            this.$store.commit('auth/setSubBoardRefresh');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      return;
+    },
     
   }
 }
@@ -217,11 +294,80 @@ export default {
   padding: 10%;
   flex-basis: 20%;
 }
+.board-detail{
+  margin: 8px 0;
+  padding: 0 8px;
+  min-height: 15vh;
+}
 .container-description {
   width: 100%;
   margin: 0px 0 20px;
   padding: 10px;
   box-shadow: var(--basic-shadow-w);
+}
+/* 버튼 */
+.btn-subscribe {
+  text-align: center;
+  margin: auto;
+  height: 50px;
+  width: 80%;
+  border: none;
+  border-radius: 5px;
+  color: var(--basic-color-bg);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: var(--basic-color-key) !important;
+  box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff;
+  transition: 0.3s all ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn-subscribe:hover,
+.btn-subscribe:active {
+  background-color: #ebebe9 !important;
+  color: var(--basic-color-key);
+}
+.btn-Checking {
+  text-align: center;
+  margin: auto;
+  height: 50px;
+  width: 80%;
+  border: none;
+  border-radius: 5px;
+  color: var(--basic-color-bg2);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: var(--basic-color-fill3) !important;
+  /* box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff; */
+  transition: 0.3s all ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn-Checking :hover,
+.btn-Checking :active {
+  background-color: var(--basic-color-bg) !important;
+  color: var(--basic-color-key);
+}
+.btn-subscribing {
+  text-align: center;
+  margin: auto;
+  height: 50px;
+  width: 80%;
+  border: none;
+  border-radius: 5px;
+  color: var(--basic-color-key);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: var(--basic-color-bg2) !important;
+  /* box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff; */
+  transition: 0.3s all ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn-subscribing:hover,
+.btn-subscribing:active {
+  background-color: var(--basic-color-bg) !important;
+  color: var(--basic-color-key);
 }
 
 #scrap-item{

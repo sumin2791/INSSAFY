@@ -220,12 +220,12 @@ export default {
 
 <style scoped>
 /* 전체 description-container */
-.board-description{
+/* .board-description{
   display: flex;
   flex-direction: column;
   padding: 5% 10%;
   min-height: 30vh;
-}
+} */
 .name-setting{
   display: flex;
   align-items: center;
@@ -235,6 +235,7 @@ export default {
 .board-detail{
   margin: 1em 0;
   padding:0 0 0 1em;
+  min-height: 15vh;
 }
 .board-detail-form{
   padding:0 0.5rem;
@@ -343,7 +344,7 @@ export default {
   color:#aa2610;
 }
 .careful-line{
-  height: 30px;
+  height: 50px;
 }
 
 </style>

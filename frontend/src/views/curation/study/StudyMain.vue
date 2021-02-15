@@ -207,11 +207,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin:0 8px;
 }
 .flagPromoList{
   display: flex;
   align-items: center;
-  margin-left:20px
+  /* margin-left:20px */
 }
 .btnWrite{
   /* width: 30%; */

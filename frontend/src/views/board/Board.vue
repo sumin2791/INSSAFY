@@ -27,7 +27,7 @@
         <v-row>
           <!-- 왼쪽 보드 설명 및 추가 기능 -->
           <v-col class="col-12 col-sm-3">
-            <v-sheet id="custom-container">
+            <div id="description" class="rounded-bg container-description">
               <v-list color="transparent">
                 <div
                   class="d-flex
@@ -41,19 +41,16 @@
                   <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button>
                 </div>
               </v-list>
-              <hr />
-              <div class="board-function">보드특수기능들</div>
-              <div class="add-board-function">보드기능 추가</div>
-            </v-sheet>
+              <v-divider class="my-2"></v-divider>
+              <v-list color="transparent">
+                <div class="board-function">보드특수기능들</div>
+                <div class="add-board-function">보드기능 추가</div>
+              </v-list>
+            </div>
           </v-col>
           <v-col class="col-12 col-sm-9">
-            <v-sheet min-height="85vh"
-              id="custom-container" 
-              class="pa-2"
-            >
-              <PostWrite :in-board="inBoard" />
-              <PostList />
-            </v-sheet>
+            <PostWrite :in-board="inBoard" style="margin:0 10px"/>
+            <PostList />
           </v-col>
         </v-row>
       </v-container>
@@ -214,14 +211,21 @@ export default {
   border-radius: 15px !important;
   background-color: var(--basic-color-bg2) !important;
 }
+
 / 구독버튼 */
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
+}
 .btn-subscribe {
   text-align: center;
   margin: auto;
   height: 50px;
-  width: 60%;
+  width: 80%;
   border: none;
-  border-radius: 30px;
+  border-radius: 5px;
   color: var(--basic-color-bg);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
   background: var(--basic-color-key) !important;
@@ -240,13 +244,13 @@ export default {
   text-align: center;
   margin: auto;
   height: 50px;
-  width: 60%;
+  width: 80%;
   border: none;
-  border-radius: 30px;
-  color: var(--basic-color-bg);
+  border-radius: 5px;
+  color: var(--basic-color-key);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
-  background: var(--basic-color-fill2) !important;
-  box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff;
+  background: var(--basic-color-bg2) !important;
+  /* box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff; */
   transition: 0.3s all ease;
   display: flex;
   justify-content: center;

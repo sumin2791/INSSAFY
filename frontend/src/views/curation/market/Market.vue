@@ -69,17 +69,9 @@
           <v-col
             class="col-12 col-sm-8"  
           >
-            <!-- 중고장터 게시글 작성 -->
-            <!-- <MarketPostWrite class="mx-4 mb-2"/> -->
-            <PostWrite :in-board="inBoard"/>
+            <PostWrite :in-board="inBoard" style="margin:0 10px"/>
             <!-- 중고장터 게시물 부분 -->
             <MarketPostList/>
-            <!-- <div v-for="(post,idx) in posts" :key="idx">
-              <MarketPost class="mx-4 mb-2" :post="post"/>
-            </div> -->
-            <!-- <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
-              <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
-            </infinite-loading> -->
           </v-col>
         </v-row>
       </v-container>

@@ -301,6 +301,7 @@ export default {
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
         .then((res)=>{
+          console.log(res)
           if(res.data.message==='No Subscription'){
             alert('구독 후에 이용 가능합니다')
           }else{

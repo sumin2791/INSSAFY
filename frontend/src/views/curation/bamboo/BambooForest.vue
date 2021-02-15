@@ -52,6 +52,7 @@ export default {
 }
 .bamboo-hd-write{
   flex-basis: 50%;
+  padding:0 15px;
 }
 .bamboo-hd-empty{
   flex:1;

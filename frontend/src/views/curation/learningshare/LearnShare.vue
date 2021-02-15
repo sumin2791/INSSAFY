@@ -72,7 +72,7 @@
           >
             <!-- 학습공유 게시글쓰기 -->
             <!-- <LearningPostWrite class="mx-4 mb-2"/> -->
-            <PostWrite :in-board="inBoard"/>
+            <PostWrite :in-board="inBoard" style="margin:0 10px"/>
             <!-- 학습공유 게시물 부분 -->
             <LearningSharePostList />
 
