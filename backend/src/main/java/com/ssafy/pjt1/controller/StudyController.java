@@ -18,6 +18,7 @@ import java.util.Map;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.service.BoardService;
 import com.ssafy.pjt1.model.service.post.PostService;
+import com.ssafy.pjt1.model.service.redis.RedisService;
 import com.ssafy.pjt1.model.service.study.StudyService;
 
 import org.slf4j.Logger;
@@ -37,6 +38,9 @@ public class StudyController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+	private RedisService redisService;
 
     /*
      * 기능: 스터디 모집글 리스트
@@ -136,6 +140,33 @@ public class StudyController {
             map.put("size", size);
             List<Map<String, Object>> studyList = studyService.getAllList(map);
             resultMap.put("studyList", studyList);          
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 워드클라우드 데이터
+     * 
+     * developer: 윤수민
+     * 
+     * @param : pa
+     * 
+     * @return : message, defaultWords
+     * 
+     */
+    @GetMapping("/wordCloud")
+    public ResponseEntity<Map<String, Object>> wordCloud(){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("study/wordCloud 호출성공");
+        try {
+            List<Map<String, Object>> defaultWords = redisService.getWordData();
+            resultMap.put("defaultWords", defaultWords);          
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
