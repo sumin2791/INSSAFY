@@ -19,4 +19,6 @@ public interface StudyService {
 
 	public List<Map<String, Object>> getRequestList(int board_id);
 
+	public void requestProcess(Map<String, Object> map);
+
 }

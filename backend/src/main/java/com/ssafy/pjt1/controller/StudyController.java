@@ -40,6 +40,9 @@ public class StudyController {
     private PostService postService;
 
     @Autowired
+    private BoardService boardService;
+
+    @Autowired
 	private RedisService redisService;
 
     /*
@@ -229,6 +232,43 @@ public class StudyController {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 스터디 가입 수락/거절
+     * 
+     * developer: 윤수민
+     * 
+     * @param : user_id, board_id, option(-1이면 거절, 1이면 수락)
+     * 
+     * @return : message
+     */
+    @PostMapping("/requestProcess")
+    public ResponseEntity<Map<String, Object>> studyProcess(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("board/subscribe 호출성공");
+
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id", (String) param.get("user_id"));
+            map.put("board_id", (int) param.get("board_id"));
+            map.put("option", (int) param.get("option"));
+            if((int) param.get("option") == 1){
+                studyService.requestProcess(map);
+                // 수락하는 경우 구독테이블에 추가
+                map.put("user_role", 0);
+                boardService.subscribe(map);
+            }else{
+                studyService.requestProcess(map);
+            }
+            resultMap.put("message", SUCCESS);
+
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }

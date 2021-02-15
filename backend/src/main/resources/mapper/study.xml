@@ -74,4 +74,10 @@
 		where s.board_id = #{board_id} and s.request_state = 0;
 	</select>
 
+	<update id="requestProcess" parameterType="map">
+		update study_request
+		set request_state = #{option}
+		where board_id = #{board_id} and user_id = #{user_id};
+	</update>
+
 </mapper>
