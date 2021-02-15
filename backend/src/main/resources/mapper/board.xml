@@ -18,7 +18,7 @@
 
 	<insert id="addFunction" parameterType="map">
 		insert into add_function values (
-		#{board_id}, #{checklist_flag}, #{calendar_flag}, #{vote_flag}, 1
+		#{board_id}, #{checklist_flag}, #{calendar_flag}, #{vote_flag}, #{user_rank_flag}, 1
 		)
 	</insert>
 

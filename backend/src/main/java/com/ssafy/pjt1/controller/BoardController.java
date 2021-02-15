@@ -126,6 +126,7 @@ public class BoardController {
                 boardService.subscribe(map);
                 /////////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
                 redisService.boardFollowSortSet(board_id);
+                resultMap.put("message", SUCCESS);
             } else {
                 int count2 = boardService.isUnSubscribed(map);
                 if (count2 == 0) {
@@ -133,16 +134,21 @@ public class BoardController {
                     boardService.updateSubscribe(map);
                     /////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
                     redisService.boardFollowSortSet(board_id);
+                    resultMap.put("message", SUCCESS);
                 } else {
                     logger.info("구독 해지");
                     // 관리자 아닐 경우 구독 해지
                     boardService.unsubscribe(map);
                     ///////////////////////////////////////////// 구독 해지시 redis에서 follower수 -1 감소
                     redisService.boardFollowSortSetDecrease(String.valueOf(board_id));
+                    resultMap.put("message", SUCCESS);
                 }
             }
 
-            resultMap.put("message", SUCCESS);
+            if ((int) param.get("user_role") == 1) {
+                resultMap.put("message", "관리자는 구독취소 불가");
+            }
+
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
