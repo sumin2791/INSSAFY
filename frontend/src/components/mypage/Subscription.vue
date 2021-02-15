@@ -128,7 +128,7 @@ export default {
       this.$toast.open({
         position: 'top-right',
         duration: 1800,
-        message: `클릭하여 ${this.board_name} 보드 구독 취소`,
+        message: `클릭하여 '${this.board_name}' 보드 구독 취소`,
         type: 'error',
         onClick: () => {
           this.$emit('delSub', this.board.board_id);

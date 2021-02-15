@@ -108,13 +108,9 @@ export default {
     async login(context, { email, password }) {
       try {
         const response = await authApi.login(email, password);
-        // console.log(response);
+        console.log(response);
         //로그인 성공 && 인증 완료
         if (response.data.message === 'SUCCESS') {
-          // context.commit('setToken', response.data.auth_token);
-          // context.commit('setId', response.data.user.user_id);
-          // context.commit('setEmail', response.data.user.user_email);
-          // context.commit('setNickname', response.data.user.user_nickname);
           context.commit('setUser', {
             token: response.data.auth_token,
             userId: response.data.user.user_id,
@@ -254,8 +250,9 @@ export default {
 
     //이미지 null이면 기본 링크 반환
     getUserImage(state) {
+      console.log(state.user.image);
       const userImage = state.user.image;
-      if (userImage == null || userImage == 'null') {
+      if (userImage == null || userImage == 'null' || userImage == '') {
         return null;
       }
       return userImage;
