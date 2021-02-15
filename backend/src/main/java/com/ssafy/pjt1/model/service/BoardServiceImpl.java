@@ -193,4 +193,9 @@ public class BoardServiceImpl implements BoardService {
 		sqlSession.getMapper(BoardMapper.class).addVote(map2);
 	}
 
+	@Override
+	public void addUserRank(Map<String, Object> map2) {
+		sqlSession.getMapper(BoardMapper.class).addUserRank(map2);
+	}
+
 }

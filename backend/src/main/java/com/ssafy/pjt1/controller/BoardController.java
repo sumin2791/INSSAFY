@@ -426,6 +426,7 @@ public class BoardController {
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
                 resultMap.put("board_function", map);
+
                 resultMap.put("message", SUCCESS);
             } else {
                 resultMap.put("message", "NULL");
@@ -468,6 +469,8 @@ public class BoardController {
                     boardService.addCalendar(map2);
                 } else if (function.equals("vote")) {
                     boardService.addVote(map2);
+                } else if (function.equals("userRank")) {
+                    boardService.addUserRank(map2);
                 }
                 resultMap.put("message", SUCCESS);
             } else {

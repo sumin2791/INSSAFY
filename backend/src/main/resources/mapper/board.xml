@@ -204,7 +204,7 @@
 	</select>
 
 	<select id="boardFunc" parameterType="int" resultType="map">
-		select checklist_flag, calendar_flag, vote_flag
+		select checklist_flag, calendar_flag, vote_flag, user_rank_flag
 		from add_function
 		where is_used = 1 and board_id = #{board_id};
 	</select>
