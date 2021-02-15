@@ -37,3 +37,7 @@ export function postPassword(payload) {
 export function putPassword(payloard) {
   return http.put('/account/user/password', payloard);
 }
+//회원탈퇴
+export function deleteUser(payload) {
+  return http.delete(`/account/user/delete?user_id=${payload.user_id}&user_password=${payload.password}`);
+}

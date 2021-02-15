@@ -227,7 +227,25 @@ export default {
         console.log(error);
       }
     },
+
+    //회원탈퇴
+    async actDeleteUser({ dispatch, state }, password) {
+      try {
+        const response = await authApi.deleteUser({
+          password: password,
+          user_id: state.user.userId,
+        });
+        if (response.data.message === 'SUCCESS') {
+          alert('iN.SSAFY를 이용해주셔서 감사합니다.');
+          dispatch('logout');
+        }
+      } catch (error) {
+        console.log(error);
+        alert('회원탈퇴 중 문제가 발생했습니다.');
+      }
+    },
   },
+
   getters: {
     //구독목록 리스트 가져오기
     getSubBoardList(state) {

@@ -375,8 +375,6 @@ export default {
           this.fetchData();
         });
       }
-      console.log(this.myInfo);
-      console.log(this.myInfo.myInfoEdit);
       this.myInfo.myInfoEdit = !this.myInfo.myInfoEdit;
     },
     deleteSub(board_id) {
