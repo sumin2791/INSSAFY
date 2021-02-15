@@ -195,7 +195,7 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public void addUserRank(Map<String, Object> map2) {
-		sqlSession.getMapper(BoardMapper.class).addFUserRank(map2);
+		sqlSession.getMapper(BoardMapper.class).addUserRank(map2);
 	}
 
 }

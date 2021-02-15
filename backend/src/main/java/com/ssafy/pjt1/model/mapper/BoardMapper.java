@@ -81,5 +81,5 @@ public interface BoardMapper {
 
 	public void addVote(Map<String, Object> map2);
 
-	public void addFUserRank(Map<String, Object> map2);
+	public void addUserRank(Map<String, Object> map2);
 }

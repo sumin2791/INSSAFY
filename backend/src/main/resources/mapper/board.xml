@@ -227,12 +227,6 @@
 		where board_id=#{board_id};
 	</update>
 
-	<update id="addFUserRank" parameterType="map">
-		update add_function
-		set user_rank_flag = #{option}
-		where board_id=#{board_id};
-	</update>
-
 	<!-- 유저랭킹 추가-->
 	<update id="addUserRank" parameterType="map">
 		update add_function
