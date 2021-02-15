@@ -160,8 +160,9 @@
 			on p.post_id = c.post_id
 			left outer join user as u
 			on p.user_id = u.user_id
-		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') ) 
-		and p.is_used = 1 and p.post_state = 0
+		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%')
+			or p.post_header like concat('%',#{keyword} ,'%') ) 
+			and p.is_used = 1 and p.post_state = 0
 		order by p.post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -179,8 +180,9 @@
 			on p.post_id = co.post_id
 			left outer join user as u
 			on p.user_id = u.user_id
-		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') ) 
-		and p.is_used = 1 and p.post_state = 0
+		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%')
+			or p.post_header like concat('%',#{keyword} ,'%') ) 
+			and p.is_used = 1 and p.post_state = 0
 		order by c.like_count desc, p.post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -189,26 +191,27 @@
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
 		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image, pl.is_used as isLiked, s.is_used as isScrapped
 		from post as p
-		left outer join
-		(select post_id, count(post_id) as comment_count
-		from comment
-		where is_used = 1
-		group by post_id) as c 
-		on p.post_id = c.post_id
-		left outer join user as u
-		on p.user_id = u.user_id
-		left outer join
-		(select *
-		from postLike
-		where user_id = #{user_id} and is_used = 1) as pl
-		on p.post_id = pl.post_id
-		left outer join 
-		(select *
-		from scrap
-		where user_id = #{user_id} and is_used = 1) as s
-		on p.post_id = s.post_id
-		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') )
-		and p.board_id = #{board_id} and p.is_used = 1
+			left outer join
+			(select post_id, count(post_id) as comment_count
+			from comment
+			where is_used = 1
+			group by post_id) as c 
+			on p.post_id = c.post_id
+			left outer join user as u
+			on p.user_id = u.user_id
+			left outer join
+			(select *
+			from postLike
+			where user_id = #{user_id} and is_used = 1) as pl
+			on p.post_id = pl.post_id
+			left outer join 
+			(select *
+			from scrap
+			where user_id = #{user_id} and is_used = 1) as s
+			on p.post_id = s.post_id
+		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%')
+			or p.post_header like concat('%',#{keyword} ,'%') )
+			and p.board_id = #{board_id} and p.is_used = 1
 		order by p.post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -217,27 +220,28 @@
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
 		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image, pl.is_used as isLiked, s.is_used as isScrapped
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
-		on p.post_id = c.post_id
-		left outer join
-		(select post_id, count(post_id) as comment_count
-		from comment
-		where is_used = 1
-		group by post_id) as co 
-		on p.post_id = co.post_id
-		left outer join user as u
-		on p.user_id = u.user_id
-		left outer join
-		(select *
-		from postLike
-		where user_id = #{user_id} and is_used = 1) as pl
-		on p.post_id = pl.post_id
-		left outer join 
-		(select *
-		from scrap
+			on p.post_id = c.post_id
+			left outer join
+			(select post_id, count(post_id) as comment_count
+			from comment
+			where is_used = 1
+			group by post_id) as co 
+			on p.post_id = co.post_id
+			left outer join user as u
+			on p.user_id = u.user_id
+			left outer join
+			(select *
+			from postLike
+			where user_id = #{user_id} and is_used = 1) as pl
+			on p.post_id = pl.post_id
+			left outer join 
+			(select *
+			from scrap
 		where user_id = #{user_id} and is_used = 1) as s
 		on p.post_id = s.post_id
-		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') )
-		and p.board_id = #{board_id} and p.is_used = 1
+		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%')
+			or p.post_header like concat('%',#{keyword} ,'%') )
+			and p.board_id = #{board_id} and p.is_used = 1
 		order by c.like_count desc, p.post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -295,26 +299,27 @@
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
 		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image, pl.is_used as isLiked, s.is_used as isScrapped
 		from post as p
-		left outer join
-		(select post_id, count(post_id) as comment_count
-		from comment
-		where is_used = 1
-		group by post_id) as c 
-		on p.post_id = c.post_id
-		left outer join user as u
-		on p.user_id = u.user_id
-		left outer join
-		(select *
-		from postLike
-		where user_id = #{user_id} and is_used = 1) as pl
-		on p.post_id = pl.post_id
-		left outer join 
-		(select *
-		from scrap
-		where user_id = #{user_id} and is_used = 1) as s
-		on p.post_id = s.post_id
-		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%') )
-		and p.board_id = #{board_id} and p.is_used = 1 and p.post_state != -1
+			left outer join
+			(select post_id, count(post_id) as comment_count
+			from comment
+			where is_used = 1
+			group by post_id) as c 
+			on p.post_id = c.post_id
+			left outer join user as u
+			on p.user_id = u.user_id
+			left outer join
+			(select *
+			from postLike
+			where user_id = #{user_id} and is_used = 1) as pl
+			on p.post_id = pl.post_id
+			left outer join 
+			(select *
+			from scrap
+			where user_id = #{user_id} and is_used = 1) as s
+			on p.post_id = s.post_id
+		where ( p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%')
+			or p.post_header like concat('%',#{keyword} ,'%') )
+			and p.board_id = #{board_id} and p.is_used = 1 and p.post_state != -1
 		order by p.post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -323,27 +328,28 @@
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
 		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image, pl.is_used as isLiked, s.is_used as isScrapped
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
-		on p.post_id = c.post_id
-		left outer join
-		(select post_id, count(post_id) as comment_count
-		from comment
-		where is_used = 1
-		group by post_id) as co 
-		on p.post_id = co.post_id
-		left outer join user as u
-		on p.user_id = u.user_id
-		left outer join
-		(select *
-		from postLike
-		where user_id = #{user_id} and is_used = 1) as pl
-		on p.post_id = pl.post_id
-		left outer join 
-		(select *
-		from scrap
-		where user_id = #{user_id} and is_used = 1) as s
-		on p.post_id = s.post_id
-		where (p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%'))
-		and p.board_id = #{board_id} and p.is_used = 1 and p.post_state != -1
+			on p.post_id = c.post_id
+			left outer join
+			(select post_id, count(post_id) as comment_count
+			from comment
+			where is_used = 1
+			group by post_id) as co 
+			on p.post_id = co.post_id
+			left outer join user as u
+			on p.user_id = u.user_id
+			left outer join
+			(select *
+			from postLike
+			where user_id = #{user_id} and is_used = 1) as pl
+			on p.post_id = pl.post_id
+			left outer join 
+			(select *
+			from scrap
+			where user_id = #{user_id} and is_used = 1) as s
+			on p.post_id = s.post_id
+		where (p.post_title like concat('%',#{keyword} ,'%') or p.post_description like concat('%',#{keyword} ,'%')
+			or p.post_header like concat('%',#{keyword} ,'%'))
+			and p.board_id = #{board_id} and p.is_used = 1 and p.post_state != -1
 		order by c.like_count desc, p.post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -375,7 +381,8 @@
 	<select id="searchSalesCnt" resultType="int">
 		select count(post_id)
 		from post
-		where (post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') )
+		where (post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%')
+			or p.post_header like concat('%',#{keyword} ,'%') )
 		and board_id = 34 and is_used = 1 and post_state != -1
 	</select>
 
@@ -388,14 +395,16 @@
 	<select id="getSearchPostCnt" parameterType="map" resultType="int">
 		select count(post_id)
 		from post
-		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') )
+		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%')
+			or post_header like concat('%',#{keyword} ,'%') )
 		and board_id = #{board_id} and is_used = 1;
 	</select>
 
 	<select id="getAllSearchPostCnt" parameterType="string" resultType="int">
 		select count(post_id)
 		from post
-		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%') )
+		where ( post_title like concat('%',#{keyword} ,'%') or post_description like concat('%',#{keyword} ,'%')
+			or post_header like concat('%',#{keyword} ,'%') )
 		and is_used = 1 and post_state = 0;
 	</select>
 
