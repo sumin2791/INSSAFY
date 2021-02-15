@@ -26,4 +26,6 @@ public interface StudyMapper {
 
 	public void secession(Map<String, Object> map);
 
+	public void reSubscription(Map<String, Object> map);
+
 }

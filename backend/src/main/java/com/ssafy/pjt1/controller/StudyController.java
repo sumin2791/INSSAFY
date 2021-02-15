@@ -199,8 +199,13 @@ public class StudyController {
             Map<String, Object> map = new HashMap<>();
             map.put("user_id", (String) param.get("user_id"));
             map.put("board_id", (int) param.get("board_id"));
-
-            studyService.request(map);
+            if(boardService.isSubscribed(map)>0){
+                // 전에 가입했다가 탈퇴한 스터디 그룹 재가입하는 경우
+                studyService.reSubscription(map);
+                boardService.updateSubscribe(map);
+            }else{
+                studyService.request(map);
+            }
             resultMap.put("message", SUCCESS);
 
         } catch (Exception e) {

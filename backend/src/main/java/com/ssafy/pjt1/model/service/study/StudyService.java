@@ -23,4 +23,6 @@ public interface StudyService {
 
 	public void secession(Map<String, Object> map);
 
+	public void reSubscription(Map<String, Object> map);
+
 }

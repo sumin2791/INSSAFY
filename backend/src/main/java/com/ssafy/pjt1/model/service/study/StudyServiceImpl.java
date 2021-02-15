@@ -64,4 +64,9 @@ public class StudyServiceImpl implements StudyService {
 		sqlSession.getMapper(StudyMapper.class).secession(map);
 	}
 
+	@Override
+	public void reSubscription(Map<String, Object> map) {
+		sqlSession.getMapper(StudyMapper.class).reSubscription(map);
+	}
+
 }

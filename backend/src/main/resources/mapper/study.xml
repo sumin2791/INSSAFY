@@ -86,4 +86,10 @@
 		where board_id = #{board_id} and user_id = #{user_id};
 	</update>
 
+	<update id="reSubscription" parameterType="map">
+		update study_request
+		set request_state = 0
+		where board_id = #{board_id} and user_id = #{user_id};
+	</update>
+
 </mapper>
