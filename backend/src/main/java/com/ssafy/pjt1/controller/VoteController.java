@@ -41,8 +41,7 @@ public class VoteController {
      * developer: 윤수민
      * 
      * @param :
-     * board_id,vote_description,vote_duplication,vote_igmyeong,
-     * vote_name
+     * board_id,vote_description,vote_name
      * 
      * @return : message, vote_id
      */
@@ -55,9 +54,6 @@ public class VoteController {
             VoteDto voteDto = new VoteDto();
             voteDto.setBoard_id((int) param.get("board_id"));
             voteDto.setVote_description((String) param.get("vote_description"));
-            voteDto.setVote_duplication((int) param.get("vote_duplication"));
-            voteDto.setVote_end_datetime((String) param.get("vote_end_datetime"));
-            voteDto.setVote_igmyeong((int) param.get("vote_igmyeong"));
             voteDto.setVote_name((String) param.get("vote_name"));
             voteService.createVote(voteDto);
             int vote_id = voteDto.getVote_id();
