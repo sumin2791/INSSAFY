@@ -211,9 +211,12 @@ public class ChatController {
                 Map<String, Object> res = new HashMap<>();
                 String[] opp_ids = pattern.split(":");
                 UserDto oppUserDto = userService.userDtoById(opp_ids[2]);
-                res.put("count", valOps.get(pattern));
-                res.put("opp_name", oppUserDto.getUser_nickname());
-                list.add(res);
+                // 일림이 0인것은 걸러준다
+                if (Integer.valueOf(valOps.get(pattern)) != 0) {
+                    res.put("count", valOps.get(pattern));
+                    res.put("opp_name", oppUserDto.getUser_nickname());
+                    list.add(res);
+                }
             }
             resultMap.put("message", SUCCESS);
             status = HttpStatus.ACCEPTED;
