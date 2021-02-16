@@ -36,7 +36,7 @@
       </div>
       <!-- 보드 이미지 부분 -->
       <GradientGenerator class="myinfo-list" style="height: 100px" v-if="board_image == null" :radius="radius" />
-      <v-img height="100px" src="@/assets/images/slide.jpg" class="blur myinfo-list" v-if="board_image != null"> </v-img>
+      <v-img height="100px" class="blur myinfo-list" v-if="board_image != null" :style="{ backgroundImage: `url(${board_image})` }"> </v-img>
     </div>
   </v-container>
 </template>
@@ -172,6 +172,9 @@ export default {
 }
 .myinfo-list {
   border-radius: 15px;
+  background-color: #000;
+  background-size: cover;
+  background-position: center;
   box-shadow: var(--basic-shadow-s);
 }
 </style>
