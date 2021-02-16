@@ -71,7 +71,7 @@
             <!-- 달력 추가기능 선택시 들어갈 부분 -->
             <div id="center-post">
               <!-- 캘린더 들어가는 부분 -->
-              <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="'스터디'" />
+              <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="'스터디'" v-if="inBoard" />
             </div>
             <!-- 스터디 게시글쓰기 -->
 
