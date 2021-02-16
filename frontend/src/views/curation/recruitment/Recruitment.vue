@@ -30,15 +30,9 @@
       </div>
       <!-- 게시글 작성 -->
       <div class="create-post">
-        <PostWrite :in-board="inBoard" style="margin:0 10px"/>
-        <RecruitmentPostList/>
+        <PostWrite :in-board="inBoard" style="margin:0 10px" />
+        <RecruitmentPostList />
       </div>
-      <!-- 각각의 게시글 들어갈 부분
-      <Post class="post-list" />
-      <Post class="post-list" />
-      <Post class="post-list" />
-      <Post class="post-list" />
-      <Post class="post-list" /> -->
     </div>
     <CalendarDialog :boardName="'채용일정'" />
     <DetailDialog />
@@ -52,9 +46,9 @@ import DueDateItem from '@/views/curation/recruitment/DueDateItem.vue';
 import CalendarSpan from '@/components/calendar/CalendarSpan';
 
 // 중고장터 리스트
-import RecruitmentPostList from "@/components/board/PostList"
+import RecruitmentPostList from '@/components/board/PostList';
 //글작성
-import PostWrite from '@/components/board/PostWrite'
+import PostWrite from '@/components/board/PostWrite';
 
 export default {
   name: 'Recruitment',
@@ -67,12 +61,12 @@ export default {
     ModifyDialog: () => import('@/components/calendar/ModifyDialog'),
 
     PostWrite,
-    RecruitmentPostList
+    RecruitmentPostList,
   },
-  data(){
+  data() {
     return {
-      inBoard:true,
-    }
+      inBoard: true,
+    };
   },
   created() {
     this.$store.dispatch('calendar/actGetDeadline');
@@ -159,7 +153,7 @@ export default {
   align-self: flex-end;
 }
 /* 글쓰기 및 리스트 */
-.create-post{
+.create-post {
   width: 100%;
 }
 /* 각각의 게시글들 */

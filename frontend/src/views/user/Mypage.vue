@@ -6,8 +6,7 @@
           <!-- 모바일 화면 -->
           <!-- 좌측 내 정보 부분 -->
           <v-col cols="12" v-if="ResponsiveSize.isMobile">
-            <v-card color="#fcfcfc"
-              id="custom-container">
+            <v-card color="#fcfcfc" id="custom-container">
               <v-list color="transparent">
                 <!-- 내 정보 부분 -->
                 <v-list-item
@@ -20,7 +19,8 @@
                 >
                   <!-- 프로필 사진 연결하기 -->
                   <v-avatar :size="ResponsiveSize.viewSize * 0.3" class="flex-shrink-1">
-                    <Profile id="profile-image" @clickProfile="clickProfile" />
+                    <Profile id="profile-image" />
+                    <div class="profile-imgae-edit" v-if="myInfo.myInfoEdit" @click="clickProfile" />
                   </v-avatar>
                   <!-- 회원이 입력한 정보 -->
                   <div
@@ -110,8 +110,7 @@
           <!-- PC화면 -->
           <!-- 좌측 내 정보 부분 -->
           <v-col sm="3" v-else>
-            <v-sheet color="#fcfcfc"
-              id="custom-container">
+            <v-sheet color="#fcfcfc" id="custom-container">
               <v-list color="transparent">
                 <div
                   color="grey 
@@ -140,7 +139,9 @@
                   </div>
                   <!-- 프로필 이미지 -->
                   <v-avatar :size="ResponsiveSize.viewSize * 0.1" class="align-self-center">
-                    <Profile id="profile-image" @clickProfile="clickProfile" />
+                    <Profile id="profile-image" />
+                    <ImageUpload class="profile-imgae-edit" v-if="myInfo.myInfoEdit" @click="clickProfile" />
+                    <!-- <div class="profile-imgae-edit" v-if="myInfo.myInfoEdit" @click="clickProfile" /> -->
                   </v-avatar>
 
                   <!-- 닉네임 -->
@@ -194,11 +195,7 @@
           </v-col>
 
           <v-col sm="9">
-            <v-sheet min-height="85vh"
-              color="#fcfcfc"
-              id="custom-container" 
-              class="pa-2"
-            >
+            <v-sheet min-height="85vh" color="#fcfcfc" id="custom-container" class="pa-2">
               <!-- 내 구독보드 -->
               <div v-if="mobileTap[0]">
                 <v-card-title
@@ -277,6 +274,7 @@ export default {
     MyPost: () => import('@/components/mypage/MyPost'),
     MyComment: () => import('@/components/mypage/MyComment'),
     ScrapPost: () => import('@/components/mypage/ScrapPost'),
+    ImageUpload: () => import('@/components/mypage/ImageUpload'),
   },
   data() {
     return {
@@ -335,7 +333,10 @@ export default {
   methods: {
     ...mapActions('auth', ['getMyInfo', 'putMyinfo', 'getSubBoard', 'actDelComment']),
     ...mapActions('user', ['putDeleteSub', 'getPosts', 'actDeletePost', 'actGetComments', 'actDelComment', 'actScraps', 'actTogleScrap']),
-    clickProfile: function() {},
+    //프로필 이미지 변경
+    clickProfile() {
+      alert('dd');
+    },
     // 내 정보보기
     fetchData() {
       //myInfo에 데이터 패치
@@ -367,11 +368,11 @@ export default {
         const member = {
           user_email: this.myInfo.email,
           user_generation: this.myInfo.generation,
-          user_image: this.myInfo.image,
+          user_image: this.$store.state.auth.user.image,
           user_location: this.myInfo.location,
           user_nickname: this.myInfo.nickname,
         };
-
+        console.log(member);
         this.$store.dispatch('auth/putMyinfo', member).then((result) => {
           if (result) {
             alert('내 정보가 정상적으로 변경되었습니다.');
@@ -448,6 +449,25 @@ export default {
 #profile-image {
   width: 100%;
   height: 100%;
+}
+.profile-imgae-edit {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  background-image: url(../../assets/images/image_upload_w.png);
+  background-size: 30px 30px;
+  background-position: center;
+  border-radius: 50%;
+  opacity: 0.4;
+  transition: transform 0.5s, opacity 0.5s ease;
+}
+.profile-imgae-edit:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
 }
 .theme--light.v-list-item:hover::before,
 .theme--light.v-list-item::before {

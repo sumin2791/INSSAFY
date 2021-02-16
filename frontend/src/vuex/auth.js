@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as authApi from '../api/auth';
 import * as userApi from '../api/user';
+import * as main from '../api/main';
 import { router } from '../main';
 
 // const enhanceAccessUser = () => {
@@ -61,6 +62,9 @@ export default {
     setEmail(state, email) {
       state.user.email = email;
     },
+    setImage(state, image) {
+      state.user.image = image;
+    },
     //로그인 시, 유저정보를 payload 형태로 set하고 localStorage에 저장
     setUser(state, payload) {
       state.user = payload;
@@ -93,6 +97,7 @@ export default {
       localStorage.subBoard = JSON.stringify(state.subBoard);
     },
 
+    //내정보 수정 서버 반영시, localstorage와 vuex에 반영
     updateUser(state, payload) {
       state.user.nickname = payload.user_nickname;
       state.user.generation = payload.user_generation;
@@ -186,6 +191,21 @@ export default {
         console.log(e);
         return false;
       }
+    },
+    //프로필 이미지 수정
+    async actImageUpload({ commit }, file) {
+      try {
+        const response = await main.imageUpload(file);
+        // console.log(response);
+        if (response.data.message === 'SUCCESS') {
+          commit('setImage', String(response.data.imgPath));
+          return true;
+        }
+      } catch (error) {
+        console.log(error);
+        alert('이미지 업로드 도중 문제가 발생했습니다.');
+      }
+      return false;
     },
 
     //비밀번호 이중체크

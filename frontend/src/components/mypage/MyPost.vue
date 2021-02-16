@@ -29,8 +29,9 @@
           {{ post.board_name }}
         </div>
       </div>
-      <GradientGenerator class="myinfo-list" style="height: 100px" v-if="board_image == null" :radius="radius" />
-      <v-img height="100px" class="myinfo-list blur" v-if="board_image != null" :style="{ backgroundImage: `url(${board_image})` }"> </v-img>
+      <GradientGenerator class="myinfo-list" style="height: 100px" v-if="post.board_image == null" :radius="radius" />
+      <v-img height="100px" class="myinfo-list blur" v-if="post.board_image != null" :style="{ backgroundImage: `url(${post.board_image})` }">
+      </v-img>
     </div>
     <!-- 포스트 제목 -->
     <v-card-title
@@ -191,6 +192,8 @@ export default {
 }
 .myinfo-list {
   border-radius: 15px;
+  background-size: cover;
+  background-position: center;
   background-color: #000;
   box-shadow: var(--basic-shadow-m);
 }

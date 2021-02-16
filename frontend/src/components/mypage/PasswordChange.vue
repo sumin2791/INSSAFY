@@ -142,7 +142,6 @@ export default {
       this.pass = isSubmit;
     },
     submit: function() {
-      // this.$store.dispatch('auth/postPassword', this.password);
       this.$store.dispatch('auth/putPassword', [this.password, this.newPassword]);
       this.dialog = false;
     },

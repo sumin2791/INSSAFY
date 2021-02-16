@@ -30,8 +30,9 @@
           {{ scrap.board_name }}
         </div>
       </div>
-      <GradientGenerator class="myinfo-list" style="height: 100px" v-if="board_image == null" :radius="radius" />
-      <v-img src="@/assets/images/slide.jpg" height="100px" class="myinfo-list blur" v-if="board_image != null"> </v-img>
+      <GradientGenerator class="myinfo-list" style="height: 100px" v-if="scrap.board_image == null" :radius="radius" />
+      <v-img height="100px" class="myinfo-list blur" v-if="scrap.board_image != null" :style="{ backgroundImage: `url(${scrap.board_image})` }">
+      </v-img>
     </div>
     <!-- 포스트 제목 -->
     <v-card-title
@@ -188,6 +189,8 @@ export default {
 }
 .myinfo-list {
   border-radius: 15px;
+  background-size: cover;
+  background-position: center;
   box-shadow: var(--basic-shadow-m);
 }
 </style>
