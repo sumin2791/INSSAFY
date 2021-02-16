@@ -13,7 +13,6 @@ import com.ssafy.pjt1.model.service.UserService;
 import com.ssafy.pjt1.model.service.chat.ChatService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -71,15 +70,12 @@ public class ChatController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         SetOperations<String, String> setOps = redisTemplate.opsForSet();
-        ListOperations<String, String> listOps = redisTemplate.opsForList();
         log.info("my:{}, opp_id:{}", my_id, opp_id);
         try {
-            // 중복체크
-            String id1 = my_id + "/" + opp_id;
-            String id2 = opp_id + "/" + my_id;
-            if (setOps.isMember("check", id1) == false && setOps.isMember("check", id2) == false) {
-                setOps.add("check", id1);
-                setOps.add("check", id2);
+            // 중복체크하기
+            if (setOps.isMember("checkDuplKey:" + my_id, opp_id) == false) {
+                setOps.add("checkDuplKey:" + my_id, opp_id);
+                setOps.add("checkDuplKey:" + opp_id, my_id);
                 // 방 만들기
                 String uid = chatService.makeRoom(my_id, opp_id);
                 resultMap.put("roomId", uid);
@@ -112,7 +108,7 @@ public class ChatController {
         HttpStatus status = HttpStatus.ACCEPTED;
         objMapper = new ObjectMapper();
         try {
-            List<Map<String, Object>> roomList = chatService.getRoomList(user_id);
+            List<Object> roomList = chatService.getRoomList(user_id);
             resultMap.put("roomInfo", roomList);
             resultMap.put("message", SUCCESS);
             status = HttpStatus.ACCEPTED;
