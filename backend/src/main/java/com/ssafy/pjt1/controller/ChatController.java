@@ -136,14 +136,15 @@ public class ChatController {
     @ApiOperation(value = "방에 입장 하고나서 메시지 리스트 출력")
     @PostMapping(value = "/enterRoom")
     public ResponseEntity<Map<String, Object>> readMessage(@RequestParam("startNUm") int startNUm,
-            @RequestParam("endNUm") int endNum, @RequestParam("room_id") String room_id) {
+            @RequestParam("endNUm") int endNum, @RequestParam("room_id") String room_id,
+            @RequestParam("user_id") String user_id, @RequestParam("opp_id") String opp_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         // id 받고나서 초기화하기
         valOps = redisTemplate.opsForValue();
-        // String key = "notice:" + user_id + ":" + opp_id;
+        String key = "notice:" + user_id + ":" + opp_id;
         try {
-            // valOps.set(key, "0");
+            valOps.set(key, "0");
             List<ChatMessage> list = chatService.getMessage(startNUm, endNum, room_id);
             log.info("메시지 출력");
             resultMap.put("msgList", list);
@@ -174,10 +175,10 @@ public class ChatController {
         String opp_id = message.getOpp_id();
         String user_id = message.getUser_id();
         valOps = redisTemplate.opsForValue();
-        String key = "notice:" + user_id + ":" + opp_id;
+        String key = "notice:" + opp_id + ":" + user_id;
         try {
-            // valOps.increment(key, 1);
-            // simpleMessageTemplate.convertAndSend("/notice/" + opp_id, message);
+            valOps.increment(key, 1);
+            simpleMessageTemplate.convertAndSend("/notice/" + opp_id, message);
             chatService.insertMessage(message);
             status = HttpStatus.ACCEPTED;
             resultMap.put("message", SUCCESS);
