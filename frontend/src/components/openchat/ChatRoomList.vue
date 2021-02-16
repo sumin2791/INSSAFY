@@ -1,53 +1,77 @@
 <template>
-  <v-list three-line>
-    <v-list-item class="pl-0">
-      <!-- 스터디 대표 이미지 -->
+  <v-list id="list" three-line>
+    <v-list-item 
+      class="pl-0"
+    >
+      <!-- 상대 프로필 이미지(임시 - 연결해줘야 함) -->
       <v-avatar>
-        <v-img :src="chatPartner.profileImg"></v-img>
+        <v-img :src="profileImg"></v-img>
       </v-avatar>
-      <!-- 스터디 이름, 설명 -->
+
       <v-list-item-content 
-        @click="goThisStudy()"
         class="ml-3 go-study"
+        @click="selectThisChat(chatList)"
       >
         <!-- 상대방 닉네임 -->
-        <v-list-item-title>{{ chatPartner.nickName }}</v-list-item-title>
+        <v-list-item-title>{{ chatList.opp_nickName }}</v-list-item-title>
         <!-- 상대방 최근 메세지 -->
-        <v-list-item-subtitle>{{ chatPartner.recentMsg }}</v-list-item-subtitle>
+        <v-list-item-subtitle>{{ chatList.recentMsg }}</v-list-item-subtitle>
       </v-list-item-content>
-      <!-- 메세지 수 보여줄 부분 -->
-      <v-list-item-action class="align-self-end">
-          <v-chip
-            class="ma-2"
-            x-small
-            color="#0B2945"
-            text-color="#F9F9F9"
-          >
-            {{ chatPartner.msgCount }}
-          </v-chip>
-      </v-list-item-action>
     </v-list-item>
     <v-divider></v-divider>
   </v-list>
 </template>
 
 <script>
+// chat api
+import * as chatApi from "@/api/chat" 
+
 export default {
   name:'ChatRoom',
+  props: {
+    chatList: Object
+  },
   data() {
     return {
-      // 채팅방 상대 정보
-      chatPartner: 
-        {
-          profileImg: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-          nickName: '아몰랑',
-          recentMsg: `I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
-          msgCount: 4,
-        },
+      // 임시 프로필 이미지
+      profileImg: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
     }
+  },
+  methods: {
+    // 현재 채팅방 메세지들 가져오기 - 초기 채팅방 가져올 때 한번만
+    selectThisChat(chatList) {
+      // 현재 선택된 채팅방 정보 갱신
+      this.$store.dispatch('chat/isSelected', chatList)
+      const currentRoom = this.$store.state.chat.selectedChatRoom
+      // 선택 X이면 안 보여주고 선택됐을 때만 보여주기
+      if (currentRoom) {
+        // API 요청으로 메세지 가져오기
+        const params = {
+          endNUm: 15,
+          startNUm: 0,
+          room_id: currentRoom,
+        }
+        chatApi.getMessages(params)
+          .then(res => {
+            this.$store.dispatch('chat/getMessages', res.data.msgList)
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      } else {
+        // vuex 초기화
+        this.$store.dispatch('chat/isNotSelected')
+        } 
+    },
   },
 }
 </script>
 
-<style>
+<style scoped>
+/* 전체 폰트 */
+#list {
+  font-family: 'Noto Sans KR', sans-serif !important;
+  background-color: var(--basic-color-bg2) !important;
+  height: 100% !important;
+}
 </style>

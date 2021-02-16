@@ -7,11 +7,12 @@
         <v-row dense>
           <!-- 뒤로 가기 -->
           <router-link 
-            :to="flagRouterBack"
+            :to="{ name:'Board', 
+              params: {board_id:$route.params.board_id}}"
             id="back-btn"
           >
             <button id="back-btn-child">
-              돌아가기
+              보드로 돌아가기
             </button>
           </router-link>
             
@@ -186,9 +187,9 @@ export default {
 }
 #back-btn * {
   text-align: center;
-  margin: 0 0 10px 3px;
+  margin: 0 0 10px 0;
   height: 50px;
-  width: 7rem;
+  width: 180px;
   border: none;
   border-radius: 15px;
   color: var(--basic-color-fill);

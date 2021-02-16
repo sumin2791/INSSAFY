@@ -108,13 +108,8 @@ export default {
     async login(context, { email, password }) {
       try {
         const response = await authApi.login(email, password);
-        // console.log(response);
         //로그인 성공 && 인증 완료
         if (response.data.message === 'SUCCESS') {
-          // context.commit('setToken', response.data.auth_token);
-          // context.commit('setId', response.data.user.user_id);
-          // context.commit('setEmail', response.data.user.user_email);
-          // context.commit('setNickname', response.data.user.user_nickname);
           context.commit('setUser', {
             token: response.data.auth_token,
             userId: response.data.user.user_id,
@@ -232,7 +227,25 @@ export default {
         console.log(error);
       }
     },
+
+    //회원탈퇴
+    async actDeleteUser({ dispatch, state }, password) {
+      try {
+        const response = await authApi.deleteUser({
+          password: password,
+          user_id: state.user.userId,
+        });
+        if (response.data.message === 'SUCCESS') {
+          alert('iN.SSAFY를 이용해주셔서 감사합니다.');
+          dispatch('logout');
+        }
+      } catch (error) {
+        console.log(error);
+        alert('회원탈퇴 중 문제가 발생했습니다.');
+      }
+    },
   },
+
   getters: {
     //구독목록 리스트 가져오기
     getSubBoardList(state) {
@@ -255,7 +268,7 @@ export default {
     //이미지 null이면 기본 링크 반환
     getUserImage(state) {
       const userImage = state.user.image;
-      if (userImage == null || userImage == 'null') {
+      if (userImage == null || userImage == 'null' || userImage == '') {
         return null;
       }
       return userImage;

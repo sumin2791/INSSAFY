@@ -14,7 +14,6 @@ import Study from '@/views/curation/study/Study';
 import StudyGroupForm from '@/views/curation/study/StudyGroupForm';
 import Market from '@/views/curation/market/Market';
 import Recruitment from '@/views/curation/recruitment/Recruitment';
-// 학습공유 테스트
 
 //board
 import Board from './views/board/Board.vue';
@@ -27,8 +26,6 @@ import SearchBoard from './views/search/SearchBoard.vue';
 
 // Chat
 import ChatPage from './views/openchat/ChatPage.vue';
-// Chat Test
-import ChatPageTest from './views/openchat/ChatPageTest.vue';
 
 //redirect vue
 import PageNotFound from './views/redirect/PageNotFound';
@@ -199,13 +196,6 @@ export default [
     path: '/chat',
     name: 'ChatPage',
     component: ChatPage,
-  },
-
-  // 채팅 관련 영역
-  {
-    path: '/chat/test',
-    name: 'ChatPageTest',
-    component: ChatPageTest,
   },
 
   //redirect 영역

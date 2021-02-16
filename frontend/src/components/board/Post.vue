@@ -2,63 +2,54 @@
   <v-card id="container"  class="pa-2 ani-hover">
     <div id="post-detail">
       <!-- 포스트 디테일 헤더 부분 -->
-      <div id=header>
+      <div id="header">
         <!-- 클릭시 드롭다운 -->
-        <v-menu
-              bottom
-              left
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  depressed
-                  text
-                  v-bind="attrs"
-                  v-on="on"
-                  class="px-0"
-                >
-                  <div id="header-user-info">
-                    <!-- 프로필 사진 연결하기 -->
-                    <v-avatar size="40">
-                      <Profile id="profile-image"/>
-                    </v-avatar>
-                    <!-- 작성자이름, 작성일자 -->
-                    <div id="header-info">
-                      <div>{{ post.user_nickname }}</div>
-                      <div>{{ date }}</div>
-                    </div>
-                  </div>
-                </v-btn>
-              </template>
-              
-              <v-list>
-                <!-- 프로필 보기 -->
-                <v-list-item-group>
-                  <v-list-item>
-                    <v-list-item-title @click="goToProfile">
-                      Profile 보기
-                    </v-list-item-title>
-                  </v-list-item>
-                  <!-- 메세지 보내기 -->
-                  <v-list-item v-if="!flagWriter">
-                    <v-list-item-title>
-                      메세지 보내기
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-menu>
-        
+        <v-menu bottom left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn depressed text v-bind="attrs" v-on="on" class="px-0">
+              <div id="header-user-info">
+                <!-- 프로필 사진 연결하기 -->
+                <v-avatar size="40">
+                  <Profile id="profile-image" />
+                </v-avatar>
+                <!-- 작성자이름, 작성일자 -->
+                <div id="header-info">
+                  <div>{{ post.user_nickname }}</div>
+                  <div>{{ date }}</div>
+                </div>
+              </div>
+            </v-btn>
+          </template>
+
+          <v-list>
+            <!-- 프로필 보기 -->
+            <v-list-item-group>
+              <v-list-item>
+                <v-list-item-title>
+                  Profile 보기
+                </v-list-item-title>
+              </v-list-item>
+              <!-- 메세지 보내기(나와 채팅 금지) -->
+              <v-list-item @click="onChat" v-if="!flagWriter">
+                <v-list-item-title>
+                  메세지 보내기
+                </v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+
         <!-- 수정 삭제 신고 버튼과 판매상태 정보 -->
-        <div id='header-right' class="mr-3">
+        <div id="header-right" class="mr-3">
           <!-- 판매정보 부분 -->
           <div v-if="flagComponent.state">
-            <v-chip v-if="this.post.post_state===0" id="state-sale">
+            <v-chip v-if="this.post.post_state === 0" id="state-sale">
               판매중
             </v-chip>
-            <v-chip v-else-if="this.post.post_state===1" id="state-book">
+            <v-chip v-else-if="this.post.post_state === 1" id="state-book">
               예약중
             </v-chip>
-            <v-chip  v-else id="state-complete">
+            <v-chip v-else id="state-complete">
               판매완료
             </v-chip>
           </div>
@@ -104,20 +95,15 @@
         <div id="title">
           <!-- 중고장터용(지역) -->
           <div v-if="flagComponent.headerMarket">
-            <v-chip 
-              outlined
-              pill
-              color="#695C4C"
-              class="mr-3"
-            >
-              {{this.post.post_header}}
+            <v-chip outlined pill color="#695C4C" class="mr-3">
+              {{ this.post.post_header }}
             </v-chip>
           </div>
-          <div>{{post.post_title}}</div>
+          <div>{{ post.post_title }}</div>
         </div>
         <!-- 게시글 내용 -->
         <div id="description">
-          {{post.post_description}}
+          {{ post.post_description }}
         </div>
       </div>
 
@@ -131,51 +117,28 @@
             v-if="post.post_image"
           >mdi-image-filter</v-icon> -->
           <div id="bottom-comment">
-            <v-icon
-              middle
-              class="mr-1"
-            >mdi-comment-outline</v-icon>
+            <v-icon middle class="mr-1">mdi-comment-outline</v-icon>
             <span v-if="isComment">{{ post.comment_count }}</span>
             <span v-else>0</span>
           </div>
           <!-- 좋아요 -->
           <div id="bottom-like">
-            <button
-              @click="postLike"
-            >
+            <button @click="postLike">
               <!-- 좋아요 중 -->
-              <v-icon
-                middle
-                v-if="flagLike"
-                color="#FFC400"
-                class="mr-1"
-              >mdi-emoticon-excited</v-icon>
+              <v-icon middle v-if="flagLike" color="#FFC400" class="mr-1">mdi-emoticon-excited</v-icon>
               <!-- 좋아요 취소상태 -->
-              <v-icon
-                middle
-                class="mr-1"
-                v-else
-              >mdi-emoticon-neutral-outline</v-icon>
+              <v-icon middle class="mr-1" v-else>mdi-emoticon-neutral-outline</v-icon>
             </button>
             <span>{{ countLike }}</span>
           </div>
         </div>
         <!-- 북마크 -->
         <div>
-          <button
-            @click="postScrap"
-          >
+          <button @click="postScrap">
             <!-- 북마크 중 -->
-            <v-icon
-              middle
-              v-if="flagScrap"
-              color="#0B2945"
-            >mdi-bookmark</v-icon>
+            <v-icon middle v-if="flagScrap" color="#0B2945">mdi-bookmark</v-icon>
             <!-- 북마크 취소상태 -->
-            <v-icon
-              middle
-              v-else
-            >mdi-bookmark-outline</v-icon>
+            <v-icon middle v-else>mdi-bookmark-outline</v-icon>
           </button>
         </div>
       </div>
@@ -187,48 +150,57 @@
 // 프로필 이미지
 import Profile from '@/components/etc/Profile';
 
-import * as postApi from '@/api/post'
-import timeForToday from '@/plugins/timeForToday'
+import * as postApi from '@/api/post';
+import timeForToday from '@/plugins/timeForToday';
 
 // 스타일 적용
 import '@/assets/css/static/style.css';
+// 채팅방 api
+import * as chatApi from '@/api/chat';
 
 export default {
-  name:"Post",
+  name: 'Post',
   components: {
     Profile,
   },
-  props:{
-    post:Object,
-    flagComponent:Object
+  props: {
+    post: Object,
+    flagComponent: Object,
   },
   data() {
     return {
-      flagLike:false,
-      flagScrap:false,
-      countLike:0,
+      flagLike: false,
+      flagScrap: false,
+
+      test: String(localStorage.userId),
+      countLike: 0,
 
       // 추후에 연결해줘야하는 부분 - 이미지(프로필 사진)
       profileImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
       // 추후에 연결해줘야하는 부분 - 게시글 내 이미지 포함 여부
       haveImg: true,
-    }
+    };
   },
-  computed:{
+  computed: {
     onceLiked() {
-      return Object.keys(this.post).includes('isLiked')
+      return Object.keys(this.post).includes('isLiked');
     },
-    onceScrapped(){
-      return Object.keys(this.post).includes('isScrapped')
+    onceScrapped() {
+      return Object.keys(this.post).includes('isScrapped');
     },
     isComment() {
-      return Object.keys(this.post).includes('comment_count')
+      return Object.keys(this.post).includes('comment_count');
     },
     isLike() {
-      return Object.keys(this.post).includes('like_count')
+      return Object.keys(this.post).includes('like_count');
     },
-    flagWriter(){
-      return this.post.user_id===localStorage.userId
+    date() {
+      let date = this.post.post_date.split('.')[0];
+      date = date.split('T').join(' ');
+      return timeForToday(date);
+    },
+    flagWriter() {
+      return this.post.user_id === String(localStorage.userId);
     },
     date(){
       return timeForToday(this.post.post_date)
@@ -241,33 +213,31 @@ export default {
     }
   },
   mounted() {
-    this.fetchData()
+    this.fetchData();
   },
-  
-  methods:{
-    fetchData(){
-      if(this.onceLiked){
-        if(this.post.isLiked===0){
-          this.flagLike=false
-        }else{
-          this.flagLike=true
+
+  methods: {
+    fetchData() {
+      if (this.onceLiked) {
+        if (this.post.isLiked === 0) {
+          this.flagLike = false;
+        } else {
+          this.flagLike = true;
         }
       }
 
-      if(this.onceScrapped){
-        if(this.post.isScrapped===0){
-          this.flagScrap=false
-        }else{
-          this.flagScrap=true
+      if (this.onceScrapped) {
+        if (this.post.isScrapped === 0) {
+          this.flagScrap = false;
+        } else {
+          this.flagScrap = true;
         }
       }
-      
-      this.countLike = this.post.post_like
 
+      this.countLike = this.post.post_like;
     },
     // 재사용의 핵심
     goToDetail() {
-      
       // params : {name:string, params:{board_id,post_id}}
 
       let data = {
@@ -283,10 +253,12 @@ export default {
         data.params.board_id = Number(this.$route.params.board_id)
       }else{
         data.params.board_id = this.$store.state.curationId[curationName]
+
       }
       // if(curationName!="Board" && curationName!="Study"){
       // }else{
       // }
+
 
       if (curationName==="Market"){
         data.name = "MarketPost"
@@ -304,7 +276,7 @@ export default {
       }
 
       // params를 이용해서 데이터를 넘겨줄 수 있다.
-      this.$router.push(data)
+      this.$router.push(data);
     },
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
@@ -318,34 +290,89 @@ export default {
             }else{
               this.countLike += 1
             }
-            this.flagLike = !this.flagLike
+            this.flagLike = !this.flagLike;
           }
         })
-        .catch((err)=>{
-          console.err(err)
+        .catch((err) => {
+          console.err(err);
+        });
+
+      // 포스트좋아하는거 카운트 바꾸기 위한 지금 이 방식은 bug가 존재합니다. (유저와 연동이 안되어 있기 때문)
+    },
+
+    postScrap() {
+      postApi
+        .scrapPost({ user_id: localStorage.getItem('userId'), post_id: this.post.post_id })
+        .then((res) => {
+          if (res.data.message === 'No Subscription') {
+            alert('구독 후에 이용 가능합니다');
+          } else {
+            this.flagScrap = !this.flagScrap;
+          }
         })
-
-      // 포스트좋아하는거 카운트 바꾸기 위한 지금 이 방식은 bug가 존재합니다. (유저와 연동이 안되어 있기 때문) 
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    postScrap(){
-      postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
-      .then((res)=>{
-        if(res.data.message==='No Subscription'){
-          alert('구독 후에 이용 가능합니다')
-        }else{
-          this.flagScrap = !this.flagScrap
-        }
-      })
-      .catch((err)=>{
-        console.log(err)
-      })
-    },
-    goToProfile(){
-      console.log(this.post.user_id)
-    }
-  }
-}
+    // 채팅으로 이동
+    onChat() {
+      // 중복 처리 해줘야 한다 - 있으면 기존껄로 없으면 만들기
+      const params = {
+        my_id: localStorage.getItem('userId'),
+        opp_id: this.post.user_id,
+      };
+      chatApi
+        .createChatRoom(params)
+        .then((res) => {
+          let existChatRoom;
+          // 1. 실패한다면 이미 채팅방 존재
+          if (res.data.message === 'fail') {
+            // 현재 가지고 있는 채팅방을 가져오자
+            chatApi
+              .getChatList({ user_id: String(localStorage.userId) })
+              .then((res) => {
+                const chatLists = res.data.roomInfo;
 
+
+                for (let i = 0; i < chatLists.length; i++) {
+                  if (chatLists[i].opp_id === this.post.user_id) {
+                    this.chatRoomId = chatLists[i].roomId;
+                    break;
+                  }
+                }
+                // break => 채팅방 존재(vuex 변화)
+                existChatRoom = {
+                  roomId: this.chatRoomId,
+                  opp_nickName: this.nickname,
+                  opp_id: this.post.user_id,
+                };
+                // vuex state 변화
+                this.$store.dispatch('chat/isSelected', existChatRoom);
+                // 그리고 라우터 변환
+                this.$router.push({ name: 'ChatPage' });
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          } else {
+            // 2. 처음이라면 대화방 만들어주고 보내주기
+            const newChatRoom = {
+              roomId: res.data.roomId,
+              opp_nickName: this.nickname,
+              opp_id: this.post.user_id,
+            };
+            // state 변환
+            this.$store.dispatch('chat/isSelected', newChatRoom);
+            // 그리고 라우터 변환
+            this.$router.push({ name: 'ChatPage' });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -380,11 +407,11 @@ export default {
   align-items: center;
 }
 /* 사용자 정보 클릭시 드롭다운 연결 */
-.v-menu__content{
-  transform: translate(5px,40px);
+.v-menu__content {
+  transform: translate(5px, 40px);
 }
-.v-list{
-  padding:0;
+.v-list {
+  padding: 0;
 }
 
 /* 프로필, 닉네임, 작성일  */
@@ -420,17 +447,17 @@ export default {
 }
 /* 판매정보 */
 #state-sale {
-  background-color: #0B2945 ;
+  background-color: #0b2945;
   color: #fff;
   border-radius: 10%;
 }
 #state-book {
-  background-color: #aa2610 ;
+  background-color: #aa2610;
   color: #fff;
   border-radius: 10%;
 }
 #state-complete {
-  background-color: #f9f9f9 ;
+  background-color: #f9f9f9;
   color: #000;
   border-radius: 10%;
 }
@@ -477,12 +504,12 @@ export default {
   display: flex;
   flex-direction: row;
 }
-#bottom-comment{
+#bottom-comment {
   display: flex;
   align-items: center;
   margin-right: 5px;
 }
-#bottom-like{
+#bottom-like {
   display: flex;
   align-items: center;
 }

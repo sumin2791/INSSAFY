@@ -1,21 +1,20 @@
 <template>
   <div id="wrap">
-    <!-- <div id="pi-bg1" class="pi-bg" :style="{backgroundImage: `url(${items[0].image})`}"/> -->
     <div id="header">
       <div id="pi0" :class="{ aheader: active == 0 }">
-        <div id="pi-bg1" class="pi-bg" :class="{ none: !image[0] }" />
+        <div id="pi-bg1" class="pi-bg" :class="{ none: !image[0] }" :style="{ backgroundImage: `url(${image[0]})` }" />
         <GradientGenerator class="pi-bg" :class="{ none: image[0] }" />
         <div class="pi-order b-title">1st</div>
         <div class="pi-count t-desc-e">{{ count[0] }}</div>
       </div>
       <div id="pi1" :class="{ aheader: active == 1 }">
-        <div id="pi-bg2" class="pi-bg" :class="{ none: !image[1] }" />
+        <div id="pi-bg2" class="pi-bg" :class="{ none: !image[1] }" :style="{ backgroundImage: `url(${image[1]})` }" />
         <GradientGenerator class="pi-bg" :class="{ none: image[1] }" />
         <div class="pi-order b-title">2nd</div>
         <div class="pi-count t-desc-e">{{ count[1] }}</div>
       </div>
       <div id="pi2" :class="{ aheader: active == 2 }">
-        <div id="pi-bg3" class="pi-bg" :class="{ none: !image[2] }" />
+        <div id="pi-bg3" class="pi-bg" :class="{ none: !image[2] }" :style="{ backgroundImage: `url(${image[2]})` }" />
         <GradientGenerator class="pi-bg" :class="{ none: image[2] }" />
         <div class="pi-order b-title">3rd</div>
         <div class="pi-count t-desc-e">{{ count[2] }}</div>
@@ -53,8 +52,8 @@ export default {
     for (let i = 0; i < this.items.length; i++) {
       if (this.items[i] != null) {
         this.title[i] = this.items[i].post_title;
-        if (this.items[i].board_image != null && this.items.board_image != '' && this.items.board_image != 'null') {
-          this.image[i] = this.items[i].board_image;
+        if (this.items[i].post_image != null && this.items.post_image != '' && this.items.post_image != 'null') {
+          this.image[i] = this.items[i].post_image;
         }
         //type 별 수치
         if (this.type === 'like') {

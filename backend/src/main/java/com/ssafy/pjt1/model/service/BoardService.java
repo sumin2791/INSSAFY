@@ -76,4 +76,5 @@ public interface BoardService {
 
 	public void addVote(Map<String, Object> map2);
 
+	public void addUserRank(Map<String, Object> map2);
 }

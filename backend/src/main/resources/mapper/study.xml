@@ -19,7 +19,7 @@
 			  where is_used = 1
 			  group by post_id) as c 
 			  on p.post_id = c.post_id 
-		where p.board_id = 37 and p.is_used = 1
+		where p.board_id = 77 and p.is_used = 1
 		order by p.post_date desc
 		limit #{start}, #{size};
 	</select>
@@ -31,7 +31,7 @@
 	</select>
 
 	<select id="getStudyInfo" parameterType="int" resultType="map">
-		select b.board_name, b.board_description, c.board_count
+		select b.board_name, b.board_description, b.board_id, b.board_image, c.board_count
 		from board as b
 		left outer join
 		(select board_id, count(board_id) as board_count
@@ -44,7 +44,7 @@
 	</select>
 
 	<select id="getAllList" parameterType="map" resultType="map">
-		select b.board_name, b.board_description, c.board_count
+		select b.board_name, b.board_description, b.board_id, b.board_image, c.board_count
 		from board as b
 		left outer join
 		(select board_id, count(board_id) as board_count
@@ -62,5 +62,34 @@
 		from board
 		where board_state = 3 and is_used = 1;
 	</select>
+
+	<insert id="request" parameterType="map">
+		insert into study_request (board_id, user_id, request_state) 
+		values ( #{board_id}, #{user_id}, 0);
+	</insert>
+
+	<select id="getRequestList" parameterType="int" resultType="map">
+		select u.user_id, u.user_nickname, u.user_image
+		from user as u left outer join study_request as s on u.user_id = s.user_id
+		where s.board_id = #{board_id} and s.request_state = 0;
+	</select>
+
+	<update id="requestProcess" parameterType="map">
+		update study_request
+		set request_state = #{option}
+		where board_id = #{board_id} and user_id = #{user_id};
+	</update>
+
+	<update id="secession" parameterType="map">
+		update study_request
+		set request_state = 2
+		where board_id = #{board_id} and user_id = #{user_id};
+	</update>
+
+	<update id="reSubscription" parameterType="map">
+		update study_request
+		set request_state = 0
+		where board_id = #{board_id} and user_id = #{user_id};
+	</update>
 
 </mapper>

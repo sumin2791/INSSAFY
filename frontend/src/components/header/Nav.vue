@@ -55,6 +55,7 @@ alert(response.data.user.user_email);
       <Toast id="toast" :class="{ toast_hide: !getToastActive }" />
       <div id="toast-bg" :class="{ toast_hide: !getToastActive }" @click="clickOutsideTheToast" />
     </div>
+    <!-- <div class="the-blur"></div> -->
   </div>
 </template>
 
@@ -89,7 +90,7 @@ export default {
       this.$store.commit('setToastType', 'search');
     },
     clickNBtn2: function() {
-      alert('clicked Btn2');
+      this.$router.push({ name: 'ChatPage'});
     },
     clickNBtn3: function() {
       this.$store.commit('setToastTogle');
@@ -113,6 +114,11 @@ export default {
 </script>
 
 <style scoped>
+/* 배경 흐림 효과 */
+/* .the-blur {
+
+} */
+
 /* 로그인 페이지 일 때 로그인 버튼 숨기기 위해 */
 #toast {
   position: fixed;

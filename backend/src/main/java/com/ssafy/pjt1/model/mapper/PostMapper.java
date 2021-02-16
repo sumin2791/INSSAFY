@@ -51,13 +51,13 @@ public interface PostMapper {
 
 	public List<Map<String, Object>> getPostList(Map<String, Object> map);
 
-	public List<PostDto> searchPostNew(Map<String, Object> map);
+	public List<Map<String, Object>> searchPostNew(Map<String, Object> map);
 
-	public List<PostDto> searchPostPopular(Map<String, Object> map);
+	public List<Map<String, Object>> searchPostPopular(Map<String, Object> map);
 
-	public List<PostDto> boardPostNew(Map<String, Object> map);
+	public List<Map<String, Object>> boardPostNew(Map<String, Object> map);
 
-	public List<PostDto> boardPostPopular(Map<String, Object> map);
+	public List<Map<String, Object>> boardPostPopular(Map<String, Object> map);
 
 	public void deleteScrapAll(int post_id);
 
@@ -67,9 +67,9 @@ public interface PostMapper {
 
 	public List<Map<String, Object>> getSalesList(Map<String, Object> map);
 
-	public List<PostDto> marketPostNew(Map<String, Object> map);
+	public List<Map<String, Object>> marketPostNew(Map<String, Object> map);
 
-	public List<PostDto> marketPostPopular(Map<String, Object> map);
+	public List<Map<String, Object>> marketPostPopular(Map<String, Object> map);
 
 	public String getWriterName(String user_id);
 
@@ -84,4 +84,12 @@ public interface PostMapper {
 	public int getSearchPostCnt(Map<String, Object> map);
 
 	public int getAllSearchPostCnt(String keyword);
+
+	public String getWriterImage(String user_id);
+
+	public String getHeaderByID(int post_id);
+
+	public int getBoardState(int board_id);
+
+	public int getBoardStateById(int post_id);
 }

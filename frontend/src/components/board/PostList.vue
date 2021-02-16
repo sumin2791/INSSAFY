@@ -15,7 +15,7 @@
 </template>
 
 <script scoped>
-import Post from '@/components/board/Post.vue';
+import Post from "@/components/board/Post.vue"
 // import {mapState} from 'vuex'
 
 //board api
@@ -23,7 +23,7 @@ import * as postApi from '@/api/post';
 import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
-  name: 'PostList',
+  name:"PostList",
   data() {
     return {
       posts:[],

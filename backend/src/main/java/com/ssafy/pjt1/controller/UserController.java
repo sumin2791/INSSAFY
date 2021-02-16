@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ssafy.pjt1.model.dto.comment.CommentDto;
-import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 import com.ssafy.pjt1.model.service.JwtService;
@@ -19,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -138,7 +137,7 @@ public class UserController {
 
             // 큐레이션 보드 구독 처리
             String user_id = userDto.getUser_id();
-            int[] curation = {73,75,76,77};
+            int[] curation = { 73, 75, 76, 77 };
             for (int board_id : curation) {
                 Map<String, Object> cMap = new HashMap<>();
                 cMap.put("board_id", board_id);
@@ -393,14 +392,16 @@ public class UserController {
      * @return : SUCCESS
      */
     @ApiOperation(value = "회원탈퇴", notes = "is_used -> 1 업데이트")
-    @PutMapping("/user/delete")
-    public ResponseEntity<Map<String, Object>> userDelete(@RequestParam("user_id") String user_id) {
+    @DeleteMapping("/user/delete")
+    public ResponseEntity<Map<String, Object>> userDelete(@RequestParam("user_id") String user_id,
+            @RequestParam("user_password") String user_password) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("@delte /user 호출성공");
-        logger.info("user_id :" + user_id);
         try {
-            if (userService.userDelete(user_id) == 1) {
+            UserDto userDto = userService.userDtoById(user_id);
+            boolean flag = passwordEncoder.matches(user_password, userDto.getUser_password());
+            if (flag && userService.userDelete(user_id) == 1) {
                 resultMap.put("message", SUCCESS);
             } else {
                 resultMap.put("message", FAIL);

@@ -1,40 +1,29 @@
 <template>
   <v-app class="main-bg-color">
     <v-main class="grey lighten-3">
-      <v-container
-        class="pt-8"
-      >
+      <v-container class="pt-8">
         <!-- PC에서 보여줄 curation이름과 검색 -->
-        <v-row 
+        <v-row
           v-if="!ResponsiveSize.isMobile"
-          no-gutters 
+          no-gutters
           dense
           class="d-flex 
             flex-row 
             justify-space-between"
         >
           <!-- 페이지 이름 -->
-          <div 
-            class="text-overline  text-weight-black page-title"
-            style="font-size: 20px !important;"
-            @click="goMainStudy()"
-          >Curation</div>
+          <div class="text-overline  text-weight-black page-title" style="font-size: 20px !important;" @click="goMainStudy()">Curation</div>
           <!-- 검색관련 부분 -->
-          <div 
+          <div
             class="d-flex 
               flex-row 
               justify-flex-end"
           >
             <!-- 검색바 -->
-            <v-text-field
-              placeholder="검색"
-              solo
-              v-model="searchKeyword"
-            ></v-text-field>
+            <v-text-field placeholder="검색" solo v-model="searchKeyword"></v-text-field>
           </div>
         </v-row>
         <v-row dense>
-          
           <!-- 왼쪽 스터디 설명 부분 -->
           <v-col class="col-12 col-sm-3">
             <div id="description" class="rounded-bg container-description">
@@ -107,7 +96,7 @@
 // import StudyGroup from "@/components/curation/study/StudyGroup.vue"
 // 캘린더 추가기능 추가시 넣을 부분
 import StudyCalendarSpan from '@/components/curation/study/StudyCalendarSpan.vue';
-import CalendarDialog from '@/components/etc/CalendarDialog';
+import CalendarDialog from '@/components/calendar/CalendarDialog';
 
 import MyStudyGroup from "@/components/curation/study/MyStudyGroup.vue"
 import CheckList from "@/components/curation/study/CheckList.vue"
@@ -149,14 +138,14 @@ export default {
     
   },
   // 뷰 인스턴스 제거될 때 resize 호출
-  beforeDestroy () {
-      if (typeof window === 'undefined') return
+  beforeDestroy() {
+    if (typeof window === 'undefined') return;
 
-      window.removeEventListener('resize', this.onResize, { passive: true })
+    window.removeEventListener('resize', this.onResize, { passive: true });
   },
-  mounted () {
+  mounted() {
     // resize 실시해서 현재 화면 크기 확인
-    this.onResize()
+    this.onResize();
 
     window.addEventListener('resize', this.onResize, { passive: true })
   },
@@ -164,7 +153,7 @@ export default {
     return {
       // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
       ResponsiveSize: {
-        isMobile: false, 
+        isMobile: false,
         viewSize: 0,
       },
       // 검색 키워드
