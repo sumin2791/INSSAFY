@@ -20,6 +20,7 @@
                   v-for="(chatList, idx) in chatLists"
                   :key="idx"
                   :chatList="chatList"
+                  class="ani-hover"
                 />
               </v-col>
             </v-list>
@@ -146,5 +147,11 @@ export default {
   z-index: -1;
   position: absolute;
   margin: auto;
+}
+.ani-hover {
+  transition: transform 0.5s ease;
+}
+.ani-hover:hover {
+  transform: scale(1.04);
 }
 </style>

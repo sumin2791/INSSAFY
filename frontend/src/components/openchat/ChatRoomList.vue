@@ -1,7 +1,7 @@
 <template>
   <v-list id="list" three-line>
     <v-list-item 
-      class="pl-0"
+      class="ma-auto"
     >
       <!-- 상대 프로필 이미지(임시 - 연결해줘야 함) -->
       <v-avatar>
@@ -9,7 +9,7 @@
       </v-avatar>
 
       <v-list-item-content 
-        class="ml-3 go-study"
+        class="ml-3 chat-partner"
         @click="selectThisChat(chatList)"
       >
         <!-- 상대방 닉네임 -->
@@ -45,7 +45,7 @@ export default {
       const currentRoom = this.$store.state.chat.selectedChatRoom
       // 채팅방 주인 정보
       const oppId = this.$store.state.chat.selectedId
-      console.log(this.$store.state.chat, '채팅')
+      // console.log(this.$store.state.chat, '채팅')
       // 선택 X이면 안 보여주고 선택됐을 때만 보여주기
       if (currentRoom) {
         // API 요청으로 메세지 가져오기
@@ -77,7 +77,18 @@ export default {
 /* 전체 폰트 */
 #list {
   font-family: 'Noto Sans KR', sans-serif !important;
-  background-color: var(--basic-color-bg2) !important;
   height: 100% !important;
+  border: none;
+  border-radius: 5px;
+  color: var(--basic-color-key);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: #ebebe9 !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+            -10px -10px 20px #ffffff;
+  border-radius: 15px !important;
+  padding: 0px;
+}
+.chat-partner:hover {
+  cursor: pointer;
 }
 </style>

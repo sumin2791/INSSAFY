@@ -7,7 +7,7 @@
       id="room-title"
     >
       <!-- 채팅 상대방 닉네임 보여줄 부분 -->
-      <v-toolbar-title text-color="white" @click="connect">{{ oppNickName }}</v-toolbar-title>
+      <v-toolbar-title text-color="white">{{ oppNickName }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -73,7 +73,9 @@ export default {
   },
   watch: {
     // 값이 바뀌면 소켓 연결
-    isInRoom: 'connect'
+    isInRoom: 'connect',
+    // 채팅방 정보가 바뀌면 소켓 연결
+    // oppRoomId: 'connect'
   },
   computed: {
     // 현재 활성화 채팅방 정보
@@ -138,6 +140,19 @@ export default {
             console.log('구독으로 받은 메시지 입니다.', res.body);
             const received = JSON.parse(res.body);
             
+            // 채팅방 입장시 알림 메세지 개수 초기화
+            const params = {
+              my_id: this.userId,
+              opp_id: this.oppUserId,
+            }
+            chatApi.updateNotice(params)
+              .then(res => {
+                console.log(res, '잘 넘어옴?')
+              })
+              .catch(err => {
+                console.error(err)
+              })
+
             // 뿌려줄 res.data 태그
             // 1 - 전체 감쌀 부분
             const divReceive = document.createElement("div");

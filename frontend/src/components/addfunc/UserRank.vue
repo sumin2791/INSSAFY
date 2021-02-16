@@ -33,14 +33,14 @@
       <!-- 랭커 3명이 안됐을 때 보여줄 부분 -->
       <v-row 
         dense 
-        v-if="count < 3"
+        v-if="count.length > 0"
         id="tf"
       >
         <div
           class="null ani-hover"
           v-for="(i) in count"
           :key="i"
-        >당신이 다음 {{i + 1}}등의 주인공!
+        >당신이 다음 {{i}}등의 주인공!
         </div>
       </v-row>
     </v-container>
@@ -62,7 +62,7 @@ export default {
       // 메달 아이콘
       medal: 'mdi-medal',
       // 등 수 부족할 때 보여줄 부분
-      count: 3,
+      count: [1, 2, 3],
     }
   },
   created() {
@@ -94,7 +94,7 @@ export default {
               this.rankingList[i].rank = i + 1
             }
             // 빈 자리 채워주기
-            this.count = (this.count - this.rankingList.length)
+            this.count = (this.count.slice(this.rankingList.length))
           }
         })
         .catch(err => {

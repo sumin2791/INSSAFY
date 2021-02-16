@@ -4,7 +4,7 @@
       Oops! 데이터가 부족해요<br>보드를 더 활성화시켜볼까요?
     </div>
     <!-- 실제 랭킹 데이터 -->
-    <v-container id="table" v-if="isEnough">
+    <v-container id="table" v-if="isEnough" @click="editFirstMessage">
       <v-row dense id="th">
         <v-col>Rank</v-col>
         <v-col class="nickname">닉네임</v-col>
@@ -29,14 +29,14 @@
       <!-- 랭커 3명이 안됐을 때 보여줄 부분 -->
       <v-row 
         dense 
-        v-if="count < 3"
+        v-if="count.length > 0"
         id="tf"
       >
         <div
           class="null ani-hover"
           v-for="(i) in count"
           :key="i"
-        >당신이 다음 {{i + 1}}등의 주인공!
+        >당신이 다음 {{i}}등의 주인공!
         </div>
       </v-row>
     </v-container>
@@ -58,7 +58,7 @@ export default {
       // 메달 아이콘
       medal: 'mdi-medal',
       // 등 수 부족할 때 보여줄 부분
-      count: 3,
+      count: [1, 2, 3],
     }
   },
   created() {
@@ -90,12 +90,21 @@ export default {
               this.rankingList[i].rank = i + 1
             }
             // 빈 자리 채워주기
-            this.count = (this.count - this.rankingList.length)
+            this.count = (this.count.slice(this.rankingList.length))
+            this.editFirstMessage()
           }
         })
         .catch(err => {
           console.error(err)
         })
+    },
+    // 랭킹 1위 한마디 활성화
+    editFirstMessage() {
+      // 1위가 존재하면 데이터 넘겨주기
+      if (this.rankingList.length) {
+        this.$emit('prize-nickname', this.rankingList[0].nickName)
+      } else { this.$emit('prize-nickname', false) }
+
     },
   },
 }
