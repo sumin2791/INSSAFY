@@ -38,8 +38,11 @@
                       Profile 보기
                     </v-list-item-title>
                   </v-list-item>
-                  <!-- 메세지 보내기 -->
-                  <v-list-item v-if="!flagWriter">
+                  <!-- 메세지 보내기(나와 채팅 금지) -->
+                  <v-list-item
+                    @click="onChat"
+                    v-if="!flagWriter"
+                  >
                     <v-list-item-title>
                       메세지 보내기
                     </v-list-item-title>
@@ -199,6 +202,11 @@ import timeForToday from '@/plugins/timeForToday'
 // 스타일 적용
 import '@/assets/css/static/style.css';
 
+// 채팅방 api
+import * as chatApi from "@/api/chat"
+import { async } from 'regenerator-runtime';
+
+
 export default {
   name:"PostForDetail",
   components:{
@@ -219,6 +227,8 @@ export default {
 
       // 추후에 연결해줘야하는 부분 - 이미지(프로필 사진)
       profileImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
+      // 채팅방 id
+      chatRoomId: '',
     }
   },
   computed:{
@@ -241,6 +251,7 @@ export default {
     flagWriter(){
       return this.post.user_id===localStorage.userId
     },
+
     // 재사용의 핵심
     flagComponent(){
       
@@ -261,6 +272,7 @@ export default {
       }
       return flag
     },
+
   },
   watch:{
 
@@ -304,17 +316,72 @@ export default {
     // user가 스크랩 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postScrap(e){
       postApi.scrapPost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
-      .then((res)=>{
-        if(res.data.message==='No Subscription'){
-          alert('구독 후에 이용가능합니다.')
-        }else{
-          this.$store.dispatch('post/postScrap') 
-        }
-          // console.log(res)
+        .then((res)=>{
+          if(res.data.message==='No Subscription'){
+            alert('구독 후에 이용가능합니다.')
+          }else{
+            this.$store.dispatch('post/postScrap') 
+          }
+            // console.log(res)
+          })
+          .catch(err=>{
+            console.error(err)
+          })
+    },
+
+    // 채팅으로 이동
+    onChat() {
+      // 중복 처리 해줘야 한다 - 있으면 기존껄로 없으면 만들기
+      const params = {
+        my_id: localStorage.getItem('userId'),
+        opp_id: this.post.user_id,
+      }
+      chatApi.createChatRoom(params)
+        .then(res => {
+          let existChatRoom
+          // 1. 실패한다면 이미 채팅방 존재
+          if (res.data.message === "fail") {
+            // 현재 가지고 있는 채팅방을 가져오자
+            chatApi.getChatList({user_id: String(localStorage.userId)})
+              .then(res => {
+                const chatLists = res.data.roomInfo
+
+                for (let i = 0; i < chatLists.length; i++) {
+                  if (chatLists[i].opp_id === this.post.user_id) {
+                    this.chatRoomId = chatLists[i].roomId;
+                    break;
+                  }
+                }
+                // break => 채팅방 존재(vuex 변화)
+                existChatRoom = {
+                  roomId: this.chatRoomId,
+                  opp_nickName: this.nickname,
+                  opp_id: this.post.user_id,
+                }
+                // vuex state 변화
+                this.$store.dispatch('chat/isSelected', existChatRoom)
+                // 그리고 라우터 변환
+                this.$router.push({ name: 'ChatPage'})
+              })
+              .catch(err => {
+                console.error(err)
+              })
+          } else { 
+            // 2. 처음이라면 대화방 만들어주고 보내주기
+            const newChatRoom = {
+              roomId: res.data.roomId,
+              opp_nickName: this.nickname,
+              opp_id: this.post.user_id,
+            }
+            // state 변환
+            this.$store.dispatch('chat/isSelected', newChatRoom)
+            // 그리고 라우터 변환
+            this.$router.push({ name: 'ChatPage'})
+           }
         })
-      .catch(err=>{
-        console.error(err)
-      })
+        .catch(err => {
+          console.error(err)
+        })
     },
 
     // 판매상태 변경
@@ -413,6 +480,15 @@ export default {
   flex-direction: row;
 }
 /* 판매정보 */
+#sell-state {
+  background-color: #0B2945 ;
+  color: #fff;
+  border-radius: 10%;
+}
+/* 게시글 제목 */
+#title {
+  margin: 0 0 1% 1%;
+
 #state-sale {
   background-color: #0B2945 ;
   color: #fff;

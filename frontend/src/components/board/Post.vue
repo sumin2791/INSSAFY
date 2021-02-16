@@ -38,8 +38,11 @@
                       Profile 보기
                     </v-list-item-title>
                   </v-list-item>
-                  <!-- 메세지 보내기 -->
-                  <v-list-item v-if="!flagWriter">
+                  <!-- 메세지 보내기(나와 채팅 금지) -->
+                  <v-list-item
+                    @click="onChat"
+                    v-if="!flagWriter"
+                  >
                     <v-list-item-title>
                       메세지 보내기
                     </v-list-item-title>
@@ -185,6 +188,8 @@ import timeForToday from '@/plugins/timeForToday'
 
 // 스타일 적용
 import '@/assets/css/static/style.css';
+// 채팅방 api
+import * as chatApi from "@/api/chat"
 
 export default {
   name:"Post",
@@ -199,6 +204,8 @@ export default {
     return {
       flagLike:false,
       flagScrap:false,
+      
+      test: String(localStorage.userId),
       countLike:0,
 
       // 추후에 연결해줘야하는 부분 - 이미지(프로필 사진)
@@ -227,7 +234,10 @@ export default {
       let date = this.post.post_date.split('.')[0]
       date = date.split('T').join(' ')
       return timeForToday(date)
-    }
+    },
+    flagWriter(){
+      return this.post.user_id=== String(localStorage.userId)
+    },
   },
   mounted() {
     this.fetchData()
@@ -319,7 +329,61 @@ export default {
         .catch((err)=>{
           console.log(err)
         })
-    }
+    },
+    // 채팅으로 이동
+    onChat() {
+      // 중복 처리 해줘야 한다 - 있으면 기존껄로 없으면 만들기
+      const params = {
+        my_id: localStorage.getItem('userId'),
+        opp_id: this.post.user_id,
+      }
+      chatApi.createChatRoom(params)
+        .then(res => {
+          let existChatRoom
+          // 1. 실패한다면 이미 채팅방 존재
+          if (res.data.message === "fail") {
+            // 현재 가지고 있는 채팅방을 가져오자
+            chatApi.getChatList({user_id: String(localStorage.userId)})
+              .then(res => {
+                const chatLists = res.data.roomInfo
+
+                for (let i = 0; i < chatLists.length; i++) {
+                  if (chatLists[i].opp_id === this.post.user_id) {
+                    this.chatRoomId = chatLists[i].roomId;
+                    break;
+                  }
+                }
+                // break => 채팅방 존재(vuex 변화)
+                existChatRoom = {
+                  roomId: this.chatRoomId,
+                  opp_nickName: this.nickname,
+                  opp_id: this.post.user_id,
+                }
+                // vuex state 변화
+                this.$store.dispatch('chat/isSelected', existChatRoom)
+                // 그리고 라우터 변환
+                this.$router.push({ name: 'ChatPage'})
+              })
+              .catch(err => {
+                console.error(err)
+              })
+          } else { 
+            // 2. 처음이라면 대화방 만들어주고 보내주기
+            const newChatRoom = {
+              roomId: res.data.roomId,
+              opp_nickName: this.nickname,
+              opp_id: this.post.user_id,
+            }
+            // state 변환
+            this.$store.dispatch('chat/isSelected', newChatRoom)
+            // 그리고 라우터 변환
+            this.$router.push({ name: 'ChatPage'})
+           }
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    },
   }
 }
 
@@ -455,5 +519,31 @@ export default {
 #bottom-like{
   display: flex;
   align-items: center;
+}
+/* 게시글 제목 */
+#title {
+  margin: 0 0 1% 1%;
+  display: flex;
+  flex-direction: row;
+  font-size: 18px;
+  font-weight: 600;
+}
+/* 게시글 내용 */
+#description {
+  margin: 0 0 1% 1%;
+  font-size: 16px;
+}
+/* 댓글, 좋아요, 북마크 부분 */
+#actions {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+/* 댓글 좋아요 부분 */
+#bottom-comment-like {
+  display: flex;
+  flex-direction: row;
 }
 </style>
