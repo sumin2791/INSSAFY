@@ -26,7 +26,7 @@
 
         <v-row>
           <!-- 왼쪽 보드 설명 및 추가 기능 -->
-          <v-col class="col-12 col-sm-3">
+          <v-col class="col-12 col-sm-4">
             <div id="description" class="rounded-bg container-description">
               <v-list color="transparent">
                 <div
@@ -41,15 +41,12 @@
                   <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button>
                 </div>
               </v-list>
-              <v-divider class="my-2"></v-divider>
-              <v-list color="transparent">
-                <CheckList :is-manager="isManager" v-if="isCheck" />
-                <VoteList v-if="isVote" />
-                <UserRank v-if="isRank" />
-              </v-list>
             </div>
+            <CheckList :is-manager="isManager" v-if="isCheck" />
+            <VoteList v-if="isVote" />
+            <UserRank v-if="isRank" />        
           </v-col>
-          <v-col class="col-12 col-sm-9">
+          <v-col class="col-12 col-sm-8">
             <PostWrite :in-board="inBoard" style="margin:0 10px" />
             <PostList />
           </v-col>
@@ -251,7 +248,6 @@ export default {
 /* 구독버튼 */
 .container-description {
   width: 100%;
-  margin: 0px 0 20px;
   padding: 10px;
   box-shadow: var(--basic-shadow-w);
 }

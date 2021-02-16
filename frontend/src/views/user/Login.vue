@@ -146,37 +146,11 @@ export default {
             // console.log(this.$store.state.auth.token);
             // console.log(this.$store.state.auth.email);
 
-            // 소켓 연결해주기
-            this.connect()
-
           }
         })
         .catch((err) => {
           console.log(err);
         });
-    },
-    // 소켓 연결
-    connect() {
-      // 배포용
-      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      // 로컬용
-      const serverURL = 'http://localhost:8000/ws';
-      let socket = new SockJS(serverURL);
-      this.stompClient = Stomp.over(socket);
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
-      this.stompClient.connect(
-        {},
-        (frame) => {
-          // 소켓 연결 성공
-          this.connected = true;
-          console.log('소켓 연결 성공', frame);
-        },
-        (error) => {
-          // 소켓 연결 실패
-          console.error('소켓 연결 실패', error)
-          this.connected = false;
-        }
-      );
     },
   },
 };
