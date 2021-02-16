@@ -20,3 +20,16 @@ export function deleteCheckList(params) {
 export function modifyCheckList(params) {
   return http.put('/CheckList/update', params)
 }
+
+// 보드내 유저 랭킹 가져오기
+export function getUserRank(params) {
+  // axios get 요청 방법 1
+  // return http.get(`/addFunc/getUserRank?board_id=${params}`)
+  // 방법 2
+  return http.get('/addFunc/getUserRank', {
+    params : {
+      board_id: params.board_id,
+    }
+  })
+  
+}

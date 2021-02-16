@@ -16,6 +16,7 @@ export default {
       state.isCheckList = data.checklist_flag
       state.isCalendar = data.calendar_flag
       state.isVote = data.vote_flag
+      state.isRank = data.user_rank_flag
     },
   },
   actions: {

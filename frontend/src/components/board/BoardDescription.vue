@@ -147,12 +147,6 @@ export default {
           state: false,
           explain: '캘린더에 일정을 표시하여 서로의 일정을 공유하고<br> 구성원들의 <strong>스케쥴 관리를 효율적</strong>으로 할 수 있게 도와줍니다.',
         }, 
-        // 인기글 주석처리
-        // {
-        //   option: '인기글',
-        //   state: false,
-        //   explain: '좋아요 순으로 보드 내<br>포스트의 인기글 <strong>TOP3</strong>를 보여줍니다.',
-        // }, 
         {
           title: 'vote',
           option: '투표',
@@ -161,7 +155,7 @@ export default {
         }, 
         // 랭킹 수정 요청 연결하기
         {
-          title: 'rank',
+          title: 'userRank',
           option: '랭킹',
           state: false,
           explain: '보드를 활발히 활동하는 유저는 누군지 확인할 수 있게<br> <strong>TOP3</strong> 활동 유저를 확인해보세요',
@@ -217,10 +211,10 @@ export default {
             if (addCheck.vote_flag) {
               this.addFuncAll[2].state = true
             }
-            // // 4. 유저 랭킹
-            // if (addCheck.vote_flag) {
-            //   this.addFuncAll[3].state = true
-            // }
+            // 4. 유저 랭킹
+            if (addCheck.user_rank_flag) {
+              this.addFuncAll[3].state = true
+            }
           }
         })
         .catch(err=>{
@@ -271,7 +265,7 @@ export default {
         })
       // 추가기능 요청 api 하나로 연결되어 있어서 이를 반복문으로 처리 - 랭킹 빼고 일단
       const addFuncState = {}
-      for ( let idx = 0; idx < this.addFuncAll.length - 1; ++idx) {
+      for ( let idx = 0; idx < this.addFuncAll.length; ++idx) {
  
       // 추가기능 편집 및 삭제 - 캘린더, 체크리스트, 투표
       const params = {
@@ -284,7 +278,7 @@ export default {
       const title = this.addFuncAll[idx].title + '_flag'
       // 동적 키 할당
       addFuncState[title] = params.option
-  
+      console.log(addFuncState)
       addFuncApi.modifyAddFunction(params)
         .then(res => {
           console.log(res)

@@ -229,6 +229,8 @@ export default {
       this.$store.commit('setSpinnerTogle');
       this.$store.commit('setSpinnerMessage', '메일 발송 중');
       var member = {
+        // 사용중으로 추가
+        is_used: 1,
         user_email: this.email,
         user_password: this.password,
         user_nickname: this.nickname,

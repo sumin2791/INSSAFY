@@ -47,7 +47,7 @@
               @keypress.enter="addHashtag()"
             ></v-text-field>
             <!-- 해쉬태그 보여지는 부분 -->
-            <div>
+            <div class="hash-group">
               <v-chip-group 
                 v-for="(hashtag, idx) in hashtags"
                 :key="idx">
@@ -121,7 +121,6 @@
                 </v-tooltip>
               </div>
             </div>
-            <div><button @click="checkAddFunc">test</button></div>
           </v-col>
         </v-col>
       </v-row>
@@ -178,11 +177,6 @@ export default {
           state: false,
           explain: '캘린더에 일정을 표시하여 서로의 일정을 공유하고<br> 구성원들의 <strong>스케쥴 관리를 효율적</strong>으로 할 수 있게 도와줍니다.',
         }, 
-        // {
-        //   option: '인기글',
-        //   state: false,
-        //   explain: '좋아요 순으로 보드 내<br>포스트의 인기글 <strong>TOP3</strong>를 보여줍니다.',
-        // }, 
         {
           option: '투표',
           state: false,
@@ -224,15 +218,13 @@ export default {
         // 추가기능 삽입 추가
         checklist_flag:(this.addFuncAll[0].state ? 1 : 0),
         calendar_flag:(this.addFuncAll[1].state ? 1 : 0),
-        // // 인기글 현재 없으니 주석처리
-        // popular_post_flag:(this.addFuncAll[2].state ? 1 : 0),
         // // 랭킹 현재 연결 없으니 주석처리
-        // rank_flag:(this.addFuncAll[4].state ? 1 : 0),
-        vote_flag:(this.addFuncAll[3].state ? 1 : 0),
+        user_rank_flag:(this.addFuncAll[3].state ? 1 : 0),
+        vote_flag:(this.addFuncAll[2].state ? 1 : 0),
         board_state:0
       };
-      boardApi.board_create(board).then(response => {
-        console.log(response.data);
+      boardApi.board_create(board)
+        .then(response => {
         const subBoard = JSON.parse(localStorage.subBoard)
         subBoard.push({
           board_id:response.data.board_id,
@@ -244,12 +236,12 @@ export default {
         })
         localStorage.subBoard = JSON.stringify(subBoard)
         alert('게시판 보드 생성')
-        
         this.$router.push({name:'Board',params:{board_id:response.data.board_id}})
-      }).catch(error => {
-        console.log(error);
-        alert("보드 생성에 실패하였습니다.");
-      })
+        })
+        .catch(error => {
+          console.log(error);
+          alert("보드 생성에 실패하였습니다.");
+        })
     }
   }
 }
@@ -270,5 +262,11 @@ export default {
 /* 추가기능 항목 설명 아이콘 */
 #add-func-info {
   align-self: flex-end;
+}
+/* 해쉬태그 나오는 부분 */
+.hash-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 </style>

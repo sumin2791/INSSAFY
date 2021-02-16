@@ -17,6 +17,7 @@ import user from './user';
 import bamboo from './bamboo';
 import market from './market';
 import addfunc from './addfunc';
+import chat from './chat';
 
 Vue.use(Vuex);
 
@@ -69,5 +70,6 @@ export default new Vuex.Store({
     bamboo,
     market,
     addfunc,
+    chat,
   },
 });

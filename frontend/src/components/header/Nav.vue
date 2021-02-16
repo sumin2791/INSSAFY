@@ -93,7 +93,7 @@ export default {
       this.$store.commit('setToastType', 'search');
     },
     clickNBtn2: function() {
-      alert('clicked Btn2');
+      this.$router.push({ name: 'ChatPage'});
     },
     clickNBtn3: function() {
       this.$store.commit('setToastTogle');
