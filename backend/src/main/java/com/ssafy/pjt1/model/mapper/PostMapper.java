@@ -92,4 +92,23 @@ public interface PostMapper {
 	public int getBoardState(int board_id);
 
 	public int getBoardStateById(int post_id);
+
+	public int getAllSearchPostCntH(String keyword);
+
+	public int getAllSearchPostCntT(String keyword);
+
+	public int getAllSearchPostCntD(String keyword);
+
+	public List<Map<String, Object>> searchPostNewH(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostNewT(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostNewD(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostPopularH(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostPopularT(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostPopularD(Map<String, Object> map);
+
 }
