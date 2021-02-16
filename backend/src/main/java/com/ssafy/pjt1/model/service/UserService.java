@@ -41,6 +41,7 @@ public interface UserService {
 
     public boolean quizCheck(String answer);
 
-	public void joinCuration(Map<String, Object> cMap);
+    public void joinCuration(Map<String, Object> cMap);
+
     public UserDto userDtoById(String user_id);
 }

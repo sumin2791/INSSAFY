@@ -90,10 +90,10 @@ export default {
   margin-bottom: 0rem !important;
   background-color: #fff;
   padding: 0.8rem;
-  border:1px #949590 solid;
   border-radius:10px;
   height:auto;
   width:100%;
+  box-shadow: var(--basic-shadow-w);
 }
 .post .post-header{
   margin-bottom: 0.5rem;

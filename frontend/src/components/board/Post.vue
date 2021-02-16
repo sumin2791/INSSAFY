@@ -52,15 +52,21 @@
             </v-menu>
         
         <!-- 수정 삭제 신고 버튼과 판매상태 정보 -->
-        <div id='header-right'>
+        <div id='header-right' class="mr-3">
           <!-- 판매정보 부분 -->
-          <div>
-            <v-chip id="sell-state">
+          <div v-if="flagComponent.state">
+            <v-chip v-if="this.post.post_state===0" id="state-sale">
+              판매중
+            </v-chip>
+            <v-chip v-else-if="this.post.post_state===1" id="state-book">
+              예약중
+            </v-chip>
+            <v-chip  v-else id="state-complete">
               판매완료
             </v-chip>
           </div>
           <!-- 수정,삭제,신고 -->
-          <div>
+          <!-- <div>
             <v-menu
               bottom
               left
@@ -77,10 +83,8 @@
                 </v-btn>
               </template>
               
-              <v-list>
-                <!-- 수정 -->
+              <v-list >
                 <v-list-item-group>
-                  <!-- 신고 -->
                   <v-list-item>
                     <v-list-item-title>
                       신고
@@ -89,22 +93,25 @@
                 </v-list-item-group>
               </v-list>
             </v-menu>
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- 디테일 페이지로 들어가는 부분 -->
       <div id="content-go-detail" @click="goToDetail">
         <!-- 포스트 제목 -->
+        <div class="detail-header" v-if="flagComponent.headerLearnShare">
+          학습공유 헤더들..
+        </div>
         <div id="title">
           <!-- 중고장터용(지역) -->
-          <div>
+          <div v-if="flagComponent.headerMarket">
             <v-chip 
               outlined
               pill
               color="#695C4C"
               class="mr-3"
             >
-              광주
+              {{this.post.post_header}}
             </v-chip>
           </div>
           <div>{{post.post_title}}</div>
@@ -119,16 +126,16 @@
       <div id="actions">
         <!-- 댓글 수 -->
         <div id="bottom-comment-like">
-          <div>
+          <div id="bottom-comment">
             <v-icon
               middle
               class="mr-1"
-            >mdi-comment-processing</v-icon>
+            >mdi-comment-outline</v-icon>
             <span v-if="isComment">{{ post.comment_count }}</span>
             <span v-else>0</span>
           </div>
           <!-- 좋아요 -->
-          <div>
+          <div id="bottom-like">
             <button
               @click="postLike"
             >
@@ -137,15 +144,16 @@
                 middle
                 v-if="flagLike"
                 color="#FFC400"
-                class="mr-1 ml-2"
+                class="mr-1"
               >mdi-emoticon-excited</v-icon>
               <!-- 좋아요 취소상태 -->
               <v-icon
                 middle
+                class="mr-1"
                 v-else
               >mdi-emoticon-neutral-outline</v-icon>
-              <span>{{ countLike }}</span>
             </button>
+            <span>{{ countLike }}</span>
           </div>
         </div>
         <!-- 북마크 -->
@@ -189,7 +197,8 @@ export default {
     Profile,
   },
   props:{
-    post:Object
+    post:Object,
+    flagComponent:Object
   },
   data() {
     return {
@@ -217,6 +226,9 @@ export default {
     },
     isLike() {
       return Object.keys(this.post).includes('like_count')
+    },
+    flagWriter(){
+      return this.post.user_id===localStorage.userId
     },
     date(){
       let date = this.post.post_date.split('.')[0]
@@ -252,11 +264,38 @@ export default {
       this.countLike = this.post.post_like
 
     },
+    // 재사용의 핵심
     goToDetail() {
-      console.log(this.post.post_id)
+      
+      // params : {name:string, params:{board_id,post_id}}
+
+      let data = {
+        name:'',
+        params:{
+          board_id:'',
+          post_id:this.post.post_id
+        }
+      }
+      const curationName = this.$route.name
+      if(curationName!="Board"){
+        data.params.board_id = this.$store.state.curationId[curationName]
+      }else{
+        data.params.board_id = Number(this.$route.params.board_id)
+      }
+
+      if (curationName==="Market"){
+        data.name = "MarketPost"
+      }else if(curationName==="LearnShare") {
+        data.name = "LearnSharePost"
+      }else if(curationName==="Recruitment"){
+        data.name = "RecruitmentPost"
+      }
+      else{
+        data.name = "Post"
+      }
+
       // params를 이용해서 데이터를 넘겨줄 수 있다.
-      this.$router.push({ name: 'Post', params: { board_id:this.$route.params.board_id, post_id: this.post.post_id }})
-      // this.$router.push({ name: 'Post', params: {post:this.post} });
+      this.$router.push(data)
     },
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
@@ -357,7 +396,7 @@ export default {
   box-shadow: var(--basic-shadow-s) !important;
   border-radius: 15px !important;
   background-color: var(--basic-color-bg2) !important;
-  margin: 7px 0;
+  margin: 16px 0;
 }
 /* 전체 detail 담겨진 부분 */
 #post-detail {
@@ -382,6 +421,12 @@ export default {
   align-items: center;
 }
 /* 사용자 정보 클릭시 드롭다운 연결 */
+.v-menu__content{
+  transform: translate(5px,40px);
+}
+.v-list{
+  padding:0;
+}
 
 /* 프로필, 닉네임, 작성일  */
 #header-user-info {
@@ -415,15 +460,65 @@ export default {
   flex-direction: row;
 }
 /* 판매정보 */
-#sell-state {
+#state-sale {
   background-color: #0B2945 ;
   color: #fff;
+  border-radius: 10%;
+}
+#state-book {
+  background-color: #aa2610 ;
+  color: #fff;
+  border-radius: 10%;
+}
+#state-complete {
+  background-color: #f9f9f9 ;
+  color: #000;
   border-radius: 10%;
 }
 /* 게시글 링크 정보 */
 #content-go-detail {
   width: 100%;
   cursor: pointer;
+  min-height: 150px;
+}
+.detail-header{
+  transform: translate(10px,15px);
+}
+/* 게시글 제목 */
+#title {
+  margin: 2% 0 2% 1%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+/* 게시글 내용 */
+#description {
+  margin: 0 0 1% 1%;
+  font-size: 16px;
+}
+/* 댓글, 좋아요, 북마크 부분 */
+#actions {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+/* 댓글 좋아요 부분 */
+#bottom-comment-like {
+  display: flex;
+  flex-direction: row;
+}
+#bottom-comment{
+  display: flex;
+  align-items: center;
+  margin-right: 5px;
+}
+#bottom-like{
+  display: flex;
+  align-items: center;
 }
 /* 게시글 제목 */
 #title {

@@ -16,14 +16,13 @@
       </div>
       <!-- 임박한 채용보기 -->
       <div id="due-date" class="rounded-bg container">
-        임박한 채용일정 보여줄 리스트
-        <DueDateItem />
-        <DueDateItem />
+        <p class="b-desc">임박한 채용일정</p>
+        <DueDateItem v-for="(event, index) in deadlines" :key="event.id + '/' + index" :event="event" class="date-item" />
       </div>
     </div>
     <div id="center-post">
       <!-- 캘린더 들어가는 부분 -->
-      <CalendarSpan id="study-calendar" class="rounded-bg" />
+      <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="'채용일정'" />
 
       <!-- 검색 돋보기 아이콘 -->
       <div class="search-bar">
@@ -33,18 +32,23 @@
       <div class="create-post">
         <button>게시글 작성 버튼</button>
       </div>
-      <!-- 각각의 게시글 들어갈 부분 -->
-      <!-- <Post class="post-list" /> -->
+      <!-- 각각의 게시글 들어갈 부분
+      <Post class="post-list" />
+      <Post class="post-list" />
+      <Post class="post-list" />
+      <Post class="post-list" />
+      <Post class="post-list" /> -->
     </div>
-    <CalendarDialog />
+    <CalendarDialog :boardName="'채용일정'" />
+    <DetailDialog />
+    <ModifyDialog :boardName="'채용일정'" />
   </div>
 </template>
 <script>
 // 스터디 홍보글 게시물
 // import Post from '@/components/board/Post.vue';
 import DueDateItem from '@/views/curation/recruitment/DueDateItem.vue';
-import CalendarSpan from '@/components/etc/CalendarSpan';
-import CalendarDialog from '@/components/etc/CalendarDialog';
+import CalendarSpan from '@/components/calendar/CalendarSpan';
 
 export default {
   name: 'Recruitment',
@@ -52,11 +56,21 @@ export default {
     // Post,
     DueDateItem,
     CalendarSpan,
-    CalendarDialog,
+    CalendarDialog: () => import('@/components/calendar/CalendarDialog'),
+    DetailDialog: () => import('@/components/calendar/DetailDialog'),
+    ModifyDialog: () => import('@/components/calendar/ModifyDialog'),
+  },
+  created() {
+    this.$store.dispatch('calendar/actGetDeadline');
+  },
+  computed: {
+    deadlines() {
+      return this.$store.state.calendar.deadlines;
+    },
   },
   methods: {
     click: function() {
-      alert('dd');
+      console.log('까꿍~');
     },
   },
 };
@@ -104,6 +118,9 @@ export default {
 /* 스터디 보드 설명 */
 #description {
 }
+.date-item {
+  margin: 10px 0 0;
+}
 
 /* 오른쪽 */
 #center-post {
@@ -119,8 +136,8 @@ export default {
   margin-top: 116px;
   overflow: hidden;
   width: 100%;
-  height: 500px;
-  min-height: 400px;
+  height: 650px;
+  min-height: 650px;
   box-shadow: var(--basic-shadow-w);
 }
 /* 검색창 */

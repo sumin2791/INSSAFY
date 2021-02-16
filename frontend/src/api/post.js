@@ -29,3 +29,12 @@ export function likePost(params){
 export function scrapPost(params){
   return http.post('/post/scrap',params)
 }
+
+export function modifyState(post_id,post_state,login_id){
+  return http.put('/post/modifyState',{},{params:{
+    post_id,
+    post_state,
+    login_id
+  }})
+
+}

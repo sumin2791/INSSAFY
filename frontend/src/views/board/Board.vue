@@ -220,7 +220,8 @@ export default {
                 user_role: 0
               })
             }
-            localStorage.subBoard = JSON.stringify(boards)
+            localStorage.subBoard = JSON.stringify(boards);
+            this.$store.commit('auth/setSubBoardRefresh');
           }
         })
         .catch(err=>{

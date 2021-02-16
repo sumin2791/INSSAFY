@@ -22,10 +22,47 @@
       @ok="handleOk"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
+        <!--market에서만 쓰는 지역-제목 form-->
+        <div class="form-row" v-if="flagBoard==='Market'">
+          <b-form-group
+            label-for="location-input"
+            invalid-feedback="지역을 선택해주세요"
+            :state="locationState"
+           class="col-12 col-sm-3 mb-0"
+          >
+            <b-form-select
+              id="location-input"
+              v-model="location.selected"
+              :options="location.options"
+              :state="locationState"
+              required
+            >
+              <template #first>
+                <b-form-select-option :value="null" disabled>-- 지역을 선택해주세요 --</b-form-select-option>
+              </template>
+            </b-form-select>
+          </b-form-group>
+          <b-form-group
+            label-for="title-input"
+            invalid-feedback="title is required"
+            :state="titleState"
+            class="col-sm-9 col-12"
+          >
+            <b-form-input
+              id="title-input"
+              placeholder="제목"
+              v-model="tempTitle"
+              :state="titleState"
+              required
+            ></b-form-input>
+          </b-form-group>
+        </div>
+        <!--범용적으로 쓰는 제목 form-->
         <b-form-group
           label-for="title-input"
           invalid-feedback="title is required"
           :state="titleState"
+          v-if="flagBoard==='others'"
         >
           <b-form-input
             id="title-input"
@@ -121,6 +158,31 @@ export default {
       tempImages:[],
       titleState: null,
       descriptionState: null,
+      locationState:null,
+
+      location:{
+        selected:null,
+        options:[
+          {value:'전체',text:'전체'},
+          {value:'서울',text:'서울'},
+          {value:'대전',text:'대전'},
+          {value:'광주',text:'광주'},
+          {value:'구미',text:'구미'},
+        ]
+      },
+    }
+  },
+  computed:{
+    flagBoard() {
+      const boardName = this.$route.name
+      if(boardName==="MarketPost"){
+        return "Market"
+      }else if(boardName==="learnSharePost"){
+        return "learnShare"
+      }else if(boardName){
+        return "others"
+      }
+      return ''
     }
   },
   methods: {
@@ -137,8 +199,11 @@ export default {
     resetModal() {
       this.tempTitle = this.post.post_title
       this.tempDescription = this.post.post_description
+      this.location.selected = this.post.post_header
+
       this.titleState = null
       this.descriptionState = null
+      this.locationState = null
       this.tempImages=[]
     },
     handleOk(bvModalEvt) {
@@ -166,6 +231,7 @@ export default {
       let postItem = deepClone(this.post)
       postItem.post_title = this.tempTitle
       postItem.post_description = this.tempDescription
+      postItem.post_header = this.location.selected
       postItem.post_image = '' //이미지는 DB설계가 아직 안 되어 있음.
 
       const login_id = localStorage.userId

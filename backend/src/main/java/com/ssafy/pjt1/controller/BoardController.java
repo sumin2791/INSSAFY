@@ -53,7 +53,8 @@ public class BoardController {
      * developer: 윤수민
      * 
      * @param : user_id, board_name, board_description, board_location,
-     * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag, board_state
+     * board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag,
+     * board_state
      * 
      * @return : message, board_id
      */
@@ -85,6 +86,7 @@ public class BoardController {
             map2.put("checklist_flag", (int) param.get("checklist_flag"));
             map2.put("calendar_flag", (int) param.get("calendar_flag"));
             map2.put("vote_flag", (int) param.get("vote_flag"));
+            map2.put("user_rank_flag", (int) param.get("user_rank_flag"));
             boardService.addFunction(map2);
 
             resultMap.put("board_id", boardDto.getBoard_id());
@@ -124,6 +126,7 @@ public class BoardController {
                 boardService.subscribe(map);
                 /////////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
                 redisService.boardFollowSortSet(board_id);
+                resultMap.put("message", SUCCESS);
             } else {
                 int count2 = boardService.isUnSubscribed(map);
                 if (count2 == 0) {
@@ -131,16 +134,21 @@ public class BoardController {
                     boardService.updateSubscribe(map);
                     /////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
                     redisService.boardFollowSortSet(board_id);
+                    resultMap.put("message", SUCCESS);
                 } else {
                     logger.info("구독 해지");
                     // 관리자 아닐 경우 구독 해지
                     boardService.unsubscribe(map);
                     ///////////////////////////////////////////// 구독 해지시 redis에서 follower수 -1 감소
                     redisService.boardFollowSortSetDecrease(String.valueOf(board_id));
+                    resultMap.put("message", SUCCESS);
                 }
             }
 
-            resultMap.put("message", SUCCESS);
+            if ((int) param.get("user_role") == 1) {
+                resultMap.put("message", "관리자는 구독취소 불가");
+            }
+
         } catch (Exception e) {
             logger.error("실패", e);
             resultMap.put("message", FAIL);
@@ -259,19 +267,22 @@ public class BoardController {
      */
     @GetMapping("/getBoards")
     public ResponseEntity<Map<String, Object>> getBoards(@RequestParam(value = "sort") String sort,
-    @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
+            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/getBoards 호출 성공");
 
         try {
             int totalCnt = boardService.getTotalCnt();
-            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
-            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
-            else resultMap.put("isLastPage","No data");
+            if (totalCnt > (page + 1) * size)
+                resultMap.put("isLastPage", "false");
+            else if (totalCnt > page * size)
+                resultMap.put("isLastPage", "true");
+            else
+                resultMap.put("isLastPage", "No data");
 
             Map<String, Object> map = new HashMap<>();
-            map.put("start", page*size);
+            map.put("start", page * size);
             map.put("size", size);
             List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
@@ -302,20 +313,23 @@ public class BoardController {
      */
     @GetMapping("/searchBoard")
     public ResponseEntity<Map<String, Object>> searchBoard(@RequestParam(value = "sort") String sort,
-            @RequestParam(value = "keyword") String keyword,
-            @RequestParam(value = "page") int page, @RequestParam(value = "size") int size) {
+            @RequestParam(value = "keyword") String keyword, @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/searchBoard 호출 성공");
         try {
             int totalCnt = boardService.getSearchCnt(keyword);
-            if(totalCnt>(page+1)*size) resultMap.put("isLastPage","false");
-            else if(totalCnt>page*size) resultMap.put("isLastPage","true");
-            else resultMap.put("isLastPage","No data");
-            logger.info("!!!!!cnt: "+totalCnt);
+            if (totalCnt > (page + 1) * size)
+                resultMap.put("isLastPage", "false");
+            else if (totalCnt > page * size)
+                resultMap.put("isLastPage", "true");
+            else
+                resultMap.put("isLastPage", "No data");
+            logger.info("!!!!!cnt: " + totalCnt);
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
-            map.put("start", page*size);
+            map.put("start", page * size);
             map.put("size", size);
             List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
@@ -413,8 +427,12 @@ public class BoardController {
             BoardDto boardDto = boardService.detailBoard(board_id);
             if (boardDto != null) {
                 int board_count = boardService.getBoardCount(board_id);
+                Map<String, Object> map = new HashMap<>();
+                map = boardService.boardFunc(board_id);
                 resultMap.put("boardDto", boardDto);
                 resultMap.put("board_count", board_count);
+                resultMap.put("board_function", map);
+
                 resultMap.put("message", SUCCESS);
             } else {
                 resultMap.put("message", "NULL");
@@ -426,4 +444,50 @@ public class BoardController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
+
+    /*
+     * 기능: 추가 기능 수정
+     * 
+     * developer: 윤수민
+     * 
+     * @param : board_id, function, login_id, option( 0: 삭제, 1: 추가)
+     * 
+     * @return : message
+     */
+    @PutMapping("/modifyFunction")
+    public ResponseEntity<Map<String, Object>> modifyFunction(@RequestParam(value = "board_id") int board_id,
+            @RequestParam(value = "function") String function, @RequestParam(value = "login_id") String login_id,
+            @RequestParam(value = "option") int option) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("/board/modifyFunction 호출 성공");
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id", board_id);
+            map.put("login_id", login_id);
+            if (boardService.isManager(map) != 0) {
+                Map<String, Object> map2 = new HashMap<>();
+                map2.put("board_id", board_id);
+                map2.put("option", option);
+                if (function.equals("checklist")) {
+                    boardService.addChecklist(map2);
+                } else if (function.equals("calendar")) {
+                    boardService.addCalendar(map2);
+                } else if (function.equals("vote")) {
+                    boardService.addVote(map2);
+                } else if (function.equals("userRank")) {
+                    boardService.addUserRank(map2);
+                }
+                resultMap.put("message", SUCCESS);
+            } else {
+                resultMap.put("message", PERMISSION);
+            }
+        } catch (Exception e) {
+            resultMap.put("message", FAIL);
+            logger.error("수정 실패", e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
 }

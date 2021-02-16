@@ -8,7 +8,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.pjt1.model.dto.board.BoardDto;
 import com.ssafy.pjt1.model.dto.post.PostDto;
-import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.service.S3Service;
 import com.ssafy.pjt1.model.service.main.MainService;
 
@@ -114,21 +113,27 @@ public class MainController {
         return new ResponseEntity<Map<String, List<PostDto>>>(resultMap, status);
     }
 
+    /*
+     * 기능: top3 코멘트 랭킹
+     * 
+     * developer: 문진환
+     *
+     */
     @ApiOperation(value = "코멘트 수 기준 post top3 불러오기")
     @GetMapping(value = "/getCommentRank")
-    public ResponseEntity<Map<String, List<PostDto>>> getCommentRank() {
-        Map<String, List<PostDto>> resultMap = new HashMap<>();
+    public ResponseEntity<Map<String, List<Map<String, String>>>> getCommentRank() {
+        Map<String, List<Map<String, String>>> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            List<PostDto> postDto = mapper.readValue(valueOps.get("postCommentRank"), List.class);
+            List<Map<String, String>> postDto = mapper.readValue(valueOps.get("postCommentRank"), List.class);
             resultMap.put("postComment", postDto);
             // resultMap = mapper.readValue(valueOps.get("postLikeRank"), List.class);
         } catch (Exception e) {
             logger.error("error", e);
         }
-        return new ResponseEntity<Map<String, List<PostDto>>>(resultMap, status);
+        return new ResponseEntity<Map<String, List<Map<String, String>>>>(resultMap, status);
     }
 
     /*
@@ -180,7 +185,8 @@ public class MainController {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        
+
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
+
 }

@@ -18,6 +18,7 @@ import bamboo from './bamboo';
 import market from './market';
 import addfunc from './addfunc';
 import chat from './chat';
+import calendar from './calendar';
 
 Vue.use(Vuex);
 
@@ -52,6 +53,14 @@ const state = {
 
   //가입하기 인증 문제
   problems: PROBLEMS(),
+
+  //curation Id
+  curationId:{
+    Market:76,
+    LearnShare:75,
+    Study:77,
+    Recruitment: 73
+  }
 };
 
 export default new Vuex.Store({
@@ -71,5 +80,6 @@ export default new Vuex.Store({
     market,
     addfunc,
     chat,
+    calendar,
   },
 });

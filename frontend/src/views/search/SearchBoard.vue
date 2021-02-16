@@ -50,6 +50,9 @@
           <Board :board="board"/>
         </v-col>
       </v-row>
+      <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+        <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
+      </infinite-loading>
     </v-container>
   </v-main>
 </template>
@@ -58,10 +61,13 @@
 import Board from '@/components/search/Board.vue'
 import * as boardApi from '@/api/board'
 
+import InfiniteLoading from 'vue-infinite-loading';
+
 export default {
   name: 'SearchBoard',
   components: {
     Board,
+    InfiniteLoading,
   },
   data() {
     return {
@@ -72,19 +78,40 @@ export default {
       },
       // 검색 정렬 조건
       sortResult: ['최신순', '인기순'],
+      boardList:[],
+      page : 0,
     }
   },
   computed:{
-    boardList(){
-      return this.$store.state.board.boardList
-    }
+    // boardList(){
+    //   return this.$store.state.board.boardList
+    // }
   },
   created() {
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     goToCreateBoard() {
       return this.$router.push({ name: 'BoardForm' });
+    },
+    infiniteHandler($state){
+      const EACH_LEN = 12
+      boardApi.get_boards({sort:"sort",page:this.page,size:EACH_LEN})
+      .then((res)=>{
+        setTimeout(()=>{
+          if(res.data.boardList){
+            this.boardList = this.boardList.concat(res.data.boardList);
+            this.page += 1;
+            $state.loaded();
+            if(res.data.boardList.length / EACH_LEN <1){
+              $state.complete();
+            }
+          }else{
+            $state.complete();
+          }
+        },1000);
+      })
+      .catch(err=>{console.log(err)})
     },
     fetchData() {
       boardApi.get_boards('sort')

@@ -25,8 +25,8 @@
 
     <update id="deleteCalendar" parameterType="string">
         update calendar_item
-        set is_useed = 0;
-        where calendar_item_id=#{calendar_item_id} and is_used = 1;
+        set is_used = 0
+        where calendar_item_id = #{calendar_item_id}  and is_used = 1;
     </update>
 
     <select id="getDeadline" resultType="CalendarItemDto">

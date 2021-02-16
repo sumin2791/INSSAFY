@@ -258,4 +258,31 @@ public class VoteController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    /*
+     * 기능: 보드 내 투표
+     * 
+     * developer: 윤수민
+     * 
+     * @param : board_id
+     * 
+     * @return : message, voteList
+     */
+    @GetMapping("/getBoardVote")
+    public ResponseEntity<Map<String, Object>> getBoardVote(@RequestParam(value = "board_id") int board_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("vote/getBoardVote 호출성공");
+        try {
+            List<Integer> voteList = voteService.getBoardVote(board_id);
+
+            resultMap.put("voteList", voteList);
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
 }

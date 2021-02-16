@@ -54,8 +54,14 @@
         <!-- 수정 삭제 신고 버튼과 판매상태 정보 -->
         <div id='header-right'>
           <!-- 판매정보 부분 -->
-          <div>
-            <v-chip id="sell-state">
+          <div v-if="flagComponent.state" @click="changeState">
+            <v-chip v-if="this.post.post_state===0" id="state-sale">
+              판매중
+            </v-chip>
+            <v-chip v-else-if="this.post.post_state===1" id="state-book">
+              예약중
+            </v-chip>
+            <v-chip  v-else id="state-complete">
               판매완료
             </v-chip>
           </div>
@@ -77,17 +83,17 @@
                 </v-btn>
               </template>
               
-              <v-list>
+              <v-list >
                 <!-- 수정 -->
                 <v-list-item-group>
-                  <v-list-item>
-                    <v-list-item-title v-if="flagWriter">
+                  <v-list-item v-if="flagWriter">
+                    <v-list-item-title>
                       <PostModify :post="post" />
                     </v-list-item-title>
                   </v-list-item>
                   <!-- 삭제 -->
-                  <v-list-item>
-                    <v-list-item-title v-if="flagWriter">
+                  <v-list-item v-if="flagWriter">
+                    <v-list-item-title>
                       삭제
                     </v-list-item-title>
                   </v-list-item>
@@ -105,40 +111,42 @@
       </div>
     
       <!-- 포스트 제목 -->
-      <div id="title">
-        <!-- 중고장터용(지역) -->
-        <div>
-          <v-chip 
-            outlined
-            pill
-            color="#695C4C"
-            class="mr-3"
-          >
-            광주
-          </v-chip>
+      <div id="body">  
+        <div id="title">
+          <!-- 중고장터용(지역) -->
+          <div v-if="flagComponent.headerMarket">
+            <v-chip 
+              outlined
+              pill
+              color="#695C4C"
+              class="mr-3"
+            >
+              {{this.post.post_header}}
+            </v-chip>
+          </div>
+          <div>{{post.post_title}}</div>
         </div>
-        <div>{{post.post_title}}</div>
-      </div>
-      <!-- 게시글 내용 -->
-      <div id="description">
-        {{post.post_description}}
-        <!-- 이미지 미리보기 -->
-        <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
+        <!-- 게시글 내용 -->
+        <div id="description">
+          {{post.post_description}}
+          <!-- 이미지 미리보기 -->
+          <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기...">
+        </div>
       </div>
 
       <!-- 게시글 관련 이미지/댓글/좋아요 들어갈 부분 -->
       <div id="actions">
         <!-- 댓글 수 -->
         <div id="bottom-comment-like">
-          <div>
+          <div id="bottom-comment">
             <v-icon
               middle
               class="mr-1"
-            >mdi-comment-processing</v-icon>
+            >mdi-comment-outline</v-icon>
             <span>{{ commentCount }}</span>
           </div>
           <!-- 좋아요 -->
-          <div>
+          <div id="bottom-like">
             <button
               @click="postLike"
             >
@@ -147,15 +155,16 @@
                 middle
                 v-if="flagLike"
                 color="#FFC400"
-                class="mr-1 ml-2"
+                class="mr-1"
               >mdi-emoticon-excited</v-icon>
               <!-- 좋아요 취소상태 -->
               <v-icon
                 middle
+                class="mr-1"
                 v-else
               >mdi-emoticon-neutral-outline</v-icon>
-              <span>{{ countLike }}</span>
             </button>
+            <span>{{ countLike }}</span>
           </div>
         </div>
         <!-- 북마크 -->
@@ -192,6 +201,7 @@ import timeForToday from '@/plugins/timeForToday'
 
 // 스타일 적용
 import '@/assets/css/static/style.css';
+
 // 채팅방 api
 import * as chatApi from "@/api/chat"
 import { async } from 'regenerator-runtime';
@@ -241,6 +251,28 @@ export default {
     flagWriter(){
       return this.post.user_id===localStorage.userId
     },
+
+    // 재사용의 핵심
+    flagComponent(){
+      
+      let flag = {
+        state:false,
+        headerMarket:false,
+        headerLearnShare:false,
+      }
+
+      if(this.$route.name==="MarketPost"){
+        flag.state = true
+        flag.headerMarket = true
+        return flag
+
+      }else if(this.$route.name==="LearnShare"){
+        flag.state = false
+        flag.headerLearnShare = true
+      }
+      return flag
+    },
+
   },
   watch:{
 
@@ -267,17 +299,17 @@ export default {
     // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postLike(e){
       postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
-        .then((res)=>{
-          if(res.data.message==='No Subscription'){
-            alert('구독 후에 이용가능합니다.')
-          }else{
-            this.$store.dispatch('post/postLike',this.flagLike)
-          }
-          // console.log(res)
-        })
-        .catch(err=>{
-          console.error(err)
-        })
+      .then((res)=>{
+        if(res.data.message==='No Subscription'){
+          alert('구독 후에 이용가능합니다.')
+        }else{
+          this.$store.dispatch('post/postLike',this.flagLike)
+        }
+        // console.log(res)
+      })
+      .catch(err=>{
+        console.error(err)
+      })
       
     },
 
@@ -351,6 +383,31 @@ export default {
           console.error(err)
         })
     },
+
+    // 판매상태 변경
+    changeState(){
+      if(this.post.user_id!=localStorage.userId){
+        return
+      }
+
+      let sellState
+      if(this.post.post_state===0){
+        sellState=1
+      }else if(this.post.post_state===1){
+        sellState=-1
+      }else{
+        sellState=0
+      }
+
+      postApi.modifyState(this.post.post_id,sellState,localStorage.userId)
+      .then(res=>{
+        console.log(res)
+        this.$store.dispatch('post/isModifyFlag')
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    }
   }
 }
 </script>
@@ -384,6 +441,12 @@ export default {
   align-items: center;
 }
 /* 사용자 정보 클릭시 드롭다운 연결 */
+.v-menu__content{
+  transform: translate(5px,40px);
+}
+.v-list{
+  padding:0;
+}
 
 /* 프로필, 닉네임, 작성일  */
 #header-user-info {
@@ -425,6 +488,30 @@ export default {
 /* 게시글 제목 */
 #title {
   margin: 0 0 1% 1%;
+
+#state-sale {
+  background-color: #0B2945 ;
+  color: #fff;
+  border-radius: 10%;
+}
+#state-book {
+  background-color: #aa2610 ;
+  color: #fff;
+  border-radius: 10%;
+}
+#state-complete {
+  background-color: #f9f9f9 ;
+  color: #000;
+  border-radius: 10%;
+}
+/* 게시글 바디*/
+#body {
+  width:100%;
+  min-height: 200px;
+}
+/* 게시글 제목 */
+#title {
+  margin: 2% 0 2% 1%;
   display: flex;
   flex-direction: row;
   font-size: 18px;
@@ -447,5 +534,15 @@ export default {
 #bottom-comment-like {
   display: flex;
   flex-direction: row;
+  align-items: center;
+}
+#bottom-comment{
+  /* display: flex; */
+  /* align-items: center; */
+  margin-right: 5px;
+}
+#bottom-like{
+  display: flex;
+  align-items: center;
 }
 </style>

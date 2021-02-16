@@ -84,6 +84,28 @@ export default {
     flagModify(){
       return this.$store.state.post.flagModify
     },
+    // 여기가 재사용 핵심 중 하나 입니다. 돌아가기 버튼의 포인트를 정하는 곳이에요.
+    flagRouterBack(){
+      const name = this.$route.name
+      if(name==="MarketPost"){
+        return {
+          name: "Market"
+        }
+      }else if(name==="LearnSharePost"){
+        return {
+          name: "LearnShare"
+        }
+      }else if(name==="RecruitmentPost"){
+        return {
+          name: "Recruitment"
+        }
+      }else{
+        return {
+          name:'Board', 
+          params: {board_id: Number(this.$route.params.board_id)}
+        }
+      }
+    }
   },
   watch:{
     flagComment:'fetchData',

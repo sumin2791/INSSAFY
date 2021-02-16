@@ -110,10 +110,6 @@ export default {
         const response = await authApi.login(email, password);
         //로그인 성공 && 인증 완료
         if (response.data.message === 'SUCCESS') {
-          // context.commit('setToken', response.data.auth_token);
-          // context.commit('setId', response.data.user.user_id);
-          // context.commit('setEmail', response.data.user.user_email);
-          // context.commit('setNickname', response.data.user.user_nickname);
           context.commit('setUser', {
             token: response.data.auth_token,
             userId: response.data.user.user_id,
@@ -231,7 +227,25 @@ export default {
         console.log(error);
       }
     },
+
+    //회원탈퇴
+    async actDeleteUser({ dispatch, state }, password) {
+      try {
+        const response = await authApi.deleteUser({
+          password: password,
+          user_id: state.user.userId,
+        });
+        if (response.data.message === 'SUCCESS') {
+          alert('iN.SSAFY를 이용해주셔서 감사합니다.');
+          dispatch('logout');
+        }
+      } catch (error) {
+        console.log(error);
+        alert('회원탈퇴 중 문제가 발생했습니다.');
+      }
+    },
   },
+
   getters: {
     //구독목록 리스트 가져오기
     getSubBoardList(state) {
@@ -243,26 +257,18 @@ export default {
     },
     //구독목록 리스트 내 board_id와 매개변수가 일치하면 true
     getSubscribed: (state) => (board_id) => {
-      return state.subBoard.find((board) => board.board_id == board_id);
+      const found = state.subBoard.find((board) => board.board_id == board_id);
+      if (found != null) {
+        return true;
+      } else {
+        return false;
+      }
     },
-
-    // getSubBoardIndex: (state) => (id) => {
-    //   let index = 0;
-    //   state.subBoard.forEach((board) => {
-    //     if (board.baord_id == id) {
-    //       return this.index;
-    //     } else {
-    //       index++;
-    //     }
-    //     return -1;
-    //   });
-    //   return index;
-    // },
 
     //이미지 null이면 기본 링크 반환
     getUserImage(state) {
       const userImage = state.user.image;
-      if (userImage == null || userImage == 'null') {
+      if (userImage == null || userImage == 'null' || userImage == '') {
         return null;
       }
       return userImage;
@@ -271,15 +277,15 @@ export default {
     getGenerationColor(state) {
       switch (state.user.generation) {
         case '1':
-          return 'solid 4px #1d80dd';
+          return '#1d80dd';
         case '2':
-          return 'solid 4px #fcff55';
+          return '#fcff55';
         case '3':
-          return 'solid 4px #f1a248';
+          return '#f1a248';
         case '4':
-          return 'solid 4px #61d1be';
+          return '#61d1be';
         default:
-          return 'solid 4px #fff';
+          return '#fff';
       }
     },
     getsMyInfo(state) {
