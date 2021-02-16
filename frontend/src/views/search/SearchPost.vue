@@ -28,21 +28,6 @@
             block
           ></v-select>
         </div>
-        
-        <!-- 보드 생성 버튼 -->
-        <div>
-          <v-btn
-            color="brown darken-1"
-            @click="goToCreateBoard()"
-          >
-            <v-icon
-              color="#fff"
-            >
-              mdi-plus
-            </v-icon>
-            <div class="text-white">보드 만들기</div>
-          </v-btn>
-        </div>
       </div>
     <!-- 보드 보여주는 부분 -->
       <v-row >

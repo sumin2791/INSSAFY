@@ -6,6 +6,9 @@ export default {
     isCalendar: false,
     isVote: false,
     isRank: false,
+
+    // 체크리스트 편집중 flag
+    isEditNow: false,
   },
   getters: {
 
@@ -18,10 +21,18 @@ export default {
       state.isVote = data.vote_flag
       state.isRank = data.user_rank_flag
     },
+    // 체크리스트 편집중 상태 저장
+    IS_EDIT_CHECK_LIST(state, boolean) {
+      console.log(boolean)
+      state.isEditNow = Boolean(boolean)
+    }
   },
   actions: {
     isUsed({commit}, addfunc) {
       commit('IS_USED', addfunc)
     },
+    isEditCheckList({commit}, bool) {
+      commit('IS_EDIT_CHECK_LIST', bool)
+    }
   },
 }

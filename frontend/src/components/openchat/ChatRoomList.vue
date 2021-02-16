@@ -43,6 +43,9 @@ export default {
       // 현재 선택된 채팅방 정보 갱신
       this.$store.dispatch('chat/isSelected', chatList)
       const currentRoom = this.$store.state.chat.selectedChatRoom
+      // 채팅방 주인 정보
+      const oppId = this.$store.state.chat.selectedId
+      console.log(this.$store.state.chat, '채팅')
       // 선택 X이면 안 보여주고 선택됐을 때만 보여주기
       if (currentRoom) {
         // API 요청으로 메세지 가져오기
@@ -50,6 +53,9 @@ export default {
           endNUm: 15,
           startNUm: 0,
           room_id: currentRoom,
+          // 추가 파라미터
+          user_id: String(localStorage.userId),
+          opp_id: oppId, 
         }
         chatApi.getMessages(params)
           .then(res => {

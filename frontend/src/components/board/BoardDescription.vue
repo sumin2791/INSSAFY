@@ -3,6 +3,19 @@
     <div class="board-name-detail">
       <div class="name-setting">
         <div class="board-name">{{this.board.name}}</div>
+        <!-- 편집시 보드 삭제 -->
+        <div class="edit-button-set" v-if="Edit">
+          <p class="r-desc delete-button" v-b-modal.modal-delete>삭제</p>
+          <b-modal id="modal-delete" title="🗑" centered @ok="boardDelete">
+            <p class="my-4">보드를 삭제하시겠어요?</p>
+            <template #modal-footer="{ok}">
+              <b-button variant="delete" @click="ok()">
+                삭제하기
+              </b-button>
+            </template>
+          </b-modal>
+        </div>
+        <!-- 편집 들어가는 버튼 -->
         <v-icon id="edit-icon"
           large
           v-if="isManager && !Edit" 
@@ -92,25 +105,14 @@
         </v-tooltip>
       </div>
     </div>
-    <div class="edit-button-set" v-if="Edit">
-      <div>
-        <!-- <p class="r-desc delete-button" @click="boardDelete">삭제</p> -->
-        <p class="r-desc delete-button" v-b-modal.modal-delete>삭제</p>
-        <b-modal id="modal-delete" title="🗑" centered @ok="boardDelete">
-          <p class="my-4">보드를 삭제하시겠어요?</p>
-          <template #modal-footer="{ok}">
-            <b-button variant="delete" @click="ok()">
-              삭제하기
-            </b-button>
-          </template>
-        </b-modal>
-      </div>
-      <div>
+    <div 
+        v-if="Edit"
+        class="careful-line"
+      >
         <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
         <button class="p-button r-desc" @click="submit">  Edit  </button>
       </div>
-    </div>
-    <div class="careful-line"></div>
+    <div ></div>
   </div>
 </template>
 
@@ -219,7 +221,7 @@ export default {
 
             // 추가기능 연결
             const addCheck = res.data.board_function
-
+            console.log(addCheck)
             // 1. 체크리스트 연결
             if (addCheck.checklist_flag) {
               this.addFuncAll[0].state = true
@@ -279,10 +281,10 @@ export default {
       this.boardDto.board_hash = this.board.hashtags.join('|')
       boardApi.board_modify(this.boardDto,localStorage.userId)
         .then(res=>{
-          console.log(res)
+          // console.log(res)
         })
         .catch(err=>{
-          console.log(err)
+          // console.log(err)
         })
       // 추가기능 요청 api 하나로 연결되어 있어서 이를 반복문으로 처리 - 랭킹 빼고 일단
       const addFuncState = {}
@@ -295,14 +297,15 @@ export default {
         function: this.addFuncAll[idx].title,
         option:(this.addFuncAll[idx].state ? 1 : 0),      
       }
+      console.log(params, '요청')
       // vuex 연결
       const title = this.addFuncAll[idx].title + '_flag'
       // 동적 키 할당
       addFuncState[title] = params.option
-      console.log(addFuncState)
+      console.log(addFuncState, '변경내용')
       addFuncApi.modifyAddFunction(params)
         .then(res => {
-          console.log(res)
+          console.log(res, '추가기능변경감지')
         })
         .catch(err => {
           console.error(err)
@@ -493,12 +496,9 @@ export default {
   color:#aa2610;
 }
 .careful-line{
-  height: 50px;
+  display: flex;
   justify-content: flex-end;
-  margin: 25px 0 0 0;
-}
-.careful-line{
-  height: 30px;
+  margin: 35px 0 15px 15px;
 }
 /* 추가기능 항목 아이템들 */
 #add-func-item {

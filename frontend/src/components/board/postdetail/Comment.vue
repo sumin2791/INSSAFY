@@ -42,7 +42,7 @@
                   </v-list-item-title>
                 </v-list-item>
                 <!-- 메세지 보내기 -->
-                <v-list-item>
+                <v-list-item @click="onChat" v-if="!flagWriter">
                   <v-list-item-title>
                     메세지 보내기
                   </v-list-item-title>
@@ -95,6 +95,9 @@ import * as commentApi from '@/api/comment'
 import timeForToday from '@/plugins/timeForToday'
 import deepClone from '@/plugins/deepClone'
 
+// 채팅방 api
+import * as chatApi from '@/api/chat';
+
 // 프로필 이미지
 import Profile from '@/components/etc/Profile';
 // 스타일 적용
@@ -121,7 +124,11 @@ export default {
     },
     commentDescription(){
       return this.comment.comment_description
-    }
+    },
+    // 채팅을 위한 flag(나 아닌 사람만 대화 가능)
+    flagWriter() {
+      return this.comment.user_id === String(localStorage.userId);
+    },
   },
   mounted(){
     
@@ -186,6 +193,62 @@ export default {
           console.log(err)
         })
       alert(`수정!`);
+    },
+    // 채팅으로 이동
+    onChat() {
+      // 중복 처리 해줘야 한다 - 있으면 기존껄로 없으면 만들기
+      const params = {
+        my_id: localStorage.getItem('userId'),
+        opp_id: this.comment.user_id,
+      };
+      chatApi
+        .createChatRoom(params)
+        .then((res) => {
+          let existChatRoom;
+          // 1. 실패한다면 이미 채팅방 존재
+          if (res.data.message === 'fail') {
+            // 현재 가지고 있는 채팅방을 가져오자
+            chatApi
+              .getChatList({ user_id: String(localStorage.userId) })
+              .then((res) => {
+                const chatLists = res.data.roomInfo;
+
+                for (let i = 0; i < chatLists.length; i++) {
+                  if (chatLists[i].opp_id === this.post.user_id) {
+                    this.chatRoomId = chatLists[i].roomId;
+                    break;
+                  }
+                }
+                // break => 채팅방 존재(vuex 변화)
+                existChatRoom = {
+                  roomId: this.chatRoomId,
+                  opp_nickName: this.comment.user_nickname,
+                  opp_id: this.comment.user_id,
+                };
+                // vuex state 변화
+                this.$store.dispatch('chat/isSelected', existChatRoom);
+                // 그리고 라우터 변환
+                this.$router.push({ name: 'ChatPage' });
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          } else {
+            // 2. 처음이라면 대화방 만들어주고 보내주기
+            const newChatRoom = {
+              roomId: res.data.roomId,
+              opp_nickName: this.comment.user_nickname,
+              opp_id: this.comment.user_id,
+            };
+            // state 변환
+            this.$store.dispatch('chat/isSelected', newChatRoom);
+            // 그리고 라우터 변환
+            this.$router.push({ name: 'ChatPage' });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   }
 }
