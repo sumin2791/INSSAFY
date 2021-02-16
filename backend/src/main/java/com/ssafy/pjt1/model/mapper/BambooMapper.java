@@ -23,5 +23,13 @@ public interface BambooMapper {
 	public int bambooDelete(int bamboo_id);
 
 	public int getTotalCnt();
+
+	public int getSearchCntT(String keyword);
+
+	public int getSearchCntD(String keyword);
+
+	public List<BambooDto> searchPostT(Map<String, Object> map);
+
+	public List<BambooDto> searchPostD(Map<String, Object> map);
 	
 }

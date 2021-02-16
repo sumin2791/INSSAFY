@@ -18,15 +18,6 @@
 		limit #{start}, #{size};
 	</select>
 
-	<select id="searchPost" parameterType="string" resultType="BambooDto">
-		select * 
-		from bamboo
-		where ( bamboo_title like concat('%',#{keyword} ,'%') or bamboo_description like concat('%',#{keyword} ,'%') ) 
-		and is_used = 1
-		order by bamboo_date desc
-		limit #{start}, #{size};
-	</select>
-
 	<select id="isWriter" parameterType="map" resultType="int">
 		select count(*)
 		from bamboo
@@ -51,6 +42,46 @@
 		select count(bamboo_id)
 		from bamboo
 		where is_used = 1;
+	</select>
+
+	<!-- search -->
+	<select id="getSearchCntT" resultType="int">
+		select count(bamboo_id)
+		from bamboo
+		where is_used = 1
+			and bamboo_title like concat('%',#{keyword} ,'%');
+	</select>
+
+	<select id="getSearchCntD" resultType="int">
+		select count(bamboo_id)
+		from bamboo
+		where is_used = 1
+			and bamboo_description like concat('%',#{keyword} ,'%');
+	</select>
+
+	<select id="searchPost" parameterType="map" resultType="BambooDto">
+		select * 
+		from bamboo
+		where ( bamboo_title like concat('%',#{keyword} ,'%') or bamboo_description like concat('%',#{keyword} ,'%') ) 
+		and is_used = 1
+		order by bamboo_date desc
+		limit #{start}, #{size};
+	</select>
+
+	<select id="searchPostT" parameterType="map" resultType="BambooDto">
+		select * 
+		from bamboo
+		where is_used = 1 and bamboo_title like concat('%',#{keyword} ,'%')
+		order by bamboo_date desc
+		limit #{start}, #{size};
+	</select>
+
+	<select id="searchPostD" parameterType="map" resultType="BambooDto">
+		select * 
+		from bamboo
+		where is_used = 1 and bamboo_description like concat('%',#{keyword} ,'%') 
+		order by bamboo_date desc
+		limit #{start}, #{size};
 	</select>
 
 </mapper>

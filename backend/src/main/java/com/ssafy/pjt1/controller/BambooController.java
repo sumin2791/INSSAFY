@@ -1,5 +1,6 @@
 package com.ssafy.pjt1.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,22 +118,40 @@ public class BambooController {
      * 
      * developer: 윤수민
      * 
-     * @param : keyword, page, size
+     * @param : keyword, page, size, type(title, description)
      * 
-     * @return : bambooList, message
+     * @return : bambooList, message, isLastPage
      */
     @GetMapping("/searchPost")
     public ResponseEntity<Map<String, Object>> searchPost(@RequestParam(value = "keyword") String keyword,
-    @RequestParam(value = "page") int page,@RequestParam(value = "size") int size) {
+    @RequestParam(value = "page") int page,@RequestParam(value = "size") int size
+    , @RequestParam(value = "type") String type) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/bamboo/searchPost 호출 성공");
         try {
+            int totalCnt;
             Map<String, Object> map = new HashMap<>();
             map.put("start",page*size);
             map.put("size",size);
             map.put("keyword",keyword);
-            List<BambooDto> bambooList = bambooService.searchPost(map);
+            List<BambooDto> bambooList = new ArrayList<>();
+            if(type.equals("title")){
+                logger.info("최신순 대나무숲 타이틀 검색");
+                totalCnt = bambooService.getSearchCntT(keyword);
+                bambooList = bambooService.searchPostT(map);
+            }else{
+                logger.info("최신순 대나무숲 내용 검색");
+                totalCnt = bambooService.getSearchCntD(keyword);
+                bambooList = bambooService.searchPostD(map);
+            }
+            // bambooList = bambooService.searchPost(map);
+            if (totalCnt > (page + 1) * size)
+                resultMap.put("isLastPage", "false");
+            else if (totalCnt > page * size)
+                resultMap.put("isLastPage", "true");
+            else
+                resultMap.put("isLastPage", "No data");
             resultMap.put("bambooList", bambooList);
             if(!bambooList.isEmpty()){
                 resultMap.put("message", SUCCESS);
