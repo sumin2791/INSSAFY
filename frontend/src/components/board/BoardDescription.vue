@@ -225,7 +225,7 @@ export default {
 
             // 추가기능 연결
             const addCheck = res.data.board_function
-            console.log(addCheck)
+            // console.log(addCheck)
             // 1. 체크리스트 연결
             if (addCheck.checklist_flag) {
               this.addFuncAll[0].state = true
@@ -301,22 +301,21 @@ export default {
         function: this.addFuncAll[idx].title,
         option:(this.addFuncAll[idx].state ? 1 : 0),      
       }
-      console.log(params, '요청')
+      // console.log(params, '요청')
       // vuex 연결
       const titleVue = this.addFuncAll[idx].titleVue + '_flag'
       // 동적 키 할당
       addFuncState[titleVue] = params.option
-      console.log(addFuncState, '변경내용')
+      // console.log(addFuncState, '변경내용')
       addFuncApi.modifyAddFunction(params)
         .then(res => {
-          console.log(res, '추가기능변경감지')
+          // console.log(res, '추가기능변경감지')
         })
         .catch(err => {
           console.error(err)
         })
       }
       // userRank_flag => user_rank_flag 키변환
-      console.log(addFuncState.user_rank_flag, "뭐야1")
       // vuex 반영
       this.$store.dispatch('addfunc/isUsed', addFuncState);
 
