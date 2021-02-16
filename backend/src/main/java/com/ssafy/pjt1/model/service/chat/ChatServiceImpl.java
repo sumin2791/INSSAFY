@@ -100,12 +100,14 @@ public class ChatServiceImpl implements ChatService {
         myRoomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
         myRoomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
         myRoomInfo.put("opp_id", opp_id);// 상대방 아이디
+        myRoomInfo.put("is_used", 1);// 사용중
 
         Map<String, Object> oppRoomInfo = new HashMap<>();
         oppRoomInfo.put("roomId", uid);// 방 번호
         oppRoomInfo.put("opp_nickName", myDto.getUser_nickname());// 상대방 닉네임
         oppRoomInfo.put("opp_img", myDto.getUser_image());// 상대방 이미지
         oppRoomInfo.put("opp_id", user_id);// 상대방 아이디
+        oppRoomInfo.put("is_used", 1);// 사용중
         // 채팅방에 넣기
         String myRoomInfoStr = objMapper.writeValueAsString(myRoomInfo);
         String oppRoomInfoStr = objMapper.writeValueAsString(oppRoomInfo);
@@ -129,4 +131,5 @@ public class ChatServiceImpl implements ChatService {
         }
         return res;
     }
+
 }
