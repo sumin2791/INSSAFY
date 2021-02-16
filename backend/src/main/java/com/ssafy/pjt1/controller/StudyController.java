@@ -310,4 +310,62 @@ public class StudyController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    /*
+     * 기능: 내 스터디 가입 요청 현황
+     * 
+     * developer: 윤수민
+     * 
+     * @param : user_id
+     * 
+     * @return : message, list
+     * 
+     */
+    @GetMapping("/myRequestList")
+    public ResponseEntity<Map<String, Object>> myRequestList(@RequestParam(value = "user_id") String user_id){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("study/myRequestList 호출성공");
+        try {
+            List<Map<String, Object>> list = studyService.myRequestList(user_id);
+            resultMap.put("list", list);          
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 특정 스터디 가입 요청 현황
+     * 
+     * developer: 윤수민
+     * 
+     * @param : user_id, board_id
+     * 
+     * @return : message, list
+     * 
+     */
+    @GetMapping("/myStudyRequest")
+    public ResponseEntity<Map<String, Object>> myStudyRequest(@RequestParam(value = "user_id") String user_id,
+    @RequestParam(value = "board_id") int board_id){
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        logger.info("study/myRequestList 호출성공");
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("board_id", board_id);
+            map.put("user_id", user_id);
+            List<Map<String, Object>> list = studyService.myStudyRequest(map);
+            resultMap.put("list", list);          
+            resultMap.put("message", SUCCESS);
+        } catch (Exception e) {
+            logger.error("실패", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
 }
