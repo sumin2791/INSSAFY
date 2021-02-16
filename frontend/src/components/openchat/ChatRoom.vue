@@ -105,6 +105,8 @@ export default {
       sendContents: '',
       // 현재 접속한 유저
       userId: String(localStorage.userId),
+      // socket 재연결 막기
+      stompClient: null,
     }
   },
   methods: {
@@ -113,7 +115,12 @@ export default {
       //const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
       const serverURL = 'http://localhost:8000/ws';
       let socket = new SockJS(serverURL);
-      this.stompClient = Stomp.over(socket);
+      if (this.stompClient != null) {
+        this.stompClient.disconnect();
+        this.stompClient = Stomp.over(socket);
+      } else {
+        this.stompClient = Stomp.over(socket);
+      }
       console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
       this.stompClient.connect(
         {},

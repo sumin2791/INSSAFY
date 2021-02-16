@@ -156,18 +156,21 @@ export default {
       addFuncAll: [
         {
           title: 'checklist',
+          titleVue: 'checklist',
           option: '체크리스트',
           state: false,
           explain: '구성원들과 함께 간단한 <strong>할 일 목록</strong>을 만들어서 관리해보세요.<br>보드를 효율적으로 사용할 수 있게 됩니다.',
         }, 
         {
           title: 'calendar',
+          titleVue: 'calendar',
           option: '캘린더',
           state: false,
           explain: '캘린더에 일정을 표시하여 서로의 일정을 공유하고<br> 구성원들의 <strong>스케쥴 관리를 효율적</strong>으로 할 수 있게 도와줍니다.',
         }, 
         {
           title: 'vote',
+          titleVue: 'vote',
           option: '투표',
           state: false,
           explain: '결정하기 힘든 일은 투표를 통해 확인하는 것은 어떨까요?<br>투표를 만들고 투표내 항목을 만들어 투표를 생성해보세요',
@@ -175,6 +178,7 @@ export default {
         // 랭킹 수정 요청 연결하기
         {
           title: 'userRank',
+          titleVue: 'user_rank',
           option: '랭킹',
           state: false,
           explain: '보드를 활발히 활동하는 유저는 누군지 확인할 수 있게<br> <strong>TOP3</strong> 활동 유저를 확인해보세요',
@@ -299,9 +303,9 @@ export default {
       }
       console.log(params, '요청')
       // vuex 연결
-      const title = this.addFuncAll[idx].title + '_flag'
+      const titleVue = this.addFuncAll[idx].titleVue + '_flag'
       // 동적 키 할당
-      addFuncState[title] = params.option
+      addFuncState[titleVue] = params.option
       console.log(addFuncState, '변경내용')
       addFuncApi.modifyAddFunction(params)
         .then(res => {
@@ -311,6 +315,8 @@ export default {
           console.error(err)
         })
       }
+      // userRank_flag => user_rank_flag 키변환
+      console.log(addFuncState.user_rank_flag, "뭐야1")
       // vuex 반영
       this.$store.dispatch('addfunc/isUsed', addFuncState);
 
