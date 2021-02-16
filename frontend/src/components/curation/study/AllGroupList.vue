@@ -1,11 +1,12 @@
 <template>
   <div>
     <div>
-      <Post
-        v-for="(post,idx) in posts"
+      <StudyGroup
+        v-for="(group,idx) in groups"
         :key="idx"
-        :post="post"
+        :group="group"
         :flagComponent="flagComponent"
+        class="pa-2 ani-hover"
       />
     </div>
     <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
@@ -15,35 +16,30 @@
 </template>
 
 <script scoped>
-import Post from "@/components/board/Post.vue"
+import StudyGroup from '@/components/curation/study/StudyGroup.vue';
 // import {mapState} from 'vuex'
 
 //board api
-import * as postApi from '@/api/post';
+import * as studyApi from '@/api/study';
 import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
-  name:"PostList",
+  name: 'GroupList',
   data() {
     return {
-      posts:[],
+      groups:[],
       page:0,
     }
   },
   components:{
-    Post,
+    StudyGroup,
     InfiniteLoading
   },
   watch:{
     writeFlag:function(){
       this.page=0
       location.reload();
-    },
-    re:function(){
-      this.page=0
-      location.reload();
-      // this.infiniteHandler()
-    },
+    }
   },
   computed:{
     writeFlag(){
@@ -68,9 +64,6 @@ export default {
         flag.headerLearnShare = true
       }
       return flag
-    },
-    re(){
-      return this.$route.params.board_id
     }
   },
   created() {
@@ -78,29 +71,25 @@ export default {
   methods: {
     // 재사용의 핵심
     infiniteHandler($state){
-      console.log($state)
-      const curationName = this.$route.name
-      let BOARD_ID
-      if(curationName==="Board" || curationName==="Study"){
-
-        BOARD_ID = Number(this.$route.params.board_id)
-      }else{
-        BOARD_ID = this.$store.state.curationId[curationName]
-
-      }
-      // if(curationName!="Board" && curationName!="Study"){
+      // const curationName = this.$route.name
+      // let BOARD_ID
+      // if(curationName!="Board"){
+      //   BOARD_ID = this.$store.state.curationId[curationName]
       // }else{
+      //   BOARD_ID = Number(this.$route.params.board_id)
       // }
-      const EACH_LEN = 4
 
-      postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId,page:this.page,size:EACH_LEN})
+      const EACH_LEN = 6
+      
+      studyApi.getAllGroupList(this.page,EACH_LEN)
       .then((res)=>{
+        console.log(res)
         setTimeout(()=>{
-          if(res.data.postList){
-            this.posts = this.posts.concat(res.data.postList);
+          if(res.data.studyList){
+            this.groups = this.groups.concat(res.data.studyList);
             this.page += 1;
             $state.loaded();
-            if(res.data.postList.length / EACH_LEN <1){
+            if(res.data.studyList.length / EACH_LEN <1){
               $state.complete();
             }
           }else{
@@ -108,13 +97,18 @@ export default {
           }
         },1000);
       })
-      .catch(err=>{
-        console.log(err)
-      })
+      .catch(err=>{console.log(err)})
   },
   
   }
 }
 </script>
 
-<style></style>
+<style scoped>
+.ani-hover {
+  transition: transform 0.5s ease;
+}
+.ani-hover:hover {
+  transform: scale(1.01);
+}
+</style>

@@ -93,8 +93,22 @@
       </div>
     </div>
     <div class="edit-button-set" v-if="Edit">
-      <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
-      <button class="p-button r-desc" @click="submit">  Edit  </button>
+      <div>
+        <!-- <p class="r-desc delete-button" @click="boardDelete">삭제</p> -->
+        <p class="r-desc delete-button" v-b-modal.modal-delete>삭제</p>
+        <b-modal id="modal-delete" title="🗑" centered @ok="boardDelete">
+          <p class="my-4">보드를 삭제하시겠어요?</p>
+          <template #modal-footer="{ok}">
+            <b-button variant="delete" @click="ok()">
+              삭제하기
+            </b-button>
+          </template>
+        </b-modal>
+      </div>
+      <div>
+        <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
+        <button class="p-button r-desc" @click="submit">  Edit  </button>
+      </div>
     </div>
     <div class="careful-line"></div>
   </div>
@@ -102,6 +116,7 @@
 
 <script>
 import * as boardApi from '@/api/board';
+import {imageDelete} from '@/api/main';
 import deepClone from '@/plugins/deepClone';
 // style 적용
 import '@/assets/css/static/style.css';
@@ -120,12 +135,14 @@ export default {
       loading: false,
       boardDto:{},
       board:{
+        id:'',
         name:'',
         description:'',
         hashtags:[],
         subscribe_count:0,
         location:'',
         igmyeong:'',
+        image:''
       },
       tempDescription:'',
       tempHashtags: [],
@@ -182,6 +199,7 @@ export default {
 
             this.$router.push({ name: 'PageNotFound'})
           }else{
+            this.board.id = res.data.boardDto.board_id
             this.boardDto = res.data.boardDto
 
             
@@ -194,9 +212,11 @@ export default {
             this.board.location=res.data.boardDto.board_location
             this.board.igmyeong=res.data.boardDto.board_igmyeong
             this.board.subscribe_count = res.data.board_count
-
             this.tempDescription = res.data.boardDto.board_description
             this.tempHashtags = deepClone(this.board.hashtags)
+            this.image = res.data.boardDto.board_image
+            this.$emit('board-image',res.data.boardDto.board_image)
+
             // 추가기능 연결
             const addCheck = res.data.board_function
 
@@ -294,6 +314,37 @@ export default {
       this.cancel()
       alert(`수정!`);
     },
+
+    //보드삭제
+    async boardDelete(){
+      if(!this.isManager){
+        return
+      }
+
+      try{
+        if(this.board.image!=''){
+          await imageDelete(this.board.image)
+          .then(res=>{
+            console.log('이미지 삭제 완료!')
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        }
+  
+        await boardApi.board_delete(Number(this.board.id),localStorage.userId)
+        .then(res=>{
+          console.log('보드 삭제')
+          this.$router.push({name:'Main'})
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }catch(err){
+        console.log('PostForDetail- 보드 삭제 에러')
+        console.log(err)
+      }
+    }
   }
 
 }
@@ -317,6 +368,7 @@ export default {
 .board-detail{
   margin: 1em 0;
   padding:0 0 0 1em;
+  min-height: 15vh;
 }
 .board-detail-form{
   padding:0 0.5rem;
@@ -355,6 +407,22 @@ export default {
 }
 .board-detail-form{
   padding:0 0.5rem;
+}
+.btn-delete {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #aa2610 !important;
+  border-radius: 30px;
+  color: #fff;
+  background-color: #aa2610 !important;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.btn-delete:hover,
+.btn-delete:active {
+  color: #fff;
+  background-color: #f0725b !important;
 }
 .p-button {
   margin-left: 5px;
@@ -415,6 +483,17 @@ export default {
 
 .edit-button-set{
   display: flex;
+  justify-content:space-between;
+  align-items: center;
+}
+.delete-button{
+  cursor: pointer;
+  margin:0;
+  text-decoration: none;
+  color:#aa2610;
+}
+.careful-line{
+  height: 50px;
   justify-content: flex-end;
   margin: 25px 0 0 0;
 }
@@ -440,4 +519,5 @@ export default {
 #edit-icon:hover {
   color: #AA2610;
 }
+
 </style>

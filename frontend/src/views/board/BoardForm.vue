@@ -69,6 +69,7 @@
           <v-col>
             <div class="my-2">대표 이미지</div>
             <v-file-input class="d-flex"
+              v-model="file"
               filled
               solo
               prepend-icon="mdi-image"
@@ -145,6 +146,7 @@
 
 <script>
 import * as boardApi from '@/api/board';
+import {imageUpload} from '@/api/main'
 
 export default {
   name:"BoardForm",
@@ -156,7 +158,7 @@ export default {
       switch1: true,
       title:'',
       description:'',
-      file1:[],
+      file:[],
       hashtag:'',
       hashtags:[],
       location:'',
@@ -206,7 +208,10 @@ export default {
     deleteHashtag(e){
       this.hashtags.splice(e,1)
     },
-    onCreate(){
+    async onCreate(){
+      console.log('사진')
+      console.log(this.file)
+      console.log('/사진')
       //@param : user_id, board_name, board_description, board_location, board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag
       let board={
         user_id: localStorage.getItem('userId'),
@@ -214,8 +219,9 @@ export default {
         board_description: this.description,
         board_location: '전체',
         board_igmyeong: 0,
+        board_image:'',
         board_hash:this.hashtags.join('|'),
-        // 추가기능 삽입 추가
+// 추가기능 삽입 추가
         checklist_flag:(this.addFuncAll[0].state ? 1 : 0),
         calendar_flag:(this.addFuncAll[1].state ? 1 : 0),
         // // 랭킹 현재 연결 없으니 주석처리
@@ -223,25 +229,40 @@ export default {
         vote_flag:(this.addFuncAll[2].state ? 1 : 0),
         board_state:0
       };
-      boardApi.board_create(board)
-        .then(response => {
-        const subBoard = JSON.parse(localStorage.subBoard)
-        subBoard.push({
-          board_id:response.data.board_id,
-          user_id:localStorage.userId,
-          favorite_flag:0,
-          is_used:1,
-          user_role:1,
-          write_post_count:0
-        })
-        localStorage.subBoard = JSON.stringify(subBoard)
-        alert('게시판 보드 생성')
-        this.$router.push({name:'Board',params:{board_id:response.data.board_id}})
-        })
-        .catch(error => {
+      try{
+        if(this.file.length!=0){
+          let fd = new FormData();
+          fd.append('file',this.file)
+          
+          const responseUpload = await imageUpload(fd)
+          board.board_image = String(responseUpload.data.imgPath)
+        }
+
+
+        await boardApi.board_create(board).then(response => {
+          const subBoard = JSON.parse(localStorage.subBoard)
+          subBoard.push({
+            board_id:response.data.board_id,
+            user_id:localStorage.userId,
+            favorite_flag:0,
+            is_used:1,
+            user_role:1,
+            write_post_count:0
+          })
+          localStorage.subBoard = JSON.stringify(subBoard)
+          alert('게시판 보드 생성')
+          
+          this.$router.push({name:'Board',params:{board_id:Number(response.data.board_id)}})
+        }).catch(error => {
           console.log(error);
+          this.$router.push({name:'SearchBoard'})
           alert("보드 생성에 실패하였습니다.");
         })
+      }catch(err){
+        this.$router.push({name:'SearchBoard'})
+        console.log('BoardForm - 보드생성 에러')
+        console.log(err)
+      }
     }
   }
 }

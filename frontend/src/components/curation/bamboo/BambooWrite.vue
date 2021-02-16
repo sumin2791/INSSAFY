@@ -1,15 +1,6 @@
 <template>
   <div>
     <b-button v-b-modal.modal-bamboo variant="light" class="btn-write">글쓰기</b-button>
-
-    <!-- <div class="mt-3">
-      Submitted Names:
-      <div v-if="submittedNames.length === 0">--</div>
-      <ul v-else class="mb-0 pl-3">
-        <li v-for="(name,idx) in submittedNames" :key="idx">{{ name }}</li>
-      </ul>
-    </div> -->
-
     <b-modal
       id="modal-bamboo"
       ref="modal"
@@ -53,11 +44,11 @@
           label-for="multiple-media"
         >
           <b-form-file 
-            multiple
             id="multiple-media"
             v-model="images"
             placeholder="Choose a file or drop it here..."
             browse-text='🖼'
+            @change="onChangeImages"
           >
           <!--card-image-->
             <template slot="file-name" slot-scope="{ names }">
@@ -68,6 +59,13 @@
             </template>
           </b-form-file>
         </b-form-group>
+        <div v-if="previewImgUrl" class="image-section">
+          <b-img
+              :src="previewImgUrl"
+              style="max-width: 10rem;"
+          ></b-img>
+          <b-icon class="deleteImg" @click="deleteImage" icon="x-circle-fill" aria-hidden="true"></b-icon>
+        </div>
       </form>
       <template #modal-footer="{ok}">
         <!-- Emulate built in modal footer ok and cancel button actions -->
@@ -81,6 +79,8 @@
 
 <script>
 import * as bambooApi from '@/api/bamboo'
+import {imageUpload} from '@/api/main';
+
 export default {
   data() {
     return {
@@ -89,9 +89,20 @@ export default {
       images:[],
       titleState: null,
       descriptionState: null,
+      previewImgUrl:null,
     }
   },
   methods: {
+    deleteImage(){
+      this.previewImgUrl = null
+      this.images=[]
+    },
+    onChangeImages(e) {
+        console.log(e.target.files)
+        const file = e.target.files[0];
+        this.images.push(file)
+        this.previewImgUrl = URL.createObjectURL(file);
+    },
     titleCheckFormValidity() {
       const valid = this.$refs.form.checkValidity()
       this.titleState = valid
@@ -108,6 +119,7 @@ export default {
       this.titleState = null
       this.descriptionState = null
       this.images=[]
+      this.previewImgUrl=null
     },
     handleOk(bvModalEvt) {
       // Prevent modal from closing
@@ -115,7 +127,7 @@ export default {
       // Trigger submit handler
       this.handleSubmit()
     },
-    handleSubmit() {
+    async handleSubmit() {
       // Exit when the form isn't valid
       if (!this.titleCheckFormValidity() ) {
         return
@@ -137,16 +149,32 @@ export default {
         writer_nickname:randomNickname
       }
       console.log(bambooItem)
-      bambooApi.create(bambooItem)
-      .then(res=>{
-        console.log(res)
-        this.$store.dispatch('bamboo/isWriteFlag')
-      })
-      .catch(err=>{
-        console.log(`밤부 생성 실패`)
+      try{
+        // 유저가 사진을 넣었다면!
+        if(this.images.length!=0){
+          let fd = new FormData();
+          fd.append('file',this.images)
+          
+          const responseUpload = await imageUpload(fd)
+          console.log(responseUpload)
+          bambooItem.bamboo_image = String(responseUpload.data.imgPath)
+        }
+
+        //대나무숲 글쓰기!
+        bambooApi.create(bambooItem)
+        .then(res=>{
+          console.log(res)
+          this.$store.dispatch('bamboo/isWriteFlag')
+        })
+        .catch(err=>{
+          console.log(`밤부 생성 실패`)
+          console.log(err)
+        })
+        
+      }catch(err){
         console.log(err)
-      })
-      
+      }
+
       this.$nextTick(() => {
         this.$bvModal.hide('modal-bamboo')
       })
@@ -157,8 +185,25 @@ export default {
 
 <style scoped>
 .btn-write {
-  width:100%;
   position: sticky;
+  text-align: center;
+  margin: auto;
+  height: 50px;
+  width:100%;
+  border: none;
+  color: var(--basic-color-fill);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: #ebebe9 !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  border-radius: 15px !important;
+  transition: 0.3s all ease;
+}
+.btn-write:hover,
+.btn-write:active,
+.btn-write:focus {
+  color: #ebebe9 !important;    
+  background-color: var(--basic-color-key) !important;
 }
 .btn-submit {
   width: 100%;

@@ -46,7 +46,7 @@
                 ><v-icon>mdi-send</v-icon>
                 </v-btn>
             </div>
-              <CommentList :comments="comments"/>
+              <CommentList :comments="comments" :postUserId="this.post.user_id"/>
             </v-card>
           </v-col>
         </v-row>

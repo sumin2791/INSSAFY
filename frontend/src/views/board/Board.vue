@@ -6,7 +6,8 @@
       >
 
         <!-- PC에서 보여줄 curation이름과 검색 -->
-        <v-row 
+        <v-row
+          id="board-header"
           v-if="!ResponsiveSize.isMobile"
           no-gutters
           class="d-flex 
@@ -35,10 +36,8 @@
 
         <v-row>
           <!-- 왼쪽 보드 설명 및 추가 기능 -->
-          <v-col 
-              class="col-12 col-sm-4" 
-            >
-            <v-sheet class="custom-container">
+          <v-col class="col-12 col-sm-3">
+            <div id="description" class="rounded-bg container-description">
               <v-list color="transparent">
                 <div
                   class="d-flex
@@ -47,38 +46,30 @@
                   style="min-height: 25vh;"
                 >
                   <!-- 보드 설명 -->
-                  <BoardDescription :in-board="inBoard" :is-manager="isManager"/>
-                  <button
-                    class="btn-subscribe b-title"
-                    @click="onSubscribe"
-                    v-if="!inBoard"
-                  >Subscribe</button>
-                  <button
-                    class="btn-subscribing b-title"
-                    @click="onSubscribe"
-                    v-if="inBoard"
-                  >Subscribing</button>
+<<<<<<< frontend/src/views/board/Board.vue
+                  <BoardDescription :in-board="inBoard" :is-manager="isManager"  @board-image="boardImage"/>
+                  <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
+                  <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button>
                 </div>
               </v-list>
-            </v-sheet>
-            <!-- 체크리스트 보여주는 부분 -->
-            <!-- 조건 체크일 때만 보여주기 달기 -->
-            <CheckList 
-              :is-manager="isManager"
-              v-if="isCheck"
-            />
-            <VoteList 
-              v-if="isVote"
-            />
-            <UserRank 
-              v-if="isRank"
-            />
+              <v-divider class="my-2"></v-divider>
+              <v-list color="transparent">
+                <CheckList 
+                  :is-manager="isManager"
+                  v-if="isCheck"
+                />
+                <VoteList 
+                  v-if="isVote"
+                />
+                <UserRank 
+                  v-if="isRank"
+                />
+              </v-list>
+            </div>
           </v-col>
-          <v-col
-              class="col-12 col-sm-8"  
-            >
-            <PostWrite :in-board="inBoard"/>
-            <PostList/>
+          <v-col class="col-12 col-sm-9">
+            <PostWrite :in-board="inBoard" style="margin:0 10px"/>
+            <PostList />
           </v-col>
         </v-row>
       </v-container>
@@ -136,10 +127,11 @@ export default {
       },
       // 검색 키워드
       searchKeyword: '',
-      
-      inBoard:'',
-      isManager:false,
-    }
+
+      inBoard: '',
+      isManager: false,
+      boardimg:''
+    };
   },
   created() {
     // this.$store.dispatch('board/IsInBoard',Number(this.$route.params.board_id))
@@ -157,6 +149,11 @@ export default {
       if(boards[idx].user_role==1){
         this.isManager=true
       }
+    }
+    if(this.boardimg!=''){
+      console.log(this.boardimg)
+      const header = document.querySelector('#board-header')
+      header.style.background=`url(${this.boardimg})` 
     }
     // 추가기능 정보 vuex 저장
     this.fetchData()
@@ -179,7 +176,15 @@ export default {
       return this.$store.state.addfunc.isRank
     },
   },
-  methods:{
+  methods: {
+    boardImage(boardimg){
+      this.boardimg = boardimg
+      if(this.boardimg!=null){
+        const header = document.querySelector('#board-header')
+        header.style.minHeight = "250px"
+        header.style.background=`url(${this.boardimg})`
+      }
+    },
     // 현재 활성화된 기기에 따라 flag 변경
     onResize() {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
@@ -259,14 +264,21 @@ export default {
   border-radius: 15px !important;
   background-color: var(--basic-color-bg2) !important;
 }
-/* 구독버튼 */
-.btn-subscribe{
+
+/ 구독버튼 */
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
+}
+.btn-subscribe {
   text-align: center;
   margin: auto;
   height: 50px;
-  width:60%;
+  width: 80%;
   border: none;
-  border-radius: 30px;
+  border-radius: 5px;
   color: var(--basic-color-bg);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
   background: var(--basic-color-key) !important;
@@ -286,14 +298,13 @@ export default {
   text-align: center;
   margin: auto;
   height: 50px;
-  width:60%;
+  width: 80%;
   border: none;
-  border-radius: 30px;
-  color: var(--basic-color-bg);
+  border-radius: 5px;
+  color: var(--basic-color-key);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
-  background: var(--basic-color-fill2) !important;
-  box-shadow: 10px 10px 20px #bcbcba, 
-              -10px -10px 20px #ffffff;
+  background: var(--basic-color-bg2) !important;
+  /* box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff; */
   transition: 0.3s all ease;
   display: flex;
   justify-content: center;
@@ -304,6 +315,8 @@ export default {
   background-color: var(--basic-color-bg) !important;
   color: var(--basic-color-key);
 }
-/* 추가기능 편집 버튼 */
+#custom-container{
+  background-color:var(--basic-color-bg2) !important;
+}
 
 </style>

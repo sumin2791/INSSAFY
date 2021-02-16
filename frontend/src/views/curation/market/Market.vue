@@ -52,13 +52,12 @@
                 내겐 필요없는 물건이<br />
                 누군가에겐 꼭 필요하다면?
               </p>
-            </div>
-            <div id="description" class="rounded-bg container-description">
+              <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
                 <!-- 중고장터 설명 부분 -->
                 <!-- 관심 품목 부분 -->
                 <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>관심품목 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
-                <b-collapse id="item-collapse">
+                <b-collapse visible id="item-collapse">
                   <v-col>
                   <MarketItem />
                 </v-col>
@@ -70,17 +69,9 @@
           <v-col
             class="col-12 col-sm-8"  
           >
-            <!-- 중고장터 게시글 작성 -->
-            <!-- <MarketPostWrite class="mx-4 mb-2"/> -->
-            <PostWrite :in-board="inBoard"/>
+            <PostWrite :in-board="inBoard" style="margin:0 10px"/>
             <!-- 중고장터 게시물 부분 -->
             <MarketPostList/>
-            <!-- <div v-for="(post,idx) in posts" :key="idx">
-              <MarketPost class="mx-4 mb-2" :post="post"/>
-            </div> -->
-            <!-- <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
-              <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
-            </infinite-loading> -->
           </v-col>
         </v-row>
       </v-container>

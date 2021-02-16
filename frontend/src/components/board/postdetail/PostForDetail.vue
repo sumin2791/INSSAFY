@@ -71,11 +71,20 @@
                     </v-list-item-title>
                   </v-list-item>
                   <!-- 삭제 -->
-                  <v-list-item v-if="flagWriter">
+                  <!-- <v-list-item v-if="flagWriter" @click="postDelete"> -->
+                  <v-list-item v-if="flagWriter" v-b-modal.modal-delete>
                     <v-list-item-title>
                       삭제
                     </v-list-item-title>
                   </v-list-item>
+                  <b-modal id="modal-delete" title="🗑" centered @ok="postDelete">
+                    <p class="my-4">포스트를 삭제하시겠어요?</p>
+                    <template #modal-footer="{ok}">
+                      <b-button variant="delete" @click="ok()">
+                        삭제하기
+                      </b-button>
+                    </template>
+                  </b-modal>
                   <!-- 신고 -->
                   <v-list-item>
                     <v-list-item-title>
@@ -102,9 +111,10 @@
         </div>
         <!-- 게시글 내용 -->
         <div id="description">
-          {{ post.post_description }}
-          <!-- 이미지 미리보기 -->
-          <img v-if="viewImage" :src="viewImage" alt="이미지 미리보기..." />
+          {{post.post_description}}
+        </div>
+        <div>
+          <img  id="description-image" v-if="post.post_image" :src="post.post_image" alt="이미지 미리보기...">
         </div>
       </div>
 
@@ -147,8 +157,9 @@ import PostModify from '@/components/board/postdetail/PostModify';
 // 프로필 이미지
 import Profile from '@/components/etc/Profile';
 
-import * as postApi from '@/api/post';
-import timeForToday from '@/plugins/timeForToday';
+import * as postApi from '@/api/post'
+import {imageDelete} from '@/api/main';
+import timeForToday from '@/plugins/timeForToday'
 
 // 스타일 적용
 import '@/assets/css/static/style.css';
@@ -347,18 +358,50 @@ export default {
         sellState = 0;
       }
 
-      postApi
-        .modifyState(this.post.post_id, sellState, localStorage.userId)
-        .then((res) => {
-          console.log(res);
-          this.$store.dispatch('post/isModifyFlag');
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      postApi.modifyState(this.post.post_id,sellState,localStorage.userId)
+      .then(res=>{
+        console.log(res)
+        this.$store.dispatch('post/isModifyFlag')
+      })
+      .catch(err=>{
+        console.log(err)
+      })
     },
-  },
-};
+
+    // 포스트 삭제
+    async postDelete(){
+      if(this.post.user_id!=localStorage.userId){
+        return
+      }
+      // 이미지가 있다면 이미지 삭제후 삭제!
+      // 이미지가 없다면 그냥 삭제!
+      try{
+        if(this.post.post_image!=''){
+          await imageDelete(this.post.post_image)
+          .then(res=>{
+            console.log('이미지 삭제 완료!')
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        }
+  
+        await postApi.post_delete(Number(this.post.post_id),localStorage.userId)
+        .then(res=>{
+          console.log('포스트 삭제')
+          this.$router.push({name:'Board',params:{board_id:this.post.board_id}})
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }catch(err){
+        console.log('PostForDetail- 포스트 삭제 에러')
+        console.log(err)
+      }
+
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -428,6 +471,23 @@ export default {
   display: flex;
   flex-direction: row;
 }
+/* 삭제버튼 */
+.btn-delete {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #aa2610 !important;
+  border-radius: 30px;
+  color: #fff;
+  background-color: #aa2610 !important;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.btn-delete:hover,
+.btn-delete:active {
+  color: #fff;
+  background-color: #f0725b !important;
+}
 /* 판매정보 */
 #sell-state {
   background-color: #0b2945;
@@ -470,6 +530,11 @@ export default {
 #description {
   margin: 0 0 1% 1%;
   font-size: 16px;
+}
+#description-image {
+  margin: 0 auto 1% auto;
+  font-size: 16px;
+  max-width: 80%;
 }
 /* 댓글, 좋아요, 북마크 부분 */
 #actions {

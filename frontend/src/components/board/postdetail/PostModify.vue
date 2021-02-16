@@ -92,11 +92,11 @@
           disabled
         >
           <b-form-file 
-            disabled
             id="multiple-media"
             v-model="tempImages"
             placeholder="Choose a file or drop it here..."
             browse-text='🖼'
+            @change="onChangeImages"
           >
           <!--card-image-->
             <template slot="file-name" slot-scope="{ names }">
@@ -107,6 +107,13 @@
             </template>
           </b-form-file>
         </b-form-group>
+        <div v-if="tempPreviewImgUrl" class="image-section">
+          <b-img
+              :src="tempPreviewImgUrl"
+              style="max-width: 10rem;"
+          ></b-img>
+          <b-icon class="deleteImg" @click="deleteImage" icon="x-circle-fill" aria-hidden="true"></b-icon>
+        </div>
       </form>
       <template #modal-footer="{ok, cancel}">
         <!-- Emulate built in modal footer ok and cancel button actions -->
@@ -143,8 +150,8 @@
 
 <script>
 import * as postApi from '@/api/post';
-
 import deepClone from '@/plugins/deepClone'
+import {imageUpload,imageDelete} from '@/api/main';
 
 export default {
   name:'ModifyForm',
@@ -156,6 +163,8 @@ export default {
       tempTitle: '',
       tempDescription:'',
       tempImages:[],
+      tempPreviewImgUrl:null,
+      
       titleState: null,
       descriptionState: null,
       locationState:null,
@@ -186,6 +195,15 @@ export default {
     }
   },
   methods: {
+    deleteImage(){
+      this.tempPreviewImgUrl = null
+      this.tempImages=[]
+    },
+    onChangeImages(e) {
+        const file = e.target.files[0];
+        this.tempImages.push(file)
+        this.tempPreviewImgUrl = URL.createObjectURL(file);
+    },
     titleCheckFormValidity() {
       const valid = this.$refs.form.checkValidity()
       this.titleState = valid
@@ -200,6 +218,7 @@ export default {
       this.tempTitle = this.post.post_title
       this.tempDescription = this.post.post_description
       this.location.selected = this.post.post_header
+      this.tempPreviewImgUrl = this.post.post_image
 
       this.titleState = null
       this.descriptionState = null
@@ -212,7 +231,7 @@ export default {
       // Trigger submit handler
       this.handleSubmit()
     },
-    handleSubmit() {
+    async handleSubmit() {
       // Exit when the form isn't valid
       if (!this.titleCheckFormValidity() ) {
         return
@@ -221,31 +240,68 @@ export default {
         return
       }
       // Push the name to submitted names
-      // this.submittedNames.push(this.name)
-      // Hide the modal manually
-      // const posts = this.$store.state.posts
-      const BOARD_ID = Number(this.$route.params.board_id)
-      // var fd = new FormData()
-      // fd.append('post_image', this.images)
+
+      const curationName = this.$route.name
+      let BOARD_ID
+      if(curationName!="Post"){
+        if(curationName==="MarketPost"){
+          BOARD_ID = this.$store.state.curationId["Market"]
+        }else if(curationName==="LearnSharePost"){
+          BOARD_ID = this.$store.state.curationId["LearnShare"]
+        }
+      }else{
+        BOARD_ID = Number(this.$route.params.board_id)
+      }
 
       let postItem = deepClone(this.post)
       postItem.post_title = this.tempTitle
       postItem.post_description = this.tempDescription
       postItem.post_header = this.location.selected
-      postItem.post_image = '' //이미지는 DB설계가 아직 안 되어 있음.
 
-      const login_id = localStorage.userId
-      console.log(postItem)
-      postApi.modify({postItem,login_id})
-        .then(res=>{
-          console.log('post 편집')
-          this.$store.dispatch('post/isModifyFlag')
-        })
-        .catch(err=>{
+      
+      try{
+        console.log(postItem)
+        // 이미지 a -> 이미지 b로 바꾸기
+        if((postItem.post_image!='' && postItem.post_image != this.tempPreviewImgUrl) || this.tempPreviewImgUrl===null){
+          await imageDelete(postItem.post_image)
+          .then(res=>{
+            console.log('이미지 삭제 완료!')
+
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        }
+
+        if(this.tempImages.length!=0){
+          let fd = new FormData();
+          fd.append('file',this.tempImages)
           
-          console.log(`post 편집 실패`)
-        })
+          const responseUpload = await imageUpload(fd)
+          postItem.post_image = String(responseUpload.data.imgPath)
+        }
+        else if(postItem.post_image!=this.tempPreviewImgUrl || this.tempPreviewImgUrl===null){
+          postItem.post_image = ''
+        }
+          
+        // }
 
+        const login_id = localStorage.userId
+        await postApi.modify({postItem,login_id})
+          .then(res=>{
+            console.log('post 편집')
+            this.$store.dispatch('post/isModifyFlag')
+          })
+          .catch(err=>{
+            
+            console.log(`post 편집 실패`)
+          })
+
+      }catch(err){
+        console.log('에러발생')
+        console.log(err)
+      }
+      
       this.$nextTick(() => {
         this.$bvModal.hide('modal-post')
       })
@@ -255,6 +311,14 @@ export default {
 </script>
 
 <style scoped>
+.image-section{
+  display: flex;
+  /* align-items: baseline; */
+}
+.deleteImg{
+  transform: translate(-5px,0);
+  cursor: pointer;
+}
 .modal-footer{
   display: flex;
 }

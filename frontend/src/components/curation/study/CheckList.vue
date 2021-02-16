@@ -1,68 +1,27 @@
 <template>
   <v-card
     id="post-box"
-    class="mx-2
-      mt-4
-      mb-2
-      pb-0
-      d-flex
-      flex-column"
+    class="
+      d-flex img-wrap justify-content-between"
     color="F9F9F9"
-    @click="goThisStudy"
   >
-    <div
-      class="img-wrap
-      d-flex
-      flex-column"
-    >
-      <!-- 보드 이미지 위로 나오는 부분 -->
-      <div class="text">
-        <div class="board-title">
-          {{ group.board_name }}
-        </div>
+    <div class="d-flex align-items-center">
+      <div class="ml-2 mr-2">
+        <GradientGenerator class="myinfo-list" style="height: 50px; width:50px" v-if="group.board_image == null" :radius="radius" />
+        <v-img src="@/assets/images/slide.jpg" height="50px" width="50px" class="myinfo-list blur" v-if="group.board_image != null"> </v-img>
       </div>
-      <GradientGenerator class="myinfo-list" style="height: 100px" v-if="group.board_image == null" :radius="radius" />
-      <v-img src="@/assets/images/slide.jpg" height="100px" class="myinfo-list blur" v-if="group.board_image != null"> </v-img>
+      
+      <div class="d-flex flex-column">
+        <div id="post-title" class="font-weight-black"> 유저 이름 </div>
+      </div>
     </div>
     <!-- 포스트 제목 -->
-    <v-card-title
-      class="
-        d-flex
-        flex-row
-        space-between
-        pa-0"
-    >
-      <v-col cols="9" id="post-title" class="font-weight-black">{{ group.board_title }}</v-col>
-    </v-card-title>
 
     <!-- 포스트 글 내용 -->
-    <v-card-text
-      id="post-contents"
-      class="font-weight-bold
-        py-0 pl-auto"
-    >
-      {{ group.board_description }}
-    </v-card-text>
-    <v-card-actions>
-      <v-list-item class="grow">
-        <!-- <v-list-item-content>
-          <v-list-item-title>
-            <v-icon>
-              mdi-account-group
-            </v-icon>
-            {{ `?` }}
-          </v-list-item-title>
-        </v-list-item-content> -->
-
-        <!-- 포스트 좋아요/댓글 수 -->
-        <v-row align="center" justify="end">
-          <span style="float:right;">
-            <v-icon>mdi-account-group</v-icon>
-            {{ group.board_count }}
-            <!-- <v-icon small> mdi-comment-processing </v-icon>
-            {{ `?` }} -->
-          </span>
-        </v-row>
+    <v-card-actions id="btn-check">
+      <v-list-item>
+        <button @click="permit">승인</button>
+        <button @click="reject">거절</button>
       </v-list-item>
     </v-card-actions>
   </v-card>
@@ -72,7 +31,7 @@
 import GradientGenerator from '@/components/etc/GradientGenerator';
 
 export default {
-  name: "StudyGroup",
+  name: "MyStudyGroup",
   data() {
     return {
       radius: '15px',
@@ -85,11 +44,11 @@ export default {
     GradientGenerator,
   },
   methods: {
-    goThisStudy() {
-      this.$router.push({ name: 'Study',params:{
-          board_id:this.group.board_id,
-          
-        } });
+    permit(){
+      alert('가입승인')
+    },
+    reject(){
+      alert('가입거부')
     }
   },
 }
@@ -119,6 +78,12 @@ export default {
   justify-content: flex-start;
   align-items: center;
   z-index: 2;
+}
+
+.v-list-item{
+  display: flex;
+  flex-direction: column;
+  min-height:0px;
 }
 /* 보드로 이동 */
 .board-title {

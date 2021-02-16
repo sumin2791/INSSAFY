@@ -1,5 +1,5 @@
 <template>
-  <v-card id="container">
+  <v-card id="container"  class="pa-2 ani-hover">
     <div id="post-detail">
       <!-- 포스트 디테일 헤더 부분 -->
       <div id="header">
@@ -88,7 +88,9 @@
       <div id="content-go-detail" @click="goToDetail">
         <!-- 포스트 제목 -->
         <div class="detail-header" v-if="flagComponent.headerLearnShare">
-          학습공유 헤더들..
+          <v-chip id="skill" v-for="(h,idx) in skill" :key="idx">
+            {{h}}
+          </v-chip>
         </div>
         <div id="title">
           <!-- 중고장터용(지역) -->
@@ -109,6 +111,11 @@
       <div id="actions">
         <!-- 댓글 수 -->
         <div id="bottom-comment-like">
+          <!-- <v-icon
+            middle
+            class="mr-1"
+            v-if="post.post_image"
+          >mdi-image-filter</v-icon> -->
           <div id="bottom-comment">
             <v-icon middle class="mr-1">mdi-comment-outline</v-icon>
             <span v-if="isComment">{{ post.comment_count }}</span>
@@ -195,6 +202,15 @@ export default {
     flagWriter() {
       return this.post.user_id === String(localStorage.userId);
     },
+    date(){
+      return timeForToday(this.post.post_date)
+    },
+    skill(){
+      if(this.post.post_header!='전체'){
+        return this.post.post_header.split('|')
+      }
+      return []
+    }
   },
   mounted() {
     this.fetchData();
@@ -225,43 +241,54 @@ export default {
       // params : {name:string, params:{board_id,post_id}}
 
       let data = {
-        name: '',
-        params: {
-          board_id: '',
-          post_id: this.post.post_id,
-        },
-      };
-      const curationName = this.$route.name;
-      if (curationName != 'Board') {
-        data.params.board_id = this.$store.state.curationId[curationName];
-      } else {
-        data.params.board_id = Number(this.$route.params.board_id);
+        name:'',
+        params:{
+          board_id:'',
+          post_id:this.post.post_id
+        }
       }
+      const curationName = this.$route.name
+      console.log(curationName)
+      if(curationName==="Board" || curationName==="Study"){
+        data.params.board_id = Number(this.$route.params.board_id)
+      }else{
+        data.params.board_id = this.$store.state.curationId[curationName]
 
-      if (curationName === 'Market') {
-        data.name = 'MarketPost';
-      } else if (curationName === 'LearnShare') {
-        data.name = 'LearnSharePost';
-      } else if (curationName === 'Recruitment') {
-        data.name = 'RecruitmentPost';
-      } else {
-        data.name = 'Post';
+      }
+      // if(curationName!="Board" && curationName!="Study"){
+      // }else{
+      // }
+
+
+      if (curationName==="Market"){
+        data.name = "MarketPost"
+      }else if(curationName==="LearnShare") {
+        data.name = "LearnSharePost"
+      }else if(curationName==="Recruitment"){
+        data.name = "RecruitmentPost"
+      }else if(curationName==="StudyMain"){
+        data.name = "StudyMainPost"
+      }else if(curationName === "Study"){
+        data.name = "StudyGroupPost"
+      }
+      else{
+        data.name = "Post"
       }
 
       // params를 이용해서 데이터를 넘겨줄 수 있다.
       this.$router.push(data);
     },
-    postLike(e) {
-      postApi
-        .likePost({ user_id: localStorage.getItem('userId'), post_id: this.post.post_id })
-        .then((res) => {
-          if (res.data.message === 'No Subscription') {
-            alert('구독 후에 이용 가능합니다');
-          } else {
-            if (this.flagLike) {
-              this.countLike -= 1;
-            } else {
-              this.countLike += 1;
+    postLike(e){
+      postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
+        .then((res)=>{
+          console.log(res)
+          if(res.data.message==='No Subscription'){
+            alert('구독 후에 이용 가능합니다')
+          }else{
+            if(this.flagLike){
+              this.countLike -= 1
+            }else{
+              this.countLike += 1
             }
             this.flagLike = !this.flagLike;
           }
@@ -272,6 +299,7 @@ export default {
 
       // 포스트좋아하는거 카운트 바꾸기 위한 지금 이 방식은 bug가 존재합니다. (유저와 연동이 안되어 있기 때문)
     },
+
     postScrap() {
       postApi
         .scrapPost({ user_id: localStorage.getItem('userId'), post_id: this.post.post_id })
@@ -304,6 +332,7 @@ export default {
               .getChatList({ user_id: String(localStorage.userId) })
               .then((res) => {
                 const chatLists = res.data.roomInfo;
+
 
                 for (let i = 0; i < chatLists.length; i++) {
                   if (chatLists[i].opp_id === this.post.user_id) {
@@ -352,8 +381,8 @@ export default {
   font-family: 'Noto Sans KR', sans-serif !important;
   box-shadow: var(--basic-shadow-s) !important;
   border-radius: 15px !important;
-  background-color: var(--basic-color-bg2) !important;
-  margin: 16px 0;
+  /* background-color: var(--basic-color-bg2) !important; */
+  margin: 16px 10px;
 }
 /* 전체 detail 담겨진 부분 */
 #post-detail {
@@ -438,8 +467,15 @@ export default {
   cursor: pointer;
   min-height: 150px;
 }
-.detail-header {
-  transform: translate(10px, 15px);
+.detail-header{
+  transform: translate(10px,10px);
+}
+#skill{
+  font-size:14px;
+  height: 20px;
+  margin-right: 5px;
+  color: #f9f9f9;
+  background: #0B2945;
 }
 /* 게시글 제목 */
 #title {
@@ -477,30 +513,10 @@ export default {
   display: flex;
   align-items: center;
 }
-/* 게시글 제목 */
-#title {
-  margin: 0 0 1% 1%;
-  display: flex;
-  flex-direction: row;
-  font-size: 18px;
-  font-weight: 600;
+.ani-hover {
+  transition: transform 0.5s ease;
 }
-/* 게시글 내용 */
-#description {
-  margin: 0 0 1% 1%;
-  font-size: 16px;
-}
-/* 댓글, 좋아요, 북마크 부분 */
-#actions {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-/* 댓글 좋아요 부분 */
-#bottom-comment-like {
-  display: flex;
-  flex-direction: row;
+.ani-hover:hover {
+  transform: scale(1.01);
 }
 </style>

@@ -11,6 +11,7 @@ import BambooForest from '@/views/curation/bamboo/BambooForest';
 import LearnShare from '@/views/curation/learningshare/LearnShare';
 import StudyMain from '@/views/curation/study/StudyMain';
 import Study from '@/views/curation/study/Study';
+import StudyGroupForm from '@/views/curation/study/StudyGroupForm';
 import Market from '@/views/curation/market/Market';
 import Recruitment from '@/views/curation/recruitment/Recruitment';
 
@@ -109,14 +110,32 @@ export default [
     props: true,
   },
   {
-    path: '/curation/main/study',
+    path: '/study/main',
     name: 'StudyMain',
     component: StudyMain,
   },
   {
-    path: '/curation/study/part',
+    path: '/study/main/:post_id(\\d+)',
+    name: 'StudyMainPost',
+    component: PostDetail,
+    props: true,
+  },
+  {
+    path: '/study/:board_id(\\d+)',
     name: 'Study',
     component: Study,
+    props:true,
+  },
+  {
+    path: '/study/:board_id(\\d+)/post/:post_id(\\d+)',
+    name: 'StudyGroupPost',
+    component: PostDetail,
+    props: true,
+  },
+  {
+    path: '/study/create',
+    name: 'StudyGroupForm',
+    component: StudyGroupForm,
   },
   {
     path: '/market',
@@ -146,6 +165,7 @@ export default [
     path: '/board/:board_id(\\d+)',
     name: 'Board',
     component: Board,
+    props: true,
   },
   {
     path: '/board/:board_id(\\d+)/post/:post_id(\\d+)',

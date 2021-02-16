@@ -107,6 +107,7 @@ export default {
   },
   props:{
     comment:Object,
+    postUserId:String,
   },
   data(){
     return {
@@ -133,7 +134,6 @@ export default {
       }
       if(this.comment.user_id===localStorage.userId){
         e.path[2].querySelector('#btnComment').style.visibility="visible"
-        console.log(e)
         sleep(3000).then(() => {
 
           if(typeof e === Object || !Object.keys(e.path[2].querySelector('#btnComment')).includes('style'))
@@ -174,7 +174,7 @@ export default {
       delete params.commentDto.user_nickname
       commentApi.comment_modify(params)
         .then(res=>{
-          console.log(res.data.message)
+          // console.log(res.data.message)
           if(res.data.message==='No Permission'){
             alert('구독 후에 이용가능합니다.')
           }else{
@@ -214,9 +214,9 @@ export default {
 /* 댓글 작성자 정보, 댓글 내용 */
 #contents {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
-  width: 80%;
+  width: 90%;
 }
 /* 사용자 정보 */
 #header {
@@ -265,9 +265,11 @@ export default {
 /* 댓글 내용 부분 margin */
 .comment-description {
   overflow: auto;
-  width: 90%;
+  width: 100%;
+  height: 40px;
   align-self: center;
-  margin: 0 0 0 10px;
+  margin-left:10px;
+  margin-top:10px;
 }
 /* 댓글 조작 버튼 */
 .modify-btn {

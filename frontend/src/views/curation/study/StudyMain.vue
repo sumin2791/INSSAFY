@@ -35,59 +35,50 @@
         <v-row dense>
           
           <!-- 왼쪽 스터디 설명 부분 -->
-          <v-col 
-            class="col-12 col-sm-4" 
-          >
-            <v-sheet>
-              <!-- 스터디 설명 부분 -->
+          <v-col class="col-12 col-sm-4">
+            <div id="description" class="rounded-bg container-description">
+              <h4 class="b-desc">스터디</h4>
+              <p class="l-desc">
+                스터디원을 구해서<br />
+                같이 공부해보는 건 어떨까요?
+              </p>
+              <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
-                <!-- 스터디 설명 부분 -->
-                <div
-                  class="d-flex
-                  flex-column
-                  justify-space-between"
-                  style="min-height: 25vh;"
-                >
-                  <!-- 내 정보 타이틀 -->
-                  <div class="text-h5">스터디</div>
-                  <div class="text-start pa-1 ma-auto">
-                    스터디원을 구해서<br>같이 공부해보는 건 어떨까요?
-                  </div>
-                </div>
-                <!-- StudyGroup 부분 -->
-                <v-divider class="my-2"></v-divider>
-                <v-list>
-                  <v-list-item>스터디 목록</v-list-item>
-                  <!-- 스터디 목록 활성화 버튼 -->
-                  <v-list-item>
-                    <v-switch
-                      v-model="isMyStudy"
+                <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>내 스터디 목록 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+                <b-collapse visible id="item-collapse">
+                  <v-col v-for="(group,idx) in myStudyGroup" :key="idx">
+                    <MyStudyGroup :group="group"/>
+                  </v-col>
+                </b-collapse>
+              </v-list>
+            </div>
+          </v-col>
+          <!-- 오른쪽 스터디 본문 부분 -->
+          <v-col class="col-12 col-sm-8">
+            <div class="main-header">
+              <div class="flagPromoList">
+                <v-switch
+                      v-model="flagPromoList"
                       inset
                       color="#0B2945"
                       :label="`${state}`"
                       @click="filterMyStudyGroup()"
                     ></v-switch>
-                  </v-list-item>
-                  <v-col>
-                    <StudyGroup />
-                    <StudyGroup />
-                    <StudyGroup />
-                    <StudyGroup />
-                  </v-col>
-                </v-list>
-              </v-list>
-            </v-sheet>
-          </v-col>
-          <!-- 오른쪽 스터디 본문 부분 -->
-          <v-col
-            class="col-12 col-sm-8"  
-          >
+              </div>
+              <div class="btnWrite" v-if="!flagPromoList"><PostWrite :in-board="inBoard"/></div>
+              <div class="btnWrite" v-if="flagPromoList">
+                <b-button class="btn-write" @click="goToCreateBoard">스터디 만들기</b-button>
+              </div>
+            </div>
             <!-- 스터디 게시글쓰기 -->
-            <StudyPostWrite class="mx-4 mb-2"/>
+            <!-- <StudyPostWrite class="mx-4 mb-2"/> -->
             <!-- 스터디 게시물 부분 -->
+            <StudyPromotionPostList v-if="!flagPromoList"/>
+            <AllGroupList v-if="flagPromoList"/>
+
+            <!-- <StudyPost class="mx-4 mb-2"/>
             <StudyPost class="mx-4 mb-2"/>
-            <StudyPost class="mx-4 mb-2"/>
-            <StudyPost class="mx-4 mb-2"/> 
+            <StudyPost class="mx-4 mb-2"/>  -->
           </v-col>
         </v-row>
       </v-container>
@@ -97,18 +88,31 @@
 
 <script>
 // 스터디 홍보 게시물
-import StudyPost from "@/components/curation/study/StudyPost.vue"
+// import StudyPost from "@/components/curation/study/StudyPost.vue"
 // 스터디 홍보 게시물 쓰기
-import StudyPostWrite from "@/components/curation/study/StudyPostWrite.vue"
+// import StudyPostWrite from "@/components/curation/study/StudyPostWrite.vue"
 // 스터디 내 그룹
-import StudyGroup from "@/components/curation/study/StudyGroup.vue"
+// import StudyGroup from "@/components/curation/study/StudyGroup.vue"
+import MyStudyGroup from "@/components/curation/study/MyStudyGroup.vue"
+
+
+
+import PostWrite from '@/components/board/PostWrite'
+import StudyPromotionPostList from "@/components/board/PostList"
+import AllGroupList from "@/components/curation/study/AllGroupList"
+
+import * as studyApi from "@/api/study"
 
 export default {
-  name:'LearningShare',
+  name:'StudyMain',
   components: {
-    StudyPost,
-    StudyPostWrite,
-    StudyGroup,
+    // StudyPost,
+    // StudyPostWrite,
+    // StudyGroup,
+    MyStudyGroup,
+    StudyPromotionPostList,
+    AllGroupList,
+    PostWrite,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -116,12 +120,29 @@ export default {
 
       window.removeEventListener('resize', this.onResize, { passive: true })
   },
+  created(){
+    studyApi.getMyGroupList(localStorage.userId)
+    .then(res=>{
+      console.log(res)
+      const group = res.data.studyList.filter((group) => {
+        if(group!=null){
+          return group
+        }
+      })
+      console.log('여기')
+      console.log(group)
+      this.myStudyGroup = group
+    })
+    .catch(err=>{
+      console.log(err)
+    })
+  },
   mounted () {
     // resize 실시해서 현재 화면 크기 확인
     this.onResize()
 
     window.addEventListener('resize', this.onResize, { passive: true })
-    this.filterMyStudyGroup()
+    // this.filterMyStudyGroup()
   },
   data() {
     return {
@@ -134,8 +155,11 @@ export default {
       searchKeyword: '',
       // 내 스터디 목록 활성화 버튼
       isMyStudy: false,
-      myStudyGroup: ['내 스터디 목록', '전체 스터디 목록'],
-      state: '',
+      myStudyGroup: {},
+      state: '홍보 목록',
+      flagPromoList:false,
+      flagPromoGroup: ['스터디 목록','홍보 목록'],
+      inBoard:true,
     }
   },
   methods: {
@@ -146,9 +170,12 @@ export default {
     },
     // 내 스터디 그룹 / 전체 스터디 그룹 전환
     filterMyStudyGroup() {
-      if (this.isMyStudy) {
-        this.state = this.myStudyGroup[0]
-      } else {this.state = this.myStudyGroup[1]}
+      if (this.flagPromoList) {
+        this.state = this.flagPromoGroup[0]
+      } else {this.state = this.flagPromoGroup[1]}
+    },
+    goToCreateBoard() {
+      return this.$router.push({ name: 'StudyGroupForm' });
     },
   }
 }
@@ -162,5 +189,53 @@ export default {
   margin: 2%;
   padding: 10%;
   flex-basis: 20%;
+}
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
+}
+
+#scrap-item{
+  text-decoration: none;
+  color:#000;
+}
+
+/* 오른쪽 section*/
+.main-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin:0 8px;
+}
+.flagPromoList{
+  display: flex;
+  align-items: center;
+  /* margin-left:20px */
+}
+.btnWrite{
+  /* width: 30%; */
+}
+.btn-write {
+  position: sticky;
+  text-align: center;
+  margin: auto;
+  height: 50px;
+  width:100%;
+  border: none;
+  color: var(--basic-color-fill);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: #ebebe9 !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  border-radius: 15px !important;
+  transition: 0.3s all ease;
+}
+.btn-write:hover,
+.btn-write:active,
+.btn-write:focus {
+  color: #ebebe9 !important;    
+  background-color: var(--basic-color-key) !important;
 }
 </style>
