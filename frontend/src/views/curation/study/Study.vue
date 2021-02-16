@@ -143,6 +143,8 @@ export default {
     // 구독했는 지 파악하기 : inBoard
     this.isInBoard()
 
+    // 요청리스트 가져오기
+    this.getRequestList()
     
     
   },
@@ -170,10 +172,12 @@ export default {
       
       inBoard:'',
       myStudyGroup: {},
-      groupDto:{}
+      groupDto:{},
+      requestList:{}
     }
   },
   computed:{
+    // 내가 스터디 그룹을 만들었는 지 확인하는 변수 : isManager
     isManager(){
       const boards = JSON.parse(localStorage.subBoard);
       const BOARD_ID = Number(this.$route.params.board_id);
@@ -197,6 +201,7 @@ export default {
     goMainStudy() {
       this.$router.push({ name: 'StudyMain' });
     },
+    // 내가 가입된 스터디리스트 가져오기
     getMyStudyGroup(){
       studyApi.getMyGroupList(localStorage.userId)
       .then(res=>{
@@ -211,6 +216,7 @@ export default {
         console.log(err)
       })
     },
+    // 내가 가입되어 있는 스터디인가?
     isInBoard(){
       const BOARD_ID = Number(this.$route.params.board_id);
       const boards = JSON.parse(localStorage.subBoard);
@@ -219,6 +225,7 @@ export default {
       });
       this.inBoard = boardIds.includes(BOARD_ID);
     },
+    // 스터디 정보 디테일한 거 가져오기!
     getStudyDetail(){
       boardApi.board_detail(this.$route.params.board_id)
       .then(res=>{
@@ -229,7 +236,29 @@ export default {
         console.log(err)
       })
     },
-    // 스터디보드 신청 확인
+    // 가입요청하기
+    // studyRequest(){
+    //   studyApi.studyRequest(localStorage.userId,this.$route.params.board_id)
+    //   .then(res=>{
+
+    //   })
+    // },
+    // 요청리스트 가져오기!
+    getRequestList(){
+      
+      console.log(this.isManager)
+      if(this.isManager){
+        studyApi.getRequestList(this.$route.params.board_id)
+        .then(res=>{
+          console.log(res)
+          this.requestList = res.data.list
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }
+    },
+    // 스터디보드 구독 중인 지 확인하기
     onSubscribe() {
       const BOARD_ID = Number(this.$route.params.board_id);
 

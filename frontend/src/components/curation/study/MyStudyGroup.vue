@@ -52,7 +52,6 @@ export default {
     goThisStudy() {
       this.$router.push({ name: 'Study',params:{
           board_id:this.group.board_id,
-          
         } });
     }
   },

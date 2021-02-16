@@ -19,6 +19,27 @@ export function getMyGroupList(login_id){
   })
 }
 
+// 스터디 가입 요청
+export function studyRequest(user_id,board_id){
+  return http.post('/study/request',{user_id,board_id})
+}
+
+// 스터디 가입 요청 리스트
+export function getRequestList(board_id){
+  return http.get('/study/requestList',{
+    params:{
+      board_id
+    }
+  })
+}
+
+// 스터디 가입 수락/거절
+export function studyRequestProcess(user_id,board_id,option){
+  return http.post('/study/requestProcess',{
+    user_id,board_id,option
+  })
+}
+
 // 학습 공유 내 wordcloud 가져오기
 export function getWordCloud(){
   return http.get('/study/wordCloud')
