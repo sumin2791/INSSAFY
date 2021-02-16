@@ -35,32 +35,21 @@
         <v-row dense>
           
           <!-- 왼쪽 학습공유 설명 부분 -->
-          <v-col 
-            class="col-12 col-sm-4" 
-          >
-            <v-sheet>
-              <!-- 학습공유 설명 부분 -->
-              <v-list color="transparent">
-                <!-- 학습공유 설명 부분 -->
-                <div
-                  class="d-flex
-                  flex-column
-                  justify-space-between"
-                  style="min-height: 25vh;"
-                >
-                  <!-- 내 정보 타이틀 -->
-                  <div class="text-h5">학습공유</div>
-                  <div class="text-start pa-1 ma-auto">
-                    오늘의 학습 내용<br>함께 나누고픈 내용 공유
-                  </div>
-                </div>
-                <!-- ranking 부분 -->
-                <v-divider class="my-2"></v-divider>
-                <v-list-item>RANK</v-list-item>
+          <v-col class="col-12 col-sm-4">
+            <div id="description" class="rounded-bg container-description">
+              <!--curation 설명-->
+              <h4 class="b-desc">학습공유</h4>
+              <p class="l-desc">
+                오늘의 학습 내용<br />
+                함께 나누고픈 내용 공유
+              </p>
+              <!-- rank-->
+              <v-divider class="my-2"></v-divider>
+              <v-list-item><a id="scrap-item" v-b-toggle href="#rank-collapse" @click.prevent>RANK <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+              <b-collapse visible id="rank-collapse">
                 <v-col>
                   <LearningRank />
                 </v-col>
-                <!-- ranking 1위의 한마디 -->
                 <v-list-item>RANK 1위의 한마디</v-list-item>
                 <v-col class="font-weight-black text-center">
                   "{{ first.speech }}"
@@ -68,27 +57,34 @@
                 <v-col class="text-end text-caption">
                   -{{ first.nickName }}-
                 </v-col>
-                <!-- 워드 클라우드 부분 -->
-                <v-divider class="my-2"></v-divider>
-                <v-list-item>워드 클라우드 부분</v-list-item>
-                <v-col class="d-flex justify-center">
-                  <v-avatar size="200">
-                    <v-img src="@/assets/images/wordcloud.jpg"></v-img>
-                  </v-avatar>
+              </b-collapse>
+              <!--워드클라우드-->
+              <v-divider class="my-2"></v-divider>
+              <v-list-item><a id="scrap-item" v-b-toggle href="#wordcloud-collapse" @click.prevent>WordCloud <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+              <b-collapse visible id="wordcloud-collapse">
+                <v-col class="d-flex justify-center p-0">
+                  <wordcloud
+                    :data="defaultWords"
+                    nameKey="name"
+                    valueKey="value"
+                    color="Category10"
+                    :margin="wordcloudmargin"
+                    :wordClick="wordClickHandler">
+                  </wordcloud>
                 </v-col>
-              </v-list>
-            </v-sheet>
+              </b-collapse>
+            </div>
           </v-col>
           <!-- 오른쪽 학습공유 본문 부분 -->
           <v-col
             class="col-12 col-sm-8"  
           >
             <!-- 학습공유 게시글쓰기 -->
-            <LearningPostWrite class="mx-4 mb-2"/>
+            <!-- <LearningPostWrite class="mx-4 mb-2"/> -->
+            <PostWrite :in-board="inBoard" style="margin:0 10px"/>
             <!-- 학습공유 게시물 부분 -->
-            <LearningPost class="mx-4 mb-2"/>
-            <LearningPost class="mx-4 mb-2"/>
-            <LearningPost class="mx-4 mb-2"/> 
+            <LearningSharePostList />
+
           </v-col>
         </v-row>
       </v-container>
@@ -100,16 +96,37 @@
 // rank 리스트
 import LearningRank from "@/components/curation/learningshare/LearningRank.vue"
 // 학습공유 게시물
-import LearningPost from "@/components/curation/learningshare/LearningPost.vue"
+// import LearningPost from "@/components/curation/learningshare/LearningPost.vue"
 // 학습공유 게시물 쓰기
-import LearningPostWrite from "@/components/curation/learningshare/LearningPostWrite.vue"
+// import LearningPostWrite from "@/components/curation/learningshare/LearningPostWrite.vue"
+// 학습공유 리스트
+import LearningSharePostList from "@/components/board/PostList"
+import PostWrite from '@/components/board/PostWrite'
+
+//워드클라우드
+import wordcloud from 'vue-wordcloud'
+import * as learnshareApi from '@/api/study'
 
 export default {
   name:'LearningShare',
   components: {
     LearningRank,
-    LearningPost,
-    LearningPostWrite,
+    // LearningPost,
+    // LearningPostWrite,
+    LearningSharePostList,
+    PostWrite,
+    wordcloud,
+  },
+  created(){
+    learnshareApi.getWordCloud()
+    .then(res=>{
+      res.data.defaultWords.forEach(element => {
+        this.defaultWords.push({name:element.name,value:element.score})
+      });
+    })
+    .catch(err=>{
+      console.log(err)
+    })
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy () {
@@ -125,6 +142,8 @@ export default {
   },
   data() {
     return {
+      defaultWords:[],
+      wordcloudmargin:{top: 15, right: 15, bottom: 15, left: 15 },
       // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
       ResponsiveSize: {
         isMobile: false, 
@@ -138,7 +157,10 @@ export default {
         // rank 1위
         speech: '저는 밥숟가락만 얹었을 뿐인데 아름다운 밤이네요!😎'
       },
-      wordcloudImg: '@/assets/images/wordcloud.jpg'
+      wordcloudImg: '@/assets/images/wordcloud.jpg',
+
+      //변수 사용할 것들
+      inBoard:true,
     }
   },
   methods: {
@@ -147,6 +169,9 @@ export default {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
       this.ResponsiveSize.viewSize = window.innerWidth;
     },
+    wordClickHandler(name, value, vm) {
+      console.log('wordClickHandler', name, value, vm);
+    }
   }
 }
 </script>
@@ -159,5 +184,15 @@ export default {
   margin: 2%;
   padding: 10%;
   flex-basis: 20%;
+}
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
+}
+#scrap-item{
+  text-decoration: none;
+  color:#000;
 }
 </style>

@@ -11,10 +11,9 @@ import BambooForest from '@/views/curation/bamboo/BambooForest';
 import LearnShare from '@/views/curation/learningshare/LearnShare';
 import StudyMain from '@/views/curation/study/StudyMain';
 import Study from '@/views/curation/study/Study';
+import StudyGroupForm from '@/views/curation/study/StudyGroupForm';
 import Market from '@/views/curation/market/Market';
 import Recruitment from '@/views/curation/recruitment/Recruitment';
-// 학습공유 테스트
-import LearnShareTest from '@/views/curation/learningshare/LearnShareTest';
 
 //board
 import Board from './views/board/Board.vue';
@@ -27,8 +26,6 @@ import SearchBoard from './views/search/SearchBoard.vue';
 
 // Chat
 import ChatPage from './views/openchat/ChatPage.vue';
-// Chat Test
-import ChatPageTest from './views/openchat/ChatPageTest.vue';
 
 //redirect vue
 import PageNotFound from './views/redirect/PageNotFound';
@@ -97,46 +94,70 @@ export default [
 
   // Curation board
   {
-    path: '/curation/bamboo',
+    path: '/bamboo',
     name: 'BambooForest',
     component: BambooForest,
   },
   {
-    path: '/curation/learningshare',
+    path: '/learningshare',
     name: 'LearnShare',
     component: LearnShare,
   },
-  // 학습공유 테스트
   {
-    path: '/curation/learningshare/test',
-    name: 'LearnShareTest',
-    component: LearnShareTest,
+    path: '/learningshare/:post_id(\\d+)',
+    name: 'LearnSharePost',
+    component: PostDetail,
+    props: true,
   },
   {
-    path: '/curation/main/study',
+    path: '/study/main',
     name: 'StudyMain',
     component: StudyMain,
   },
   {
-    path: '/curation/study/part',
-    name: 'Study',
-    component: Study,
+    path: '/study/main/:post_id(\\d+)',
+    name: 'StudyMainPost',
+    component: PostDetail,
+    props: true,
   },
   {
-    path: '/curation/market',
+    path: '/study/:board_id(\\d+)',
+    name: 'Study',
+    component: Study,
+    props:true,
+  },
+  {
+    path: '/study/:board_id(\\d+)/post/:post_id(\\d+)',
+    name: 'StudyGroupPost',
+    component: PostDetail,
+    props: true,
+  },
+  {
+    path: '/study/create',
+    name: 'StudyGroupForm',
+    component: StudyGroupForm,
+  },
+  {
+    path: '/market',
     name: 'Market',
     component: Market,
   },
   {
-    path: '/curation/market/:post_id(\\d+)',
+    path: '/market/:post_id(\\d+)',
     name: 'MarketPost',
     component: PostDetail,
     props: true,
   },
   {
-    path: '/curation/recruitment',
+    path: '/recruitment',
     name: 'Recruitment',
     component: Recruitment,
+  },
+  {
+    path: '/Recruitment/:post_id(\\d+)',
+    name: 'RecruitmentPost',
+    component: PostDetail,
+    props: true,
   },
 
   // board
@@ -144,6 +165,7 @@ export default [
     path: '/board/:board_id(\\d+)',
     name: 'Board',
     component: Board,
+    props: true,
   },
   {
     path: '/board/:board_id(\\d+)/post/:post_id(\\d+)',
@@ -174,13 +196,6 @@ export default [
     path: '/chat',
     name: 'ChatPage',
     component: ChatPage,
-  },
-
-  // 채팅 관련 영역
-  {
-    path: '/chat/test',
-    name: 'ChatPageTest',
-    component: ChatPageTest,
   },
 
   //redirect 영역

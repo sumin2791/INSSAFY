@@ -1,7 +1,7 @@
 <template>
   <div class="frame">
-    <p id="f-type" class="r-title">Custom</p>
-    <div class="bg-image" v-if="board_image" />
+    <p id="f-type" class="r-title">Board</p>
+    <div class="bg-image" v-if="board_image" :style="{ backgroundImage: `url(${favorite.board_image})` }" />
     <GradientGenerator id="bg-graid" radius="0px" v-if="!board_image" />
     <div class="inner">
       <div id="f-title" class="f-text b-desc">
@@ -13,8 +13,8 @@
       </p>
     </div>
     <div id="f-option" class="t-desc-e">
-      <p>new</p>
-      <p>{{ favorite.write_post_count }}</p>
+      <!-- <p>new</p>
+      <p>{{ favorite.write_post_count }}</p> -->
     </div>
   </div>
 </template>

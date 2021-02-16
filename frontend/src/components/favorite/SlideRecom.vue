@@ -1,21 +1,21 @@
 <template>
   <div class="frame">
-    <p id="f-type" class="r-title">Custom</p>
-    <div class="bg-image" v-if="board_image" />
+    <p id="f-type" class="r-title">Suggest</p>
+    <div class="bg-image" v-if="board_image" :style="{ backgroundImage: `url(${favorite.board_image})` }" />
     <GradientGenerator id="bg-graid" radius="0px" v-if="!board_image" />
     <div class="inner">
       <div id="f-title" class="f-text b-desc">
-        <p>{{ board_name }}</p>
+        <p>{{ favorite.board_name }}</p>
       </div>
-      <p id="f-desc" class="f-text r-desc">{{ board_description }}</p>
+      <p id="f-desc" class="f-text r-desc">{{ favorite.board_description }}</p>
       <p id="f-hashtag" class="f-text hashtag l-desc">
-        {{ board_hash }}
+        {{ favorite.board_hash }}
       </p>
     </div>
-    <div id="f-option" class="t-desc-e">
+    <!-- <div id="f-option" class="t-desc-e">
       <p>new</p>
       <p>{{ favorite.write_post_count }}</p>
-    </div>
+    </div> -->
   </div>
 </template>
 

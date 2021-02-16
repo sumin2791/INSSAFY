@@ -4,6 +4,7 @@
       v-for="(comment,idx) in comments"
       :key="idx"
       :comment="comment"
+      :postUserId="postUserId"
     />
   </div>
 </template>
@@ -19,6 +20,7 @@ export default {
   },
   props:{
     comments:Array,
+    postUserId:String,
   },
   computed:{
     // comments() {
@@ -28,6 +30,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

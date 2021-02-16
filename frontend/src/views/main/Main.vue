@@ -11,8 +11,8 @@
       </svg>
       <swiper v-cloak id="f-swiper" class="swiper" :options="swiperOption" @clickSlide="clickFavorite">
         <swiper-slide v-for="(item, index) in favorites" :key="`faborite${item.board_id}/${index}`">
-          <Slide :favorite="item" v-if="item.board_id != -1" />
-          <SlideRecom :favorite="item" v-if="item.board_id == -1" />
+          <Slide :favorite="item" v-if="!item.type" />
+          <SlideRecom :favorite="item" v-if="item.type" />
         </swiper-slide>
         <div class="swiper-pagination" slot="pagination"></div>
       </swiper>
@@ -20,11 +20,11 @@
     <div id="curation-container">
       <p id="c-title" class="b-title">Curation</p>
       <div id="c-list" class="l-desc">
-        <button class="c-btn real-shadow-box" @click="clickCBtn1">스터디</button>
-        <button class="c-btn real-shadow-box" @click="clickCBtn2">학습공유</button>
-        <button class="c-btn real-shadow-box" @click="clickCBtn3">채용일정</button>
-        <button class="c-btn real-shadow-box" @click="clickCBtn4">중고장터</button>
-        <button class="c-btn real-shadow-box" @click="clickCBtn5">대나무숲</button>
+        <button class="c-btn newmorphism" @click="clickCBtn1">스터디</button>
+        <button class="c-btn newmorphism" @click="clickCBtn2">학습공유</button>
+        <button class="c-btn newmorphism" @click="clickCBtn3">채용일정</button>
+        <button class="c-btn newmorphism" @click="clickCBtn4">중고장터</button>
+        <button class="c-btn newmorphism" @click="clickCBtn5">대나무숲</button>
       </div>
     </div>
     <div id="popular-container" class="m-top">
@@ -35,13 +35,13 @@
           <button class="p-button r-desc" @click="clickPBtn2">게시글 리스트</button>
         </div>
       </div>
-      <p class="p-desc l-desc">팔로워 수</p>
+      <p class="p-desc l-desc">구독자 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="item in getFollowRank" :key="`p-subs${item.board_id}`" :item="item" />
+        <BoardItem class="p-item" v-for="item in getFollowRank" :key="`p-subs${item.board_id}`" :item="item" :type="'subscribe'" />
       </div>
       <p class="p-desc l-desc">게시글 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="item in getPostsRank" :key="`p-posts${item.board_id}`" :item="item" />
+        <BoardItem class="p-item" v-for="item in getPostsRank" :key="`p-posts${item.board_id}`" :item="item" :type="'post'" />
       </div>
       <div id="sub-title-container">
         <p class="p-desc l-desc">좋아요 수</p>
@@ -49,9 +49,9 @@
       </div>
       <div id="p-item-container2">
         <p class="p-desc l-desc mobile">좋아요 수</p>
-        <PostItem v-cloak class="p-item2" :items="getLikeRank" :type="`like`" />
+        <PostItem v-cloak class="p-item2" :items="getLikeRank" :key="componentKey + 'like'" :type="`like`" />
         <p class="p-desc l-desc mobile">댓글 수</p>
-        <PostItem v-cloak class="p-item2" :items="getCommentRank" :type="`comment`" />
+        <PostItem v-cloak class="p-item2" :items="getCommentRank" :key="componentKey + 'comment'" :type="`comment`" />
       </div>
     </div>
   </div>
@@ -85,6 +85,7 @@ export default {
   },
   data() {
     return {
+      componentKey: 0,
       favorites: [],
       options: {
         width: '400px',
@@ -149,19 +150,35 @@ export default {
     ...mapGetters('main', ['getFavorites', 'getFollowRank', 'getPostsRank', 'getLikeRank', 'getCommentRank']),
     ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
   },
-  mounted() {},
+  mounted() {
+    this.actNewBoards().then((result) => {
+      const boards = result;
+      for (let i = 0; i < boards.length; i++) {
+        if (!this.$store.getters['auth/getSubscribed'](boards[i].board_id)) {
+          //suggest에 사용할 보드 추가
+          boards[i].type = 'suggest';
+          this.favorites.push(boards[i]);
+          if (this.favorites.length >= 8) break;
+        }
+      }
+    });
+  },
   watch: {
     getFavorites: function() {
       this.favorites = this.getFavorites;
-      // this.favorites = JSON.parse(JSON.stringify(this.getFavorites));
-      for (let index = this.favorites.length; index < 8; index++) {
-        const item = { board_id: -1 };
-        this.favorites.push(item);
-      }
+    },
+    getLikeRank: function() {
+      this.forceRerender();
+    },
+    getCommentRank: function() {
+      this.forceRerender();
     },
   },
   methods: {
-    ...mapActions('main', ['actFavorites', 'actFollowRank', 'actPostRank', 'actLikeRank', 'actCommentRank']),
+    ...mapActions('main', ['actFavorites', 'actFollowRank', 'actPostRank', 'actLikeRank', 'actCommentRank', 'actNewBoards']),
+    forceRerender() {
+      this.componentKey += 1;
+    },
     clickFavorite: function(index) {
       this.$router.push(`board/${this.getFavorites[index].board_id}`);
     },
@@ -318,17 +335,14 @@ p {
   width: 100px;
   height: 50px;
   font-weight: 700;
-  color: var(--basic-color-fill3);
-  text-shadow: 0 0px 1px var(--basic-color-fill3);
   margin-left: 15px;
   border: none;
   border-radius: 30px;
-  background: #ebebe9;
-  box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff;
-  transition: 0.3s all ease;
+  transition: all 0.6s ease !important;
 }
 .c-btn:hover,
-c-btn:active {
+.c-btn:active {
+  background: #ebebe9;
   background: linear-gradient(145deg, #d4d4d2, #fbfbf9);
   box-shadow: 10px 10px 20px #b3b3b1, -10px -10px 20px #ffffff;
 }

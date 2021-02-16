@@ -28,6 +28,8 @@ public interface VoteService {
 	public List<Map<String, Object>> getVoteItem(int vote_id);
 
 	public void voteDeleteAll(int vote_id);
+
+	public List<Integer> getBoardVote(int board_id);
     
 }
 

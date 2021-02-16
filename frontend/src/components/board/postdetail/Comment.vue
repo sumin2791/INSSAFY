@@ -1,31 +1,60 @@
 <template>
-  <b-container>
-    <b-row class="comment" v-cloak>
-      <b-col sm="2" class="comment-header">
-        <div class="user-profile-img">
-          <b-avatar src="https://placekitten.com/300/300" size="2rem">유저프로필</b-avatar>
+  <v-card id="container">
+    <div id="post-detail">
+      <!-- 포스트 디테일 헤더 부분 -->
+      <div id="contents">
+        <div id="header">
+          <!-- 클릭시 드롭다운 -->
+          <v-menu
+            bottom
+            left
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                depressed
+                text
+                v-bind="attrs"
+                v-on="on"
+                class="px-0"
+              >
+                <div id="header-user-info">
+                  <!-- 프로필 사진 연결하기 -->
+                  <v-avatar size="40">
+                    <Profile id="profile-image"/>
+                  </v-avatar>
+                  <!-- 작성자이름, 작성일자 -->
+                  <div id="header-info">
+                    <div>
+                    {{ comment.user_nickname }}
+                    </div>
+                    <div>{{ date }}</div>
+                  </div>
+                </div>
+              </v-btn>
+            </template>
+            
+            <v-list>
+              <!-- 프로필 보기 -->
+              <v-list-item-group>
+                <v-list-item>
+                  <v-list-item-title>
+                    Profile 보기
+                  </v-list-item-title>
+                </v-list-item>
+                <!-- 메세지 보내기 -->
+                <v-list-item>
+                  <v-list-item-title>
+                    메세지 보내기
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-menu>
         </div>
-        <div class="header-detail">
-          <div class="user-name-date">
-            <b-dropdown id="dropdown-left" class="user-name" variant="link" toggle-class="text-decoration-none" no-caret>
-              <template #button-content>
-                {{comment.user_nickname}}
-              </template>
-              <b-dropdown-item href="#">Profile</b-dropdown-item>
-              <b-dropdown-item href="#">메시지 보내기</b-dropdown-item>
-            </b-dropdown>
-            <div class="comment-date">{{date}}</div>
-          </div>
-          <!-- <div @click="showBtn" id="btnCommentMobile">
-            <div>수정</div>
-            <div>삭제</div>
-          </div> -->
-        </div>
-      </b-col>
-      <b-col class="main">
         <div class="comment-description" @mouseover="showBtn" v-if="!Edit">
           {{commentDescription}}
         </div>
+        <!-- 내 댓글 수정시 나오는 input -->
         <div
           class="comment-description"
           v-if="Edit"
@@ -34,22 +63,30 @@
             dense
             label=""
             v-model="tempComment"
-            class="text-h5"
-            color="grey-darken-4"
           ></v-text-field>
         </div>
-        <div id="btnComment" v-if="!Edit">
+      </div>
+      <div>
+        <!-- 내 댓글 수정, 삭제 버튼 -->
+        <div 
+          id="btnComment" 
+          v-if="!Edit"
+          class="modify-btn"
+        >
           <div @click="btnCommentModify">수정</div>
           <div @click="btnCommentDelete">삭제</div>
         </div>
-        <div class="edit-button-set" v-if="Edit">
-          <button class="p-button r-desc" @click="submit">Edit</button>
-          <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
+        <!-- 수정 중 완료, 취소 버튼 -->
+        <div 
+          v-if="Edit"
+          class="modify-btn"
+        >
+          <button @click="submit">Edit</button>
+          <button @click="cancel">cancel</button>
         </div>
-        
-      </b-col>
-    </b-row>
-  </b-container>
+      </div>
+    </div>
+  </v-card>
 </template>
 
 <script>
@@ -58,10 +95,19 @@ import * as commentApi from '@/api/comment'
 import timeForToday from '@/plugins/timeForToday'
 import deepClone from '@/plugins/deepClone'
 
+// 프로필 이미지
+import Profile from '@/components/etc/Profile';
+// 스타일 적용
+// import '@/assets/css/static/style.css';
+
 export default {
   name:"Comment",
+  components: {
+    Profile,
+  },
   props:{
     comment:Object,
+    postUserId:String,
   },
   data(){
     return {
@@ -87,12 +133,11 @@ export default {
         return new Promise((r) => setTimeout(r, ms))
       }
       if(this.comment.user_id===localStorage.userId){
-        e.path[1].querySelector('#btnComment').style.visibility="visible"
-        console.log(e)
+        e.path[2].querySelector('#btnComment').style.visibility="visible"
         sleep(3000).then(() => {
 
-          if(typeof e === Object || !Object.keys(e.path[1].querySelector('#btnComment')).includes('style'))
-            e.path[1].querySelector('#btnComment').style.visibility="hidden"
+          if(typeof e === Object || !Object.keys(e.path[2].querySelector('#btnComment')).includes('style'))
+            e.path[2].querySelector('#btnComment').style.visibility="hidden"
         })
       }
       
@@ -129,7 +174,7 @@ export default {
       delete params.commentDto.user_nickname
       commentApi.comment_modify(params)
         .then(res=>{
-          console.log(res.data.message)
+          // console.log(res.data.message)
           if(res.data.message==='No Permission'){
             alert('구독 후에 이용가능합니다.')
           }else{
@@ -147,103 +192,89 @@ export default {
 </script>
 
 <style scoped>
-.row .comment{
-  display:flex;
-  /* margin-bottom: 1rem; */
-
-  padding:0 0.8rem;
-  flex:1;
+/* 전체 폰트 */
+#container {
+  font-family: 'Noto Sans KR', sans-serif !important;
+  background-color: #fcfcfc !important;
 }
-.comment-description{
-  display:flex;
-  /* margin-bottom: 1rem; */
-  padding:0rem;
-  flex:1;
-  margin:auto 0;
-}
-.comment .comment-header{
+/* 전체 detail 담겨진 부분 */
+#post-detail {
   display: flex;
-  /* margin-bottom: 0.5rem; */
-  padding-left:0;
-  padding-right:0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 1% 2%;
 }
-.comment .comment-header .header-detail{
-  /* display:flex; */
-  /* justify-content:space-between; */
+/* 프로필 이미지 */
+#profile-image {
   width: 100%;
+  height: 100%;
 }
-.user-name-date{
-  display:grid;
-  grid-template-columns: 1fr;
+/* 댓글 작성자 정보, 댓글 내용 */
+#contents {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 90%;
+}
+/* 사용자 정보 */
+#header {
+  margin: 1%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
 }
-.comment-date{
-  
-  font-size:0.6rem;
+/* 프로필, 닉네임, 작성일  */
+#header-user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
+/* 작성자 닉네임, 작성일 */
+#header-info {
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 0.6em;
+}
+/* 닉네임 */
+#header-info > div:first-child {
+  line-height: 110%;
+  font-size: 14px;
+  font-weight: 400;
+}
+/* 작성일자 */
+#header-info > div:last-of-type {
+  line-height: 110%;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+/* 게시글 내용 */
+#description {
+  margin: 0 0 0 1%;
+  font-size: 14px;
+}
+/* 보여주는 부분에서 이용 */
 #btnComment{
   visibility:hidden;
 }
-.edit-button-set{
+/* 댓글 내용 부분 margin */
+.comment-description {
+  overflow: auto;
+  width: 100%;
+  height: 40px;
+  align-self: center;
+  margin-left:10px;
+  margin-top:10px;
+}
+/* 댓글 조작 버튼 */
+.modify-btn {
   display: flex;
-}
-.p-button {
-  margin-left: 5px;
-  margin-top: 3px;
-  font-size: 14px;
-  padding: 4px 8px;
-  border: 1px solid #000;
-  border-radius: 30px;
-  transition: background-color 0.3s, color 0.3s ease;
-}
-.p-button:hover,
-.p-button:active {
-  color: #fff;
-  background-color: #000 !important;
-}
-.p-button-cancel {
-  margin-left: 5px;
-  margin-top: 3px;
-  font-size: 14px;
-  padding: 4px 8px;
-  border: 1px solid #000;
-  border-radius: 30px;
-  transition: background-color 0.3s, color 0.3s ease;
-}
-.p-button-cancel:hover,
-.p-button-cancel:active {
-  color: #fff;
-  background-color: #aa2610 !important;
-}
-/* #btnCommentMobile{
-  display:flex;
-} */
-.user-name{
-  display: inline-block;
-  font-size:1fr;
-}
-
-.main{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0;
-  /* width:100%; */
-}
-@media screen and (max-width:576px){
-  #btnComment{
-    display: none;
-  }
-  .user-name-date{
-  display:flex;
-  flex-direction: row;
-  justify-content: space-between;
-  /* grid-template-columns: 1fr 0.2fr; */
-}
-}
-@media screen and (min-width:576px){
-  #btnCommentMobile{
-    display: none;
-  }
+  flex-direction: column;
+  cursor: pointer;
 }
 </style>

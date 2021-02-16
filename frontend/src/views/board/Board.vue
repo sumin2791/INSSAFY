@@ -4,6 +4,7 @@
       <v-container id="container" class="pt-8">
         <!-- PC에서 보여줄 curation이름과 검색 -->
         <v-row
+          id="board-header"
           v-if="!ResponsiveSize.isMobile"
           no-gutters
           class="d-flex 
@@ -26,7 +27,7 @@
         <v-row>
           <!-- 왼쪽 보드 설명 및 추가 기능 -->
           <v-col class="col-12 col-sm-3">
-            <v-sheet id="custom-container">
+            <div id="description" class="rounded-bg container-description">
               <v-list color="transparent">
                 <div
                   class="d-flex
@@ -35,18 +36,21 @@
                   style="min-height: 25vh;"
                 >
                   <!-- 보드 설명 -->
-                  <BoardDescription :in-board="inBoard" :is-manager="isManager" />
+                  <BoardDescription :in-board="inBoard" :is-manager="isManager" @board-image="boardImage" />
                   <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
                   <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button>
                 </div>
               </v-list>
-              <hr />
-              <div class="board-function">보드특수기능들</div>
-              <div class="add-board-function">보드기능 추가</div>
-            </v-sheet>
+              <v-divider class="my-2"></v-divider>
+              <v-list color="transparent">
+                <CheckList :is-manager="isManager" v-if="isCheck" />
+                <VoteList v-if="isVote" />
+                <UserRank v-if="isRank" />
+              </v-list>
+            </div>
           </v-col>
           <v-col class="col-12 col-sm-9">
-            <PostWrite :in-board="inBoard" />
+            <PostWrite :in-board="inBoard" style="margin:0 10px" />
             <PostList />
           </v-col>
         </v-row>
@@ -67,12 +71,22 @@ import * as boardApi from '@/api/board';
 // 스타일 적용
 import '@/assets/css/static/style.css';
 
+// 체크리스트
+import CheckList from '@/components/addfunc/CheckList';
+// 투표
+import VoteList from '@/components/addfunc/VoteList';
+// 유저랭킹
+import UserRank from '@/components/addfunc/UserRank';
+
 export default {
   name: 'Board',
   components: {
     BoardDescription,
     PostList,
     PostWrite,
+    CheckList,
+    VoteList,
+    UserRank,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy() {
@@ -98,6 +112,7 @@ export default {
 
       inBoard: '',
       isManager: false,
+      boardimg: '',
     };
   },
   created() {
@@ -117,13 +132,41 @@ export default {
         this.isManager = true;
       }
     }
+    if (this.boardimg != '') {
+      console.log(this.boardimg);
+      const header = document.querySelector('#board-header');
+      header.style.background = `url(${this.boardimg})`;
+    }
+    // 추가기능 정보 vuex 저장
+    this.fetchData();
   },
   computed: {
     // inBoard() {
     //   return this.$store.state.board.inBoard
     // }
+    // 추가기능 체크
+    isCheck() {
+      return this.$store.state.addfunc.isCheckList;
+    },
+    isCalendar() {
+      return this.$store.state.addfunc.isCalendar;
+    },
+    isVote() {
+      return this.$store.state.addfunc.isVote;
+    },
+    isRank() {
+      return this.$store.state.addfunc.isRank;
+    },
   },
   methods: {
+    boardImage(boardimg) {
+      this.boardimg = boardimg;
+      if (this.boardimg != null) {
+        const header = document.querySelector('#board-header');
+        header.style.minHeight = '250px';
+        header.style.background = `url(${this.boardimg})`;
+      }
+    },
     // 현재 활성화된 기기에 따라 flag 변경
     onResize() {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
@@ -166,12 +209,25 @@ export default {
               });
             }
             localStorage.subBoard = JSON.stringify(boards);
+            this.$store.commit('auth/setSubBoardRefresh');
           }
         })
         .catch((err) => {
           console.log(err);
         });
-      return;
+    },
+    // 추가기능 flag 정보 가져오기
+    fetchData() {
+      boardApi
+        .board_detail(this.$route.params.board_id)
+        .then((res) => {
+          const addfunc = res.data.board_function;
+          // 추가기능 여부 갱신
+          this.$store.dispatch('addfunc/isUsed', addfunc);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
 };
@@ -181,24 +237,31 @@ export default {
 .main-bg-color {
   background-color: #ebebe9;
 }
-/* 전체 폰트 /
+/* 전체 폰트 */
 #container {
   font-family: 'Noto Sans KR', sans-serif !important;
 }
-/ 왼쪽, 오른쪽 섹션 컨테이너 /
-#custom-container {
+/* 왼쪽, 오른쪽 섹션 컨테이너 */
+.custom-container {
   box-shadow: var(--basic-shadow-s) !important;
   border-radius: 15px !important;
   background-color: var(--basic-color-bg2) !important;
 }
-/ 구독버튼 */
+
+/* 구독버튼 */
+.container-description {
+  width: 100%;
+  margin: 0px 0 20px;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
+}
 .btn-subscribe {
   text-align: center;
   margin: auto;
   height: 50px;
-  width: 60%;
+  width: 80%;
   border: none;
-  border-radius: 30px;
+  border-radius: 5px;
   color: var(--basic-color-bg);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
   background: var(--basic-color-key) !important;
@@ -217,13 +280,13 @@ export default {
   text-align: center;
   margin: auto;
   height: 50px;
-  width: 60%;
+  width: 80%;
   border: none;
-  border-radius: 30px;
-  color: var(--basic-color-bg);
+  border-radius: 5px;
+  color: var(--basic-color-key);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
-  background: var(--basic-color-fill2) !important;
-  box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff;
+  background: var(--basic-color-bg2) !important;
+  /* box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff; */
   transition: 0.3s all ease;
   display: flex;
   justify-content: center;
@@ -233,5 +296,8 @@ export default {
 .btn-subscribing:active {
   background-color: var(--basic-color-bg) !important;
   color: var(--basic-color-key);
+}
+#custom-container {
+  background-color: var(--basic-color-bg2) !important;
 }
 </style>

@@ -23,9 +23,12 @@
         <b-dropdown-item id="declare">신고</b-dropdown-item>
       </b-dropdown>
     </div>
-    <div class="">
+    <div class="post-body">
       <div class="title f-text b-desc">{{post.bamboo_title}}</div>
       <div class="description r-desc">{{post.bamboo_description}}</div>
+      <div>
+        <img id="description-image" v-if="post.bamboo_image" :src="post.bamboo_image" alt="이미지 미리보기...">
+      </div>
     </div>
     <!-- <div class="post-footer">
       <div v-if="post.post_like>=10">
@@ -90,10 +93,10 @@ export default {
   margin-bottom: 0rem !important;
   background-color: #fff;
   padding: 0.8rem;
-  border:1px #949590 solid;
   border-radius:10px;
   height:auto;
   width:100%;
+  box-shadow: var(--basic-shadow-w);
 }
 .post .post-header{
   margin-bottom: 0.5rem;
@@ -102,6 +105,10 @@ export default {
 }
 .post .post-body{
   /* height:auto; */
+}
+#description-image{
+  margin: 0 auto 1% auto;
+  max-width: 100%;
 }
 .post .post-footer{
   display:flex;

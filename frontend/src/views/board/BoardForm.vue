@@ -47,7 +47,7 @@
               @keypress.enter="addHashtag()"
             ></v-text-field>
             <!-- 해쉬태그 보여지는 부분 -->
-            <div>
+            <div class="hash-group">
               <v-chip-group 
                 v-for="(hashtag, idx) in hashtags"
                 :key="idx">
@@ -69,6 +69,7 @@
           <v-col>
             <div class="my-2">대표 이미지</div>
             <v-file-input class="d-flex"
+              v-model="file"
               filled
               solo
               prepend-icon="mdi-image"
@@ -94,15 +95,33 @@
           </v-col>
           <!-- 추가 기능 -->
           <v-col>
-            <b-form-group label="추가기능(optional)" v-slot="{ ariaDescribedby }">
-              <b-form-checkbox-group
-                id="checkbox-group-1"
-                v-model="selected"
-                :options="options.f"
-                :aria-describedby="ariaDescribedby"
-                name="flavour-1"
-              ></b-form-checkbox-group>
-            </b-form-group>
+            <!-- 추가기능 추가 정보(편집) -->
+            <div id="add-func-group">
+              <div>추가기능</div>
+              <div
+                id="add-func-item"
+                v-for="(func, idx) in addFuncAll"
+                :key="idx"
+              >
+                <v-checkbox
+                  hide-details
+                  color="#0B2945"
+                  :label="func.option"
+                  v-model="func.state"
+                ></v-checkbox>
+                <v-tooltip right>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon
+                      id="add-func-info"
+                      v-bind="attrs"
+                      v-on="on"
+                      color="#AA2610"
+                    >mdi-information-outline</v-icon>
+                  </template>
+                  <span v-html="func.explain"></span>
+                </v-tooltip>
+              </div>
+            </div>
           </v-col>
         </v-col>
       </v-row>
@@ -127,33 +146,57 @@
 
 <script>
 import * as boardApi from '@/api/board';
+import {imageUpload} from '@/api/main'
 
 export default {
   name:"BoardForm",
+  watch: {
+    addFuncAll:'checkAddFunc'
+  },
   data() {
     return {
       switch1: true,
       title:'',
       description:'',
-      file1:[],
+      file:[],
       hashtag:'',
       hashtags:[],
       location:'',
       selected: [],
       options: {
-        f:[
-          {text:'인기글',value:'popular',disabled:false},
-          {text:'랭킹',value:'rank',disabled:false},
-          {text:'체크리스트',value:'checklist',disabled:true},
-          {text:'달력',value:'calender',disabled:true},
-          {text:'투표',value:'vate',disabled:true},
-        ],
         location: ['서울', '대전', '구미', '광주'],
         ikmyeong:false,
       },
+      // 전체 추가기능 목록 (체크되어 있는지)
+      addFuncAll: [
+        {
+          option: '체크리스트',
+          state: false,
+          explain: '구성원들과 함께 간단한 <strong>할 일 목록</strong>을 만들어서 관리해보세요.<br>보드를 효율적으로 사용할 수 있게 됩니다.',
+        }, 
+        {
+          option: '캘린더',
+          state: false,
+          explain: '캘린더에 일정을 표시하여 서로의 일정을 공유하고<br> 구성원들의 <strong>스케쥴 관리를 효율적</strong>으로 할 수 있게 도와줍니다.',
+        }, 
+        {
+          option: '투표',
+          state: false,
+          explain: '결정하기 힘든 일은 투표를 통해 확인하는 것은 어떨까요?<br>투표를 만들고 투표내 항목을 만들어 투표를 생성해보세요',
+        }, 
+        {
+          option: '랭킹',
+          state: false,
+          explain: '보드를 활발히 활동하는 유저는 누군지 확인할 수 있게<br> <strong>TOP3</strong> 활동 유저를 확인해보세요',
+        }, 
+      ],
     }
   },
   methods: {
+    // 추가기능 test
+    checkAddFunc() {
+      console.log(this.addFuncAll)
+    },
     addHashtag() {
       if(this.hashtags.length===5){
         alert('해쉬태그는 5개 이하만 가능합니다.')
@@ -165,7 +208,10 @@ export default {
     deleteHashtag(e){
       this.hashtags.splice(e,1)
     },
-    onCreate(){
+    async onCreate(){
+      console.log('사진')
+      console.log(this.file)
+      console.log('/사진')
       //@param : user_id, board_name, board_description, board_location, board_igmyeong, board_hash, checklist_flag, calendar_flag, vote_flag
       let board={
         user_id: localStorage.getItem('userId'),
@@ -173,31 +219,50 @@ export default {
         board_description: this.description,
         board_location: '전체',
         board_igmyeong: 0,
+        board_image:'',
         board_hash:this.hashtags.join('|'),
-        checklist_flag:0,
-        calendar_flag:0,
-        vote_flag:0,
+// 추가기능 삽입 추가
+        checklist_flag:(this.addFuncAll[0].state ? 1 : 0),
+        calendar_flag:(this.addFuncAll[1].state ? 1 : 0),
+        // // 랭킹 현재 연결 없으니 주석처리
+        user_rank_flag:(this.addFuncAll[3].state ? 1 : 0),
+        vote_flag:(this.addFuncAll[2].state ? 1 : 0),
         board_state:0
       };
-      boardApi.board_create(board).then(response => {
-        console.log(response.data);
-        const subBoard = JSON.parse(localStorage.subBoard)
-        subBoard.push({
-          board_id:response.data.board_id,
-          user_id:localStorage.userId,
-          favorite_flag:0,
-          is_used:1,
-          user_role:1,
-          write_post_count:0
+      try{
+        if(this.file.length!=0){
+          let fd = new FormData();
+          fd.append('file',this.file)
+          
+          const responseUpload = await imageUpload(fd)
+          board.board_image = String(responseUpload.data.imgPath)
+        }
+
+
+        await boardApi.board_create(board).then(response => {
+          const subBoard = JSON.parse(localStorage.subBoard)
+          subBoard.push({
+            board_id:response.data.board_id,
+            user_id:localStorage.userId,
+            favorite_flag:0,
+            is_used:1,
+            user_role:1,
+            write_post_count:0
+          })
+          localStorage.subBoard = JSON.stringify(subBoard)
+          alert('게시판 보드 생성')
+          
+          this.$router.push({name:'Board',params:{board_id:Number(response.data.board_id)}})
+        }).catch(error => {
+          console.log(error);
+          this.$router.push({name:'SearchBoard'})
+          alert("보드 생성에 실패하였습니다.");
         })
-        localStorage.subBoard = JSON.stringify(subBoard)
-        alert('게시판 보드 생성')
-        
-        this.$router.push({name:'Board',params:{board_id:response.data.board_id}})
-      }).catch(error => {
-        console.log(error);
-        alert("보드 생성에 실패하였습니다.");
-      })
+      }catch(err){
+        this.$router.push({name:'SearchBoard'})
+        console.log('BoardForm - 보드생성 에러')
+        console.log(err)
+      }
     }
   }
 }
@@ -207,5 +272,22 @@ export default {
 /* 전체 메인 배경색 */
 .main-bg-color {
   background-color: #ebebe9;
+}
+/* 추가기능 항목 아이템들 */
+#add-func-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 20px 0 25px;
+}
+/* 추가기능 항목 설명 아이콘 */
+#add-func-info {
+  align-self: flex-end;
+}
+/* 해쉬태그 나오는 부분 */
+.hash-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 </style>

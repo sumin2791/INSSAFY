@@ -70,4 +70,16 @@ public interface BoardMapper {
 	public int getTotalCnt();
 
 	public int getSearchCnt(String keyword);
+
+	public Map<String, Object> boardFunc(int board_id);
+
+	public void modifyFunction(Map<String, Object> map2);
+
+	public void addChecklist(Map<String, Object> map2);
+
+	public void addCalendar(Map<String, Object> map2);
+
+	public void addVote(Map<String, Object> map2);
+
+	public void addUserRank(Map<String, Object> map2);
 }

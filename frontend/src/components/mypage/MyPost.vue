@@ -30,7 +30,7 @@
         </div>
       </div>
       <GradientGenerator class="myinfo-list" style="height: 100px" v-if="board_image == null" :radius="radius" />
-      <v-img src="@/assets/images/slide.jpg" height="100px" class="myinfo-list blur" v-if="board_image != null"> </v-img>
+      <v-img height="100px" class="myinfo-list blur" v-if="board_image != null" :style="{ backgroundImage: `url(${board_image})` }"> </v-img>
     </div>
     <!-- 포스트 제목 -->
     <v-card-title
@@ -99,6 +99,9 @@ export default {
       board_image: null,
       radius: '15px',
     };
+  },
+  mounted() {
+    console.log(this.post);
   },
   methods: {
     // 작성글 삭제
@@ -188,6 +191,7 @@ export default {
 }
 .myinfo-list {
   border-radius: 15px;
+  background-color: #000;
   box-shadow: var(--basic-shadow-m);
 }
 </style>

@@ -32,15 +32,15 @@
         <!-- 보드 생성 버튼 -->
         <div>
           <v-btn
-            color="brown darken-1"
+            id="create-btn"
             @click="goToCreateBoard()"
           >
             <v-icon
-              color="#fff"
+              color="#AA2610"
             >
               mdi-plus
             </v-icon>
-            <div class="text-white">보드 만들기</div>
+            <div class="text-btn">보드 만들기</div>
           </v-btn>
         </div>
       </div>
@@ -50,6 +50,9 @@
           <Board :board="board"/>
         </v-col>
       </v-row>
+      <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+        <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
+      </infinite-loading>
     </v-container>
   </v-main>
 </template>
@@ -58,10 +61,13 @@
 import Board from '@/components/search/Board.vue'
 import * as boardApi from '@/api/board'
 
+import InfiniteLoading from 'vue-infinite-loading';
+
 export default {
   name: 'SearchBoard',
   components: {
     Board,
+    InfiniteLoading,
   },
   data() {
     return {
@@ -72,19 +78,40 @@ export default {
       },
       // 검색 정렬 조건
       sortResult: ['최신순', '인기순'],
+      boardList:[],
+      page : 0,
     }
   },
   computed:{
-    boardList(){
-      return this.$store.state.board.boardList
-    }
+    // boardList(){
+    //   return this.$store.state.board.boardList
+    // }
   },
   created() {
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     goToCreateBoard() {
       return this.$router.push({ name: 'BoardForm' });
+    },
+    infiniteHandler($state){
+      const EACH_LEN = 12
+      boardApi.get_boards({sort:"sort",page:this.page,size:EACH_LEN})
+      .then((res)=>{
+        setTimeout(()=>{
+          if(res.data.boardList){
+            this.boardList = this.boardList.concat(res.data.boardList);
+            this.page += 1;
+            $state.loaded();
+            if(res.data.boardList.length / EACH_LEN <1){
+              $state.complete();
+            }
+          }else{
+            $state.complete();
+          }
+        },1000);
+      })
+      .catch(err=>{console.log(err)})
     },
     fetchData() {
       boardApi.get_boards('sort')
@@ -123,5 +150,31 @@ export default {
 .search-result-board {
   flex-basis: 19.5%;
   border: 3px dotted #000000;
+}
+/* 보드 만들기 버튼 */
+#create-btn {
+  position: sticky;
+  text-align: center;
+  margin: auto;
+  height: 50px;
+  width:100%;
+  border: none;
+  color: var(--basic-color-fill);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: #ebebe9 !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  border-radius: 15px !important;
+  transition: 0.3s all ease;
+}
+#create-btn:hover,
+#create-btn:active,
+#create-btn:focus {
+  color: #ebebe9 !important;    
+  background-color: var(--basic-color-bg2) !important;
+}
+/* 보드 생성 버튼 */
+.text-btn {
+  color: #AA2610;
 }
 </style>

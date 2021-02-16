@@ -15,20 +15,7 @@
       <v-card-text>
         <v-container>
           <v-row>
-            <!-- 기존의 비밀번호 확인 -->
-            <v-text-field
-              v-model="email"
-              id="email"
-              label="이메일"
-              hint="이메일을 입력해주세요."
-              color="blue darken-4"
-              :type="'text'"
-              required
-            ></v-text-field>
-            <div class="error-text" :class="{ visible: error.email && email.length !== 0 }">
-              {{ error.email }}
-            </div>
-            <!-- 새로운 비밀번호 -->
+            <!--비밀번호 -->
             <v-text-field
               v-model="password"
               id="password"
@@ -39,7 +26,7 @@
               required
             ></v-text-field>
           </v-row>
-          <div class="error-text" :class="{ visible: error.password && passwordConfirm.length !== 0 }">
+          <div class="error-text" :class="{ visible: error.password !== 0 }">
             {{ error.passwordConfirm }}
           </div>
         </v-container>
@@ -69,14 +56,11 @@ export default {
   name: 'AccoundDelete',
   data() {
     return {
-      // 기존 비밀번호
-      email: '',
       password: '',
       passwordSchema: new PV(),
       // 에러 메세지
       error: {
-        email: false,
-        passwordConfirm: false,
+        passwordConfirm: '',
       },
       pass: false,
 
@@ -111,10 +95,6 @@ export default {
       if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
       else this.error.password = false;
 
-      this.email = this.email.toLowerCase();
-      if (this.email.length >= 0 && !EmailValidator.validate(this.email)) this.error.email = '이메일 형식이 아닙니다.';
-      else this.error.email = false;
-
       let isSubmit = true;
       Object.values(this.error).map((v) => {
         if (v) isSubmit = false;
@@ -123,7 +103,7 @@ export default {
     },
     submit: function() {
       // this.$store.dispatch('auth/postPassword', this.password);
-      this.$store.dispatch('auth/putPassword', [this.password, this.email]);
+      this.$store.dispatch('auth/actDeleteUser', [this.password]);
       this.dialog = false;
     },
   },

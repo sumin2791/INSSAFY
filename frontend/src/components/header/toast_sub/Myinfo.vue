@@ -16,7 +16,7 @@ export default {
   name: 'Info',
   data() {
     return {
-      infoList: ['My Info', 'Notify', 'Logout'],
+      infoList: ['My Info', 'Logout'],
       linkList: ['edu.ssafy↗', 'lab.ssafy↗', 'project.ssafy↗'],
     };
   },
@@ -33,10 +33,7 @@ export default {
         case 0:
           this.$router.push({ name: 'Mypage' });
           break;
-        case 1:
-          alert('clicked notify');
-          break;
-        case 2: //로그아웃
+        case 1: //로그아웃
           this.$store.dispatch('auth/logout');
           this.$router.push({ name: 'Login' });
           break;

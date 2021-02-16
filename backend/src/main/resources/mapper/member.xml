@@ -58,7 +58,7 @@
 		where user_email = #{user_email} and is_used = 1;
 	</update>
 
-	<update id="userDelete" parameterType="string">
+	<update id="userDelete" parameterType="String">
 		update user 
 		set is_used = 0
 		where user_id = #{user_id} and is_used = 1;
@@ -116,6 +116,6 @@
 	<select id="userDtoById" parameterType="string" resultType="UserDto">
 		select *
 		from user
-		where user_id = #{user_id}
+		where user_id = #{user_id} and is_used=1;
 	</select>
 </mapper>

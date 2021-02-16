@@ -133,7 +133,7 @@ public class CalendarItemController {
      * 
      * @return ResultMap * time:
      */
-    @PutMapping("delete")
+    @PutMapping("/delete")
     public ResponseEntity<Map<String, Object>> deleteCalendars(@RequestParam String calendar_item_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -161,7 +161,7 @@ public class CalendarItemController {
      * 
      * developer: 윤수민
      * 
-     * @param 
+     * @param
      * 
      * @return: message, calendarList
      */
@@ -182,5 +182,5 @@ public class CalendarItemController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
-    
+
 }

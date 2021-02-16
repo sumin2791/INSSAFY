@@ -32,14 +32,6 @@ alert(response.data.user.user_email);
       </div>
     </div>
     <div id="nav-container-mobile" class="navigation">
-      <div id="hamberger" class="m-btn" @click="clickHanberger">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-          <path d="M24 6h-24v-4h24v4zm0 4h-24v4h24v-4zm0 8h-24v4h24v-4z" />
-        </svg>
-      </div>
-      <div id="nav-logo-m" @click="clickLogo" class="b-title">
-        iN.SSAFY
-      </div>
       <div id="search" class="m-btn" @click="clickSearch" v-if="getToken != null">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path
@@ -47,6 +39,10 @@ alert(response.data.user.user_email);
           />
         </svg>
       </div>
+      <div id="nav-logo-m" @click="clickLogo" class="b-title">
+        iN.SSAFY
+      </div>
+      <Profile id="icon-profile" class="m-btn" @clickProfile="clickHanberger" v-if="getToken != null" />
       <button id="login-btn2" class="m-btn" @click="clickLoginBtn" v-if="getToken == null">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
           <path
@@ -59,6 +55,7 @@ alert(response.data.user.user_email);
       <Toast id="toast" :class="{ toast_hide: !getToastActive }" />
       <div id="toast-bg" :class="{ toast_hide: !getToastActive }" @click="clickOutsideTheToast" />
     </div>
+    <!-- <div class="the-blur"></div> -->
   </div>
 </template>
 
@@ -93,7 +90,7 @@ export default {
       this.$store.commit('setToastType', 'search');
     },
     clickNBtn2: function() {
-      alert('clicked Btn2');
+      this.$router.push({ name: 'ChatPage'});
     },
     clickNBtn3: function() {
       this.$store.commit('setToastTogle');
@@ -117,6 +114,11 @@ export default {
 </script>
 
 <style scoped>
+/* 배경 흐림 효과 */
+/* .the-blur {
+
+} */
+
 /* 로그인 페이지 일 때 로그인 버튼 숨기기 위해 */
 #toast {
   position: fixed;
@@ -199,13 +201,19 @@ svg {
   width: 40px;
   height: 40px;
   padding: 2px;
+  box-sizing: content-box;
   margin: 5px 10px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
 }
 #icon-profile:hover,
 #icon-profile:active {
-  transform: scale(1.2);
+  transform: scale(1.05);
+}
+@media (max-width: 426px) {
+  #icon-profile {
+    margin-top: 10px;
+  }
 }
 
 #login-btn {
@@ -231,7 +239,7 @@ svg {
 #nav-logo-m {
   width: 160px;
   padding: 8px;
-  margin-left: 4px;
+  margin-left: 10px;
   text-align: center;
   font-size: 26px;
 }
