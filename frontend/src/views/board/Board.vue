@@ -158,7 +158,7 @@ export default {
   methods: {
     boardImage(boardimg) {
       this.boardimg = boardimg;
-      if (this.boardimg != null) {
+      if (this.boardimg != '') {
         const header = document.querySelector('#board-header');
         header.style.minHeight = '250px';
         header.style.background = `url(${this.boardimg})`;

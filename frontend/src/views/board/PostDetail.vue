@@ -33,18 +33,17 @@
             <!-- 입력창 부분 -->
             <v-spacer></v-spacer>
             <div id="input">
-                <v-text-field
-                  solo
-                  dense
-                  id="comment"
-                  v-model="comment"
-                  @keypress.enter="createComment"
-                >
-                </v-text-field>
-                <v-btn
-                  @click="createComment"
-                ><v-icon>mdi-send</v-icon>
-                </v-btn>
+              <input
+                id="comment"
+                v-model="comment"
+                placeholder="한마디!"
+                @keypress.enter="createComment"
+              >
+              <v-btn
+                id="btn-comment"
+                @click="createComment"
+              ><v-icon>mdi-send</v-icon>
+              </v-btn>
             </div>
               <CommentList :comments="comments" :postUserId="this.post.user_id"/>
             </v-card>
@@ -177,6 +176,17 @@ export default {
 </script>
 
 <style scoped>
+#input{
+  margin-bottom: 1px;
+}
+#comment{
+  width:95%;
+  padding: 5px 10px 5px 10px;
+  height: 40px;
+}
+#btn-comment{
+  height: 40px;
+}
 /* 전체 메인 배경색 */
 #main-bg {
   background-color: #ebebe9 !important;
@@ -212,5 +222,9 @@ export default {
 #input {
   display: flex;
   flex-direction: row;
+  min-height: 10px;
+}
+.v-text-field__details{
+  min-height: 0px;
 }
 </style>
