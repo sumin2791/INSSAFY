@@ -161,7 +161,6 @@ export default {
         board_state:3
       };
       boardApi.board_create(board).then(response => {
-        console.log(response.data);
         const subBoard = JSON.parse(localStorage.subBoard)
         subBoard.push({
           board_id:response.data.board_id,
@@ -174,7 +173,6 @@ export default {
         localStorage.subBoard = JSON.stringify(subBoard)
         this.$router.push({name:'Study',params:{board_id:response.data.board_id}})
       }).catch(error => {
-        console.log(error);
         alert("보드 생성에 실패하였습니다.");
       })
     }

@@ -124,7 +124,6 @@ export default {
   created(){
     studyApi.getMyGroupList(localStorage.userId)
     .then(res=>{
-      console.log(res)
       const group = res.data.studyList.filter((group) => {
         if(group!=null){
           return group

@@ -50,15 +50,10 @@ export default {
       if(this.isManager){
         studyApi.studyRequestProcess( this.user.user_id,Number(this.$route.params.board_id),1)
         .then(res=>{
-          console.log('수락하기')
-          console.log(res)
-          console.log('---------')
           this.$store.dispatch('study/isWriteFlag')
         })
         .catch(err=>{
-          console.log('수락실패')
           console.log(err)
-          console.log('--------')
         })
       }else{
         alert('매니저만 할 수 있어요.')
@@ -68,15 +63,10 @@ export default {
       if(this.isManager){
         studyApi.studyRequestProcess( this.user.user_id,Number(this.$route.params.board_id),-1)
         .then(res=>{
-          console.log('거절하기')
-          console.log(res)
-          console.log('---------')
           this.$store.dispatch('study/isWriteFlag')
         })
         .catch(err=>{
-          console.log('거절실패')
           console.log(err)
-          console.log('--------')
         })
       }else{
         alert('매니저만 할 수 있어요.')
@@ -84,7 +74,7 @@ export default {
     }
   },
   created(){
-    console.log(this.user)
+    
   }
 }
 </script>
