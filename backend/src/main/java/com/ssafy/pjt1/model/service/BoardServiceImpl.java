@@ -198,4 +198,64 @@ public class BoardServiceImpl implements BoardService {
 		sqlSession.getMapper(BoardMapper.class).addUserRank(map2);
 	}
 
+	@Override
+	public int getSearchCntN(String keyword) {
+		return sqlSession.getMapper(BoardMapper.class).getSearchCntN(keyword);
+	}
+
+	@Override
+	public int getSearchCntD(String keyword) {
+		return sqlSession.getMapper(BoardMapper.class).getSearchCntD(keyword);
+	}
+
+	@Override
+	public int getSearchCntL(String keyword) {
+		return sqlSession.getMapper(BoardMapper.class).getSearchCntL(keyword);
+	}
+
+	@Override
+	public int getSearchCntH(String keyword) {
+		return sqlSession.getMapper(BoardMapper.class).getSearchCntH(keyword);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBoardNewN(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardNewN(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBoardNewD(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardNewD(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBoardNewL(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardNewL(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBoardNewH(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardNewH(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBoardPopularN(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardPopularN(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBoardPopularD(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardPopularD(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBoardPopularL(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardPopularL(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBoardPopularH(Map<String, Object> map) {
+		return sqlSession.getMapper(BoardMapper.class).searchBoardPopularH(map);
+	}
+
 }
