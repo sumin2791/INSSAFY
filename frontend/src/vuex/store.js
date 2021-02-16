@@ -16,6 +16,7 @@ import main from './main';
 import user from './user';
 import bamboo from './bamboo';
 import market from './market';
+import calendar from './calendar';
 
 Vue.use(Vuex);
 
@@ -74,6 +75,7 @@ export default new Vuex.Store({
     main,
     user,
     bamboo,
-    market
+    market,
+    calendar,
   },
 });

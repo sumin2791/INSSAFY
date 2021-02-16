@@ -2,8 +2,7 @@
   <div id="wrap">
     <div id="popular-item">
       <div id="header">
-        <!-- <div id="h-bg" :style="{ backgroundImage: `url(${item.image})` }" /> -->
-        <div id="h-bg" :class="{ none: !imageState }" />
+        <div id="h-bg" :class="{ none: !imageState }" :style="{ backgroundImage: `url(${imageState})` }" />
         <GradientGenerator id="h-bg" :class="{ none: imageState }" />
         <div id="h-inner" @click="clickHeader">
           <!-- <p id="type" class="l-desc-e">{{ `Type` }}</p> -->
@@ -89,12 +88,11 @@ export default {
   },
   created() {
     //이미지 상태 초기화
-    if (this.item.baord_image == undefined || this.item.board_image == 'null' || this.item.board_image == '') {
-      this.imageState == false;
+    if (this.item.board_image == undefined || this.item.board_image == 'null' || this.item.board_image == '') {
+      this.imageState = false;
     } else {
-      this.imageState == this.item.board_image;
+      this.imageState = this.item.board_image;
     }
-
     // console.log(this.$store.getters['auth/getSubBoardList']);
     // console.log(this.getSubscribed(this.item.board_id));
   },

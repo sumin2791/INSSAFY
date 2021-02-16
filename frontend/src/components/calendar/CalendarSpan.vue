@@ -18,26 +18,46 @@
             @blur="date = parseDate(dateFormatted)"
             v-on="on"
             hide-details=""
-            style="margin: 16px 10px 0 0; width: 20%;"
+            style="margin: 16px 10px 0 0; width: 20%; color: #000;"
           ></v-text-field>
         </template>
-        <v-date-picker v-model="date" no-title @input="menu = false"></v-date-picker>
+        <v-app style="height: 300px; overflow:hidden;">
+          <v-date-picker id="picker" v-model="date" no-title @input="menu = false"></v-date-picker>
+        </v-app>
       </v-menu>
 
       <v-select v-model="type" :items="typeOptions" label="Type" class="my-auto" hide-details style="margin: 0 4px 0 10px; width: 20%;"></v-select>
     </div>
 
-    <div id="calendar-container" class="container-shadow">
-      <v-calendar id="calendar" ref="calendar" :start="date" :type="type"></v-calendar>
-    </div>
+    <v-app style="background-color:inherit; height:inherit">
+      <div id="calendar-container" class="container-shadow" style="height: 550px">
+        <v-calendar
+          id="calendar"
+          ref="calendar"
+          :event-color="getEventColor"
+          :events="events"
+          :start="date"
+          :type="type"
+          @click:date="open"
+          @click:event="showEvent"
+          @click:more="moreEvent"
+          @click:time="open"
+          v-model="date"
+        ></v-calendar>
+      </div>
+    </v-app>
   </div>
 </template>
 
 <script>
 import moment from 'moment';
+import { mapState } from 'vuex';
 
 export default {
   name: 'CalendarSpan',
+  props: {
+    boardName: String,
+  },
   data() {
     return {
       dateOpen: false,
@@ -53,10 +73,14 @@ export default {
       menu: false,
     };
   },
+  created() {
+    this.$store.dispatch('calendar/actGetEvents', this.boardName);
+  },
   computed: {
     computedDateFormatted() {
       return this.formatDate(this.date);
     },
+    ...mapState('calendar', ['events']),
   },
   watch: {
     date(val) {
@@ -64,29 +88,57 @@ export default {
     },
   },
   methods: {
+    //캘린더 내 활용 메서드
     formatDate(date) {
       if (!date) return null;
       const [year, month, day] = date.split('-');
-      return `${year}. ${month}. ${day}`;
+      return `${year}. ${month}. ${day}. `;
     },
     parseDate(date) {
       if (!date) return null;
       const [year, month, day] = date.split('. ');
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     },
-    clickChevronLeft: function() {
+    getEventColor(event) {
+      return event.color;
+    },
+
+    //클릭 이벤트
+    //캘린더 month 좌우 꺽쇠 아이콘
+    clickChevronLeft() {
       const nextMoment = moment(this.date, 'YYYY-MM-DD').subtract(1, 'month');
       this.date = nextMoment.format('YYYY-MM-DD');
     },
-    clickChevronRight: function() {
+    clickChevronRight() {
       const nextMoment = moment(this.date, 'YYYY-MM-DD').add(1, 'month');
       this.date = nextMoment.format('YYYY-MM-DD');
+    },
+    //버튼 이벤트
+    open(date) {
+      this.$store.commit('calendar/OPEN_CALENDAR_DIALOG', date);
+    },
+    showEvent({ event }) {
+      this.$store.commit('calendar/OPEN_EVENT_DETAIL_DIALOG', event);
+    },
+    moreEvent({ date }) {
+      this.type = 'day';
+      this.date = date;
+      this.$toast.open({
+        message: '하루 일정으로 변경되었습니다.',
+        type: 'default',
+      });
     },
   },
 };
 </script>
 
 <style scoped>
+v-app {
+  height: auto;
+}
+.v-btn::before {
+  background-color: var(--basic-color-key);
+}
 #wrap {
   display: flex;
   flex-direction: column;
@@ -124,7 +176,6 @@ export default {
   transform: scale(1.2);
 }
 #calendar-container {
-  height: calc(100% - 100px);
   margin: 10px;
   overflow: hidden;
   border-radius: 15px;

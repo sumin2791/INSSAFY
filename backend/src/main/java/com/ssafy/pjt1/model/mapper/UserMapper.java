@@ -1,6 +1,5 @@
 package com.ssafy.pjt1.model.mapper;
 
-import com.ssafy.pjt1.model.dto.post.PostDto;
 import com.ssafy.pjt1.model.dto.subscription.SubscriptionDto;
 import com.ssafy.pjt1.model.dto.user.UserDto;
 

@@ -39,7 +39,7 @@ public class ChatServiceImpl implements ChatService {
     // 메시지 다 갖고오기
     @Override
     public List<ChatMessage> getMessage(int startNum, int endNum, String room_id) throws IOException {
-        String key = "message::" + room_id;
+        String key = "message:" + room_id;
         listOps = redisTemplate.opsForList();
         objMapper = new ObjectMapper();
         List<String> str = listOps.range(key, startNum, endNum);
@@ -54,7 +54,7 @@ public class ChatServiceImpl implements ChatService {
     // 메시지 저장
     @Override
     public void insertMessage(ChatMessage message) throws IOException {
-        String key = "message::" + message.getRoom_id();
+        String key = "message:" + message.getRoom_id();
         listOps = redisTemplate.opsForList();
         log.info("key:{}", key);
         log.info("messages:{}", message.getMsg());
@@ -69,7 +69,7 @@ public class ChatServiceImpl implements ChatService {
     public List<Map<String, Object>> getRoomList(String user_id) throws JsonMappingException, JsonProcessingException {
         listOps = redisTemplate.opsForList();
         objMapper = new ObjectMapper();
-        String key = "roomInfo::" + user_id;
+        String key = "roomInfo:" + user_id;
         Long size = (Long) listOps.size(key);
         List<String> roomListString = listOps.range(key, 0, size);
         Map<String, Object> roomMapList = new HashMap<>();
@@ -81,6 +81,8 @@ public class ChatServiceImpl implements ChatService {
             String recentMsg = getRecentMessage((String) room_id);
             log.info("msg:{}", room_id);
             roomMapList.put("recentMsg", recentMsg);
+            // 상대 id도 저장
+
             // 객체를 리스트에 저장
             roomListObject.add(roomMapList);
         }
@@ -96,23 +98,30 @@ public class ChatServiceImpl implements ChatService {
         log.info("들어옴");
         // 방 생성하기
         // 내 방과, 상대방 방을 동시에 생성
-        Map<String, Object> roomInfo = new HashMap<>();
+        UserDto myDto = userService.userDtoById(user_id);
         UserDto oppDto = userService.userDtoById(opp_id);
-        log.info("dto:{}", oppDto.getUser_email());
-        roomInfo.put("roomId", uid);// 방 번호
-        roomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
-        roomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
+        Map<String, Object> myRoomInfo = new HashMap<>();
+        myRoomInfo.put("roomId", uid);// 방 번호
+        myRoomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
+        myRoomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
+        myRoomInfo.put("opp_id", opp_id);// 상대방 아이디
+        Map<String, Object> oppRoomInfo = new HashMap<>();
+        oppRoomInfo.put("roomId", uid);// 방 번호
+        oppRoomInfo.put("opp_nickName", myDto.getUser_nickname());// 상대방 닉네임
+        oppRoomInfo.put("opp_img", myDto.getUser_image());// 상대방 이미지
+        oppRoomInfo.put("opp_id", user_id);// 상대방 아이디
         // 채팅방에 넣기
-        String infoString = objMapper.writeValueAsString(roomInfo);
-        log.info("info:{}", infoString);
-        listOps.leftPush("roomInfo::" + user_id, infoString);
-        listOps.leftPush("roomInfo::" + opp_id, infoString);
+        String myRoomInfoStr = objMapper.writeValueAsString(myRoomInfo);
+        String oppRoomInfoStr = objMapper.writeValueAsString(oppRoomInfo);
+        listOps.leftPush("roomInfo:" + user_id, myRoomInfoStr);
+        listOps.leftPush("roomInfo:" + opp_id, oppRoomInfoStr);
         return uid;
     }
 
+    // 마지막 메세지를 갖고오기.
     @Override
     public String getRecentMessage(String room_id) throws JsonMappingException, JsonProcessingException {
-        String key = "message::" + room_id;
+        String key = "message:" + room_id;
         listOps = redisTemplate.opsForList();
         objMapper = new ObjectMapper();
         List<String> str = listOps.range(key, 0, 0);
