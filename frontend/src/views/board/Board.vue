@@ -43,7 +43,7 @@
               </v-list>
             </div>
             <CheckList :is-manager="isManager" v-if="isCheck" />
-            <VoteList v-if="isVote" />
+            <VoteList :in-board="inBoard" :is-manager="isManager" v-if="isVote" />
             <UserRank v-if="isRank" />        
           </v-col>
           <v-col class="col-12 col-sm-8">

@@ -4,18 +4,58 @@
     <!-- 체크리스트 제목 -->
     <div>투표(추가기능)</div>
     <!-- 수정버튼 -->
-    <v-icon id="edit-icon"
+    <VoteDialog v-if="isManager"/>
+    <!-- <v-icon id="edit-icon"
       large
+      v-if="isManager"
     >
-      mdi-cog
-    </v-icon>
+      mdi-plus-box
+    </v-icon> -->
     </div>
+    <VoteItem v-for="(voteId,idx) in votelist" :key="idx" :voteId="voteId" :isManager="isManager"/>
   </v-card>
 </template>
 
 <script>
+import {get_voteList} from '@/api/addfunc'
 export default {
   name: 'VoteList',
+  components:{
+    VoteDialog: () => import('@/components/addfunc/VoteDialog'),
+    VoteItem: () => import('@/components/addfunc/VoteItem')
+  },
+  props:{
+    inBoard:Boolean,
+    isManager:Boolean,
+  },
+  data(){
+    return {
+      votelist:[],
+    }
+  },
+  computed:{
+    flagWrite(){
+      return this.$store.state.addfunc.flagWrite
+    }
+  },
+  watch:{
+    flagWrite:'getVoteList'
+  },
+  created(){
+    this.getVoteList()
+  },
+  methods:{
+    getVoteList(){
+      get_voteList(this.$route.params.board_id)
+      .then(res=>{
+        console.log(res)
+        this.votelist = res.data.voteList
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    }
+  }
 }
 </script>
 
