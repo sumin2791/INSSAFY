@@ -1,5 +1,5 @@
 <template>
-  <v-card id="container"  class="pa-2 ani-hover">
+  <v-card id="container" class="pa-2 ani-hover">
     <div id="post-detail">
       <!-- 포스트 디테일 헤더 부분 -->
       <div id="header">
@@ -88,8 +88,8 @@
       <div id="content-go-detail" @click="goToDetail">
         <!-- 포스트 제목 -->
         <div class="detail-header" v-if="flagComponent.headerLearnShare">
-          <v-chip id="skill" v-for="(h,idx) in skill" :key="idx">
-            {{h}}
+          <v-chip id="skill" v-for="(h, idx) in skill" :key="idx">
+            {{ h }}
           </v-chip>
         </div>
         <div id="title">
@@ -194,23 +194,18 @@ export default {
     isLike() {
       return Object.keys(this.post).includes('like_count');
     },
-    date() {
-      let date = this.post.post_date.split('.')[0];
-      date = date.split('T').join(' ');
-      return timeForToday(date);
-    },
     flagWriter() {
       return this.post.user_id === String(localStorage.userId);
     },
-    date(){
-      return timeForToday(this.post.post_date)
+    date() {
+      return timeForToday(this.post.post_date);
     },
-    skill(){
-      if(this.post.post_header!='전체'){
-        return this.post.post_header.split('|')
+    skill() {
+      if (this.post.post_header != '전체') {
+        return this.post.post_header.split('|');
       }
-      return []
-    }
+      return [];
+    },
   },
   mounted() {
     this.fetchData();
@@ -241,54 +236,52 @@ export default {
       // params : {name:string, params:{board_id,post_id}}
 
       let data = {
-        name:'',
-        params:{
-          board_id:'',
-          post_id:this.post.post_id
-        }
-      }
-      const curationName = this.$route.name
-      console.log(curationName)
-      if(curationName==="Board" || curationName==="Study"){
-        data.params.board_id = Number(this.$route.params.board_id)
-      }else{
-        data.params.board_id = this.$store.state.curationId[curationName]
-
+        name: '',
+        params: {
+          board_id: '',
+          post_id: this.post.post_id,
+        },
+      };
+      const curationName = this.$route.name;
+      console.log(curationName);
+      if (curationName === 'Board' || curationName === 'Study') {
+        data.params.board_id = Number(this.$route.params.board_id);
+      } else {
+        data.params.board_id = this.$store.state.curationId[curationName];
       }
       // if(curationName!="Board" && curationName!="Study"){
       // }else{
       // }
 
-
-      if (curationName==="Market"){
-        data.name = "MarketPost"
-      }else if(curationName==="LearnShare") {
-        data.name = "LearnSharePost"
-      }else if(curationName==="Recruitment"){
-        data.name = "RecruitmentPost"
-      }else if(curationName==="StudyMain"){
-        data.name = "StudyMainPost"
-      }else if(curationName === "Study"){
-        data.name = "StudyGroupPost"
-      }
-      else{
-        data.name = "Post"
+      if (curationName === 'Market') {
+        data.name = 'MarketPost';
+      } else if (curationName === 'LearnShare') {
+        data.name = 'LearnSharePost';
+      } else if (curationName === 'Recruitment') {
+        data.name = 'RecruitmentPost';
+      } else if (curationName === 'StudyMain') {
+        data.name = 'StudyMainPost';
+      } else if (curationName === 'Study') {
+        data.name = 'StudyGroupPost';
+      } else {
+        data.name = 'Post';
       }
 
       // params를 이용해서 데이터를 넘겨줄 수 있다.
       this.$router.push(data);
     },
-    postLike(e){
-      postApi.likePost({user_id:localStorage.getItem('userId'), post_id:this.post.post_id})
-        .then((res)=>{
-          console.log(res)
-          if(res.data.message==='No Subscription'){
-            alert('구독 후에 이용 가능합니다')
-          }else{
-            if(this.flagLike){
-              this.countLike -= 1
-            }else{
-              this.countLike += 1
+    postLike(e) {
+      postApi
+        .likePost({ user_id: localStorage.getItem('userId'), post_id: this.post.post_id })
+        .then((res) => {
+          console.log(res);
+          if (res.data.message === 'No Subscription') {
+            alert('구독 후에 이용 가능합니다');
+          } else {
+            if (this.flagLike) {
+              this.countLike -= 1;
+            } else {
+              this.countLike += 1;
             }
             this.flagLike = !this.flagLike;
           }
@@ -332,7 +325,6 @@ export default {
               .getChatList({ user_id: String(localStorage.userId) })
               .then((res) => {
                 const chatLists = res.data.roomInfo;
-
 
                 for (let i = 0; i < chatLists.length; i++) {
                   if (chatLists[i].opp_id === this.post.user_id) {
@@ -467,15 +459,15 @@ export default {
   cursor: pointer;
   min-height: 150px;
 }
-.detail-header{
-  transform: translate(10px,10px);
+.detail-header {
+  transform: translate(10px, 10px);
 }
-#skill{
-  font-size:14px;
+#skill {
+  font-size: 14px;
   height: 20px;
   margin-right: 5px;
   color: #f9f9f9;
-  background: #0B2945;
+  background: #0b2945;
 }
 /* 게시글 제목 */
 #title {
