@@ -207,6 +207,8 @@ const getBoardId = (type) => {
   switch (type) {
     case '채용일정':
       return 73;
+    case '스터디':
+      return 77;
     default:
       break;
   }

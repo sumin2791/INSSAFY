@@ -28,9 +28,9 @@
           <v-col class="col-12 col-sm-3">
             <div id="description" class="rounded-bg container-description">
               <div class="board-name-detail">
-                <h4 class="b-desc">{{groupDto.board_name}}</h4>
+                <h4 class="b-desc">{{ groupDto.board_name }}</h4>
                 <p class="l-desc board-detail">
-                  {{groupDto.board_description}}
+                  {{ groupDto.board_description }}
                 </p>
               </div>
               <!-- <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">가입신청</button>
@@ -42,39 +42,40 @@
               <button class="btn-subscribing b-title" @click="onSubscribe">Subscribing</button>
               <v-divider class="my-2" v-if="isManager"></v-divider>
               <v-list color="transparent" v-if="isManager">
-                <v-list-item class="mb-3"><a id="scrap-item" v-b-toggle href="#check-collapse" @click.prevent>신청목록<b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+                <v-list-item class="mb-3"
+                  ><a id="scrap-item" v-b-toggle href="#check-collapse" @click.prevent
+                    >신청목록<b-icon icon="chevron-down" aria-hidden="true"></b-icon></a
+                ></v-list-item>
                 <b-collapse id="check-collapse">
-                  <div class="p-1" v-for="(group,idx) in myStudyGroup" :key="idx">
-                    <CheckList :group="group"/>
+                  <div class="p-1" v-for="(group, idx) in myStudyGroup" :key="idx">
+                    <CheckList :group="group" />
                   </div>
                 </b-collapse>
               </v-list>
               <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
-                <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>내 스터디 목록 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+                <v-list-item
+                  ><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent
+                    >내 스터디 목록 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a
+                ></v-list-item>
                 <b-collapse visible id="item-collapse">
-                  <v-col v-for="(group,idx) in myStudyGroup" :key="idx">
-                    <MyStudyGroup :group="group"/>
+                  <v-col v-for="(group, idx) in myStudyGroup" :key="idx">
+                    <MyStudyGroup :group="group" />
                   </v-col>
                 </b-collapse>
               </v-list>
             </div>
-
-            
           </v-col>
           <!-- 오른쪽 스터디 본문 부분 -->
-          <v-col
-            class="col-12 col-sm-9"  
-          >
+          <v-col class="col-12 col-sm-9">
             <!-- 달력 추가기능 선택시 들어갈 부분 -->
             <div id="center-post">
               <!-- 캘린더 들어가는 부분 -->
-              <StudyCalendarSpan id="study-calendar" class="rounded-bg" />
+              <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="'스터디'" />
             </div>
-            <CalendarDialog />
             <!-- 스터디 게시글쓰기 -->
-            
-            <PostWrite class="mt-3" :in-board="inBoard"/>
+
+            <PostWrite class="mt-3" :in-board="inBoard" />
             <GroupPostList />
             <!-- 스터디 게시물 부분 -->
             <!-- <StudyPost class="mx-4 mb-2"/> -->
@@ -84,6 +85,10 @@
         </v-row>
       </v-container>
     </v-main>
+
+    <CalendarDialog :boardName="'스터디'" />
+    <ModifyDialog :boardName="'스터디'" />
+    <DetailDialog />
   </v-app>
 </template>
 
@@ -95,47 +100,47 @@
 // 스터디 내 그룹
 // import StudyGroup from "@/components/curation/study/StudyGroup.vue"
 // 캘린더 추가기능 추가시 넣을 부분
-import StudyCalendarSpan from '@/components/curation/study/StudyCalendarSpan.vue';
-import CalendarDialog from '@/components/calendar/CalendarDialog';
+// import StudyCalendarSpan from '@/components/curation/study/StudyCalendarSpan.vue';
+import CalendarSpan from '@/components/calendar/CalendarSpan';
 
-import MyStudyGroup from "@/components/curation/study/MyStudyGroup.vue"
-import CheckList from "@/components/curation/study/CheckList.vue"
-import PostWrite from '@/components/board/PostWrite'
-import GroupPostList from "@/components/board/PostList"
+import MyStudyGroup from '@/components/curation/study/MyStudyGroup.vue';
+import CheckList from '@/components/curation/study/CheckList.vue';
+import PostWrite from '@/components/board/PostWrite';
+import GroupPostList from '@/components/board/PostList';
 
-import * as studyApi from "@/api/study"
+import * as studyApi from '@/api/study';
 import * as boardApi from '@/api/board';
 
 export default {
-  name:'StudyGroupMain',
+  name: 'StudyGroupMain',
   components: {
     // StudyPost,
     // StudyPostWrite,
     // StudyGroup,
     // 캘린더 부분
-    StudyCalendarSpan,
-    CalendarDialog,
+    // StudyCalendarSpan,
     MyStudyGroup,
     CheckList,
     PostWrite,
     GroupPostList,
+    CalendarSpan,
+    CalendarDialog: () => import('@/components/calendar/CalendarDialog'),
+    DetailDialog: () => import('@/components/calendar/DetailDialog'),
+    ModifyDialog: () => import('@/components/calendar/ModifyDialog'),
   },
-  watch:{
-  },
-  created(){
+  watch: {},
+  created() {
     //왼쪽 스터디 디테일 가져오기
-    this.getStudyDetail()
-    
+    this.getStudyDetail();
+
     // 왼쪽에 내 스터디 목록 가져오기
-    this.getMyStudyGroup()
+    this.getMyStudyGroup();
 
     // 구독했는 지 파악하기 : inBoard
-    this.isInBoard()
+    this.isInBoard();
 
     // 요청리스트 가져오기
-    this.getRequestList()
-    
-    
+    this.getRequestList();
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy() {
@@ -147,7 +152,7 @@ export default {
     // resize 실시해서 현재 화면 크기 확인
     this.onResize();
 
-    window.addEventListener('resize', this.onResize, { passive: true })
+    window.addEventListener('resize', this.onResize, { passive: true });
   },
   data() {
     return {
@@ -158,16 +163,16 @@ export default {
       },
       // 검색 키워드
       searchKeyword: '',
-      
-      inBoard:'',
+
+      inBoard: '',
       myStudyGroup: {},
-      groupDto:{},
-      requestList:{}
-    }
+      groupDto: {},
+      requestList: {},
+    };
   },
-  computed:{
+  computed: {
     // 내가 스터디 그룹을 만들었는 지 확인하는 변수 : isManager
-    isManager(){
+    isManager() {
       const boards = JSON.parse(localStorage.subBoard);
       const BOARD_ID = Number(this.$route.params.board_id);
 
@@ -178,7 +183,7 @@ export default {
         }
       }
       return false;
-    }
+    },
   },
   methods: {
     // 현재 활성화된 기기에 따라 flag 변경
@@ -191,22 +196,23 @@ export default {
       this.$router.push({ name: 'StudyMain' });
     },
     // 내가 가입된 스터디리스트 가져오기
-    getMyStudyGroup(){
-      studyApi.getMyGroupList(localStorage.userId)
-      .then(res=>{
-        const group = res.data.studyList.filter((group) => {
-          if(group!=null){
-            return group
-          }
+    getMyStudyGroup() {
+      studyApi
+        .getMyGroupList(localStorage.userId)
+        .then((res) => {
+          const group = res.data.studyList.filter((group) => {
+            if (group != null) {
+              return group;
+            }
+          });
+          this.myStudyGroup = group;
         })
-        this.myStudyGroup = group
-      })
-      .catch(err=>{
-        console.log(err)
-      })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // 내가 가입되어 있는 스터디인가?
-    isInBoard(){
+    isInBoard() {
       const BOARD_ID = Number(this.$route.params.board_id);
       const boards = JSON.parse(localStorage.subBoard);
       const boardIds = boards.map((e) => {
@@ -215,15 +221,16 @@ export default {
       this.inBoard = boardIds.includes(BOARD_ID);
     },
     // 스터디 정보 디테일한 거 가져오기!
-    getStudyDetail(){
-      boardApi.board_detail(this.$route.params.board_id)
-      .then(res=>{
-        console.log(res)
-        this.groupDto = res.data.boardDto
-      })
-      .catch(err=>{
-        console.log(err)
-      })
+    getStudyDetail() {
+      boardApi
+        .board_detail(this.$route.params.board_id)
+        .then((res) => {
+          console.log(res);
+          this.groupDto = res.data.boardDto;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // 가입요청하기
     // studyRequest(){
@@ -233,18 +240,18 @@ export default {
     //   })
     // },
     // 요청리스트 가져오기!
-    getRequestList(){
-      
-      console.log(this.isManager)
-      if(this.isManager){
-        studyApi.getRequestList(this.$route.params.board_id)
-        .then(res=>{
-          console.log(res)
-          this.requestList = res.data.list
-        })
-        .catch(err=>{
-          console.log(err)
-        })
+    getRequestList() {
+      console.log(this.isManager);
+      if (this.isManager) {
+        studyApi
+          .getRequestList(this.$route.params.board_id)
+          .then((res) => {
+            console.log(res);
+            this.requestList = res.data.list;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     },
     // 스터디보드 구독 중인 지 확인하기
@@ -293,9 +300,8 @@ export default {
         });
       return;
     },
-    
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -312,7 +318,7 @@ export default {
   padding: 10%;
   flex-basis: 20%;
 }
-.board-detail{
+.board-detail {
   margin: 8px 0;
   padding: 0 8px;
   min-height: 15vh;
@@ -388,17 +394,17 @@ export default {
   color: var(--basic-color-key);
 }
 
-#scrap-item{
+#scrap-item {
   text-decoration: none;
-  color:#000;
+  color: #000;
 }
 
 /* calendar 내용 */
 #study-calendar {
   overflow: hidden;
   width: 100%;
-  height: 500px;
-  min-height: 400px;
+  height: 650px;
+  min-height: 650px;
   box-shadow: var(--basic-shadow-w);
 }
 /* 모바일 웹화면 */

@@ -181,6 +181,7 @@ export default {
 }
 .bottom-btn {
   border-radius: 30px;
+  background: #ebebe9 !important;
   color: var(--basic-color-fill2) !important;
 }
 .bottom-btn:hover,
