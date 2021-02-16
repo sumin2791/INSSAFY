@@ -84,4 +84,22 @@ public interface PostService {
 
 	public int getAllSearchPostCnt(String keyword);
 
+	public int getAllSearchPostCntH(String keyword);
+
+	public int getAllSearchPostCntT(String keyword);
+
+	public int getAllSearchPostCntD(String keyword);
+
+	public List<Map<String, Object>> searchPostNewH(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostNewT(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostNewD(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostPopularH(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostPopularT(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchPostPopularD(Map<String, Object> map);
+
 }
