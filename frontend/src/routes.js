@@ -1,5 +1,6 @@
 //main
 import Main from './views/main/Main.vue';
+import Intro from './views/main/Intro.vue';
 
 //로그인 영역
 import Login from './views/user/Login.vue';
@@ -57,6 +58,12 @@ const redirectBefore = () => (to, from, next) => {
 };
 
 export default [
+  //intro 영역
+  {
+    path: '/intro',
+    name: 'Intro',
+    component: Intro,
+  },
   //main 영역
   {
     path: '/',
@@ -124,7 +131,7 @@ export default [
     path: '/study/:board_id(\\d+)',
     name: 'Study',
     component: Study,
-    props:true,
+    props: true,
   },
   {
     path: '/study/:board_id(\\d+)/post/:post_id(\\d+)',

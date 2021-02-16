@@ -58,6 +58,8 @@ export default {
         //type 별 수치
         if (this.type === 'like') {
           this.count[i] = this.items[i].post_like;
+        } else {
+          this.count[i] = this.items[i].comment_count;
         }
       }
     }
