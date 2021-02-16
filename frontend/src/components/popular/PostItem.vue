@@ -51,9 +51,17 @@ export default {
     //null 우회를 위한 local 변수화
     for (let i = 0; i < this.items.length; i++) {
       if (this.items[i] != null) {
+        //타이틀 설정
         this.title[i] = this.items[i].post_title;
-        if (this.items[i].post_image != null && this.items.post_image != '' && this.items.post_image != 'null') {
-          this.image[i] = this.items[i].post_image;
+
+        if (this.type === 'like') {
+          if (this.items[i].post_image != null && this.items.post_image != '' && this.items.post_image != 'null') {
+            this.image[i] = this.items[i].post_image;
+          }
+        } else {
+          if (this.items[i].post_img != null && this.items.post_img != '' && this.items.post_img != 'null') {
+            this.image[i] = this.items[i].post_img;
+          }
         }
         //type 별 수치
         if (this.type === 'like') {
