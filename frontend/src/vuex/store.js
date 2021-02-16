@@ -19,6 +19,7 @@ import market from './market';
 import addfunc from './addfunc';
 import chat from './chat';
 import calendar from './calendar';
+import study from './study';
 
 Vue.use(Vuex);
 
@@ -81,5 +82,6 @@ export default new Vuex.Store({
     addfunc,
     chat,
     calendar,
+    study,
   },
 });

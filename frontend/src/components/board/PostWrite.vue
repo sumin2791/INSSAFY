@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-button v-b-modal.modal-post class="btn-write">{{writeName}}</b-button>
+    <b-button v-b-modal.modal-post class="btn-write newmorphism">{{writeName}}</b-button>
 
     <!-- 구독한 사람만 쓸 수 있다고 알림 -->
     <b-modal id="modal-post" title="Info" v-if="!inBoard" ok-only>
@@ -490,6 +490,23 @@ export default {
   color: #ebebe9 !important;    
   background-color: var(--basic-color-key) !important;
 }
+/* .btn-write {
+  color:var(--basic-color-fill3) !important;
+  text-align: center;
+  height: 50px;
+  width:100%;
+  font-weight: 700;
+  border: none;
+  border-radius: 30px;
+  transition: all 0.6s ease !important;
+}
+.btn-write:hover,
+.btn-write:active,
+.btn-write:focus {
+  background: #ebebe9;
+  background: linear-gradient(145deg, #d4d4d2, #fbfbf9);
+  box-shadow: 10px 10px 20px #b3b3b1, -10px -10px 20px #ffffff;
+} */
 .btn-submit {
   width: 100%;
   height: 40px;
