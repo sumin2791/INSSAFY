@@ -69,6 +69,7 @@ export default [
     path: '/',
     name: 'Main',
     component: Main,
+    beforeEnter: requireAuth(),
   },
 
   // 사용자 관련 영역
