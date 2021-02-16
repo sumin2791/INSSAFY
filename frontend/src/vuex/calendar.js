@@ -1,5 +1,4 @@
 import * as calendarApi from '@/api/calendar';
-import { BIconArrowLeftShort } from 'bootstrap-vue';
 
 const INIT_EVENT = () => {
   return {
