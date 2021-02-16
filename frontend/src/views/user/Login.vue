@@ -62,8 +62,11 @@ import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
 
 //소켓 설정
-import SockJS from 'sockjs-client';
-import Stomp from 'webstomp-client';
+// import SockJS from 'sockjs-client';
+// import Stomp from 'webstomp-client';
+
+// 채팅방 api
+import * as chatApi from '@/api/chat';
 
 
 export default {
@@ -146,12 +149,35 @@ export default {
             // console.log(this.$store.state.auth.token);
             // console.log(this.$store.state.auth.email);
 
+            // // 로그인 ID를 가져온다
+            // const params = this.$store.state.auth.user.userId
+            // // 채팅 알림 연결
+            // chatApi.getNotice(params)
+            //   .then(res => {
+            //     console.log(res)
+            //     // res.data.notices (비어있으면 알림 0 아니면 알림 존재)
+            //     // 이 안에 opp_name, count 로 저장되어 있음 - 일단은 이름만 보여주자
+            //     // 알림이 있으면 토스트를 띄워주자
+            //     const notice = res.data.notices
+            //     if (notice.length) {
+            //       for (let i=0; i < notice.length; i++ )
+            //         this.$toast.open({
+            //           message: notice,
+            //           type: 'warning',
+            //         })
+            //     }
+            //   })
+            //   .catch(err => {
+            //     console.error(err)
+            //   });
           }
         })
         .catch((err) => {
           console.log(err);
         });
     },
+    // 채팅방 이동 및 활성화
+
   },
 };
 </script>

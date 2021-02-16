@@ -86,6 +86,10 @@ export default {
     oppUserId() {
       return this.$store.state.chat.selectedId
     },
+    // 상대방 닉네임
+    oppUserNickname() {
+      return this.$store.state.chat.selectedNickname
+    },
     // 채팅방 보낼 메세지 있는지 확인
     isPossibleChat() {
       return Boolean(this.sendContents.trim())
@@ -178,7 +182,9 @@ export default {
         opp_id: this.oppUserId,
         msg: this.sendContents,
         date: date,
+        opp_nickName: this.oppUserNickname,
       };
+      console.log(message, '파라미터 변경')
       console.log('연결중 보내기')
       this.stompClient.send('/app/receive', JSON.stringify(message), {});
       // 초기화(input)

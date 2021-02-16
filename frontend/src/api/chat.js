@@ -12,3 +12,8 @@ export function getChatList(params) {
 export function getMessages(params) {
   return http.post('/chat/enterRoom', {}, {params})
 }
+
+// 로그인 후에 API
+export function getNotice(userId) {
+  return http.get(`/chat/notice/${userId}`)
+}

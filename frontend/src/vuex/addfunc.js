@@ -19,6 +19,7 @@ export default {
       state.isCheckList = data.checklist_flag
       state.isCalendar = data.calendar_flag
       state.isVote = data.vote_flag
+      // userRank response가 다르다
       state.isRank = data.user_rank_flag
     },
     // 체크리스트 편집중 상태 저장
