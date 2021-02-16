@@ -521,7 +521,7 @@ public class PostController {
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword, board_id, page,size,user_id
+     * @param : sort, keyword, board_id, page,size,user_id,type
      * 
      * @return : postList, message, isLastPage
      */
@@ -529,7 +529,7 @@ public class PostController {
     public ResponseEntity<Map<String, Object>> searchBoardPost(@RequestParam(value = "sort") String sort,
             @RequestParam(value = "keyword") String keyword, @RequestParam(value = "board_id") String board_id,
             @RequestParam(value = "page") int page, @RequestParam(value = "size") int size,
-            @RequestParam(value = "user_id") String user_id) {
+            @RequestParam(value = "user_id") String user_id, @RequestParam(value = "type") String type) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/post/board/searchPost 호출 성공");
@@ -542,21 +542,46 @@ public class PostController {
             map.put("size", size);
             map.put("user_id", user_id);
 
-            int totalCnt = postService.getSearchPostCnt(map);
+            int totalCnt;
+            totalCnt = postService.getSearchPostCnt(map);
+            
+            if (sort.equals("new")) {
+                if(type.equals("header")){
+                    logger.info("최신순 포스트 헤더 검색");
+                    totalCnt = postService.getSearchPostCntH(map);
+                    postList = postService.boardPostNewH(map);
+                }else if(type.equals("title")){
+                    logger.info("최신순 포스트 타이틀 검색");
+                    totalCnt = postService.getSearchPostCntT(map);
+                    postList = postService.boardPostNewT(map);
+                }else{
+                    logger.info("최신순 포스트 내용 검색");
+                    totalCnt = postService.getSearchPostCntD(map);
+                    postList = postService.boardPostNewD(map);
+                }
+                // postList = postService.boardPostNew(map);
+            } else {
+                if(type.equals("header")){
+                    logger.info("좋아요순 포스트 헤더 검색");
+                    totalCnt = postService.getSearchPostCntH(map);
+                    postList = postService.boardPostPopularH(map);
+                }else if(type.equals("title")){
+                    logger.info("좋아요순 포스트 타이틀 검색");
+                    totalCnt = postService.getSearchPostCntT(map);
+                    postList = postService.boardPostPopularT(map);
+                }else{
+                    logger.info("좋아요순 포스트 내용 검색");
+                    totalCnt = postService.getSearchPostCntD(map);
+                    postList = postService.boardPostPopularD(map);
+                }
+                // postList = postService.boardPostPopular(map);
+            }
             if (totalCnt > (page + 1) * size)
                 resultMap.put("isLastPage", "false");
             else if (totalCnt > page * size)
                 resultMap.put("isLastPage", "true");
             else
                 resultMap.put("isLastPage", "No data");
-
-            if (sort.equals("new")) {
-                logger.info("최신순 포스트 검색");
-                postList = postService.boardPostNew(map);
-            } else {
-                logger.info("좋아요순 포스트 검색");
-                postList = postService.boardPostPopular(map);
-            }
             resultMap.put("postList", postList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {

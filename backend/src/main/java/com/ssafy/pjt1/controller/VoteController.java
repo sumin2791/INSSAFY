@@ -44,7 +44,7 @@ public class VoteController {
      * board_id,vote_description,vote_duplication,vote_end_datetime,vote_igmyeong,
      * vote_name
      * 
-     * @return : message
+     * @return : message, vote_id
      */
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> voteCreate(@RequestBody Map<String, Object> param) {
@@ -60,7 +60,9 @@ public class VoteController {
             voteDto.setVote_igmyeong((int) param.get("vote_igmyeong"));
             voteDto.setVote_name((String) param.get("vote_name"));
             voteService.createVote(voteDto);
+            int vote_id = voteDto.getVote_id();
 
+            resultMap.put("vote_id", vote_id);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
