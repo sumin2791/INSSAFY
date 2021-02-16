@@ -7,12 +7,12 @@
   >
     <div class="d-flex align-items-center">
       <div class="ml-2 mr-2">
-        <GradientGenerator class="myinfo-list" style="height: 50px; width:50px" v-if="group.board_image == null" :radius="radius" />
-        <v-img src="@/assets/images/slide.jpg" height="50px" width="50px" class="myinfo-list blur" v-if="group.board_image != null"> </v-img>
+        <GradientGenerator class="myinfo-list" style="height: 50px; width:50px" v-if="user.user_image == null" :radius="radius" />
+        <v-img src="user.user_image" height="50px" width="50px" class="myinfo-list blur" v-if="user.user_image != null"> </v-img>
       </div>
       
       <div class="d-flex flex-column">
-        <div id="post-title" class="font-weight-black"> 유저 이름 </div>
+        <div id="post-title" class="font-weight-black">{{user.user_nickname}}</div>
       </div>
     </div>
     <!-- 포스트 제목 -->
@@ -29,6 +29,7 @@
 
 <script>
 import GradientGenerator from '@/components/etc/GradientGenerator';
+import * as studyApi from '@/api/study'
 
 export default {
   name: "MyStudyGroup",
@@ -38,19 +39,53 @@ export default {
     }
   },
   props:{
-    group:Object,
+    user:Object,
+    isManager:Boolean
   },
   components: {
     GradientGenerator,
   },
   methods: {
     permit(){
-      alert('가입승인')
+      if(this.isManager){
+        studyApi.studyRequestProcess( this.user.user_id,Number(this.$route.params.board_id),1)
+        .then(res=>{
+          console.log('수락하기')
+          console.log(res)
+          console.log('---------')
+          this.$store.dispatch('study/isWriteFlag')
+        })
+        .catch(err=>{
+          console.log('수락실패')
+          console.log(err)
+          console.log('--------')
+        })
+      }else{
+        alert('매니저만 할 수 있어요.')
+      }
     },
     reject(){
-      alert('가입거부')
+      if(this.isManager){
+        studyApi.studyRequestProcess( this.user.user_id,Number(this.$route.params.board_id),-1)
+        .then(res=>{
+          console.log('거절하기')
+          console.log(res)
+          console.log('---------')
+          this.$store.dispatch('study/isWriteFlag')
+        })
+        .catch(err=>{
+          console.log('거절실패')
+          console.log(err)
+          console.log('--------')
+        })
+      }else{
+        alert('매니저만 할 수 있어요.')
+      }
     }
   },
+  created(){
+    console.log(this.user)
+  }
 }
 </script>
 

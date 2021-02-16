@@ -58,11 +58,12 @@
             <div class="main-header">
               <div class="flagPromoList">
                 <v-switch
-                      v-model="flagPromoList"
-                      inset
-                      color="#0B2945"
-                      :label="`${state}`"
-                      @click="filterMyStudyGroup()"
+                  class="m-0"
+                  v-model="flagPromoList"
+                  inset
+                  color="#0B2945"
+                  :label="`${state}`"
+                  @click="filterMyStudyGroup()"
                     ></v-switch>
               </div>
               <div class="btnWrite" v-if="!flagPromoList"><PostWrite :in-board="inBoard"/></div>
@@ -129,8 +130,6 @@ export default {
           return group
         }
       })
-      console.log('여기')
-      console.log(group)
       this.myStudyGroup = group
     })
     .catch(err=>{
@@ -206,13 +205,16 @@ export default {
 .main-header{
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items:center;
   margin:0 8px;
 }
 .flagPromoList{
   display: flex;
   align-items: center;
   /* margin-left:20px */
+}
+.v-messages{
+  min-height:0;
 }
 .btnWrite{
   /* width: 30%; */
