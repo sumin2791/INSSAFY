@@ -71,4 +71,11 @@
 		where board_id = #{board_id} and is_used = 1;
 	</select>
 
+	<select id="isVoted" parameterType="map" resultType="int">
+		select count(s.user_id)
+		from vote_select as s join vote_item as i
+			on s.vote_item_id = i.vote_item_id
+		where i.vote_id = #{vote_id} and s.user_id = #{user_id} and s.is_used = 1;
+	</select>
+
 </mapper>

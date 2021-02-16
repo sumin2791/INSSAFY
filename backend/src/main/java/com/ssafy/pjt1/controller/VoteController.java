@@ -41,7 +41,7 @@ public class VoteController {
      * developer: 윤수민
      * 
      * @param :
-     * board_id,vote_description,vote_duplication,vote_end_datetime,vote_igmyeong,
+     * board_id,vote_description,vote_duplication,vote_igmyeong,
      * vote_name
      * 
      * @return : message, vote_id
@@ -236,21 +236,25 @@ public class VoteController {
      * 
      * developer: 윤수민
      * 
-     * @param : vote_id
+     * @param : vote_id, user_id
      * 
-     * @return : message, VoteDto, voteItemList
+     * @return : message, VoteDto, voteItemList, isVoted
      */
     @GetMapping("/getVoteById")
-    public ResponseEntity<Map<String, Object>> getVoteById(@RequestParam(value = "vote_id") int vote_id) {
+    public ResponseEntity<Map<String, Object>> getVoteById(@RequestParam(value = "vote_id") int vote_id, @RequestParam(value = "user_id") String user_id) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("vote/getVoteById 호출성공");
         try {
             VoteDto voteDto = voteService.getVoteById(vote_id);
             List<Map<String, Object>> voteItemList = voteService.getVoteItem(vote_id);
-
+            Map<String, Object> map = new HashMap<>();
+            map.put("vote_id",vote_id);
+            map.put("user_id",user_id);
+            int isVoted = voteService.isVoted(map);
             resultMap.put("voteDto", voteDto);
             resultMap.put("voteItemList", voteItemList);
+            resultMap.put("isVoted", isVoted);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {
             logger.error("실패", e);
