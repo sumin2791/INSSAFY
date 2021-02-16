@@ -170,11 +170,15 @@ public class ChatController {
         String roomId = message.getRoom_id();
         String opp_id = message.getOpp_id();
         String user_id = message.getUser_id();
+        String opp_nickName = message.getOpp_nickName();
         valOps = redisTemplate.opsForValue();
         String key = "notice:" + opp_id + ":" + user_id;
         try {
             valOps.increment(key, 1);
-            simpleMessageTemplate.convertAndSend("/notice/" + opp_id, message);
+            // {count: 1, nickname:""}
+            Map<String, String> notices = new HashMap<>();
+            notices.put("opp_nickName", opp_nickName);
+            simpleMessageTemplate.convertAndSend("/notice/" + opp_id, notices);
             chatService.insertMessage(message);
             status = HttpStatus.ACCEPTED;
             resultMap.put("message", SUCCESS);
@@ -225,6 +229,62 @@ public class ChatController {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             log.error("getNotice error: {}", e);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: notice 0 만들기
+     * 
+     * developer: 문진환
+     * 
+     * param: my_id, opp_id
+     * 
+     * return void
+     */
+    @ApiOperation(value = "알림 0으로 초기화")
+    @PostMapping(value = "/updateNotice")
+    public ResponseEntity<Map<String, Object>> updateNotice(@RequestParam("my_id") String my_id,
+            @RequestParam("opp_id") String opp_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            String key = "notice:" + my_id + ":" + opp_id;
+            valOps = redisTemplate.opsForValue();
+            valOps.set(key, "0");
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            log.error("error: {}", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 내 채팅방 한개 삭제하기
+     * 
+     * developer: 문진환
+     * 
+     * param:
+     * 
+     * return
+     */
+    @ApiOperation(value = "내 방 삭제")
+    @PostMapping(value = "/deleteMyRoom")
+    public ResponseEntity<Map<String, Object>> deleteMyRoom(@RequestParam("my_id") String my_id,
+            @RequestParam("opp_id") String opp_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            log.error("error: {}", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }

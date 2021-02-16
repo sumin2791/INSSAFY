@@ -18,4 +18,5 @@ public interface ChatService {
     public String makeRoom(String user_id, String opp_id) throws IOException;
 
     public List<Object> getRoomList(String user_id) throws JsonMappingException, JsonProcessingException;
+
 }
