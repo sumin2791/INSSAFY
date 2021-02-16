@@ -30,7 +30,8 @@
       </div>
       <!-- 게시글 작성 -->
       <div class="create-post">
-        <button>게시글 작성 버튼</button>
+        <PostWrite :in-board="inBoard" style="margin:0 10px"/>
+        <RecruitmentPostList/>
       </div>
       <!-- 각각의 게시글 들어갈 부분
       <Post class="post-list" />
@@ -50,6 +51,11 @@
 import DueDateItem from '@/views/curation/recruitment/DueDateItem.vue';
 import CalendarSpan from '@/components/calendar/CalendarSpan';
 
+// 중고장터 리스트
+import RecruitmentPostList from "@/components/board/PostList"
+//글작성
+import PostWrite from '@/components/board/PostWrite'
+
 export default {
   name: 'Recruitment',
   components: {
@@ -59,6 +65,14 @@ export default {
     CalendarDialog: () => import('@/components/calendar/CalendarDialog'),
     DetailDialog: () => import('@/components/calendar/DetailDialog'),
     ModifyDialog: () => import('@/components/calendar/ModifyDialog'),
+
+    PostWrite,
+    RecruitmentPostList
+  },
+  data(){
+    return {
+      inBoard:true,
+    }
   },
   created() {
     this.$store.dispatch('calendar/actGetDeadline');
@@ -143,6 +157,10 @@ export default {
 /* 검색창 */
 .center-post .search-bar {
   align-self: flex-end;
+}
+/* 글쓰기 및 리스트 */
+.create-post{
+  width: 100%;
 }
 /* 각각의 게시글들 */
 .center-post .post-list {

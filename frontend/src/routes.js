@@ -154,7 +154,7 @@ export default [
     component: Recruitment,
   },
   {
-    path: '/Recruitment/:post_id(\\d+)',
+    path: '/recruitment/:post_id(\\d+)',
     name: 'RecruitmentPost',
     component: PostDetail,
     props: true,
