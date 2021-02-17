@@ -41,11 +41,5 @@ export default {
     flagWrite({ commit }) {
       commit('FLAG_WRITE');
     },
-    isEditCheckList({commit}, bool) {
-      commit('IS_EDIT_CHECK_LIST', bool)
-    },
-    flagWrite({commit}){
-      commit('FLAG_WRITE')
-    },
   },
 };
