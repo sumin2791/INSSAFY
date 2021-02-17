@@ -6,6 +6,8 @@ export default {
     isCalendar: false,
     isVote: false,
     isRank: false,
+
+    flagWrite:false,
   },
   getters: {
 
@@ -18,10 +20,16 @@ export default {
       state.isVote = data.vote_flag
       state.isRank = data.user_rank_flag
     },
+    FLAG_WRITE(state){
+      state.flagWrite = !state.flagWrite
+    }
   },
   actions: {
     isUsed({commit}, addfunc) {
       commit('IS_USED', addfunc)
     },
+    flagWrite({commit}){
+      commit('FLAG_WRITE')
+    }
   },
 }
