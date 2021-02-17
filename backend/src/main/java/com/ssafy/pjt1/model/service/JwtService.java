@@ -1,18 +1,13 @@
 package com.ssafy.pjt1.model.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.ssafy.pjt1.common.error.UnauthorizedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.ssafy.pjt1.model.dto.user.UserDto;
 
 import io.jsonwebtoken.*;
 
@@ -21,74 +16,48 @@ public class JwtService {
 
 	public static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
-	private static final String TK = "ssafySecret";
-	private static final int EXPIRE_MINUTES = 60;
+	private String signature = "VUETOKEN";
+	private Long expireMin = 5L;
 
-	// 1초 -> 1분 -> 60분
-	public <T> String create(String key, T data, String subject) {
-		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setHeaderParam("regDate", System.currentTimeMillis())
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * EXPIRE_MINUTES)).setSubject(subject)
-				.claim(key, data).signWith(SignatureAlgorithm.HS256, this.generateKey()).compact();
+	// 로그인 성공시 사용자 정보를 기반으로 JWTToken을 생성하여 반환.
+	public String create(UserDto memberDto) {
+		JwtBuilder jwtBuilder = Jwts.builder();
+		// JWT Token = Header + Payload + Signature
+
+		// Header 설정
+		jwtBuilder.setHeaderParam("typ", "JWT"); // 토큰의 타입으로 고정 값.
+
+		// Payload 설정
+		jwtBuilder.setSubject("로그인토큰") // 토큰의 제목 설정
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * expireMin)) // 유효기간 설정
+				.claim("user", memberDto).claim("greeting", "환영합니다. " + memberDto.getUser_email()); // 담고 싶은 정보 설정.
+
+		// signature 설정
+		jwtBuilder.signWith(SignatureAlgorithm.HS256, signature.getBytes());
+
+		// 마지막 직렬화 처리
+		String jwt = jwtBuilder.compact();
+		logger.info("jwt : {}", jwt);
 		return jwt;
 	}
 
-	private byte[] generateKey() {
-		byte[] key = null;
-		try {
-			key = TK.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			if (logger.isInfoEnabled()) {
-				e.printStackTrace();
-			} else {
-				logger.error("Making JWT Key Error ::: {}", e.getMessage());
-			}
-		}
-
-		return key;
+	// 전달 받은 토큰이 제대로 생성된것이니 확인 하고 문제가 있다면 RuntimeException을 발생.
+	public void checkValid(String jwt) {
+		// 예외가 발생하지 않으면 OK
+		Jwts.parser().setSigningKey(signature.getBytes()).parseClaimsJws(jwt);
 	}
 
-	// 전달 받은 토큰이 제대로 생성된것인지 확인 하고 문제가 있다면 UnauthorizedException을 발생.
-	public boolean isUsable(String jwt) {
-		try {
-			Jws<Claims> claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(jwt);
-			return true;
-		} catch (Exception e) {
-			// if (logger.isInfoEnabled()) {
-			// e.printStackTrace();
-			// } else {
-			logger.error(e.getMessage());
-			// }
-			// throw new UnauthorizedException();
-			// 개발환경
-			return false;
-		}
-	}
-
-	public Map<String, Object> get(String key) {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-				.getRequest();
-		String jwt = request.getHeader("access-token");
+	// JWT Token을 분석해서 필요한 정보를 반환.
+	public Map<String, Object> get(String jwt) {
 		Jws<Claims> claims = null;
 		try {
-			claims = Jwts.parser().setSigningKey(TK.getBytes("UTF-8")).parseClaimsJws(jwt);
-		} catch (Exception e) {
-			// if (logger.isInfoEnabled()) {
-			// e.printStackTrace();
-			// } else {
-			logger.error(e.getMessage());
-			// }
-			throw new UnauthorizedException();
-			// 개발환경
-			// Map<String,Object> testMap = new HashMap<>();
-			// testMap.put("userid", userid);
-			// return testMap;
+			claims = Jwts.parser().setSigningKey(signature.getBytes()).parseClaimsJws(jwt);
+		} catch (final Exception e) {
+			throw new RuntimeException();
 		}
-		Map<String, Object> value = claims.getBody();
-		logger.info("value : {}", value);
-		return value;
-	}
 
-	public String getUserId() {
-		return (String) this.get("user").get("userid");
+		logger.info("claims : {}", claims);
+		// Claims는 Map의 구현체이다.
+		return claims.getBody();
 	}
 }
