@@ -1,21 +1,23 @@
 <template>
   <div id="wrap" @click="clickProfile">
-    <div id="default-image" class="image" v-if="!getUserImage" :style="{ borderColor: `${getGenerationColor}` }" />
-    <div class="image" v-if="getUserImage" :style="{ backgroundImage: `url(${getUserImage})`, borderColor: `${getGenerationColor}` }" />
+    <div id="default-image" class="image" v-if="!getUserImage" />
+    <div class="image" v-if="getUserImage" :style="{ backgroundImage: `url(${getUserImage})`}" />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 export default {
   name: 'Profile',
+  props:{
+    getUserImage:String,
+  },
   data() {
     return {
       imageUrl: '',
     };
   },
   computed: {
-    ...mapGetters('auth', ['getUserImage', 'getGenerationColor']),
+    
   },
   methods: {
     clickProfile: function() {
@@ -38,8 +40,8 @@ export default {
   border-width: 6px !important;
 }
 .image {
-  border-style: solid !important;
-  border-width: 3px !important;
+  /* border-style: solid !important;
+  border-width: 3px !important; */
   transition: border 0.5s ease;
   width: 100%;
   height: 100%;

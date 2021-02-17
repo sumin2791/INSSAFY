@@ -29,9 +29,10 @@ export default {
     IS_EDIT_CHECK_LIST(state, boolean) {
       console.log(boolean)
       state.isEditNow = Boolean(boolean)
+    },
     FLAG_WRITE(state){
       state.flagWrite = !state.flagWrite
-    }
+    },
   },
   actions: {
     isUsed({commit}, addfunc) {
@@ -39,8 +40,9 @@ export default {
     },
     isEditCheckList({commit}, bool) {
       commit('IS_EDIT_CHECK_LIST', bool)
+    },
     flagWrite({commit}){
       commit('FLAG_WRITE')
-    }
+    },
   },
 }
