@@ -43,3 +43,10 @@ export function board_delete(board_id,login_id) {
   return http.delete(`/board/delete/${board_id}`,{params:{login_id:login_id}})
 }
 // ==============
+
+//보드 권한 주기
+export function board_updateManager(user_id,board_id){
+  return http.post('/board/updateManager',{
+    user_id,board_id
+  })
+}

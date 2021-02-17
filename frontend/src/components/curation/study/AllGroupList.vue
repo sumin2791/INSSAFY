@@ -83,7 +83,6 @@ export default {
       
       studyApi.getAllGroupList(this.page,EACH_LEN)
       .then((res)=>{
-        console.log(res)
         setTimeout(()=>{
           if(res.data.studyList){
             this.groups = this.groups.concat(res.data.studyList);

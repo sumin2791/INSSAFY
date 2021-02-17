@@ -7,8 +7,10 @@ export default {
     isVote: false,
     isRank: false,
 
+
     // 체크리스트 편집중 flag
     isEditNow: false,
+    flagWrite:false,
   },
   getters: {
 
@@ -22,10 +24,13 @@ export default {
       // userRank response가 다르다
       state.isRank = data.user_rank_flag
     },
+
     // 체크리스트 편집중 상태 저장
     IS_EDIT_CHECK_LIST(state, boolean) {
       console.log(boolean)
       state.isEditNow = Boolean(boolean)
+    FLAG_WRITE(state){
+      state.flagWrite = !state.flagWrite
     }
   },
   actions: {
@@ -34,6 +39,8 @@ export default {
     },
     isEditCheckList({commit}, bool) {
       commit('IS_EDIT_CHECK_LIST', bool)
+    flagWrite({commit}){
+      commit('FLAG_WRITE')
     }
   },
 }

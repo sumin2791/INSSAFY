@@ -85,12 +85,12 @@ export default {
       this.$router.push({ name: 'Main' });
     },
     clickNBtn1: function() {
-      this.$store.commit('setSearchFilters', ['보드명', '글제목']);
+      this.$store.commit('search/SET_SEARCH_ACTIVE', { active: 'allBoard', epicenter: 'nav' });
       this.$store.commit('setToastTogle');
       this.$store.commit('setToastType', 'search');
     },
     clickNBtn2: function() {
-      this.$router.push({ name: 'ChatPage'});
+      this.$router.push({ name: 'ChatPage' });
     },
     clickNBtn3: function() {
       this.$store.commit('setToastTogle');

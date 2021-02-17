@@ -24,13 +24,9 @@
       <!-- 캘린더 들어가는 부분 -->
       <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="'채용일정'" />
 
-      <!-- 검색 돋보기 아이콘 -->
-      <div class="search-bar">
-        🔍검색창 들어갈 부분
-      </div>
       <!-- 게시글 작성 -->
       <div class="create-post">
-        <PostWrite :in-board="inBoard" style="margin:0 10px" />
+        <PostWrite :in-board="inBoard" style="margin:24px 10px 0" />
         <RecruitmentPostList />
       </div>
     </div>

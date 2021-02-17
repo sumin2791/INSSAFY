@@ -82,4 +82,28 @@ public interface BoardMapper {
 	public void addVote(Map<String, Object> map2);
 
 	public void addUserRank(Map<String, Object> map2);
+
+	public int getSearchCntN(String keyword);
+
+	public int getSearchCntD(String keyword);
+
+	public int getSearchCntL(String keyword);
+
+	public int getSearchCntH(String keyword);
+
+	public List<Map<String, Object>> searchBoardNewN(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchBoardNewD(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchBoardNewL(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchBoardNewH(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchBoardPopularN(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchBoardPopularD(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchBoardPopularL(Map<String, Object> map);
+
+	public List<Map<String, Object>> searchBoardPopularH(Map<String, Object> map);
 }

@@ -24,6 +24,7 @@ const INIT_USER = () => {
     location: localStorage.getItem('location'),
   };
 };
+
 const INIT_SUB_BOARD = () => {
   const getSubBoard = localStorage.subBoard;
   if (!getSubBoard) return null;

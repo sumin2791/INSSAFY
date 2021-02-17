@@ -1,49 +1,27 @@
 <template>
-  <v-app class="main-bg-color">
+  <div class="main-bg-color">
     <!-- 전체 포함하는 컨테이너 -->
-    <v-container
-      class="pt-8"
-    >
-      <!-- 보드 생성하기 제목 -->
-      <div 
-        class="text-overline 
-          text-center
-          font-weight-black"
+    <div class="join-form">
+      <!-- <div 
+        class="text-overline text-center font-weight-black mb-3"
         style="font-size: 24px !important;"
-      >보드 생성하기</div>
-      <v-row no-gutters dense>
-        <!-- (PC기준)왼쪽 -->
-        <v-col 
-          class="col-12 col-sm-8">
-          <!-- 보드 이름 -->
-          <v-col>
-            <div class="my-2">보드 이름</div>
+      >보드 생성하기
+      </div> -->
+      <h2 class="mb-3">보드 생성하기</h2>
+      <div class="join-input">
+        <!-- 보드 생성하기 제목 -->
+        <div>
+            <!-- 보드 이름 -->
+            <v-text-field label=" 보드이름" v-model="title" prepend-icon="T"></v-text-field>
+            <!-- 보드 설명 -->
+            <v-textarea label=" 상세설명" rows="4"
+              row-height="30" prepend-icon="mdi-format-align-left" v-model="description"></v-textarea>
+            <!-- 해쉬태그 -->
             <v-text-field
-              placeholder="보드이름을 작성해주세요"
-              solo
-              v-model="title"
-            ></v-text-field>
-          </v-col>
-          <!-- 보드 설명 -->
-          <v-col>
-            <div class="my-2">보드 설명</div>
-            <v-textarea
-              filled
-              solo
-              rows="4"
-              row-height="30"
-              placeholder="보드에 대한 설명을 적어보세요"
-              v-model="description"
-              class="description"
-            ></v-textarea>
-          </v-col>
-          <!-- 해쉬태그 -->
-          <v-col>
-            <div class="my-2">Hash Tag</div>
-            <v-text-field
+              label=" 해쉬태그"
               placeholder="ex. SSAFY"
-              solo
               v-model.trim="hashtag"
+              prepend-icon="#"
               @keypress.enter="addHashtag()"
             ></v-text-field>
             <!-- 해쉬태그 보여지는 부분 -->
@@ -54,48 +32,38 @@
                 <v-chip
                   class="ma-2"
                   close
-                  color="indigo darken-4"
-                  text-color="white"
+                  color="#0b2945"
+                  text-color="#fff"
                   @click:close="deleteHashtag(idx)"
                 > {{ hashtag }}
                 </v-chip>
               </v-chip-group>
             </div>
-          </v-col>
-        </v-col>
-        <!-- (PC기준)오른쪽 -->
-        <v-col class="col-12 col-sm-4">
-          <!-- 보드 대표 이미지 -->
-          <v-col>
-            <div class="my-2">대표 이미지</div>
+            <!-- 보드 대표 이미지 -->
             <v-file-input class="d-flex"
               v-model="file"
-              filled
-              solo
               prepend-icon="mdi-image"
-              placeholder="대표 이미지 선택하기"
+              placeholder=" 대표 이미지 선택 (1X4 비율 추천)"
             ></v-file-input>
-          </v-col>
-          <!-- 익명 여부 -->
-          <v-col>
-            <div class="my-2">익명성 여부</div>
-            <b-form-checkbox v-model="options.ikmyeong" name="check-button" switch>
-              <p v-if="!options.ikmyeong" style="margin:0; text-decoration:line-through;">익명 보드</p>
-              <b v-if="options.ikmyeong">익명 보드</b>
-            </b-form-checkbox>
-          </v-col>
-          <!-- 지역 정보 -->
-          <v-col>
-            <v-select
-              v-model="location"
-              :items="options.location"
-              label="지역"
-              solo
-            ></v-select>
-          </v-col>
-          <!-- 추가 기능 -->
-          <v-col>
-            <!-- 추가기능 추가 정보(편집) -->
+            <!-- 익명 여부 -->
+            <!-- <v-col>
+              <div class="my-2">익명성 여부</div>
+              <b-form-checkbox v-model="options.ikmyeong" name="check-button" switch>
+                <p v-if="!options.ikmyeong" style="margin:0; text-decoration:line-through;">익명 보드</p>
+                <b v-if="options.ikmyeong">익명 보드</b>
+              </b-form-checkbox>
+            </v-col> -->
+            <!-- 지역 정보 -->
+            <!-- <v-col>
+              <v-select
+                v-model="location"
+                :items="options.location"
+                label="지역"
+                solo
+              ></v-select>
+            </v-col> -->
+            <!-- 추가 기능 -->
+              <!-- 추가기능 추가 정보(편집) -->
             <div id="add-func-group">
               <div>추가기능</div>
               <div
@@ -122,26 +90,24 @@
                 </v-tooltip>
               </div>
             </div>
-          </v-col>
-        </v-col>
-      </v-row>
+        </div>
+          
+      </div>
       <v-row 
         no-gutters 
         dense 
         class="d-flex 
           justify-center">
         <v-btn
-          color="blue-grey"
           x-large
-          class="ma-2 white--text text-overline"
+          class="btn-write newmorphism"
           @click="onCreate()"
-
         >
           보드 만들기
         </v-btn>
       </v-row>
-    </v-container>
-  </v-app>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -271,9 +237,83 @@ export default {
 <style scoped>
 /* 전체 메인 배경색 */
 .main-bg-color {
-  background-color: #ebebe9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+  max-width: 580px;
+  width: 100%;
+  margin: 50px auto;
+  background-color: var(--basic-color-bg2);
+  box-shadow: var(--basic-shadow-s);
+  border-radius: 10px;
+  padding: 40px 40px;
 }
+.join-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* align-items: center; */
+  /* height: 40vh; */
+  width: 100%;
+}
+.join-input {
+  width: 100%;
+  float: left;
+  position: relative;
+  margin-bottom: 10px;
+}
+input,
+select {
+  background: transparent;
+  font-size: 1em;
+  width: 100%;
+  height: 50px;
+  line-height: 1em;
+  padding: 0 20px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  border-radius: 0;
+  outline: none;
+}
+
+input:hover,
+input:focus,
+select:hover,
+select:focus,
+input:hover,
+input:focus {
+  border-bottom: 1px solid #000;
+}
+
+.btn-write {
+  position: sticky;
+  text-align: center;
+  margin-top: 30px;
+  height: 50px;
+  width:100%;
+  border: none;
+  color: var(--basic-color-fill);
+  text-shadow: 0 0px 1px var(--basic-color-fill3);
+  background: #ebebe9 !important;
+  box-shadow: 10px 10px 20px #bcbcba, 
+              -10px -10px 20px #ffffff;
+  border-radius: 15px !important;
+  transition: 0.3s all ease;
+}
+.btn-write:hover,
+.btn-write:active,
+.btn-write:focus {
+  color: #ebebe9 !important;    
+  background-color: var(--basic-color-key) !important;
+}
+
 /* 추가기능 항목 아이템들 */
+#add-func-group{
+  margin-top:20px;
+}
 #add-func-item {
   display: flex;
   flex-direction: row;

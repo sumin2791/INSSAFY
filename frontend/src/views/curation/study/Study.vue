@@ -25,30 +25,70 @@
         </v-row>
         <v-row dense>
           <!-- 왼쪽 스터디 설명 부분 -->
-          <v-col class="col-12 col-sm-3">
+          <v-col class="col-12 col-sm-4">
             <div id="description" class="rounded-bg container-description">
-              <div class="board-name-detail">
-                <h4 class="b-desc">{{ groupDto.board_name }}</h4>
-                <p class="l-desc board-detail">
-                  {{ groupDto.board_description }}
-                </p>
+              <div id="container">
+                <div class="board-name-detail">
+                  <div class="name-setting">
+                    <h4 class="b-desc">{{ groupDto.board_name }}</h4>
+                    <!-- 수정버튼과 삭제버튼 토글-->
+                    <v-icon id="edit-icon"
+                      v-if="isManager && !Edit"
+                      @click="btnModify"
+                    >
+                      mdi-cog
+                    </v-icon>
+                    <p class="r-desc delete-button" v-b-modal.modal-delete v-if="isManager && Edit">삭제</p>
+                    <b-modal id="modal-delete" title="🗑" centered @ok="groupDelete">
+                      <p class="my-4">보드를 삭제하시겠어요?</p>
+                      <template #modal-footer="{ok}">
+                        <b-button variant="delete" @click="ok()">
+                          삭제하기
+                        </b-button>
+                      </template>
+                    </b-modal>
+                  </div>
+                  <p class="l-desc board-detail" v-if="!Edit">
+                    {{ groupDto.board_description }}
+                  </p>
+                  <!-- 수정버튼 클릭 시 생성-->
+                  <div
+                    class="board-detail-form"
+                    v-if="Edit">
+                    <v-textarea
+                      solo
+                      clearable
+                      no-resize
+                      clear-icon="mdi-close-circle"
+                      label=""
+                      placeholder="보드를 설명해주세요"
+                      v-model="tempDescription"
+                      color="grey-darken-4"
+                    ></v-textarea>
+                  </div>
+                </div>
+
+                <div class="edit-button-set" v-if="Edit">
+                  <div>
+                    <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
+                    <button class="p-button r-desc" @click="submit">  Edit  </button>
+                  </div>
+                </div>
               </div>
-              <!-- <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">가입신청</button>
-              <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
-              <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button> -->
-              <!---->
-              <button class="btn-subscribe b-title" @click="onSubscribe">Subscribe</button>
-              <button class="btn-Checking b-title" @click="onSubscribe">Checking</button>
-              <button class="btn-subscribing b-title" @click="onSubscribe">Subscribing</button>
+
+              <!-- 구독 버튼 -->
+              <button class="btn-subscribe b-title" @click="studyRequest" v-if="!inBoard && flagRequest>1">Subscribe</button>
+              <button class="btn-Checking b-title" @click="studyWait" v-if="!inBoard && flagRequest===0">Checking</button>
+              <button class="btn-subscribing b-title" @click="studySecession" v-if="inBoard || flagRequest===1">Subscribing</button>
               <v-divider class="my-2" v-if="isManager"></v-divider>
               <v-list color="transparent" v-if="isManager">
-                <v-list-item class="mb-3"
+                <v-list-item class="mb-0"
                   ><a id="scrap-item" v-b-toggle href="#check-collapse" @click.prevent
                     >신청목록<b-icon icon="chevron-down" aria-hidden="true"></b-icon></a
                 ></v-list-item>
                 <b-collapse id="check-collapse">
-                  <div class="p-1" v-for="(group, idx) in myStudyGroup" :key="idx">
-                    <CheckList :group="group" />
+                  <div class="p-1 mt-1" v-for="(user, idx) in requestList" :key="idx">
+                    <CheckList :user="user" :isManager="isManager"/>
                   </div>
                 </b-collapse>
               </v-list>
@@ -67,20 +107,15 @@
             </div>
           </v-col>
           <!-- 오른쪽 스터디 본문 부분 -->
-          <v-col class="col-12 col-sm-9">
+          <v-col class="col-12 col-sm-8">
             <!-- 달력 추가기능 선택시 들어갈 부분 -->
             <div id="center-post">
               <!-- 캘린더 들어가는 부분 -->
               <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="'스터디'" v-if="inBoard" />
             </div>
             <!-- 스터디 게시글쓰기 -->
-
             <PostWrite class="mt-3" :in-board="inBoard" />
             <GroupPostList />
-            <!-- 스터디 게시물 부분 -->
-            <!-- <StudyPost class="mx-4 mb-2"/> -->
-            <!-- <StudyPost class="mx-4 mb-2"/> -->
-            <!-- <StudyPost class="mx-4 mb-2"/>  -->
           </v-col>
         </v-row>
       </v-container>
@@ -93,42 +128,30 @@
 </template>
 
 <script>
-// 스터디 홍보 게시물
-// import StudyPost from "@/components/curation/study/StudyPost.vue"
-// 스터디 홍보 게시물 쓰기
-// import StudyPostWrite from "@/components/curation/study/StudyPostWrite.vue"
-// 스터디 내 그룹
-// import StudyGroup from "@/components/curation/study/StudyGroup.vue"
-// 캘린더 추가기능 추가시 넣을 부분
-// import StudyCalendarSpan from '@/components/curation/study/StudyCalendarSpan.vue';
 import CalendarSpan from '@/components/calendar/CalendarSpan';
-
-import MyStudyGroup from '@/components/curation/study/MyStudyGroup.vue';
-import CheckList from '@/components/curation/study/CheckList.vue';
-import PostWrite from '@/components/board/PostWrite';
-import GroupPostList from '@/components/board/PostList';
 
 import * as studyApi from '@/api/study';
 import * as boardApi from '@/api/board';
+import {imageDelete} from '@/api/main';
+
+import deepClone from '@/plugins/deepClone';
 
 export default {
   name: 'StudyGroupMain',
   components: {
-    // StudyPost,
-    // StudyPostWrite,
-    // StudyGroup,
-    // 캘린더 부분
-    // StudyCalendarSpan,
-    MyStudyGroup,
-    CheckList,
-    PostWrite,
-    GroupPostList,
+    MyStudyGroup: () => import('@/components/curation/study/MyStudyGroup.vue'),
+    CheckList: () => import('@/components/curation/study/CheckList.vue'),
+    PostWrite: () => import('@/components/board/PostWrite'),
+    GroupPostList: () => import('@/components/board/PostList'),
     CalendarSpan,
     CalendarDialog: () => import('@/components/calendar/CalendarDialog'),
     DetailDialog: () => import('@/components/calendar/DetailDialog'),
     ModifyDialog: () => import('@/components/calendar/ModifyDialog'),
   },
-  watch: {},
+  watch: {
+    isMyStudyState:'myStudyState',
+    isRequestList:'getRequestList',
+  },
   created() {
     //왼쪽 스터디 디테일 가져오기
     this.getStudyDetail();
@@ -141,7 +164,13 @@ export default {
 
     // 요청리스트 가져오기
     this.getRequestList();
+
+    // 나의 현재 스터디 진행 상황
+    this.myStudyState();
+
   },
+
+
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy() {
     if (typeof window === 'undefined') return;
@@ -163,11 +192,16 @@ export default {
       },
       // 검색 키워드
       searchKeyword: '',
-
       inBoard: '',
       myStudyGroup: {},
       groupDto: {},
       requestList: {},
+      flagRequest:2,
+      Edit:false,
+
+      //스터디 수정할 때 사용
+      tempDescription:'',
+
     };
   },
   computed: {
@@ -178,12 +212,22 @@ export default {
 
       if (this.inBoard) {
         const idx = boards.findIndex((board) => board.board_id === BOARD_ID);
-        if (boards[idx].user_role == 1) {
+        if (boards[idx].user_role != undefined && boards[idx].user_role == 1) {
           return true;
         }
       }
       return false;
     },
+
+    //스터디에서 어떤 변화가 발생했는 지 확인하는 것
+    isMyStudyState(){
+      return this.$store.state.study.writeFlag
+    },
+
+    isRequestList(){
+      return this.$store.state.study.writeFlag
+    },
+    
   },
   methods: {
     // 현재 활성화된 기기에 따라 flag 변경
@@ -211,6 +255,79 @@ export default {
           console.log(err);
         });
     },
+    // 스터디 내용 수정하기
+    btnModify() {
+      this.Edit = !this.Edit
+      alert(`Edit태그 불러오기!`);
+    },
+    cancel(){
+      this.tempDescription = this.groupDto.board_description
+      this.Edit = !this.Edit
+    },
+    submit(){
+      // this.board.hashtags = [this.board.hashtags, ...this.tempHashtags]
+      this.groupDto.description = this.tempDescription
+      this.groupDto.board_description = this.groupDto.description
+      boardApi.board_modify(this.groupDto,String(localStorage.userId))
+      .then(res=>{
+        console.log(res)
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+
+      this.cancel()
+      alert(`수정!`);
+    },
+    //보드삭제
+    async groupDelete(){
+      if(!this.isManager){
+        alert('매니저만 사용할 수 있어요')
+        return
+      }
+
+      try{
+        if(this.groupDto.image!=''){
+          await imageDelete(this.groupDto.image)
+          .then(res=>{
+            console.log('이미지 삭제 완료!')
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        }
+  
+        await boardApi.board_delete(Number(this.$route.params.board_id),localStorage.userId)
+        .then(res=>{
+          console.log('보드 삭제')
+          this.$router.push({name:'StudyMain'})
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      }catch(err){
+        console.log('PostForDetail- 보드 삭제 에러')
+        console.log(err)
+      }
+    },
+    // ==========================================
+
+    // 유저의 현재 스터디 상황
+    myStudyState(){
+      studyApi.myStudyRequest(localStorage.userId,this.$route.params.board_id)
+      .then(res=>{
+        
+        if(res.data.list.length>=1){
+          console.log('현재 스터디 상황')
+          console.log(res.data.list[0]['request_state'])
+          console.log('--------------')
+          this.flagRequest = res.data.list[0]['request_state']
+        }
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    },
     // 내가 가입되어 있는 스터디인가?
     isInBoard() {
       const BOARD_ID = Number(this.$route.params.board_id);
@@ -225,28 +342,75 @@ export default {
       boardApi
         .board_detail(this.$route.params.board_id)
         .then((res) => {
-          console.log(res);
           this.groupDto = res.data.boardDto;
+          this.tempDescription = res.data.boardDto.board_description
         })
         .catch((err) => {
           console.log(err);
         });
     },
     // 가입요청하기
-    // studyRequest(){
-    //   studyApi.studyRequest(localStorage.userId,this.$route.params.board_id)
-    //   .then(res=>{
+    studyRequest(){
+      studyApi.studyRequest(String(localStorage.userId),Number(this.$route.params.board_id))
+      .then(res=>{
+        console.log('스터디가입요청성공')
+        console.log(res)
+        console.log('---------')
+        this.flagRequest=0
+      })
+      .catch(err=>{
+        console.log('스터디가입요청실패')
+        console.log(err)
+        console.log('----------')
+      })
+    },
+    // 기다리기
+    studyWait(){
+      alert('확인 중에 있습니다. 조금만 기다려주세요')
+    },
+    // 탈퇴하기
+    studySecession(){
+      if(this.isManager){
+        alert('그룹 생성자는 탈퇴할 수 없습니다.')
+        return
+      }
+      const BOARD_ID = Number(this.$route.params.board_id);
 
-    //   })
-    // },
-    // 요청리스트 가져오기!
+      const boards = JSON.parse(localStorage.subBoard);
+      const board = boards.filter((board) => board.board_id === Number(this.$route.params.board_id));
+
+      studyApi.studySecession(Number(this.$route.params.board_id),String(localStorage.userId))
+      .then(res=>{
+        console.log('스터디 탈퇴')
+        console.log(res)
+        console.log('---------')
+        this.inBoard = !this.inBoard;
+        this.flagRequest=2
+
+        // localStorage 수정해주는 부분
+        if (board.length > 0) {
+          // 보드가 있네? 그럼 구독 해지!
+          const idx = boards.findIndex((board) => board.board_id === Number(this.$route.params.board_id));
+          boards.splice(idx, 1);
+        }
+        localStorage.subBoard = JSON.stringify(boards);
+        this.$store.commit('auth/setSubBoardRefresh');
+      })
+      .catch(err=>{
+        console.log('스터디 탈퇴 실패')
+        console.log(err)
+        console.log('---------')
+      })
+    },
+    // 요청리스트 가져오기! ( 매니저만 볼 수 있음)
     getRequestList() {
-      console.log(this.isManager);
       if (this.isManager) {
         studyApi
           .getRequestList(this.$route.params.board_id)
           .then((res) => {
+            console.log('매니저만 보는 요청 리스트')
             console.log(res);
+            console.log('--------------')
             this.requestList = res.data.list;
           })
           .catch((err) => {
@@ -254,7 +418,7 @@ export default {
           });
       }
     },
-    // 스터디보드 구독 중인 지 확인하기
+    // 스터디보드 구독하기
     onSubscribe() {
       const BOARD_ID = Number(this.$route.params.board_id);
 
@@ -312,6 +476,19 @@ export default {
 
 .main-bg-color {
   background-color: #ebebe9;
+}
+#container {
+  font-family: 'Noto Sans KR', sans-serif !important;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 15px;
+  min-height: 20vh;
+}
+.name-setting{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1em;
 }
 .description {
   margin: 2%;
@@ -397,6 +574,40 @@ export default {
 #scrap-item {
   text-decoration: none;
   color: #000;
+}
+/* 수정할 때 사용하는 버튼 */
+.edit-button-set{
+  display: flex;
+  justify-content:flex-end;
+  align-items: center;
+}
+.p-button {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button:hover,
+.p-button:active {
+  color: #fff;
+  background-color: #000 !important;
+}
+.p-button-cancel {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #000;
+  border-radius: 30px;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.p-button-cancel:hover,
+.p-button-cancel:active {
+  color: #fff;
+  background-color: #aa2610 !important;
 }
 
 /* calendar 내용 */
