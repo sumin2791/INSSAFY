@@ -35,6 +35,12 @@
                   메세지 보내기
                 </v-list-item-title>
               </v-list-item>
+              <!-- 관리자 권한 주기-->
+              <v-list-item v-if="flagAuthority" @click="updateManager">
+                <v-list-item-title>
+                  권한 주기
+                </v-list-item-title>
+              </v-list-item>
             </v-list-item-group>
           </v-list>
         </v-menu>
@@ -72,7 +78,7 @@
                   </v-list-item>
                   <!-- 삭제 -->
                   <!-- <v-list-item v-if="flagWriter" @click="postDelete"> -->
-                  <v-list-item v-if="flagWriter" v-b-modal.modal-delete>
+                  <v-list-item v-if="flagWriter || isManager" v-b-modal.modal-delete>
                     <v-list-item-title>
                       삭제
                     </v-list-item-title>
@@ -168,6 +174,9 @@ import '@/assets/css/static/style.css';
 import * as chatApi from '@/api/chat';
 import { async } from 'regenerator-runtime';
 
+//보드 api
+import * as boardApi from '@/api/board'
+
 export default {
   name: 'PostForDetail',
   components: {
@@ -190,9 +199,15 @@ export default {
       profileImg: 'https://avatars0.githubusercontent.com/u/9064066?v=4&s=460',
       // 채팅방 id
       chatRoomId: '',
+
+      inBoard: '',
+      isManager: false,
     };
   },
   computed: {
+    flagAuthority(){
+      return this.post.user_id != localStorage.userId &&this.isManager 
+    },
     flagLike() {
       return this.$store.state.post.flagLike;
     },
@@ -236,8 +251,23 @@ export default {
     // '$route':'fetchData'
   },
   created() {
-    console.log(this.post);
-    // this.fetchData()
+
+    // 보드 구독했는 지 여부와 관리자 여부 확인하기 !!
+    const BOARD_ID = Number(this.$route.params.board_id);
+    const boards = JSON.parse(localStorage.subBoard);
+    const boardIds = boards.map((e) => {
+      return e.board_id;
+    });
+    this.inBoard = boardIds.includes(BOARD_ID);
+
+    // 구독했다면 관리자인가? 아님 그냥 유저인가? : isManager
+    if (this.inBoard) {
+      const idx = boards.findIndex((board) => board.board_id === BOARD_ID);
+      if (boards[idx].user_role == 1) {
+        this.isManager = true;
+      }
+    }
+    // ===================
 
     // 이미지 하나만 추출했어요.
     var input = this.post.post_image;
@@ -252,6 +282,17 @@ export default {
     }
   },
   methods: {
+    // 권한주기
+    updateManager(){
+      
+      boardApi.board_updateManager(this.post.user_id,Number(this.$route.params.board_id))
+      .then(res=>{
+        this.isManager=true
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    },
     // user가 좋아요 버튼 클릭 시 vuex에서 flag 변화 + 서버와 연결
     postLike(e) {
       postApi
