@@ -24,7 +24,13 @@
       </div>
       <div class="search-container">
         <div id="search-bar" ref="searchBar">
-          <input id="s-input" @keyup.enter="onSearching" v-model="keyword" type="text" placeholder="검색어를 입력하세요" />
+          <input
+            id="s-input"
+            @keyup.enter="onSearching"
+            v-model="keyword"
+            type="text"
+            placeholder="검색어를 입력하세요"
+          />
           <button id="s-del-btn" @click="clickDeleteBtn" :class="{ visible: keyword != '' }">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
               <path
@@ -75,7 +81,7 @@ export default {
   },
   methods: {
     ...mapActions('search', ['actSearchAllBoard']),
-    ...mapMutations('search', ['SET_SEARCH_ACTIVE', 'SET_PAYLOAD_SORT', 'SET_PAYLOAD']),
+    ...mapMutations('search', ['SET_SEARCH_ACTIVE', 'SET_PAYLOAD_SORT', 'SET_PAYLOAD', 'CLEAR_SEARCH_LIST']),
     //검색 관련
     clickCloser() {
       this.$store.commit('setToastTogle');
@@ -93,6 +99,7 @@ export default {
         page: this.page,
         type: this.select.type,
       });
+      this.CLEAR_SEARCH_LIST();
       if (this.epicenter === 'nav') {
         if (this.active === 'allBoard' && this.$router.currentRoute.path !== '/board/search') {
           this.$router.push({ name: 'SearchBoard' });
