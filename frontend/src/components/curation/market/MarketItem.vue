@@ -3,13 +3,13 @@
     class="mx-auto"
     outlined
   >
-    <v-list-item three-line>
+    <v-list-item three-line @click="goToDetail">
       <v-list-item-content>
         <v-list-item-title class="text-body-1 mb-1">
-          {{ title }}
+          {{ postDto.post_title }}
         </v-list-item-title>
         <v-list-item-subtitle>
-          {{ contents }}
+          {{ postDto.post_description }}
         </v-list-item-subtitle>
       </v-list-item-content>
 
@@ -19,11 +19,12 @@
       >
         <img
           alt="Avatar"
-          :src="img"
+          :src="image"
+          v-if="image!=''"
         >
       </v-list-item-avatar>
     </v-list-item>
-
+  
     <v-card-actions>
       <v-btn
         outlined
@@ -31,15 +32,19 @@
         text
         block
       >
-        판매중
+        {{isState}}
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import * as postApi from '@/api/post'
 export default {
   name: "MarketItem",
+  props:{
+    likeId:Number
+  },
   data() {
     return {
       // 판매정보 가져올 부분
@@ -49,8 +54,40 @@ export default {
       status: '',
       // 판매중, 판매완료, 거래중 상태 표시
       optionStatus: ['판매중', '판매완료', '거래중'],
+      postDto:{}
     }
   },
+  computed:{
+    isState(){
+      if(this.postDto.post_state===0){
+        return '판매중'
+      }else if(this.postDto.post_state===-1){
+        return '예약중'
+      }else{
+        return '판매완료'
+      }
+    },
+    image(){
+      return this.postDto.post_image
+    }
+  },
+  created(){
+    this.getDetail()
+  },
+  methods:{
+    getDetail(){
+      postApi.getPost({
+        login_id:String(localStorage.getItem('userId')),
+        post_id:Number(this.likeId)
+      })
+      .then(res=>{
+        this.postDto = res.data.postDto
+      })
+    },
+    goToDetail(){
+      this.$router.push({name:'MarketPost',params:{post_id:this.postDto.post_id}});
+    }
+  }
 }
 </script>
 
