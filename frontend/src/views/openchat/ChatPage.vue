@@ -1,8 +1,8 @@
 <template>
-  <v-app class="main-bg-color">
-    <v-main class="grey lighten-3">
+  <!-- <v-app class="main-bg-color"> -->
+    <!-- <v-main class="grey lighten-3"> -->
       <v-container
-        class="pt-8"
+        class="chat-page"
       > 
         <v-row>
           <!-- 왼쪽 채팅방 리스트 -->
@@ -11,12 +11,11 @@
             v-show="!ResponsiveSize.isMobile || !isInRoom"
             id="container" 
           >
-            <v-list color="transparent">
+            <v-list color="##fcfcfc">
               <!-- 채팅방 리스트 타이틀 -->
               <div id="title">채팅방 목록</div>
-              {{ResponsiveSize.isMobile}} {{isInRoom}}
               <!-- 채팅중인 대화상대 목록 -->
-              <v-col>
+              <v-col class="my-list">
                 <ChatRoomList
                   v-for="(chatList, idx) in chatLists"
                   :key="idx"
@@ -36,8 +35,8 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-main>
-  </v-app>
+    <!-- </v-main> -->
+  <!-- </v-app> -->
 </template>
 
 <script>
@@ -118,8 +117,10 @@ export default {
 </script>
 
 <style scoped>
-.main-bg-color {
+.chat-page {
   background-color: #ebebe9;
+  max-height: 90vh;
+  margin: 20px auto;
 }
 /* 전체 폰트 */
 #container {
@@ -127,7 +128,7 @@ export default {
   box-shadow: var(--basic-shadow-s) !important;
   border-radius: 15px;
   background-color: var(--basic-color-bg2) !important;
-  min-height: calc(95vh - 50px);
+  min-height: calc(100vh - 82px);
 }
 /* 제목 */
 #title {
@@ -138,9 +139,14 @@ export default {
   justify-content: space-between;
   margin-bottom: 1em;
 }
+/* 내 대화상대 목록 리스트 */ 
+.my-list {
+  overflow-y: scroll;
+}
 /* 오른쪽 채팅방 부분 */
 #right {
   padding: 0px 0px 0px 8px;
+  min-height: calc(100vh - 82px);
 }
 /* z-index 조절 */
 .front {

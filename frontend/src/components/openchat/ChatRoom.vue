@@ -1,5 +1,5 @@
 <template>
-  <v-card min-height="90vh" id="chatroom-bg">
+  <v-card id="chatroom-bg">
     <!-- 위쪽 툴바 부분 -->
     <v-toolbar
       color="#5C5C64"
@@ -105,8 +105,6 @@ export default {
   },
   data() {
     return {
-      // 오른쪽 채팅방 상대 이름
-      youNickName: '아몰랑',
       // 보낼 내용
       sendContents: '',
       // 현재 접속한 유저
@@ -235,6 +233,8 @@ export default {
     exitRoom() {
       // 활성화 채팅방 없애고 메세지도 지우기
       this.$store.dispatch('chat/isNotSelected')
+      // data를 갱신해서 re-rendar되게
+      this.sendContents = ''
     },
     // message 갱신용
     messagesUpdate() {
@@ -251,11 +251,13 @@ export default {
   box-shadow: var(--basic-shadow-s) !important;
   border-radius: 15px 15px 5px 5px;
   padding: 0px 0px 0px 0px !important;
+  height: 100%;
 }
 .chat-area {
 /*   border: 1px solid #ccc; */
   background-color: #FFF;
   min-height: 90vh;
+  max-height: 92vh;
   padding: 1em;
   /* overflow: auto; */
   box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.3)
@@ -263,9 +265,10 @@ export default {
 /* 채팅방 부분 */
 #chat-message {
   min-height: calc(90vh - 64px);
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
-  /* overflow-y: scroll; */
+  overflow-y: scroll !important;
 }
 /* 댓글 입력 부분 */
 #input {
