@@ -22,7 +22,6 @@ import calendar from './calendar';
 import search from './search';
 import study from './study';
 
-
 Vue.use(Vuex);
 
 const PROBLEMS = () => [
@@ -76,10 +75,7 @@ export default new Vuex.Store({
     addfunc,
     chat,
     calendar,
-<<<<<<< frontend/src/vuex/store.js
     search,
-=======
     study,
->>>>>>> frontend/src/vuex/store.js
   },
 });

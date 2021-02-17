@@ -88,7 +88,7 @@ export default {
       this.actSearchAllBoard().then((v) => {
         if (v) {
           setTimeout(() => {
-            if (this.result.isLastPage !== 'No data') {
+            if (this.result) {
               this.boardList = this.boardList.concat(this.result);
               $state.loaded();
               if (this.result.length / this.size < 1) {
