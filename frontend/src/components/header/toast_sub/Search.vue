@@ -64,7 +64,9 @@ export default {
     ...mapGetters('search', ['getHeader', 'getType', 'getSort']),
     ...mapState('search', ['active', 'header', 'type', 'sort', 'epicenter']),
   },
-  mounted() {},
+  mounted() {
+    this.select.type = this.getType.value[0];
+  },
   watch: {
     getIndex() {
       console.log(this.getIndex);
