@@ -100,9 +100,6 @@ export default {
       let vote ={
         board_id:Number(this.$route.params.board_id),
         vote_name: this.question,
-        vote_duplication:0,
-        vote_end_datetime:"2021-02-24 12:00:00",
-        vote_igmyeong:0,
         vote_description:'null',
       }
       try{
