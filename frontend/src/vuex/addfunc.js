@@ -24,11 +24,11 @@ export default {
 
     // 체크리스트 편집중 상태 저장
     IS_EDIT_CHECK_LIST(state, boolean) {
-      console.log(boolean);
-      state.isEditNow = Boolean(boolean);
+      console.log(boolean)
+      state.isEditNow = Boolean(boolean)
     },
-    FLAG_WRITE(state) {
-      state.flagWrite = !state.flagWrite;
+    FLAG_WRITE(state){
+      state.flagWrite = !state.flagWrite
     },
   },
   actions: {
@@ -40,6 +40,12 @@ export default {
     },
     flagWrite({ commit }) {
       commit('FLAG_WRITE');
+    },
+    isEditCheckList({commit}, bool) {
+      commit('IS_EDIT_CHECK_LIST', bool)
+    },
+    flagWrite({commit}){
+      commit('FLAG_WRITE')
     },
   },
 };
