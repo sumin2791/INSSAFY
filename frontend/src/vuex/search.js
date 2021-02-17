@@ -24,12 +24,12 @@ const INIT_HEADER = () => {
 const INIT_BOARD_TYPE = () => {
   return {
     allBoard: {
-      key: ['보드명', '작성글', '지역', '해시태그'],
+      key: ['보드명', '보드설명', '지역', '해시태그'],
       value: ['name', 'description', 'location', 'hash'],
     },
     allPost: {
-      key: ['머리말', '글 제목', '글 내용'],
-      value: ['header', 'title', 'desc'],
+      key: ['글 제목', '글 내용', '머리말'],
+      value: ['title', 'desc', 'header'],
     },
   };
 };
@@ -60,8 +60,7 @@ export default {
     sort: INIT_SORT(),
 
     //검색 결과
-    result: [],
-    isLastPage: false,
+    searchList: [],
 
     //검색 버튼 클릭 이벤트 발생 지점
     epicenter: '',
@@ -98,11 +97,11 @@ export default {
     },
 
     //result 적용
-    SET_RESULT(state, payload) {
-      state.result = payload;
+    SET_SEARCH_LIST(state, payload) {
+      state.searchList = state.searchList.concat(payload);
     },
-    SET_ISLASTPAGE(state, boolean) {
-      state.isLastPage = boolean;
+    CLEAR_SEARCH_LIST(state) {
+      state.searchList = [];
     },
   },
   //--------------------------------
@@ -115,9 +114,10 @@ export default {
         const response = await searchApi.getSearchAllBoard(state.payload);
         if (response.data.message === 'success') {
           console.log(response);
-          commit('SET_RESULT', response.data.boardList);
-          commit('SET_ISLASTPAGE', response.data.isLastPage);
-          console.log(state.isLastPage);
+          commit('SET_SEARCH_LIST', response.data.boardList);
+          if (response.data.isLastPage === 'No data') {
+            return false;
+          }
           return true;
         }
       } catch (error) {

@@ -4,7 +4,7 @@ import store from '../vuex/store';
 
 // axios 인스턴스를 만들 때 구성 기본 값 설정
 const instance = axios.create({
-  baseURL: 'http://localhost:8000/',
+  baseURL: 'http://localhost:8000',
   // baseURL: 'http://http://i4c109.p.ssafy.io/api',
 });
 

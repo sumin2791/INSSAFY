@@ -8,20 +8,16 @@
           text-center
             text-body-1"
         >
-          보드 중 "{{ payload.keyword }}"에 대한 검색 결과
+          <h5 class="m-desc" v-if="payload.keyword !== ''">보드 중 "{{ payload.keyword }}"에 대한 검색 결과</h5>
+          <h5 class="m-desc" v-if="payload.keyword === ''">보드 전체 검색 결과</h5>
         </v-col>
       </v-row>
       <!-- 검색 건수 / 정렬 / 보드 생성 -->
       <div
         class="d-flex 
           flex-row
-          justify-content-between"
+          justify-content-end"
       >
-        <!-- 검색 건수 / 정렬 -->
-        <div>
-          <v-select v-model="search.currentSort" :items="sortResult" label="정렬기준" solo color="##fff" class="sort-dropdown" block></v-select>
-        </div>
-
         <!-- 보드 생성 버튼 -->
         <div>
           <v-btn id="create-btn" @click="goToCreateBoard()">
@@ -34,12 +30,14 @@
       </div>
       <!-- 보드 보여주는 부분 -->
       <v-row>
-        <v-col class="col-6 col-sm-3" v-for="(board, idx) in boardList" :key="idx">
+        <v-col class="col-6 col-sm-3" v-for="(board, idx) in searchList" :key="idx">
           <Board :board="board" />
         </v-col>
       </v-row>
       <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
-        <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">목록의 끝입니다 :)</div>
+        <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">
+          목록의 끝입니다 :)
+        </div>
       </infinite-loading>
     </v-container>
   </v-main>
@@ -47,10 +45,9 @@
 
 <script>
 import Board from '@/components/search/Board.vue';
-import * as boardApi from '@/api/board';
 
 import InfiniteLoading from 'vue-infinite-loading';
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'SearchBoard',
@@ -61,21 +58,17 @@ export default {
   data() {
     return {
       search: {
-        searchKeyword: '게임',
-        searchCount: 248,
-        currentSort: '',
+        infiniteState: null,
       },
-      // 검색 정렬 조건
-      sortResult: ['최신순', '인기순'],
-      boardList: [],
-      page: 0,
     };
   },
   computed: {
-    ...mapState('search', ['result', 'size', 'payload', 'isLastPage']),
+    ...mapState('search', ['searchList', 'size', 'payload']),
   },
-  created() {
-    this.boardList = this.boardList.concat(this.result);
+  watch: {
+    searchList() {
+      this.infiniteState.loaded();
+    },
   },
   methods: {
     ...mapActions('search', ['actSearchAllBoard']),
@@ -84,21 +77,15 @@ export default {
       return this.$router.push({ name: 'BoardForm' });
     },
     infiniteHandler($state) {
-      this.SET_NEXT_PAGE();
+      this.infiniteState = $state;
       this.actSearchAllBoard().then((v) => {
         if (v) {
           setTimeout(() => {
-            console.log(!this.isLastPage);
-            if (!this.isLastPage) {
-              this.boardList = this.boardList.concat(this.result);
-              $state.loaded();
-              if (this.result.length / this.size < 1) {
-                $state.complete();
-              }
-            } else {
-              $state.complete();
-            }
+            this.SET_NEXT_PAGE();
+            $state.loaded();
           }, 1000);
+        } else {
+          $state.complete();
         }
       });
     },

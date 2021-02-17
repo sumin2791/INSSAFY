@@ -1,87 +1,77 @@
 <template>
-<v-main class="main-bg-color">
+  <v-main class="main-bg-color">
     <v-container>
       <!-- 검색어 결과 노출 부분 -->
-      <v-row>          
-        <v-col 
+      <v-row>
+        <v-col
           class="mb-4
           text-center
-            text-body-1">
-            게시글 중 "{{ search.searchKeyword }}"에 대한 검색 결과 &nbsp; '{{ search.searchCount }}건'
+            text-body-1"
+        >
+          <h5 class="m-desc" v-if="payload.keyword !== ''">게시물 중 "{{ payload.keyword }}"에 대한 검색 결과</h5>
+          <h5 class="m-desc" v-if="payload.keyword === ''">게시물 전체 검색 결과</h5>
         </v-col>
       </v-row>
-      <!-- 검색 건수 / 정렬 / 보드 생성 -->
-      <div 
-        class="d-flex 
-          flex-row
-          justify-content-between"
-      >
-        <!-- 검색 건수 / 정렬 -->
-        <div>
-          <v-select
-            v-model="search.currentSort"
-            :items="sortResult"
-            label="정렬기준"
-            solo
-            color="##fff"
-            class="sort-dropdown"
-            block
-          ></v-select>
+
+      <!-- 보드 보여주는 부분 -->
+      <v-row>
+        <v-col class="col-12 col-sm-4" v-for="(item, index) in searchList" :key="index">
+          <Post :post="item" />
+        </v-col>
+      </v-row>
+      <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+        <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">
+          목록의 끝입니다 :)
         </div>
-      </div>
-    <!-- 보드 보여주는 부분 -->
-      <v-row >
-        <v-col class="col-6 col-sm-4">
-          <MyPost />
-        </v-col>
-        <v-col class="col-6 col-sm-4">
-          <MyPost />
-        </v-col>
-        <v-col class="col-6 col-sm-4">
-          <MyPost />
-        </v-col>
-        <v-col class="col-6 col-sm-4">
-          <MyPost />
-        </v-col>
-        <v-col class="col-6 col-sm-4">
-          <MyPost />
-        </v-col>
-      </v-row>
+      </infinite-loading>
     </v-container>
   </v-main>
 </template>
 
 <script>
-import MyPost from "@/components/mypage/MyPost.vue"
+import Post from '@/components/search/Post.vue';
 
-
+import InfiniteLoading from 'vue-infinite-loading';
+import { mapActions, mapMutations, mapState } from 'vuex';
 export default {
   name: 'SearchPost',
   components: {
-    MyPost,
+    Post,
+    InfiniteLoading,
   },
   data() {
     return {
       search: {
-        searchKeyword: '게임',
-        searchCount: 248,
-        currentSort: '',
+        infiniteState: null,
       },
-      // 검색 정렬 조건
-      sortResult: ['최신순', '인기순'],
-    }
+    };
   },
-  computed:{
-    boardList(){
-      return this.$store.state.board.boardList
-    }
+  computed: {
+    ...mapState('search', ['searchList', 'size', 'payload']),
+  },
+  watch: {
+    searchList() {
+      this.infiniteState.loaded();
+    },
   },
   methods: {
-    goToCreateBoard() {
-      return this.$router.push({ name: 'BoardForm' });
+    ...mapActions('search', ['actSearchAllBoard']),
+    ...mapMutations('search', ['SET_NEXT_PAGE']),
+    infiniteHandler($state) {
+      this.infiniteState = $state;
+      this.actSearchAllBoard().then((v) => {
+        if (v) {
+          setTimeout(() => {
+            this.SET_NEXT_PAGE();
+            $state.loaded();
+          }, 1000);
+        } else {
+          $state.complete();
+        }
+      });
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

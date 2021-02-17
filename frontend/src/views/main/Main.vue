@@ -6,8 +6,17 @@
   <div id="main-container">
     <div id="favorite-container" class="m-top-s">
       <p id="" class="main-title pc-only">FAVORITE</p>
-      <svg id="f-star" class="mobile-only" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" />
+      <svg
+        id="f-star"
+        class="mobile-only"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"
+        />
       </svg>
       <swiper v-cloak id="f-swiper" class="swiper" :options="swiperOption" @clickSlide="clickFavorite">
         <swiper-slide v-for="(item, index) in favorites" :key="`faborite${item.board_id}/${index}`">
@@ -37,11 +46,23 @@
       </div>
       <p class="p-desc l-desc">구독자 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="item in getFollowRank" :key="`p-subs${item.board_id}`" :item="item" :type="'subscribe'" />
+        <BoardItem
+          class="p-item"
+          v-for="item in getFollowRank"
+          :key="`p-subs${item.board_id}`"
+          :item="item"
+          :type="'subscribe'"
+        />
       </div>
       <p class="p-desc l-desc">게시글 수</p>
       <div class="p-item-container">
-        <BoardItem class="p-item" v-for="item in getPostsRank" :key="`p-posts${item.board_id}`" :item="item" :type="'post'" />
+        <BoardItem
+          class="p-item"
+          v-for="item in getPostsRank"
+          :key="`p-posts${item.board_id}`"
+          :item="item"
+          :type="'post'"
+        />
       </div>
       <div id="sub-title-container">
         <p class="p-desc l-desc">좋아요 수</p>
@@ -162,7 +183,14 @@ export default {
     },
   },
   methods: {
-    ...mapActions('main', ['actFavorites', 'actFollowRank', 'actPostRank', 'actLikeRank', 'actCommentRank', 'actNewBoards']),
+    ...mapActions('main', [
+      'actFavorites',
+      'actFollowRank',
+      'actPostRank',
+      'actLikeRank',
+      'actCommentRank',
+      'actNewBoards',
+    ]),
     forceRerender() {
       this.componentKey += 1;
     },
@@ -204,6 +232,7 @@ export default {
         page: 0,
         type: 'name',
       });
+      this.$store.commit('search/CLEAR_SEARCH_LIST');
       this.$router.push({ name: 'SearchBoard' });
     },
     clickPBtn2: function() {
@@ -323,7 +352,11 @@ p {
   z-index: 1;
   background: var(--basic-color-bg); /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #ebebe900 150px, #ebebe9ff 200px); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #ebebe900 150px, #ebebe9ff 200px); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(
+    to right,
+    #ebebe900 150px,
+    #ebebe9ff 200px
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 #c-list button:first-child {
   margin-left: 200px;
