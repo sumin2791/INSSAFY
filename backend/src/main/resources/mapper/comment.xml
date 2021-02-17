@@ -9,11 +9,6 @@
 		values ( #{user_id}, #{post_id}, #{comment_description}, now(),1)
 	</insert>
 
-	<insert id="createNotification" parameterType="CommentDto" useGeneratedKeys="true" keyProperty="comment_id">
-		insert into comment_notification
-		values ( #{comment_id} , 1)
-	</insert>
-
 	<update id="commentModify" parameterType="CommentDto">
 		update comment
 		set  comment_description=#{comment_description}
@@ -22,12 +17,6 @@
 
 	<update id="commentDelete" parameterType="int">
 		update comment
-		set is_used = 0
-		where comment_id = #{comment_id}
-	</update>
-
-	<update id="notificationDelete" parameterType="int">
-		update comment_notification
 		set is_used = 0
 		where comment_id = #{comment_id}
 	</update>
