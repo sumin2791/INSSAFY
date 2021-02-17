@@ -12,7 +12,13 @@
             justify-space-between"
         >
           <!-- 페이지 이름 -->
-          <div class="text-overline  text-weight-black page-title" style="font-size: 20px !important;" @click="goMainStudy()">Curation</div>
+          <div
+            class="text-overline  text-weight-black page-title"
+            style="font-size: 20px !important;"
+            @click="goMainStudy()"
+          >
+            Curation
+          </div>
           <!-- 검색관련 부분 -->
           <div
             class="d-flex 
@@ -32,10 +38,7 @@
                   <div class="name-setting">
                     <h4 class="b-desc">{{ groupDto.board_name }}</h4>
                     <!-- 수정버튼과 삭제버튼 토글-->
-                    <v-icon id="edit-icon"
-                      v-if="isManager && !Edit"
-                      @click="btnModify"
-                    >
+                    <v-icon id="edit-icon" v-if="isManager && !Edit" @click="btnModify">
                       mdi-cog
                     </v-icon>
                     <p class="r-desc delete-button" v-b-modal.modal-delete v-if="isManager && Edit">삭제</p>
@@ -52,9 +55,7 @@
                     {{ groupDto.board_description }}
                   </p>
                   <!-- 수정버튼 클릭 시 생성-->
-                  <div
-                    class="board-detail-form"
-                    v-if="Edit">
+                  <div class="board-detail-form" v-if="Edit">
                     <v-textarea
                       solo
                       clearable
@@ -71,15 +72,21 @@
                 <div class="edit-button-set" v-if="Edit">
                   <div>
                     <button class="p-button-cancel r-desc" @click="cancel">cancel</button>
-                    <button class="p-button r-desc" @click="submit">  Edit  </button>
+                    <button class="p-button r-desc" @click="submit">Edit</button>
                   </div>
                 </div>
               </div>
 
               <!-- 구독 버튼 -->
-              <button class="btn-subscribe b-title" @click="studyRequest" v-if="!inBoard && flagRequest>1">Subscribe</button>
-              <button class="btn-Checking b-title" @click="studyWait" v-if="!inBoard && flagRequest===0">Checking</button>
-              <button class="btn-subscribing b-title" @click="studySecession" v-if="inBoard || flagRequest===1">Subscribing</button>
+              <button class="btn-subscribe b-title" @click="studyRequest" v-if="!inBoard && flagRequest > 1">
+                Subscribe
+              </button>
+              <button class="btn-Checking b-title" @click="studyWait" v-if="!inBoard && flagRequest === 0">
+                Checking
+              </button>
+              <button class="btn-subscribing b-title" @click="studySecession" v-if="inBoard || flagRequest === 1">
+                Subscribing
+              </button>
               <v-divider class="my-2" v-if="isManager"></v-divider>
               <v-list color="transparent" v-if="isManager">
                 <v-list-item class="mb-0"
@@ -88,7 +95,7 @@
                 ></v-list-item>
                 <b-collapse id="check-collapse">
                   <div class="p-1 mt-1" v-for="(user, idx) in requestList" :key="idx">
-                    <CheckList :user="user" :isManager="isManager"/>
+                    <CheckList :user="user" :isManager="isManager" />
                   </div>
                 </b-collapse>
               </v-list>
@@ -111,7 +118,12 @@
             <!-- 달력 추가기능 선택시 들어갈 부분 -->
             <div id="center-post">
               <!-- 캘린더 들어가는 부분 -->
-              <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="'스터디'" v-if="inBoard" />
+              <CalendarSpan
+                id="study-calendar"
+                class="rounded-bg"
+                :boardName="this.$route.params.board_id"
+                v-if="inBoard"
+              />
             </div>
             <!-- 스터디 게시글쓰기 -->
             <PostWrite class="mt-3" :in-board="inBoard" />
@@ -121,8 +133,8 @@
       </v-container>
     </v-main>
 
-    <CalendarDialog :boardName="'스터디'" />
-    <ModifyDialog :boardName="'스터디'" />
+    <CalendarDialog :boardName="this.$route.params.board_id" />
+    <ModifyDialog :boardName="this.$route.params.board_id" />
     <DetailDialog />
   </v-app>
 </template>
@@ -132,7 +144,7 @@ import CalendarSpan from '@/components/calendar/CalendarSpan';
 
 import * as studyApi from '@/api/study';
 import * as boardApi from '@/api/board';
-import {imageDelete} from '@/api/main';
+import { imageDelete } from '@/api/main';
 
 import deepClone from '@/plugins/deepClone';
 
@@ -149,8 +161,8 @@ export default {
     ModifyDialog: () => import('@/components/calendar/ModifyDialog'),
   },
   watch: {
-    isMyStudyState:'myStudyState',
-    isRequestList:'getRequestList',
+    isMyStudyState: 'myStudyState',
+    isRequestList: 'getRequestList',
   },
   created() {
     //왼쪽 스터디 디테일 가져오기
@@ -167,9 +179,7 @@ export default {
 
     // 나의 현재 스터디 진행 상황
     this.myStudyState();
-
   },
-
 
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy() {
@@ -196,12 +206,11 @@ export default {
       myStudyGroup: {},
       groupDto: {},
       requestList: {},
-      flagRequest:2,
-      Edit:false,
+      flagRequest: 2,
+      Edit: false,
 
       //스터디 수정할 때 사용
-      tempDescription:'',
-
+      tempDescription: '',
     };
   },
   computed: {
@@ -220,14 +229,13 @@ export default {
     },
 
     //스터디에서 어떤 변화가 발생했는 지 확인하는 것
-    isMyStudyState(){
-      return this.$store.state.study.writeFlag
+    isMyStudyState() {
+      return this.$store.state.study.writeFlag;
     },
 
-    isRequestList(){
-      return this.$store.state.study.writeFlag
+    isRequestList() {
+      return this.$store.state.study.writeFlag;
     },
-    
   },
   methods: {
     // 현재 활성화된 기기에 따라 flag 변경
@@ -257,76 +265,78 @@ export default {
     },
     // 스터디 내용 수정하기
     btnModify() {
-      this.Edit = !this.Edit
+      this.Edit = !this.Edit;
       alert(`Edit태그 불러오기!`);
     },
-    cancel(){
-      this.tempDescription = this.groupDto.board_description
-      this.Edit = !this.Edit
+    cancel() {
+      this.tempDescription = this.groupDto.board_description;
+      this.Edit = !this.Edit;
     },
-    submit(){
+    submit() {
       // this.board.hashtags = [this.board.hashtags, ...this.tempHashtags]
-      this.groupDto.description = this.tempDescription
-      this.groupDto.board_description = this.groupDto.description
-      boardApi.board_modify(this.groupDto,String(localStorage.userId))
-      .then(res=>{
-        console.log(res)
-      })
-      .catch(err=>{
-        console.log(err)
-      })
+      this.groupDto.description = this.tempDescription;
+      this.groupDto.board_description = this.groupDto.description;
+      boardApi
+        .board_modify(this.groupDto, String(localStorage.userId))
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-      this.cancel()
+      this.cancel();
       alert(`수정!`);
     },
     //보드삭제
-    async groupDelete(){
-      if(!this.isManager){
-        alert('매니저만 사용할 수 있어요')
-        return
+    async groupDelete() {
+      if (!this.isManager) {
+        alert('매니저만 사용할 수 있어요');
+        return;
       }
 
-      try{
-        if(this.groupDto.image!=''){
+      try {
+        if (this.groupDto.image != '') {
           await imageDelete(this.groupDto.image)
-          .then(res=>{
-            console.log('이미지 삭제 완료!')
-          })
-          .catch(err=>{
-            console.log(err)
-          })
+            .then((res) => {
+              console.log('이미지 삭제 완료!');
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         }
-  
-        await boardApi.board_delete(Number(this.$route.params.board_id),localStorage.userId)
-        .then(res=>{
-          console.log('보드 삭제')
-          this.$router.push({name:'StudyMain'})
-        })
-        .catch(err=>{
-          console.log(err)
-        })
-      }catch(err){
-        console.log('PostForDetail- 보드 삭제 에러')
-        console.log(err)
+
+        await boardApi
+          .board_delete(Number(this.$route.params.board_id), localStorage.userId)
+          .then((res) => {
+            console.log('보드 삭제');
+            this.$router.push({ name: 'StudyMain' });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (err) {
+        console.log('PostForDetail- 보드 삭제 에러');
+        console.log(err);
       }
     },
     // ==========================================
 
     // 유저의 현재 스터디 상황
-    myStudyState(){
-      studyApi.myStudyRequest(localStorage.userId,this.$route.params.board_id)
-      .then(res=>{
-        
-        if(res.data.list.length>=1){
-          console.log('현재 스터디 상황')
-          console.log(res.data.list[0]['request_state'])
-          console.log('--------------')
-          this.flagRequest = res.data.list[0]['request_state']
-        }
-      })
-      .catch(err=>{
-        console.log(err)
-      })
+    myStudyState() {
+      studyApi
+        .myStudyRequest(localStorage.userId, this.$route.params.board_id)
+        .then((res) => {
+          if (res.data.list.length >= 1) {
+            console.log('현재 스터디 상황');
+            console.log(res.data.list[0]['request_state']);
+            console.log('--------------');
+            this.flagRequest = res.data.list[0]['request_state'];
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // 내가 가입되어 있는 스터디인가?
     isInBoard() {
@@ -343,64 +353,66 @@ export default {
         .board_detail(this.$route.params.board_id)
         .then((res) => {
           this.groupDto = res.data.boardDto;
-          this.tempDescription = res.data.boardDto.board_description
+          this.tempDescription = res.data.boardDto.board_description;
         })
         .catch((err) => {
           console.log(err);
         });
     },
     // 가입요청하기
-    studyRequest(){
-      studyApi.studyRequest(String(localStorage.userId),Number(this.$route.params.board_id))
-      .then(res=>{
-        console.log('스터디가입요청성공')
-        console.log(res)
-        console.log('---------')
-        this.flagRequest=0
-      })
-      .catch(err=>{
-        console.log('스터디가입요청실패')
-        console.log(err)
-        console.log('----------')
-      })
+    studyRequest() {
+      studyApi
+        .studyRequest(String(localStorage.userId), Number(this.$route.params.board_id))
+        .then((res) => {
+          console.log('스터디가입요청성공');
+          console.log(res);
+          console.log('---------');
+          this.flagRequest = 0;
+        })
+        .catch((err) => {
+          console.log('스터디가입요청실패');
+          console.log(err);
+          console.log('----------');
+        });
     },
     // 기다리기
-    studyWait(){
-      alert('확인 중에 있습니다. 조금만 기다려주세요')
+    studyWait() {
+      alert('확인 중에 있습니다. 조금만 기다려주세요');
     },
     // 탈퇴하기
-    studySecession(){
-      if(this.isManager){
-        alert('그룹 생성자는 탈퇴할 수 없습니다.')
-        return
+    studySecession() {
+      if (this.isManager) {
+        alert('그룹 생성자는 탈퇴할 수 없습니다.');
+        return;
       }
       const BOARD_ID = Number(this.$route.params.board_id);
 
       const boards = JSON.parse(localStorage.subBoard);
       const board = boards.filter((board) => board.board_id === Number(this.$route.params.board_id));
 
-      studyApi.studySecession(Number(this.$route.params.board_id),String(localStorage.userId))
-      .then(res=>{
-        console.log('스터디 탈퇴')
-        console.log(res)
-        console.log('---------')
-        this.inBoard = !this.inBoard;
-        this.flagRequest=2
+      studyApi
+        .studySecession(Number(this.$route.params.board_id), String(localStorage.userId))
+        .then((res) => {
+          console.log('스터디 탈퇴');
+          console.log(res);
+          console.log('---------');
+          this.inBoard = !this.inBoard;
+          this.flagRequest = 2;
 
-        // localStorage 수정해주는 부분
-        if (board.length > 0) {
-          // 보드가 있네? 그럼 구독 해지!
-          const idx = boards.findIndex((board) => board.board_id === Number(this.$route.params.board_id));
-          boards.splice(idx, 1);
-        }
-        localStorage.subBoard = JSON.stringify(boards);
-        this.$store.commit('auth/setSubBoardRefresh');
-      })
-      .catch(err=>{
-        console.log('스터디 탈퇴 실패')
-        console.log(err)
-        console.log('---------')
-      })
+          // localStorage 수정해주는 부분
+          if (board.length > 0) {
+            // 보드가 있네? 그럼 구독 해지!
+            const idx = boards.findIndex((board) => board.board_id === Number(this.$route.params.board_id));
+            boards.splice(idx, 1);
+          }
+          localStorage.subBoard = JSON.stringify(boards);
+          this.$store.commit('auth/setSubBoardRefresh');
+        })
+        .catch((err) => {
+          console.log('스터디 탈퇴 실패');
+          console.log(err);
+          console.log('---------');
+        });
     },
     // 요청리스트 가져오기! ( 매니저만 볼 수 있음)
     getRequestList() {
@@ -408,9 +420,9 @@ export default {
         studyApi
           .getRequestList(this.$route.params.board_id)
           .then((res) => {
-            console.log('매니저만 보는 요청 리스트')
+            console.log('매니저만 보는 요청 리스트');
             console.log(res);
-            console.log('--------------')
+            console.log('--------------');
             this.requestList = res.data.list;
           })
           .catch((err) => {
@@ -484,7 +496,7 @@ export default {
   padding: 12px 15px;
   min-height: 20vh;
 }
-.name-setting{
+.name-setting {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -576,9 +588,9 @@ export default {
   color: #000;
 }
 /* 수정할 때 사용하는 버튼 */
-.edit-button-set{
+.edit-button-set {
   display: flex;
-  justify-content:flex-end;
+  justify-content: flex-end;
   align-items: center;
 }
 .p-button {

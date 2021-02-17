@@ -214,19 +214,19 @@ public class RedisService {
         }
     }
 
-     /*
+    /*
      * 기능: post 작성 시 redis techStack + 1
      * 
      * developer: 윤수민
      */
     public void postTechStackPlus(String post_header) {
-        post_header = post_header.replace("#","");
-        post_header = post_header.replace("|","#");
+        post_header = post_header.replace("#", "");
+        post_header = post_header.replace("|", "#");
         String[] list = post_header.split("#");
         String sortkey = "techStack";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         for (String techStack_name : list) {
-            if(!techStack_name.equals("null")){
+            if (!techStack_name.equals("null")) {
                 zset.incrementScore(sortkey, String.valueOf(techStack_name), 1);
             }
         }
@@ -238,13 +238,13 @@ public class RedisService {
      * developer: 윤수민
      */
     public void postTechStackMinus(String post_header) {
-        post_header = post_header.replace("#","");
-        post_header = post_header.replace("|","#");
+        post_header = post_header.replace("#", "");
+        post_header = post_header.replace("|", "#");
         String[] list = post_header.split("#");
         String sortkey = "techStack";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         for (String techStack_name : list) {
-            if(!techStack_name.equals("null")){
+            if (!techStack_name.equals("null")) {
                 zset.incrementScore(sortkey, String.valueOf(techStack_name), -1);
             }
         }
@@ -255,7 +255,7 @@ public class RedisService {
      * 
      * developer: 윤수민
      */
-	public List<Map<String, Object>> getWordData() {
+    public List<Map<String, Object>> getWordData() {
         String key = "techStack";
         ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
         Set<String> range = zSetOps.range(key, 0, 33);
@@ -266,11 +266,11 @@ public class RedisService {
             Map<String, Object> map = new HashMap<>();
             Double d = zSetOps.score(key, value);
             int score = Integer.parseInt(String.valueOf(Math.round(d)));
-            map.put("name",value);
-            map.put("score",score);
+            map.put("name", value);
+            map.put("score", score);
             list.add(map);
         }
         return list;
-	}
+    }
 
 }

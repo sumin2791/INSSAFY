@@ -452,6 +452,11 @@ export default {
         await postApi.create(postItem)
           .then(res=>{
             this.$store.dispatch('board/isWriteFlag')
+            const nowName = this.$route.name
+            const nowBoardId = this.$route.params.board_id
+            
+            
+            this.$router.push({ name: nowName, params: { board_id: nowBoardId } });
           })
           .catch(err=>{
             console.log(`post 생성 실패 ${err}`)

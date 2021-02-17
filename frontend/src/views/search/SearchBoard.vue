@@ -30,7 +30,7 @@
       </div>
       <!-- 보드 보여주는 부분 -->
       <v-row>
-        <v-col class="col-6 col-sm-3" v-for="(board, idx) in searchList" :key="idx">
+        <v-col class="col-12 col-sm-3" v-for="(board, idx) in searchList" :key="idx">
           <Board :board="board" class="real-shadow-text" />
         </v-col>
       </v-row>

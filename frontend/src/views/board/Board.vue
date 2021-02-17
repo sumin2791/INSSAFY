@@ -38,7 +38,9 @@
                   <!-- 보드 설명 -->
                   <BoardDescription :in-board="inBoard" :is-manager="isManager" @board-image="boardImage" />
                   <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
-                  <button class="btn-subscribing b-title" v-if="inBoard"  v-b-modal.modal-unsubscribe>Subscribing</button>
+                  <button class="btn-subscribing b-title" v-if="inBoard" v-b-modal.modal-unsubscribe>
+                    Subscribing
+                  </button>
                   <b-modal id="modal-unsubscribe" title="Info" size="sm" centered @ok="onSubscribe">
                     <p class="my-4">구독을 취소하시겠습니까?</p>
                     <template #modal-footer="{ok}">
@@ -257,6 +259,10 @@ export default {
 </script>
 
 <style scoped>
+#board-header {
+  background-size: cover !important;
+  background-position: center !important;
+}
 /* calendar 내용 */
 #study-calendar {
   overflow: hidden;
