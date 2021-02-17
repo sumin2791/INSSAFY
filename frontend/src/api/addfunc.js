@@ -1,4 +1,5 @@
 import http from './http';
+import { getPost } from './post';
 
 // 보드에 달린 추가기능 수정 및 삭제
 export function modifyAddFunction(params) {
@@ -32,4 +33,46 @@ export function getUserRank(params) {
     }
   })
   
+}
+
+//투표생성
+export function vote_create(params){
+  return http.post('/vote/create',params)
+}
+
+//투표항목생성
+export function vote_item_create(vote_id,vote_item_name){
+  return http.post('/vote/item/create',{
+    vote_id,vote_item_name
+  })
+}
+
+// 투표선택
+export function vote_select(user_id,vote_item_id){
+  return http.post('/vote/select',{
+    user_id,vote_item_id
+  })
+}
+
+// 투표 디테일한 정보
+export function get_voteDetail(vote_id,user_id){
+  return http.get('/vote/getVoteById',{
+    params:{
+      vote_id,user_id
+    }
+  })
+}
+
+// 보드 내 투표리스트
+export function get_voteList(board_id){
+  return http.get('/vote/getBoardVote',{
+    params:{
+      board_id
+    }
+  })
+}
+
+//투표삭제
+export function vote_delete(vote_id) {
+  return http.delete(`/vote/delete/${vote_id}`)
 }

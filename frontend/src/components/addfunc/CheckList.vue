@@ -45,7 +45,6 @@
         @delete-item="deleteItem(check)"
         @change-item-done="changeItemDone(check)"
         @change-item-contents="changeItemContents"
-        @modify-ing="checkListEdit"
       />
     </div>
     <!-- 체크리스트 편집 완료 -->
@@ -76,6 +75,7 @@ export default {
     // 작성되면 이를 확인해서 변화
   },
   computed: {
+
   },
   data() {
     return {
@@ -90,11 +90,10 @@ export default {
   methods: {
     // 관리자가 들어오면 체크리스트 수정가능케
     checkListEdit() {
-      this.isEdit = !this.isEdit
-      // if (state) {
-      // alert ('수정을 마친 후 편집을 종료하세요')}
-      // // 체크리스트 수정 중이면 편집 마칠 수 없다
-      // else {this.isEdit = !this.isEdit}
+      // 수정 중인데 수정 중이면 못 바꾸게
+      if (this.$store.state.addfunc.isEditNow && this.isEdit) {
+        alert('편집을 마치고 종료하세요')
+      } else { this.isEdit = !this.isEdit }
     },
     // 생성부분
     createChecklist() {
@@ -172,6 +171,7 @@ export default {
       checkListApi.modifyCheckList(params)
         .then(res => {
           // console.log(res)
+          this.ingEditItem = !this.ingEditItem
         })
         .catch(err => {
           // console.error(err)

@@ -12,3 +12,13 @@ export function getChatList(params) {
 export function getMessages(params) {
   return http.post('/chat/enterRoom', {}, {params})
 }
+
+// 로그인 후에 알림 받기 API
+export function getNotice(userId) {
+  return http.get(`/chat/notice/${userId}`)
+}
+
+// 채팅방 들어갔을 때 받게 되는 알림의 메세지 개수 초기화
+export function updateNotice(params) {
+  return http.post('/chat/updateNotice', {}, {params})
+} 

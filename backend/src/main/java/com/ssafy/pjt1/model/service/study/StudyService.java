@@ -25,4 +25,8 @@ public interface StudyService {
 
 	public void reSubscription(Map<String, Object> map);
 
+	public List<Map<String, Object>> myRequestList(String user_id);
+
+	public List<Map<String, Object>> myStudyRequest(Map<String, Object> map);
+
 }

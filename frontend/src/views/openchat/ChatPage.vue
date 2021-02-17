@@ -20,6 +20,7 @@
                   v-for="(chatList, idx) in chatLists"
                   :key="idx"
                   :chatList="chatList"
+                  class="ani-hover"
                 />
               </v-col>
             </v-list>
@@ -70,12 +71,12 @@ export default {
     window.addEventListener('resize', this.onResize, { passive: true })
   },
   watch: {
-  
+    isSend: 'getChatList'
   },
   computed: {
     // 채팅방 들어갔는지 확인
-    isInRoom() {
-      return this.$store.state.chat.isInChatRoom
+    isSend() {
+      return this.$store.state.chat.isSend
     },
   },
   data() {
@@ -146,5 +147,11 @@ export default {
   z-index: -1;
   position: absolute;
   margin: auto;
+}
+.ani-hover {
+  transition: transform 0.5s ease;
+}
+.ani-hover:hover {
+  transform: scale(1.04);
 }
 </style>

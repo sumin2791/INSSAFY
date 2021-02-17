@@ -139,7 +139,7 @@ export default {
   created() {
     if (this.$store.state.auth.user.token && this.$store.state.auth.user.userId) {
       this.$store.dispatch('auth/getSubBoard');
-      this.actFavorites(this.$store.state.auth.user.userId);
+      this.actFavorites(this.$store.state.auth.user.userId).then(() => this.addSeggest());
     }
     this.actFollowRank();
     this.actPostRank();
@@ -149,19 +149,6 @@ export default {
   computed: {
     ...mapGetters('main', ['getFavorites', 'getFollowRank', 'getPostsRank', 'getLikeRank', 'getCommentRank']),
     ...mapGetters('auth', ['getSubBoardFavoriteList', 'getSubBoardList']),
-  },
-  mounted() {
-    this.actNewBoards().then((result) => {
-      const boards = result;
-      for (let i = 0; i < boards.length; i++) {
-        if (!this.$store.getters['auth/getSubscribed'](boards[i].board_id)) {
-          //suggest에 사용할 보드 추가
-          boards[i].type = 'suggest';
-          this.favorites.push(boards[i]);
-          if (this.favorites.length >= 8) break;
-        }
-      }
-    });
   },
   watch: {
     getFavorites: function() {
@@ -178,6 +165,20 @@ export default {
     ...mapActions('main', ['actFavorites', 'actFollowRank', 'actPostRank', 'actLikeRank', 'actCommentRank', 'actNewBoards']),
     forceRerender() {
       this.componentKey += 1;
+    },
+    //메인 빈 공간 메우기위해 최신 보드 추가( 최소 8개 의 슬라이드 유지)
+    addSeggest() {
+      this.actNewBoards().then((result) => {
+        const boards = result;
+        for (let i = 0; i < boards.length; i++) {
+          if (!this.$store.getters['auth/getSubscribed'](boards[i].board_id)) {
+            //suggest에 사용할 보드 추가
+            boards[i].type = 'suggest';
+            this.favorites.push(boards[i]);
+            if (this.favorites.length >= 8) break;
+          }
+        }
+      });
     },
     clickFavorite: function(index) {
       this.$router.push(`board/${this.getFavorites[index].board_id}`);

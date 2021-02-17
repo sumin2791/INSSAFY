@@ -43,11 +43,11 @@
               </v-list>
             </div>
             <CheckList :is-manager="isManager" v-if="isCheck" />
-            <VoteList v-if="isVote" />
+            <VoteList :in-board="inBoard" :is-manager="isManager" v-if="isVote" />
             <UserRank v-if="isRank" />        
           </v-col>
           <v-col class="col-12 col-sm-8">
-            <PostWrite :in-board="inBoard" style="margin:0 10px" />
+            <PostWrite :in-board="inBoard" style="margin:0 10px" />     
             <PostList />
           </v-col>
         </v-row>
@@ -158,7 +158,7 @@ export default {
   methods: {
     boardImage(boardimg) {
       this.boardimg = boardimg;
-      if (this.boardimg != null) {
+      if (this.boardimg != '') {
         const header = document.querySelector('#board-header');
         header.style.minHeight = '250px';
         header.style.background = `url(${this.boardimg})`;
@@ -219,6 +219,7 @@ export default {
         .board_detail(this.$route.params.board_id)
         .then((res) => {
           const addfunc = res.data.board_function;
+          // console.log(addfunc, '나옴?')
           // 추가기능 여부 갱신
           this.$store.dispatch('addfunc/isUsed', addfunc);
         })

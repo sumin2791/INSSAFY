@@ -62,8 +62,11 @@ import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
 
 //소켓 설정
-import SockJS from 'sockjs-client';
-import Stomp from 'webstomp-client';
+// import SockJS from 'sockjs-client';
+// import Stomp from 'webstomp-client';
+
+// 채팅방 api
+import * as chatApi from '@/api/chat';
 
 
 export default {
@@ -146,12 +149,72 @@ export default {
             // console.log(this.$store.state.auth.token);
             // console.log(this.$store.state.auth.email);
 
+            // 로그인 ID를 가져온다
+            const params = this.$store.state.auth.user.userId
+            // 채팅 알림 연결
+            chatApi.getNotice(params)
+              .then(res => {
+                console.log(res)
+                // res.data.notices (비어있으면 알림 0 아니면 알림 존재)
+                // 이 안에 opp_name, count 로 저장되어 있음 - 일단은 이름만 보여주자
+                // 알림이 있으면 토스트를 띄워주자
+                const notice = res.data.notices
+                if (notice.length) {
+                  for (let i=0; i < notice.length; i++ )
+                    this.$toast.open({
+                      message: `${notice[i].opp_name}님의 메세지`,
+                      type: 'info',
+                      duration: 4000,
+                      // queue: true,
+                      // 상대방 닉네임, 내 아이디
+                      // onClick: this.moveToChatRoom(notice[i].opp_name, params),
+                      position: 'top-right',
+                    })
+                }
+              })
+              .catch(err => {
+                console.error(err)
+              });
           }
         })
         .catch((err) => {
           console.log(err);
         });
     },
+
+    // // 채팅방 이동 및 활성화 - async, await로 구현 가능하면 구현
+    // async moveToChatRoom(opp_name, user_id) {
+    //   // 현재 가지고 있는 채팅방을 가져오자
+    //   await chatApi
+    //     .getChatList({ user_id: user_id })
+    //     .then((res) => {
+    //       const chatLists = res.data.roomInfo;
+    //       // 방 정보, 상대방 아이디 저장
+    //       let chatRoomId;
+    //       let oppId;
+    //       for (let i = 0; i < chatLists.length; i++) {
+    //         if (chatLists[i].opp_nickName === opp_name) {
+    //           chatRoomId = chatLists[i].roomId;
+    //           oppId = chatLists[i].opp_id;
+    //           break;
+    //         }
+    //       }
+    //       // break => 채팅방 존재(vuex 변화)
+    //       const existChatRoom = {
+    //         roomId: chatRoomId,
+    //         opp_nickName: opp_name,
+    //         opp_id: oppId,
+    //       };
+    //       // vuex state 변화
+    //       this.$store.dispatch('chat/isSelected', existChatRoom);
+          
+    //       this.$router.push({ name: 'ChatPage' });
+    //     })
+    //     .catch((err) => {
+    //       console.error(err);
+    //     });
+    //     // 그리고 라우터 변환
+    // }
   },
 };
 </script>

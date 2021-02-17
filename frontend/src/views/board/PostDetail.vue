@@ -6,15 +6,15 @@
       >
         <v-row dense>
           <!-- 뒤로 가기 -->
-          <router-link 
+          <!-- <router-link 
             :to="{ name:'Board', 
               params: {board_id:$route.params.board_id}}"
             id="back-btn"
-          >
-            <button id="back-btn-child">
-              보드로 돌아가기
+          > -->
+            <button id="back-btn" @click="goBack">
+              뒤로 가기
             </button>
-          </router-link>
+          <!-- </router-link> -->
             
         </v-row>        
         <v-row dense>
@@ -33,18 +33,17 @@
             <!-- 입력창 부분 -->
             <v-spacer></v-spacer>
             <div id="input">
-                <v-text-field
-                  solo
-                  dense
-                  id="comment"
-                  v-model="comment"
-                  @keypress.enter="createComment"
-                >
-                </v-text-field>
-                <v-btn
-                  @click="createComment"
-                ><v-icon>mdi-send</v-icon>
-                </v-btn>
+              <input
+                id="comment"
+                v-model="comment"
+                placeholder="한마디!"
+                @keypress.enter="createComment"
+              >
+              <v-btn
+                id="btn-comment"
+                @click="createComment"
+              ><v-icon>mdi-send</v-icon>
+              </v-btn>
             </div>
               <CommentList :comments="comments" :postUserId="this.post.user_id"/>
             </v-card>
@@ -170,22 +169,37 @@ export default {
       }
         
       // this.$store.dispatch('createComment',params)
-    }
+    },
+    // 뒤로가기 구현
+    goBack() {
+      this.$router.go(-1);
+    },
   }
   
 }
 </script>
 
 <style scoped>
+#input{
+  margin-bottom: 1px;
+}
+#comment{
+  width:95%;
+  padding: 5px 10px 5px 10px;
+  height: 40px;
+}
+#btn-comment{
+  height: 40px;
+}
 /* 전체 메인 배경색 */
 #main-bg {
   background-color: #ebebe9 !important;
 }
 /* 뒤로가기 버튼 */
-#back-btn {
+/* #back-btn {
   all: unset !important;
-}
-#back-btn * {
+} */
+#back-btn {
   text-align: center;
   margin: 0 0 10px 0;
   height: 50px;
@@ -212,5 +226,9 @@ export default {
 #input {
   display: flex;
   flex-direction: row;
+  min-height: 10px;
+}
+.v-text-field__details{
+  min-height: 0px;
 }
 </style>

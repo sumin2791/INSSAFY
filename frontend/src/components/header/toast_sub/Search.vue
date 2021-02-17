@@ -1,90 +1,159 @@
 <template>
-  <div id="search-container">
-    <div id="filter-container">
-      <button
-        class="filter-btn l-desc"
-        :class="{ newmorphism: active.index == index }"
-        v-for="(item, index) in getSearchStateFilters"
-        :key="index"
-        @click="clickFilter(index)"
-      >
-        {{ item }}
-      </button>
+  <div id="wrap">
+    <div id="header" class="search-container">
+      <p class="h-p l-desc" v-if="active === 'allPost'" @click="allPost">{{ header.allBoard }}</p>
+      <p class="h-p m-desc">{{ getHeader }}</p>
+      <p class="h-p l-desc" v-if="active === 'allBoard'" @click="allBoard">{{ header.allPost }}</p>
+
+      <p class="h-p b-desc" style="padding-top: 2px;">|</p>
+      <p class="h-p l-desc" :class="{ bold: getSort === sort.value[0] }" @click="clickSortNew">{{ sort.key[0] }}</p>
+      <p class="h-p l-desc" :class="{ bold: getSort === sort.value[1] }" @click="clickSortHot">{{ sort.key[1] }}</p>
     </div>
-    <div id="search-container">
-      <div id="search-bar" ref="searchBar">
-        <input id="s-input" @keyup.enter="onSearching" v-model="keyword" type="text" placeholder="검색어를 입력하세요" />
-        <button id="s-del-btn" @click="clickDeleteBtn" :class="{ visible: keyword != '' }">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path
-              d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.151 17.943l-4.143-4.102-4.117 4.159-1.833-1.833 4.104-4.157-4.162-4.119 1.833-1.833 4.155 4.102 4.106-4.16 1.849 1.849-4.1 4.141 4.157 4.104-1.849 1.849z"
-            />
-          </svg>
+
+    <div class="search-container">
+      <div id="filter-container" v-if="getType">
+        <button
+          class="filter-btn l-desc"
+          :class="{ newmorphism: select.index == index }"
+          v-for="(item, index) in getType.key"
+          :key="index"
+          @click="clickFilter(index)"
+        >
+          {{ item }}
         </button>
-        <button id="s-btn" ref="searchBtn" @click="onSearching">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path
-              d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"
-            />
-          </svg>
-        </button>
+      </div>
+      <div class="search-container">
+        <div id="search-bar" ref="searchBar">
+          <input id="s-input" @keyup.enter="onSearching" v-model="keyword" type="text" placeholder="검색어를 입력하세요" />
+          <button id="s-del-btn" @click="clickDeleteBtn" :class="{ visible: keyword != '' }">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <path
+                d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4.151 17.943l-4.143-4.102-4.117 4.159-1.833-1.833 4.104-4.157-4.162-4.119 1.833-1.833 4.155 4.102 4.106-4.16 1.849 1.849-4.1 4.141 4.157 4.104-1.849 1.849z"
+              />
+            </svg>
+          </button>
+          <button id="s-btn" ref="searchBtn" @click="onSearching">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <path
+                d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 export default {
   name: 'Search',
   data() {
     return {
-      active: {
+      select: {
         index: 0,
-        filter: '',
+        type: '',
       },
       keyword: '',
+      page: 0,
+      size: 10,
     };
   },
   computed: {
-    ...mapGetters(['getSearchStateFilters']),
+    ...mapGetters('search', ['getHeader', 'getType', 'getSort']),
+    ...mapState('search', ['active', 'header', 'type', 'sort', 'epicenter']),
+  },
+  mounted() {
+    this.select.type = this.getType.value[0];
+  },
+  watch: {
+    getIndex() {
+      console.log(this.getIndex);
+      console.log(this.getSort);
+    },
   },
   methods: {
-    clickCloser: function() {
+    ...mapActions('search', ['actSearchAllBoard']),
+    ...mapMutations('search', ['SET_SEARCH_ACTIVE', 'SET_PAYLOAD_SORT', 'SET_PAYLOAD']),
+    //검색 관련
+    clickCloser() {
       this.$store.commit('setToastTogle');
     },
     //search function
     clickFilter: function(index) {
-      this.active.index = index;
-      this.active.filter = this.filter;
+      this.select.index = index;
+      this.select.type = this.getType.value[index];
       var value = 54 * index;
       this.$refs.searchBar.style.marginTop = `${value}px`;
     },
     onSearching: function() {
-      this.$store.commit('setToastTogle');
-      this.$store.commit('setSearchKeyword', this.keyword);
-      console.log(this.active.index);
-      if (this.active.index == 0) {
-        this.$router.push({ name: 'SearchBoard' });
-      } else if (this.active.index == 1) {
-        this.$router.push({ name: 'SearchPost' });
+      this.SET_PAYLOAD({
+        keyword: this.keyword,
+        page: this.page,
+        type: this.select.type,
+      });
+      if (this.epicenter === 'nav') {
+        if (this.active === 'allBoard' && this.$router.currentRoute.path !== '/board/search') {
+          this.$router.push({ name: 'SearchBoard' });
+        } else if (this.active === 'allPost' && this.$router.currentRoute.path !== '/post/search') {
+          this.$router.push({ name: 'SearchPost' });
+        }
       }
+      this.actSearchAllBoard();
+
+      this.$store.commit('setToastTogle');
       // this.$refs.searchBtn.blur();
     },
     clickDeleteBtn: function() {
       this.keyword = '';
+    },
+
+    //전체 검색 전환
+    allPost() {
+      this.SET_SEARCH_ACTIVE({ active: 'allBoard', epicenter: 'nav' });
+      this.clickFilter(0);
+    },
+    allBoard() {
+      this.SET_SEARCH_ACTIVE({ active: 'allPost', epicenter: 'nav' });
+      this.clickFilter(0);
+    },
+
+    //sort 전환
+    clickSortNew() {
+      this.SET_PAYLOAD_SORT('new');
+    },
+    clickSortHot() {
+      this.SET_PAYLOAD_SORT('hot');
     },
   },
 };
 </script>
 
 <style scoped>
-#search-container {
+#wrap {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+#header {
+  text-align: center;
+  font-size: 18px;
+}
+.h-p {
+  padding: 5px;
+  margin: 0 10px;
+  cursor: pointer;
+}
+.bold {
+  font-weight: 500 !important;
+}
+.search-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
   width: 80%;
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
   transition: all 0.6s ease;
 }
