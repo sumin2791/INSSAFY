@@ -1,11 +1,8 @@
 package com.ssafy.pjt1.common.interceptor;
 
-import java.util.Enumeration;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ssafy.pjt1.common.error.UnauthorizedException;
 import com.ssafy.pjt1.model.service.JwtService;
 
 import org.slf4j.Logger;
@@ -17,34 +14,31 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
-    public static final Logger logger = LoggerFactory.getLogger(JwtInterceptor.class);
-
-    private static final String HEADER_AUTH = "auth_token";
-
     @Autowired
     private JwtService jwtService;
+
+    public static final Logger logger = LoggerFactory.getLogger(JwtInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        final String token = request.getHeader(HEADER_AUTH);
+        logger.info(request.getMethod() + " : " + request.getServletPath());
 
-        // 해더 디버깅용
-        Enumeration<String> headerNames = request.getHeaderNames();
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                String names = headerNames.nextElement();
-                System.out.println(">>>>" + names);
-                System.out.println("Header: " + request.getHeader(names));
-            }
-        }
-        if (token != null && jwtService.isUsable(token)) {
-            logger.info("토큰 사용 가능 : {}", token);
+        // option 요청은 바로 통과시켜주자.
+        if (request.getMethod().equals("OPTIONS")) {
             return true;
         } else {
-            logger.info("토큰 사용 불가능 : {}", token);
-            throw new UnauthorizedException();
+            // request의 parameter에서 auth_token으로 넘어온 녀석을 찾아본다.
+            // String token = request.getParameter("auth_token");
+            String token = request.getHeader("auth_token");
+            if (token != null && token.length() > 0) {
+                // 유효한 토큰이면 진행, 그렇지 않으면 예외를 발생시킨다.
+                jwtService.checkValid(token);
+                logger.info("토큰 사용 가능 : {}", token);
+                return true;
+            } else {
+                throw new RuntimeException("인증 토큰이 없습니다.");
+            }
         }
-
     }
 }

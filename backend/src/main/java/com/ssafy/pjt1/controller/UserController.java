@@ -76,7 +76,7 @@ public class UserController {
             if (loginUser != null
                     && passwordEncoder.matches(userDto.getUser_password(), loginUser.getUser_password())) {
                 // 토큰 생성
-                String token = jwtService.create("userid", loginUser.getUser_email(), "auth_token");
+                String token = jwtService.create(userDto);
                 logger.info("로그인 토큰정보 : {}", token);
                 if (loginUser.getUser_auth() == 0) {// 메일 인증 안 받음
                     resultMap.put("message", "NO_AUTH");
