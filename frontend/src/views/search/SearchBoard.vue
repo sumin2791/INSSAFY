@@ -72,7 +72,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('search', ['result', 'size', 'payload']),
+    ...mapState('search', ['result', 'size', 'payload', 'isLastPage']),
   },
   created() {
     this.boardList = this.boardList.concat(this.result);
@@ -88,7 +88,8 @@ export default {
       this.actSearchAllBoard().then((v) => {
         if (v) {
           setTimeout(() => {
-            if (this.result) {
+            console.log(!this.isLastPage);
+            if (!this.isLastPage) {
               this.boardList = this.boardList.concat(this.result);
               $state.loaded();
               if (this.result.length / this.size < 1) {

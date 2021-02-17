@@ -199,6 +199,11 @@ export default {
       this.$router.push({ name: 'BambooForest' });
     },
     clickPBtn1: function() {
+      this.$store.commit('search/SET_PAYLOAD', {
+        keyword: '',
+        page: 0,
+        type: 'name',
+      });
       this.$router.push({ name: 'SearchBoard' });
     },
     clickPBtn2: function() {
