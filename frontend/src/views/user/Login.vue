@@ -225,12 +225,12 @@ export default {
           // vuex state 변화
           this.$store.dispatch('chat/isSelected', existChatRoom);
 
-          // 그리고 라우터 변환
           this.$router.push({ name: 'ChatPage' });
         })
         .catch((err) => {
           console.error(err);
         });
+      // 그리고 라우터 변환
     },
   },
 };

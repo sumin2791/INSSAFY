@@ -68,7 +68,7 @@ export default {
     getUserRankInBoard() {
       // 보드 id
       const params = {
-        board_id: Number(121)
+        board_id: Number(75)
       }
       addFuncApi.getUserRank(params)
         .then(res => {
