@@ -431,8 +431,24 @@ export default {
         await postApi
           .post_delete(Number(this.post.post_id), localStorage.userId)
           .then((res) => {
-            console.log('포스트 삭제');
-            this.$router.push({ name: 'Board', params: { board_id: this.post.board_id } });
+            const nowName = this.$route.name
+            let returnName
+            if(nowName==='StudyMainPost'){
+              this.$router.push({ name: 'StudyMain'});
+            }
+            else if(nowName==='MarketPost'){
+              returnName = 'Market'
+            }else if(nowName==='LearnSharePost'){
+              returnName = 'LearnShare'
+            }else if(nowName==='StudyGroupPost'){
+              returnName = 'Study'
+            }else if(nowName==='RecruitmentPost'){
+              returnName = 'Recruitment'
+            }else{
+              returnName = 'Board'
+            }
+            
+            this.$router.push({ name: returnName, params: { board_id: this.post.board_id } });
           })
           .catch((err) => {
             console.log(err);
