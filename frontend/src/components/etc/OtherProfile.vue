@@ -5,6 +5,7 @@
   </div>
 </template>
 
+
 <script>
 export default {
   name: 'Profile',
@@ -17,7 +18,7 @@ export default {
     };
   },
   computed: {
-    
+
   },
   methods: {
     clickProfile: function() {
@@ -26,6 +27,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 #wrap {

@@ -5,12 +5,12 @@
       d-flex img-wrap justify-content-between"
     color="F9F9F9"
   >
-    <div class="d-flex align-items-center">
-      <div class="ml-2 mr-2">
+    <div class="d-flex align-items-center ml-3">
+      <!-- <div class="ml-2 mr-2">
         <GradientGenerator class="myinfo-list" style="height: 50px; width:50px" v-if="user.user_image == null" :radius="radius" />
         <v-img src="user.user_image" height="50px" width="50px" class="myinfo-list blur" v-if="user.user_image != null"> </v-img>
-      </div>
-      
+      </div> -->
+      <Profile :getUserImage="image" style="width:40px; height:40px;" class="mr-1"/>
       <div class="d-flex flex-column">
         <div id="post-title" class="font-weight-black">{{user.user_nickname}}</div>
       </div>
@@ -28,8 +28,9 @@
 </template>
 
 <script>
-import GradientGenerator from '@/components/etc/GradientGenerator';
+// import GradientGenerator from '@/components/etc/GradientGenerator';
 import * as studyApi from '@/api/study'
+import Profile from '@/components/etc/OtherProfile'
 
 export default {
   name: "MyStudyGroup",
@@ -43,7 +44,13 @@ export default {
     isManager:Boolean
   },
   components: {
-    GradientGenerator,
+    // GradientGenerator,
+    Profile,
+  },
+  computed:{
+    image(){
+      return this.user.user_image
+    }
   },
   methods: {
     permit(){
@@ -74,7 +81,7 @@ export default {
     }
   },
   created(){
-    
+  
   }
 }
 </script>
