@@ -17,7 +17,10 @@
                 <label for="email">이메일</label>
                 <input
                   v-model="email"
-                  v-bind:class="{ error: error.email && email.length !== 0, complete: !error.email && email.length !== 0 }"
+                  v-bind:class="{
+                    error: error.email && email.length !== 0,
+                    complete: !error.email && email.length !== 0,
+                  }"
                   @keyup.enter="Login"
                   id="email"
                   placeholder="이메일을 입력하세요."
@@ -31,7 +34,10 @@
                 <input
                   v-model="password"
                   type="password"
-                  v-bind:class="{ error: error.password && password.length !== 0, complete: !error.password && password.length !== 0 }"
+                  v-bind:class="{
+                    error: error.password && password.length !== 0,
+                    complete: !error.password && password.length !== 0,
+                  }"
                   id="password"
                   @keyup.enter="onLogin"
                   placeholder="비밀번호를 입력하세요."
@@ -39,7 +45,15 @@
                 <div class="error-text" v-if="error.password && password.length !== 0">{{ error.password }}</div>
               </div>
             </div>
-            <button id="login-btn" class="b-title" @click="onLogin" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">Login</button>
+            <button
+              id="login-btn"
+              class="b-title"
+              @click="onLogin"
+              :disabled="!isSubmit"
+              :class="{ disabled: !isSubmit }"
+            >
+              Login
+            </button>
           </div>
           <div class="etc-options">
             <div class="etc-option-item">
@@ -67,7 +81,6 @@ import * as EmailValidator from 'email-validator';
 
 // 채팅방 api
 import * as chatApi from '@/api/chat';
-
 
 export default {
   components: {},
@@ -118,7 +131,8 @@ export default {
       if (this.email.length >= 0 && !EmailValidator.validate(this.email)) this.error.email = '이메일 형식이 아닙니다.';
       else this.error.email = false;
 
-      if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
+      if (this.password.length >= 0 && !this.passwordSchema.validate(this.password))
+        this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
       else this.error.password = false;
 
       let isSubmit = true;
@@ -150,17 +164,18 @@ export default {
             // console.log(this.$store.state.auth.email);
 
             // 로그인 ID를 가져온다
-            const params = this.$store.state.auth.user.userId
+            const params = this.$store.state.auth.user.userId;
             // 채팅 알림 연결
-            chatApi.getNotice(params)
-              .then(res => {
-                console.log(res)
+            chatApi
+              .getNotice(params)
+              .then((res) => {
+                // console.log(res)
                 // res.data.notices (비어있으면 알림 0 아니면 알림 존재)
                 // 이 안에 opp_name, count 로 저장되어 있음 - 일단은 이름만 보여주자
                 // 알림이 있으면 토스트를 띄워주자
-                const notice = res.data.notices
+                const notice = res.data.notices;
                 if (notice.length) {
-                  for (let i=0; i < notice.length; i++ )
+                  for (let i = 0; i < notice.length; i++)
                     this.$toast.open({
                       message: `${notice[i].opp_name}님의 메세지`,
                       type: 'info',
@@ -168,13 +183,14 @@ export default {
                       // queue: true,
                       // 상대방 닉네임, 내 아이디
                       onClick: () => {
-                        this.moveToChatRoom(notice[i].opp_name, params)},
+                        this.moveToChatRoom(notice[i].opp_name, params);
+                      },
                       position: 'top-right',
-                    })
+                    });
                 }
               })
-              .catch(err => {
-                console.error(err)
+              .catch((err) => {
+                console.error(err);
               });
           }
         })
@@ -208,14 +224,14 @@ export default {
           };
           // vuex state 변화
           this.$store.dispatch('chat/isSelected', existChatRoom);
-          
+
           this.$router.push({ name: 'ChatPage' });
         })
         .catch((err) => {
           console.error(err);
         });
-        // 그리고 라우터 변환
-    }
+      // 그리고 라우터 변환
+    },
   },
 };
 </script>

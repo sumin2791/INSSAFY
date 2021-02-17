@@ -26,7 +26,13 @@ alert(response.data.user.user_email);
             />
           </svg>
         </button> -->
-        <button id="login-btn" class="b-title" :class="{ hidden: isLoginRoute }" @click="clickLoginBtn" v-if="getToken == null">
+        <button
+          id="login-btn"
+          class="b-title"
+          :class="{ hidden: isLoginRoute }"
+          @click="clickLoginBtn"
+          v-if="getToken == null"
+        >
           Login
         </button>
       </div>
@@ -62,7 +68,8 @@ alert(response.data.user.user_email);
 <script>
 import Toast from './Toast';
 import Profile from '@/components/etc/Profile';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
+import routes from '@/routes';
 
 export default {
   name: 'Nav',
@@ -75,6 +82,7 @@ export default {
   },
   computed: {
     ...mapGetters(['getUser', 'getToken', 'getToastActive']),
+    ...mapState('search', ['active']),
     isLoginRoute: function() {
       return this.$route.name == 'Login';
     },
@@ -85,7 +93,8 @@ export default {
       this.$router.push({ name: 'Main' });
     },
     clickNBtn1: function() {
-      this.$store.commit('search/SET_SEARCH_ACTIVE', { active: 'allBoard', epicenter: 'nav' });
+      const epicenter = this.$router.currentRoute.path;
+      this.$store.commit('search/SET_SEARCH_ACTIVE', { active: this.active, epicenter: epicenter });
       this.$store.commit('setToastTogle');
       this.$store.commit('setToastType', 'search');
     },

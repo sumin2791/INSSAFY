@@ -17,14 +17,6 @@
     >
       <!-- 보드 이미지 위로 나오는 부분 -->
       <div class="text">
-        <!-- 삭제 버튼 -->
-        <div class="align-self-end">
-          <v-btn icon color="#AA2610" @click.stop="removeBoard">
-            <v-icon dark>
-              mdi-close-thick
-            </v-icon>
-          </v-btn>
-        </div>
         <div class="board-title">
           {{ post.board_name }}
         </div>
@@ -147,20 +139,18 @@ export default {
 }
 .text {
   position: absolute;
-  width: calc(100% - 20px);
-  margin: 0 !important;
+  width: 100%;
+  margin: 10px 0 !important;
   height: 100px;
   color: #ffffff;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   text-align: center;
-  justify-content: flex-start;
   align-items: center;
   z-index: 2;
 }
 /* 보드로 이동 */
 .board-title {
-  flex-grow: 100%;
   cursor: pointer;
 }
 /* 게시글 제목 넘치는 부분 처리 */
@@ -196,6 +186,8 @@ export default {
   -webkit-box-orient: vertical;
 }
 .myinfo-list {
+  margin: 10px;
+  width: calc(100% - 20px) !important;
   border-radius: 15px;
   background-size: cover;
   background-position: center;

@@ -100,12 +100,26 @@ export default {
         type: this.select.type,
       });
       this.CLEAR_SEARCH_LIST();
-      if (this.epicenter === 'nav') {
-        if (this.active === 'allBoard' && this.$router.currentRoute.path !== '/board/search') {
+      //네비게이션 바의 검색 아이콘을 눌러서 진입했을 때
+      //분기 안해도 되는 것 (해당 페이지 내에서 검색버튼 눌렀을 때(active == epicenter))
+      //메인의 경우 -> 전체 검색 페이지로 이동
+      console.log(this.epicenter);
+      console.log(this.active);
+      if (
+        !(this.epicenter === '/board/search' && this.active === 'allBoard') ||
+        !(this.epicenter === '/post/search' && this.active === 'allPost')
+      ) {
+        if (this.active === 'allBoard') {
           this.$router.push({ name: 'SearchBoard' });
-        } else if (this.active === 'allPost' && this.$router.currentRoute.path !== '/post/search') {
+        } else if (this.active === 'allPost') {
           this.$router.push({ name: 'SearchPost' });
         }
+        //보드 전체검색에서 포스트 검색할 때
+      } else if (this.epicenter === '/board/search' && this.active === 'allPost') {
+        this.$router.push({ name: 'SearchPost' });
+        //포스트 전체 검색에서 보드 검색할 때
+      } else if (this.epicenter === '/post/search' && this.active === 'allBoard') {
+        this.$router.push({ name: 'SearchPost' });
       }
       this.actSearchAllBoard();
 
@@ -118,11 +132,11 @@ export default {
 
     //전체 검색 전환
     allPost() {
-      this.SET_SEARCH_ACTIVE({ active: 'allBoard', epicenter: 'nav' });
+      this.SET_SEARCH_ACTIVE({ active: 'allBoard', epicenter: this.epicenter });
       this.clickFilter(0);
     },
     allBoard() {
-      this.SET_SEARCH_ACTIVE({ active: 'allPost', epicenter: 'nav' });
+      this.SET_SEARCH_ACTIVE({ active: 'allPost', epicenter: this.epicenter });
       this.clickFilter(0);
     },
 

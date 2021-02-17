@@ -24,12 +24,12 @@ const INIT_HEADER = () => {
 const INIT_BOARD_TYPE = () => {
   return {
     allBoard: {
-      key: ['보드명', '작성글', '지역', '해시태그'],
+      key: ['보드명', '보드설명', '지역', '해시태그'],
       value: ['name', 'description', 'location', 'hash'],
     },
     allPost: {
-      key: ['머리말', '글 제목', '글 내용'],
-      value: ['header', 'title', 'desc'],
+      key: ['글 제목', '글 내용', '머리말'],
+      value: ['title', 'desc', 'header'],
     },
   };
 };
@@ -99,7 +99,6 @@ export default {
     //result 적용
     SET_SEARCH_LIST(state, payload) {
       state.searchList = state.searchList.concat(payload);
-      console.log(state.searchList);
     },
     CLEAR_SEARCH_LIST(state) {
       state.searchList = [];

@@ -8,28 +8,16 @@
           text-center
             text-body-1"
         >
-          보드 중 "{{ payload.keyword }}"에 대한 검색 결과
+          <h5 class="m-desc" v-if="payload.keyword !== ''">보드 중 "{{ payload.keyword }}"에 대한 검색 결과</h5>
+          <h5 class="m-desc" v-if="payload.keyword === ''">보드 전체 검색 결과</h5>
         </v-col>
       </v-row>
       <!-- 검색 건수 / 정렬 / 보드 생성 -->
       <div
         class="d-flex 
           flex-row
-          justify-content-between"
+          justify-content-end"
       >
-        <!-- 검색 건수 / 정렬 -->
-        <div>
-          <v-select
-            v-model="search.currentSort"
-            :items="sortResult"
-            label="정렬기준"
-            solo
-            color="##fff"
-            class="sort-dropdown"
-            block
-          ></v-select>
-        </div>
-
         <!-- 보드 생성 버튼 -->
         <div>
           <v-btn id="create-btn" @click="goToCreateBoard()">
@@ -70,12 +58,8 @@ export default {
   data() {
     return {
       search: {
-        searchKeyword: '게임',
-        searchCount: 248,
-        currentSort: '',
+        infiniteState: null,
       },
-      // 검색 정렬 조건
-      sortResult: ['최신순', '인기순'],
     };
   },
   computed: {
@@ -83,7 +67,7 @@ export default {
   },
   watch: {
     searchList() {
-      this.$state.loaded();
+      this.infiniteState.loaded();
     },
   },
   methods: {
@@ -93,8 +77,8 @@ export default {
       return this.$router.push({ name: 'BoardForm' });
     },
     infiniteHandler($state) {
+      this.infiniteState = $state;
       this.actSearchAllBoard().then((v) => {
-        console.log(v);
         if (v) {
           setTimeout(() => {
             this.SET_NEXT_PAGE();
