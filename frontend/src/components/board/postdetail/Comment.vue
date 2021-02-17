@@ -99,7 +99,7 @@ import deepClone from '@/plugins/deepClone'
 import * as chatApi from '@/api/chat';
 
 // 프로필 이미지
-import Profile from '@/components/etc/Profile';
+import Profile from '@/components/etc/OtherProfile';
 // 스타일 적용
 // import '@/assets/css/static/style.css';
 
@@ -129,6 +129,9 @@ export default {
     flagWriter() {
       return this.comment.user_id === String(localStorage.userId);
     },
+    // image(){
+    //   return this.comment.user_image
+    // }
   },
   mounted(){
     
