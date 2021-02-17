@@ -50,5 +50,25 @@ public class BambooServiceImpl implements BambooService {
     public int getTotalCnt() {
         return sqlSession.getMapper(BambooMapper.class).getTotalCnt();
     }
+
+    @Override
+    public int getSearchCntT(String keyword) {
+        return sqlSession.getMapper(BambooMapper.class).getSearchCntT(keyword);
+    }
+
+    @Override
+    public int getSearchCntD(String keyword) {
+        return sqlSession.getMapper(BambooMapper.class).getSearchCntD(keyword);
+    }
+
+    @Override
+    public List<BambooDto> searchPostT(Map<String, Object> map) {
+        return sqlSession.getMapper(BambooMapper.class).searchPostT(map);
+    }
+
+    @Override
+    public List<BambooDto> searchPostD(Map<String, Object> map) {
+        return sqlSession.getMapper(BambooMapper.class).searchPostD(map);
+    }
     
 }

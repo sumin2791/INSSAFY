@@ -15,10 +15,6 @@ public interface CommentMapper {
 
 	public int commentDelete(int comment_id);
 
-	public void createNotification(int comment_id);
-
-	public void notificationDelete(int comment_id);
-
 	public int isCommentWriter(Map<String, Object> map);
 
 	public String getPostIdByCommentId(int comment_id);

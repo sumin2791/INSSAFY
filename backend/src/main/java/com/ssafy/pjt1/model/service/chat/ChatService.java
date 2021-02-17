@@ -2,7 +2,6 @@ package com.ssafy.pjt1.model.service.chat;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -14,9 +13,10 @@ public interface ChatService {
 
     public void insertMessage(ChatMessage message) throws IOException;
 
-    public List<Map<String, Object>> getRoomList(String user_id) throws JsonMappingException, JsonProcessingException;
+    public String getRecentMessage(String room_id) throws JsonMappingException, JsonProcessingException;
 
     public String makeRoom(String user_id, String opp_id) throws IOException;
 
-    public String getRecentMessage(String room_id) throws JsonMappingException, JsonProcessingException;
+    public List<Object> getRoomList(String user_id) throws JsonMappingException, JsonProcessingException;
+
 }

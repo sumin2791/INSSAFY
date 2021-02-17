@@ -67,8 +67,6 @@ public class CommentController {
                 commentDto.setComment_description((String) param.get("comment_description"));
                 commentService.createComment(commentDto);
 
-                int comment_id = commentDto.getComment_id();
-                commentService.createNotification(comment_id);
                 // redis 댓글수 업데이트
                 redisService.postCommentSortset(post_id);
                 resultMap.put("message", SUCCESS);
@@ -139,7 +137,6 @@ public class CommentController {
                 redisService.postCommentSortsetDecrease(comment_id);
                 if (commentService.commentDelete(comment_id) == 1) {
                     // 삭제
-                    commentService.notificationDelete(comment_id);
                     resultMap.put("message", SUCCESS);
                 }
             } else {

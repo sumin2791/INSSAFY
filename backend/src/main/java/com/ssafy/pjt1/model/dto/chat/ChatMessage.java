@@ -15,4 +15,5 @@ public class ChatMessage {
     private String opp_id;
     private String msg;
     private String date;
+    private String opp_nickName;
 }

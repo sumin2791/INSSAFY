@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,6 +19,7 @@ import com.ssafy.pjt1.model.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Autowired
     private UserService userService;
+
+    private ValueOperations<String, String> valOps;
 
     // 메시지 다 갖고오기
     @Override
@@ -64,38 +68,29 @@ public class ChatServiceImpl implements ChatService {
         listOps.leftPush(key, strMsg);
     }
 
-    // 채팅방 갖고오기
     @Override
-    public List<Map<String, Object>> getRoomList(String user_id) throws JsonMappingException, JsonProcessingException {
-        listOps = redisTemplate.opsForList();
+    public List<Object> getRoomList(String user_id) throws JsonMappingException, JsonProcessingException {
+        valOps = redisTemplate.opsForValue();
         objMapper = new ObjectMapper();
-        String key = "roomInfo:" + user_id;
-        Long size = (Long) listOps.size(key);
-        List<String> roomListString = listOps.range(key, 0, size);
-        Map<String, Object> roomMapList = new HashMap<>();
-        List<Map<String, Object>> roomListObject = new LinkedList<>();
-        for (String str : roomListString) {
-            // 스트링을 객체로 변환
-            roomMapList = objMapper.readValue(str, Map.class);
-            Object room_id = roomMapList.get("roomId");
-            String recentMsg = getRecentMessage((String) room_id);
-            log.info("msg:{}", room_id);
-            roomMapList.put("recentMsg", recentMsg);
-            // 상대 id도 저장
-
-            // 객체를 리스트에 저장
-            roomListObject.add(roomMapList);
+        String key = "roomInfo:" + user_id + ":*";
+        Set<String> keys = redisTemplate.keys(key);
+        List<Object> roomList = new LinkedList<>();
+        for (String opp_id : keys) {// 내 키를 기준으로 상대방 키를 알수있음
+            String roomInfoStr = valOps.get(opp_id);
+            Map<String, String> roomInfoObj = objMapper.readValue(roomInfoStr, Map.class);
+            String roomId = roomInfoObj.get("roomId");
+            String recentMsg = getRecentMessage(roomId);
+            roomInfoObj.put("recentMsg", recentMsg);
+            roomList.add(roomInfoObj);
         }
-        return roomListObject;
+        return roomList;
     }
 
-    // 방 만들기
     @Override
     public String makeRoom(String user_id, String opp_id) throws IOException {
         String uid = UUID.randomUUID().toString();
-        listOps = redisTemplate.opsForList();
+        valOps = redisTemplate.opsForValue();
         objMapper = new ObjectMapper();
-        log.info("들어옴");
         // 방 생성하기
         // 내 방과, 상대방 방을 동시에 생성
         UserDto myDto = userService.userDtoById(user_id);
@@ -105,16 +100,19 @@ public class ChatServiceImpl implements ChatService {
         myRoomInfo.put("opp_nickName", oppDto.getUser_nickname());// 상대방 닉네임
         myRoomInfo.put("opp_img", oppDto.getUser_image());// 상대방 이미지
         myRoomInfo.put("opp_id", opp_id);// 상대방 아이디
+        myRoomInfo.put("is_used", 1);// 사용중
+
         Map<String, Object> oppRoomInfo = new HashMap<>();
         oppRoomInfo.put("roomId", uid);// 방 번호
         oppRoomInfo.put("opp_nickName", myDto.getUser_nickname());// 상대방 닉네임
         oppRoomInfo.put("opp_img", myDto.getUser_image());// 상대방 이미지
         oppRoomInfo.put("opp_id", user_id);// 상대방 아이디
+        oppRoomInfo.put("is_used", 1);// 사용중
         // 채팅방에 넣기
         String myRoomInfoStr = objMapper.writeValueAsString(myRoomInfo);
         String oppRoomInfoStr = objMapper.writeValueAsString(oppRoomInfo);
-        listOps.leftPush("roomInfo:" + user_id, myRoomInfoStr);
-        listOps.leftPush("roomInfo:" + opp_id, oppRoomInfoStr);
+        valOps.set("roomInfo:" + user_id + ":" + opp_id, myRoomInfoStr);
+        valOps.set("roomInfo:" + opp_id + ":" + user_id, oppRoomInfoStr);
         return uid;
     }
 
