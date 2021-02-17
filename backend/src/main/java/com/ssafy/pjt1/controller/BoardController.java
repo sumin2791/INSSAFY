@@ -80,6 +80,8 @@ public class BoardController {
             map.put("board_id", boardDto.getBoard_id());
             map.put("user_role", 1);
             boardService.subscribe(map);
+            /////////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
+            redisService.boardFollowSortSet(String.valueOf(boardDto.getBoard_id()));
 
             Map<String, Object> map2 = new HashMap<>();
             map2.put("board_id", boardDto.getBoard_id());
@@ -205,6 +207,8 @@ public class BoardController {
                 logger.info("구독 설정 + 관리자 추가");
                 map.put("user_role", 1);
                 boardService.subscribe(map);
+                /////////////////////////////////////////////////// 구독 누르면 캐시에 해당 보드 구독한 수 넣기
+                redisService.boardFollowSortSet((String) param.get("board_id"));
             } else {
                 logger.info("관리자 추가");
                 boardService.updateManager(map);
@@ -326,38 +330,38 @@ public class BoardController {
             map.put("size", size);
             List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
-                if(type.equals("name")){
+                if (type.equals("name")) {
                     logger.info("최신순 보드 이름 검색");
                     totalCnt = boardService.getSearchCntN(keyword);
                     boardList = boardService.searchBoardNewN(map);
-                }else if(type.equals("description")){
+                } else if (type.equals("description")) {
                     logger.info("최신순 보드 내용 검색");
                     totalCnt = boardService.getSearchCntD(keyword);
                     boardList = boardService.searchBoardNewD(map);
-                }else if(type.equals("location")){
+                } else if (type.equals("location")) {
                     logger.info("최신순 보드 지역 검색");
                     totalCnt = boardService.getSearchCntL(keyword);
                     boardList = boardService.searchBoardNewL(map);
-                }else{
+                } else {
                     logger.info("최신순 보드 해쉬 검색");
                     totalCnt = boardService.getSearchCntH(keyword);
                     boardList = boardService.searchBoardNewH(map);
                 }
                 // boardList = boardService.searchBoardNew(map);
             } else {
-                if(type.equals("name")){
+                if (type.equals("name")) {
                     logger.info("구독순 보드 이름 검색");
                     totalCnt = boardService.getSearchCntN(keyword);
                     boardList = boardService.searchBoardPopularN(map);
-                }else if(type.equals("description")){
+                } else if (type.equals("description")) {
                     logger.info("구독순 보드 내용 검색");
                     totalCnt = boardService.getSearchCntD(keyword);
                     boardList = boardService.searchBoardPopularD(map);
-                }else if(type.equals("location")){
+                } else if (type.equals("location")) {
                     logger.info("구독순 보드 지역 검색");
                     totalCnt = boardService.getSearchCntL(keyword);
                     boardList = boardService.searchBoardPopularL(map);
-                }else{
+                } else {
                     logger.info("구독순 보드 해쉬 검색");
                     totalCnt = boardService.getSearchCntH(keyword);
                     boardList = boardService.searchBoardPopularH(map);
