@@ -84,7 +84,7 @@
                       삭제
                     </v-list-item-title>
                   </v-list-item>
-                  <b-modal id="modal-delete" title="🗑" centered @ok="postDelete">
+                  <b-modal id="modal-delete" title="🗑" size="sm" centered @ok="postDelete">
                     <p class="my-4">포스트를 삭제하시겠어요?</p>
                     <template #modal-footer="{ok}">
                       <b-button variant="delete" @click="ok()">
@@ -539,13 +539,13 @@ export default {
   border: 1px solid #aa2610 !important;
   border-radius: 30px;
   color: #fff;
-  background-color: #aa2610 !important;
+  background-color: #f0725b !important;
   transition: background-color 0.3s, color 0.3s ease;
 }
 .btn-delete:hover,
 .btn-delete:active {
   color: #fff;
-  background-color: #f0725b !important;
+  background-color: #aa2610 !important;
 }
 /* 판매정보 */
 #sell-state {

@@ -38,7 +38,15 @@
                   <!-- 보드 설명 -->
                   <BoardDescription :in-board="inBoard" :is-manager="isManager" @board-image="boardImage" />
                   <button class="btn-subscribe b-title" @click="onSubscribe" v-if="!inBoard">Subscribe</button>
-                  <button class="btn-subscribing b-title" @click="onSubscribe" v-if="inBoard">Subscribing</button>
+                  <button class="btn-subscribing b-title" v-if="inBoard"  v-b-modal.modal-unsubscribe>Subscribing</button>
+                  <b-modal id="modal-unsubscribe" title="Info" size="sm" centered @ok="onSubscribe">
+                    <p class="my-4">구독을 취소하시겠습니까?</p>
+                    <template #modal-footer="{ok}">
+                      <b-button variant="delete" @click="ok()">
+                        취소하기
+                      </b-button>
+                    </template>
+                  </b-modal>
                 </div>
               </v-list>
             </div>
@@ -293,6 +301,23 @@ export default {
 .btn-subscribing:active {
   background-color: var(--basic-color-bg) !important;
   color: var(--basic-color-key);
+}
+/* modal 에서 구독 취소 버튼 */
+.btn-delete {
+  margin-left: 5px;
+  margin-top: 3px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #aa2610 !important;
+  border-radius: 30px;
+  color: #fff;
+  background-color: #f0725b !important;
+  transition: background-color 0.3s, color 0.3s ease;
+}
+.btn-delete:hover,
+.btn-delete:active {
+  color: #fff;
+  background-color: #aa2610 !important;
 }
 #custom-container {
   background-color: var(--basic-color-bg2) !important;
