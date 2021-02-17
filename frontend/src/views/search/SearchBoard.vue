@@ -2,52 +2,40 @@
   <v-main class="main-bg-color">
     <v-container>
       <!-- 검색어 결과 노출 부분 -->
-      <v-row>          
-        <v-col 
+      <v-row>
+        <v-col
           class="mb-4
           text-center
-            text-body-1">
-            보드 중 "{{ search.searchKeyword }}"에 대한 검색 결과 &nbsp; '{{ search.searchCount }}건'
+            text-body-1"
+        >
+          보드 중 "{{ payload.keyword }}"에 대한 검색 결과
         </v-col>
       </v-row>
       <!-- 검색 건수 / 정렬 / 보드 생성 -->
-      <div 
+      <div
         class="d-flex 
           flex-row
           justify-content-between"
       >
         <!-- 검색 건수 / 정렬 -->
         <div>
-          <v-select
-            v-model="search.currentSort"
-            :items="sortResult"
-            label="정렬기준"
-            solo
-            color="##fff"
-            class="sort-dropdown"
-            block
-          ></v-select>
+          <v-select v-model="search.currentSort" :items="sortResult" label="정렬기준" solo color="##fff" class="sort-dropdown" block></v-select>
         </div>
-        
+
         <!-- 보드 생성 버튼 -->
         <div>
-          <v-btn
-            id="create-btn"
-            @click="goToCreateBoard()"
-          >
-            <v-icon
-              color="#AA2610"
-            >
+          <v-btn id="create-btn" @click="goToCreateBoard()">
+            <v-icon color="#AA2610">
               mdi-plus
             </v-icon>
             <div class="text-btn">보드 만들기</div>
           </v-btn>
         </div>
       </div>
-    <!-- 보드 보여주는 부분 -->
-      <v-row >
-        <v-col class="col-6 col-sm-3" v-for="(board,idx) in boardList" :key="idx">
-          <Board :board="board"/>
+      <!-- 보드 보여주는 부분 -->
+      <v-row>
+        <v-col class="col-6 col-sm-3" v-for="(board, idx) in boardList" :key="idx">
+          <Board :board="board" />
         </v-col>
       </v-row>
       <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
@@ -58,10 +46,11 @@
 </template>
 
 <script>
-import Board from '@/components/search/Board.vue'
-import * as boardApi from '@/api/board'
+import Board from '@/components/search/Board.vue';
+import * as boardApi from '@/api/board';
 
 import InfiniteLoading from 'vue-infinite-loading';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'SearchBoard',
@@ -78,55 +67,42 @@ export default {
       },
       // 검색 정렬 조건
       sortResult: ['최신순', '인기순'],
-      boardList:[],
-      page : 0,
-    }
+      boardList: [],
+      page: 0,
+    };
   },
-  computed:{
-    // boardList(){
-    //   return this.$store.state.board.boardList
-    // }
+  computed: {
+    ...mapState('search', ['result', 'size', 'payload']),
   },
   created() {
-    // this.fetchData()
+    this.boardList = this.boardList.concat(this.result);
   },
   methods: {
+    ...mapActions('search', ['actSearchAllBoard']),
+    ...mapMutations('search', ['SET_NEXT_PAGE']),
     goToCreateBoard() {
       return this.$router.push({ name: 'BoardForm' });
     },
-    infiniteHandler($state){
-      const EACH_LEN = 12
-      boardApi.get_boards({sort:"sort",page:this.page,size:EACH_LEN})
-      .then((res)=>{
-        setTimeout(()=>{
-          if(res.data.boardList){
-            this.boardList = this.boardList.concat(res.data.boardList);
-            this.page += 1;
-            $state.loaded();
-            if(res.data.boardList.length / EACH_LEN <1){
+    infiniteHandler($state) {
+      this.SET_NEXT_PAGE();
+      this.actSearchAllBoard().then((v) => {
+        if (v) {
+          setTimeout(() => {
+            if (this.result.isLastPage !== 'No data') {
+              this.boardList = this.boardList.concat(this.result);
+              $state.loaded();
+              if (this.result.length / this.size < 1) {
+                $state.complete();
+              }
+            } else {
               $state.complete();
             }
-          }else{
-            $state.complete();
-          }
-        },1000);
-      })
-      .catch(err=>{console.log(err)})
+          }, 1000);
+        }
+      });
     },
-    fetchData() {
-      boardApi.get_boards('sort')
-        .then(res=>{
-          this.$store.dispatch('board/getBoardList',res.data.boardList)
-          // this.boardList = res.data.boardList
-          console.log(res)
-        })
-        .catch(err=>{
-          console.log(err)
-        })
-
-    }
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -157,24 +133,23 @@ export default {
   text-align: center;
   margin: auto;
   height: 50px;
-  width:100%;
+  width: 100%;
   border: none;
   color: var(--basic-color-fill);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
   background: #ebebe9 !important;
-  box-shadow: 10px 10px 20px #bcbcba, 
-              -10px -10px 20px #ffffff;
+  box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff;
   border-radius: 15px !important;
   transition: 0.3s all ease;
 }
 #create-btn:hover,
 #create-btn:active,
 #create-btn:focus {
-  color: #ebebe9 !important;    
+  color: #ebebe9 !important;
   background-color: var(--basic-color-bg2) !important;
 }
 /* 보드 생성 버튼 */
 .text-btn {
-  color: #AA2610;
+  color: #aa2610;
 }
 </style>

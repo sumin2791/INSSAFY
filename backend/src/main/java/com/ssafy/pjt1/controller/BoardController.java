@@ -303,42 +303,73 @@ public class BoardController {
     }
 
     /*
-     * 기능: 보드 검색 (최신순, 인기순)
+     * 기능: 보드 검색 (최신순, 인기순, 타입별)
      * 
      * developer: 윤수민
      * 
-     * @param : sort, keyword, page, size
+     * @param : sort, keyword, page, size, type(name, description, location, hash)
      * 
-     * @return : boardList, message
+     * @return : boardList, message, isLastPage
      */
     @GetMapping("/searchBoard")
     public ResponseEntity<Map<String, Object>> searchBoard(@RequestParam(value = "sort") String sort,
             @RequestParam(value = "keyword") String keyword, @RequestParam(value = "page") int page,
-            @RequestParam(value = "size") int size) {
+            @RequestParam(value = "size") int size, @RequestParam(value = "type") String type) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/board/searchBoard 호출 성공");
         try {
-            int totalCnt = boardService.getSearchCnt(keyword);
-            if (totalCnt > (page + 1) * size)
-                resultMap.put("isLastPage", "false");
-            else if (totalCnt > page * size)
-                resultMap.put("isLastPage", "true");
-            else
-                resultMap.put("isLastPage", "No data");
-            logger.info("!!!!!cnt: " + totalCnt);
+            int totalCnt;
             Map<String, Object> map = new HashMap<>();
             map.put("keyword", keyword);
             map.put("start", page * size);
             map.put("size", size);
             List<Map<String, Object>> boardList;
             if (sort.equals("new")) {
-                logger.info("최신순 보드 검색");
-                boardList = boardService.searchBoardNew(map);
+                if(type.equals("name")){
+                    logger.info("최신순 보드 이름 검색");
+                    totalCnt = boardService.getSearchCntN(keyword);
+                    boardList = boardService.searchBoardNewN(map);
+                }else if(type.equals("description")){
+                    logger.info("최신순 보드 내용 검색");
+                    totalCnt = boardService.getSearchCntD(keyword);
+                    boardList = boardService.searchBoardNewD(map);
+                }else if(type.equals("location")){
+                    logger.info("최신순 보드 지역 검색");
+                    totalCnt = boardService.getSearchCntL(keyword);
+                    boardList = boardService.searchBoardNewL(map);
+                }else{
+                    logger.info("최신순 보드 해쉬 검색");
+                    totalCnt = boardService.getSearchCntH(keyword);
+                    boardList = boardService.searchBoardNewH(map);
+                }
+                // boardList = boardService.searchBoardNew(map);
             } else {
-                logger.info("구독순 보드 검색");
-                boardList = boardService.searchBoardPopular(map);
+                if(type.equals("name")){
+                    logger.info("구독순 보드 이름 검색");
+                    totalCnt = boardService.getSearchCntN(keyword);
+                    boardList = boardService.searchBoardPopularN(map);
+                }else if(type.equals("description")){
+                    logger.info("구독순 보드 내용 검색");
+                    totalCnt = boardService.getSearchCntD(keyword);
+                    boardList = boardService.searchBoardPopularD(map);
+                }else if(type.equals("location")){
+                    logger.info("구독순 보드 지역 검색");
+                    totalCnt = boardService.getSearchCntL(keyword);
+                    boardList = boardService.searchBoardPopularL(map);
+                }else{
+                    logger.info("구독순 보드 해쉬 검색");
+                    totalCnt = boardService.getSearchCntH(keyword);
+                    boardList = boardService.searchBoardPopularH(map);
+                }
+                // boardList = boardService.searchBoardPopular(map);
             }
+            if (totalCnt > (page + 1) * size)
+                resultMap.put("isLastPage", "false");
+            else if (totalCnt > page * size)
+                resultMap.put("isLastPage", "true");
+            else
+                resultMap.put("isLastPage", "No data");
             resultMap.put("boardList", boardList);
             resultMap.put("message", SUCCESS);
         } catch (Exception e) {

@@ -253,4 +253,50 @@ public class PostServiceImpl implements PostService {
 		return sqlSession.getMapper(PostMapper.class).getAllSearchPostCnt(keyword);
 	}
 
+	
+	@Override
+	public int getAllSearchPostCntH(String keyword) {
+		return sqlSession.getMapper(PostMapper.class).getAllSearchPostCntH(keyword);
+	}
+
+	@Override
+	public int getAllSearchPostCntT(String keyword) {
+		return sqlSession.getMapper(PostMapper.class).getAllSearchPostCntT(keyword);
+	}
+
+	@Override
+	public int getAllSearchPostCntD(String keyword) {
+		return sqlSession.getMapper(PostMapper.class).getAllSearchPostCntD(keyword);
+	}
+	
+	@Override
+	public List<Map<String, Object>> searchPostNewH(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostNewH(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchPostNewT(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostNewT(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchPostNewD(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostNewD(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchPostPopularH(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostPopularH(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchPostPopularT(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostPopularT(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchPostPopularD(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).searchPostPopularD(map);
+	}
+
 }

@@ -19,17 +19,12 @@ import market from './market';
 import addfunc from './addfunc';
 import chat from './chat';
 import calendar from './calendar';
+import search from './search';
 import study from './study';
+
 
 Vue.use(Vuex);
 
-//initialized
-const SEARCH_STATE = () => {
-  return {
-    filters: [],
-    keyword: '',
-  };
-};
 const PROBLEMS = () => [
   '시스템 기반 OO:OO까지 설문 완료(숫자만 입력)',
   '공가 내 규정으로 OOOOO 취득시 3일/월 허용',
@@ -50,18 +45,17 @@ const state = {
     myinfo: false,
     email: false,
   },
-  searchState: SEARCH_STATE(),
 
   //가입하기 인증 문제
   problems: PROBLEMS(),
 
   //curation Id
-  curationId:{
-    Market:76,
-    LearnShare:75,
-    StudyMain:77,
-    Recruitment: 73
-  }
+  curationId: {
+    Market: 76,
+    LearnShare: 75,
+    StudyMain: 77,
+    Recruitment: 73,
+  },
 };
 
 export default new Vuex.Store({
@@ -82,6 +76,10 @@ export default new Vuex.Store({
     addfunc,
     chat,
     calendar,
+<<<<<<< frontend/src/vuex/store.js
+    search,
+=======
     study,
+>>>>>>> frontend/src/vuex/store.js
   },
 });

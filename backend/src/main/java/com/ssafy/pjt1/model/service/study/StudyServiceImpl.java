@@ -69,4 +69,14 @@ public class StudyServiceImpl implements StudyService {
 		sqlSession.getMapper(StudyMapper.class).reSubscription(map);
 	}
 
+	@Override
+	public List<Map<String, Object>> myRequestList(String user_id) {
+		return sqlSession.getMapper(StudyMapper.class).myRequestList(user_id);
+	}
+
+	@Override
+	public List<Map<String, Object>> myStudyRequest(Map<String, Object> map) {
+		return sqlSession.getMapper(StudyMapper.class).myStudyRequest(map);
+	}
+
 }
