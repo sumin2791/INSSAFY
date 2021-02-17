@@ -288,3 +288,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/vscode,eclipse,windows,macos,node,vue,vuejs,java
+
+### AWS S3 ###
+src/main/resources/application.properties
