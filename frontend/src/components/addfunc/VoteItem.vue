@@ -1,11 +1,12 @@
 <template>
   <div>
     
-    <p @click="show" v-if="!isShow">{{this.voteDto.vote_name}}</p>
+    <p @click="show" v-if="!isShow" style="cursor:pointer">{{this.voteDto.vote_name}}</p>
     <div id="vote-container">
       <vue-poll :showResults="showResult" v-bind="options" @addvote="addVote" v-if="isShow"/>
       <div class="btn-set">
         <button class="p-button-cancel r-desc" @click="voteDelete" v-if="isShow && isManager">삭제</button>
+        <div class="binkan"></div>
         <button class="p-button r-desc" @click="show" v-if="isShow">close</button>
       </div>
 
@@ -53,7 +54,7 @@ export default {
     }
   },
   watch:{
-    
+
   },
   created(){
     this.getVoteDetail()
@@ -128,6 +129,9 @@ export default {
 .btn-set{
   display: flex;
   justify-content: space-between;
+}
+.binkan{
+  width:0.5px;
 }
 .p-button {
   margin-left: 5px;
