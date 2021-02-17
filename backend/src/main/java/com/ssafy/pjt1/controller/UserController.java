@@ -137,7 +137,7 @@ public class UserController {
 
             // 큐레이션 보드 구독 처리
             String user_id = userDto.getUser_id();
-            int[] curation = { 73, 75, 76, 77 };
+            int[] curation = { 120, 121, 122, 123 };
             for (int board_id : curation) {
                 Map<String, Object> cMap = new HashMap<>();
                 cMap.put("board_id", board_id);
