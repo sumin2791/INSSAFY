@@ -73,6 +73,11 @@ public class VoteServiceImpl implements VoteService {
         return sqlSession.getMapper(VoteMapper.class).getBoardVote(board_id);
     }
 
+    @Override
+    public int isVoted(Map<String, Object> map) {
+        return sqlSession.getMapper(VoteMapper.class).isVoted(map);
+    }
+
 
 }
 

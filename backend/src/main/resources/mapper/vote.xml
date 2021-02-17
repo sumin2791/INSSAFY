@@ -4,16 +4,13 @@
 <mapper namespace="com.ssafy.pjt1.model.mapper.VoteMapper">
 
 	<insert id="createVote" parameterType="VoteDto" useGeneratedKeys="true" keyProperty="vote_id">
-		insert into vote (board_id, vote_name, vote_done, vote_description, 
-		vote_end_datetime, vote_duplication, vote_igmyeong, is_used) values (
-		#{board_id}, #{vote_name}, 0, #{vote_description}, #{vote_end_datetime}
-		, #{vote_duplication}, #{vote_igmyeong}, 1)
+		insert into vote (board_id, vote_name, vote_description, is_used) values (
+		#{board_id}, #{vote_name}, #{vote_description}, 1)
 	</insert>
 
 	<update id="voteModify" parameterType="VoteDto">
 		update vote
-		set  vote_name=#{vote_name}, vote_done=#{vote_done},vote_description=#{vote_description}, 
-		vote_end_datetime=#{vote_end_datetime}, vote_duplication=#{vote_duplication}, vote_igmyeong=#{vote_igmyeong}
+		set  vote_name=#{vote_name},vote_description=#{vote_description}
 		where vote_id = #{vote_id}
 	</update>
 	
@@ -69,6 +66,13 @@
 		select vote_id
 		from vote
 		where board_id = #{board_id} and is_used = 1;
+	</select>
+
+	<select id="isVoted" parameterType="map" resultType="int">
+		select count(s.user_id)
+		from vote_select as s join vote_item as i
+			on s.vote_item_id = i.vote_item_id
+		where i.vote_id = #{vote_id} and s.user_id = #{user_id} and s.is_used = 1;
 	</select>
 
 </mapper>
