@@ -20,7 +20,7 @@
                 <div id="header-user-info">
                   <!-- 프로필 사진 연결하기 -->
                   <v-avatar size="40">
-                    <Profile id="profile-image"/>
+                    <Profile id="profile-image" :getUserImage="image"/>
                   </v-avatar>
                   <!-- 작성자이름, 작성일자 -->
                   <div id="header-info">
@@ -129,9 +129,9 @@ export default {
     flagWriter() {
       return this.comment.user_id === String(localStorage.userId);
     },
-    // image(){
-    //   return this.comment.user_image
-    // }
+    image(){
+      return this.comment.user_image
+    }
   },
   mounted(){
     
