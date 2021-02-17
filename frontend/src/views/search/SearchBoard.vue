@@ -20,7 +20,7 @@
       >
         <!-- 보드 생성 버튼 -->
         <div>
-          <v-btn id="create-btn" @click="goToCreateBoard()">
+          <v-btn id="create-btn" style="margin-bottom:20px" @click="goToCreateBoard()">
             <v-icon color="#AA2610">
               mdi-plus
             </v-icon>
@@ -31,7 +31,7 @@
       <!-- 보드 보여주는 부분 -->
       <v-row>
         <v-col class="col-6 col-sm-3" v-for="(board, idx) in searchList" :key="idx">
-          <Board :board="board" />
+          <Board :board="board" class="real-shadow-text" />
         </v-col>
       </v-row>
       <infinite-loading @infinite="infiniteHandler" spinner="waveDots">

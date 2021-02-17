@@ -15,7 +15,7 @@
 
       <!-- 보드 보여주는 부분 -->
       <v-row>
-        <v-col class="col-12 col-sm-4" v-for="(item, index) in searchList" :key="index">
+        <v-col class="col-12 col-sm-4 " v-for="(item, index) in searchList" :key="index">
           <Post :post="item" />
         </v-col>
       </v-row>
@@ -55,11 +55,11 @@ export default {
     },
   },
   methods: {
-    ...mapActions('search', ['actSearchAllBoard']),
+    ...mapActions('search', ['actSearchAllPost']),
     ...mapMutations('search', ['SET_NEXT_PAGE']),
     infiniteHandler($state) {
       this.infiniteState = $state;
-      this.actSearchAllBoard().then((v) => {
+      this.actSearchAllPost().then((v) => {
         if (v) {
           setTimeout(() => {
             this.SET_NEXT_PAGE();

@@ -1,4 +1,5 @@
 import * as searchApi from '@/api/search';
+import { faSleigh } from '@fortawesome/free-solid-svg-icons';
 import store from './store';
 //api로 넘길 payload 형태 객체 초기화
 const INIT_PAYLOAD = () => {
@@ -113,7 +114,6 @@ export default {
       try {
         const response = await searchApi.getSearchAllBoard(state.payload);
         if (response.data.message === 'success') {
-          console.log(response);
           commit('SET_SEARCH_LIST', response.data.boardList);
           if (response.data.isLastPage === 'No data') {
             return false;
@@ -128,6 +128,23 @@ export default {
     },
 
     //모든 포스트 검색
+    async actSearchAllPost({ commit, state }) {
+      try {
+        const response = await searchApi.getSearchAllPost(state.payload);
+        console.log(response);
+        if (response.data.message === 'success') {
+          commit('SET_SEARCH_LIST', response.data.postList);
+          if (response.data.isLastPage === 'No date') {
+            return false;
+          }
+          return true;
+        }
+      } catch (error) {
+        console.log(error);
+        alert('검색 도중에 문제가 발생했습니다.');
+      }
+      return false;
+    },
   },
 
   //--------------------------------

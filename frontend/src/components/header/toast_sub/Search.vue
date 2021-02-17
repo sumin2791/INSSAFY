@@ -80,7 +80,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('search', ['actSearchAllBoard']),
+    ...mapActions('search', ['actSearchAllBoard', 'actSearchAllPost']),
     ...mapMutations('search', ['SET_SEARCH_ACTIVE', 'SET_PAYLOAD_SORT', 'SET_PAYLOAD', 'CLEAR_SEARCH_LIST']),
     //검색 관련
     clickCloser() {
@@ -105,6 +105,7 @@ export default {
       //메인의 경우 -> 전체 검색 페이지로 이동
       console.log(this.epicenter);
       console.log(this.active);
+      //페이지 이동
       if (
         !(this.epicenter === '/board/search' && this.active === 'allBoard') ||
         !(this.epicenter === '/post/search' && this.active === 'allPost')
@@ -121,7 +122,12 @@ export default {
       } else if (this.epicenter === '/post/search' && this.active === 'allBoard') {
         this.$router.push({ name: 'SearchPost' });
       }
-      this.actSearchAllBoard();
+      //active에 따른 검색결과 요청
+      if (this.active === 'allBoard') {
+        this.actSearchAllBoard();
+      } else if (this.active === 'allPost') {
+        this.actSearchAllPost();
+      }
 
       this.$store.commit('setToastTogle');
       // this.$refs.searchBtn.blur();

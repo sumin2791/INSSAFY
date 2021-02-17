@@ -3,45 +3,41 @@
     class="mx-auto
       img-wrap"
     max-width="400"
+    style="border-radius: 15px"
   >
     <div class="text">
-      <v-btn 
-        small
-        fab
-        class="subscription"
-      >
+      <!-- <v-btn small fab class="subscription">
         <v-icon color="#fff">mdi-heart</v-icon>
-      </v-btn>
+      </v-btn> -->
       <v-card-title @click="goToBoard" style="cursor:pointer">{{ board.board_name }}</v-card-title>
-      <v-card-subtitle 
+      <v-card-subtitle
         class="pb-0
           text-white 
-          text-start">
+          text-start"
+      >
         {{ board.board_description }}
       </v-card-subtitle>
 
       <v-card-text class="text-white text-start">
-        <div class="hashtag-list" v-for="(hash,idx) in hashtags" :key="idx">{{ hash }}</div>
+        <div class="hashtag-list" v-for="(hash, idx) in hashtags" :key="idx">{{ hash }}</div>
       </v-card-text>
     </div>
 
-    <v-img
-      id="v-img"
-      class="align-end blur"
-      height="250px"
-      src="@/assets/images/slide.jpg"
-    >
-    </v-img>
-
-
+    <!-- <v-img id="v-img" class="align-end blur" height="250px" src="@/assets/images/slide.jpg" style="border-radius: 15px">
+    </v-img> -->
+    <GradientGenerator class="myinfo-list" style="height: 250px" :radius="'15px'" />
   </v-card>
 </template>
 
 <script>
+import GradientGenerator from '@/components/etc/GradientGenerator';
 export default {
   name: 'Board',
-  props:{
-    board:Object
+  props: {
+    board: Object,
+  },
+  components: {
+    GradientGenerator,
   },
   data() {
     return {
@@ -53,29 +49,33 @@ export default {
       //   hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
       //   count: 100,
       // },
-    }
+    };
   },
-  created() {
-  },
-  computed:{
+  created() {},
+  computed: {
     hashtags() {
-      if(this.board.board_hash!=null){
-        return this.board.board_hash.split('|')
-      }else{
-        return ' '
+      if (this.board.board_hash != null) {
+        return this.board.board_hash.split('|');
+      } else {
+        return ' ';
       }
-    }
+    },
   },
-  methods:{
-    goToBoard(){
-      console.log(this.board.board_id)
-      this.$router.push({ name: 'Board', params: { board_id:this.board.board_id}})
-    }
-  }
-}
+  methods: {
+    goToBoard() {
+      console.log(this.board.board_id);
+      this.$router.push({ name: 'Board', params: { board_id: this.board.board_id } });
+    },
+  },
+};
 </script>
 
 <style scoped>
+.myinfo-list {
+  width: 100%;
+  border-radius: 15px !important;
+}
+
 .container-board {
   display: flex;
   flex-direction: column;
@@ -103,8 +103,8 @@ export default {
   align-self: center;
   margin: 5%;
 }
-.hashtag-list{
-  display:inline;
+.hashtag-list {
+  display: inline;
 }
 .scrap-count {
   align-self: flex-end;
@@ -130,7 +130,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  color: #FFFFFF;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   text-align: center;
