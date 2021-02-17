@@ -9,9 +9,9 @@
             <v-btn depressed text v-bind="attrs" v-on="on" class="px-0">
               <div id="header-user-info">
                 <!-- 프로필 사진 연결하기 -->
-                <v-avatar size="40">
-                  <Profile id="profile-image" />
-                </v-avatar>
+                <div>
+                  <Profile id="profile-image" :getUserImage="image"/>
+                </div>
                 <!-- 작성자이름, 작성일자 -->
                 <div id="header-info">
                   <div>{{ post.user_nickname }}</div>
@@ -148,7 +148,7 @@
 
 <script>
 // 프로필 이미지
-import Profile from '@/components/etc/Profile';
+import Profile from '@/components/etc/OtherProfile';
 
 import * as postApi from '@/api/post';
 import timeForToday from '@/plugins/timeForToday';
@@ -206,6 +206,9 @@ export default {
       }
       return [];
     },
+    image(){
+      return this.post.user_image
+    }
   },
   mounted() {
     this.fetchData();
@@ -386,8 +389,8 @@ export default {
 }
 /* 프로필 이미지 */
 #profile-image {
-  width: 100%;
-  height: 100%;
+  width: 40px;
+  height: 40px;
 }
 /* 전체 최상단(유저 & 판매상태 & 신고) */
 #header {

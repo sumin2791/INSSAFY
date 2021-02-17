@@ -19,7 +19,7 @@
         </v-row>        
         <v-row dense>
           <v-col class="pb-0">
-            <Post :post="post" :nickname="nickname" :commentCount="commentCount"/>
+            <Post :post="post" :nickname="nickname" :commentCount="commentCount" :image="image"/>
           </v-col>    
         </v-row>
         <v-row dense>
@@ -70,6 +70,7 @@ export default {
       nickname:'',
       comments:[],
       commentCount:0,
+      image:'',
     }
   },
   components:{
@@ -127,6 +128,7 @@ export default {
         }else{
           this.post = res.data.postDto
           this.nickname = res.data.writer_nickname
+          this.image = res.data.writer_image
           
           //좋아요와 스크립트 여부는 vuex에 저장해놔야함...
           this.$store.dispatch('post/isLiked',res.data.isLiked)

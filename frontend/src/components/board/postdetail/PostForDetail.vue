@@ -9,9 +9,10 @@
             <v-btn depressed text v-bind="attrs" v-on="on" class="px-0">
               <div id="header-user-info">
                 <!-- 프로필 사진 연결하기 -->
-                <v-avatar size="40">
-                  <Profile id="profile-image" />
-                </v-avatar>
+                <div>
+                  <Profile id="profile-image" :getUserImage="image"/>
+                  
+                </div>
                 <!-- 작성자이름, 작성일자 -->
                 <div id="header-info">
                   <div>{{ nickname }}</div>
@@ -161,7 +162,7 @@
 // 게시글 수정
 import PostModify from '@/components/board/postdetail/PostModify';
 // 프로필 이미지
-import Profile from '@/components/etc/Profile';
+import Profile from '@/components/etc/OtherProfile';
 
 import * as postApi from '@/api/post';
 import { imageDelete } from '@/api/main';
@@ -187,6 +188,7 @@ export default {
     post: Object,
     nickname: String,
     commentCount: Number,
+    image:String
   },
   data() {
     return {
@@ -251,7 +253,6 @@ export default {
     // '$route':'fetchData'
   },
   created() {
-
     // 보드 구독했는 지 여부와 관리자 여부 확인하기 !!
     const BOARD_ID = Number(this.$route.params.board_id);
     const boards = JSON.parse(localStorage.subBoard);
@@ -478,8 +479,8 @@ export default {
 }
 /* 프로필 이미지 */
 #profile-image {
-  width: 100%;
-  height: 100%;
+  width: 40px;
+  height: 40px;
 }
 /* 전체 최상단(유저 & 판매상태 & 신고) */
 #header {
