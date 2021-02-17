@@ -36,8 +36,11 @@ export default {
   },
   data() {
     return {
-      // 임시 프로필 이미지
-      profileImg: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+      // 렌더링해서 html 끼워진 텍스트 갱신하게끔
+      render: [
+        {first: 1, bool: true},
+        {second: 2, boool: false},
+      ],
     }
   },
   methods: {
@@ -56,7 +59,7 @@ export default {
       if (currentRoom) {
         // API 요청으로 메세지 가져오기
         const params = {
-          endNUm: 5,
+          endNUm: 40,
           startNUm: 0,
           room_id: currentRoom,
           // 추가 파라미터
