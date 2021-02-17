@@ -14,6 +14,7 @@
             <v-list color="transparent">
               <!-- 채팅방 리스트 타이틀 -->
               <div id="title">채팅방 목록</div>
+              {{ResponsiveSize.isMobile}} {{isInRoom}}
               <!-- 채팅중인 대화상대 목록 -->
               <v-col>
                 <ChatRoomList
@@ -77,6 +78,9 @@ export default {
     // 채팅방 들어갔는지 확인
     isSend() {
       return this.$store.state.chat.isSend
+    },
+    isInRoom() {
+      return this.$store.state.chat.isInChatRoom
     },
   },
   data() {
