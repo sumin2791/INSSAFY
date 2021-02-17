@@ -114,7 +114,7 @@
 	</select>
 
 	<select id="getComment" parameterType="int" resultType="map">
-		select c.comment_id, c.post_id, c.user_id, c.comment_description, c.comment_date, u.user_nickname
+		select c.comment_id, c.post_id, c.user_id, c.comment_description, c.comment_date, u.user_nickname, u.user_image
 		from comment as c left outer join user as u
 		on c.user_id = u.user_id
 		where c.post_id = #{post_id} and c.is_used = 1 and u.is_used = 1
