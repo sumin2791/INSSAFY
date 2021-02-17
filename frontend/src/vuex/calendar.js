@@ -209,7 +209,7 @@ const getBoardId = (type) => {
     case '스터디':
       return 77;
     default:
-      break;
+      return type;
   }
 };
 //2

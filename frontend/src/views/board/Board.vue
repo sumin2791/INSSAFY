@@ -44,10 +44,16 @@
             </div>
             <CheckList :is-manager="isManager" v-if="isCheck" />
             <VoteList :in-board="inBoard" :is-manager="isManager" v-if="isVote" />
-            <UserRank v-if="isRank" />        
+            <UserRank v-if="isRank" />
           </v-col>
           <v-col class="col-12 col-sm-8">
-            <PostWrite :in-board="inBoard" style="margin:0 10px" />     
+            <!-- 달력 -->
+            <CalendarSpan id="study-calendar" class="rounded-bg" :boardName="this.boardId" v-if="isCalendar" />
+            <CalendarDialog :boardName="this.boardId" />
+            <ModifyDialog :boardName="this.boardId" />
+            <DetailDialog />
+
+            <PostWrite :in-board="inBoard" style="margin:20px 10px" />
             <PostList />
           </v-col>
         </v-row>
@@ -75,6 +81,8 @@ import VoteList from '@/components/addfunc/VoteList';
 // 유저랭킹
 import UserRank from '@/components/addfunc/UserRank';
 
+import CalendarSpan from '@/components/calendar/CalendarSpan';
+
 export default {
   name: 'Board',
   components: {
@@ -84,6 +92,12 @@ export default {
     CheckList,
     VoteList,
     UserRank,
+
+    //달력
+    CalendarSpan,
+    CalendarDialog: () => import('@/components/calendar/CalendarDialog'),
+    DetailDialog: () => import('@/components/calendar/DetailDialog'),
+    ModifyDialog: () => import('@/components/calendar/ModifyDialog'),
   },
   // 뷰 인스턴스 제거될 때 resize 호출
   beforeDestroy() {
@@ -110,9 +124,12 @@ export default {
       inBoard: '',
       isManager: false,
       boardimg: '',
+
+      boardId: '',
     };
   },
   created() {
+    this.boardId = this.$route.params.board_id;
     // this.$store.dispatch('board/IsInBoard',Number(this.$route.params.board_id))
     // 구독했는 지 파악하기 : inBoard
     const BOARD_ID = Number(this.$route.params.board_id);
@@ -158,7 +175,7 @@ export default {
   methods: {
     boardImage(boardimg) {
       this.boardimg = boardimg;
-      if (this.boardimg != '') {
+      if (this.boardimg != '' && this.boardimg != null && this.boardimg != 'null') {
         const header = document.querySelector('#board-header');
         header.style.minHeight = '250px';
         header.style.background = `url(${this.boardimg})`;
@@ -232,6 +249,15 @@ export default {
 </script>
 
 <style scoped>
+/* calendar 내용 */
+#study-calendar {
+  overflow: hidden;
+  width: 100%;
+  height: 650px;
+  min-height: 650px;
+  box-shadow: var(--basic-shadow-w);
+}
+
 .main-bg-color {
   background-color: #ebebe9;
 }
