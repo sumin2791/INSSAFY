@@ -226,7 +226,9 @@ public class RedisService {
         String sortkey = "techStack";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         for (String techStack_name : list) {
-            zset.incrementScore(sortkey, String.valueOf(techStack_name), 1);
+            if(!techStack_name.equals("null")){
+                zset.incrementScore(sortkey, String.valueOf(techStack_name), 1);
+            }
         }
     }
 
@@ -242,7 +244,9 @@ public class RedisService {
         String sortkey = "techStack";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         for (String techStack_name : list) {
-            zset.incrementScore(sortkey, String.valueOf(techStack_name), -1);
+            if(!techStack_name.equals("null")){
+                zset.incrementScore(sortkey, String.valueOf(techStack_name), -1);
+            }
         }
     }
 
