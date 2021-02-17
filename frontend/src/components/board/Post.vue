@@ -201,7 +201,7 @@ export default {
       return timeForToday(this.post.post_date);
     },
     skill() {
-      if (this.post.post_header != '전체') {
+      if (this.post.post_header != '전체' && this.post.post_header != 'null' && this.post.post_header !=''&& this.post.post_header!=null) {
         return this.post.post_header.split('|');
       }
       return [];

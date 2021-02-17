@@ -59,8 +59,8 @@
                 <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>관심품목 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
                 <b-collapse visible id="item-collapse">
                   <v-col>
-                  <MarketItem />
-                </v-col>
+                    <MarketItem v-for="(likeId,idx) in likeIdList" :key="idx" :likeId="likeId"/>
+                  </v-col>
                 </b-collapse>
               </v-list>
             </div>
@@ -82,8 +82,6 @@
 <script>
 // 관심 품목 등록 리스트
 import MarketItem from "@/components/curation/market/MarketItem.vue"
-// 중고장터 게시물 작성
-// import MarketPostWrite from "@/components/curation/market/MarketPostWrite.vue"
 
 // 중고장터 리스트
 import MarketPostList from "@/components/board/PostList"
@@ -92,7 +90,7 @@ import PostWrite from '@/components/board/PostWrite'
 
 
 import * as marketApi from '@/api/market'
-// import InfiniteLoading from 'vue-infinite-loading';
+import * as userApi from '@/api/user'
 
 export default {
   name:'Market',
@@ -116,6 +114,9 @@ export default {
 
     window.addEventListener('resize', this.onResize, { passive: true })
   },
+  created(){
+    this.getLikeItem()
+  },
   data() {
     return {
       // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
@@ -132,6 +133,7 @@ export default {
       posts:[],
       page:0,
       inBoard:true,
+      likeIdList:[],
     }
   },
   methods: {
@@ -140,26 +142,15 @@ export default {
       this.ResponsiveSize.isMobile = window.innerWidth < 426;
       this.ResponsiveSize.viewSize = window.innerWidth;
     },
-    // infiniteHandler($state){
-    //   const EACH_LEN = 5
-    //   marketApi.getSaleList({board_id:34,login_id:localStorage.userId,page:this.page,size:EACH_LEN})
-    //   .then((res)=>{
-    //     console.log(res)
-    //     setTimeout(()=>{
-    //       if(res.data.postList){
-    //         this.posts = this.posts.concat(res.data.postList);
-    //         this.page += 1;
-    //         $state.loaded();
-    //         if(res.data.postList.length / EACH_LEN <1){
-    //           $state.complete();
-    //         }
-    //       }else{
-    //         $state.complete();
-    //       }
-    //     },1000);
-    //   })
-    //   .catch(err=>{console.log(err)})
-    // },
+    getLikeItem(){
+      userApi.getScraps(String(localStorage.userId))
+      .then(res=>{
+        res.data.scraps.forEach(e => {
+          if(e.board_name==="중고장터")
+            this.likeIdList.push(e.post_id)
+        });
+      })
+    }
   }
 }
 </script>
