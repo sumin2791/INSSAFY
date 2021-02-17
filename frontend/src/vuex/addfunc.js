@@ -7,22 +7,19 @@ export default {
     isVote: false,
     isRank: false,
 
-
     // 체크리스트 편집중 flag
     isEditNow: false,
-    flagWrite:false,
+    flagWrite: false,
   },
-  getters: {
-
-  },
+  getters: {},
   mutations: {
     // response에서 받아오는 부분
     IS_USED(state, data) {
-      state.isCheckList = data.checklist_flag
-      state.isCalendar = data.calendar_flag
-      state.isVote = data.vote_flag
+      state.isCheckList = data.checklist_flag;
+      state.isCalendar = data.calendar_flag;
+      state.isVote = data.vote_flag;
       // userRank response가 다르다
-      state.isRank = data.user_rank_flag
+      state.isRank = data.user_rank_flag;
     },
 
     // 체크리스트 편집중 상태 저장
@@ -35,8 +32,14 @@ export default {
     },
   },
   actions: {
-    isUsed({commit}, addfunc) {
-      commit('IS_USED', addfunc)
+    isUsed({ commit }, addfunc) {
+      commit('IS_USED', addfunc);
+    },
+    isEditCheckList({ commit }, bool) {
+      commit('IS_EDIT_CHECK_LIST', bool);
+    },
+    flagWrite({ commit }) {
+      commit('FLAG_WRITE');
     },
     isEditCheckList({commit}, bool) {
       commit('IS_EDIT_CHECK_LIST', bool)
@@ -45,4 +48,4 @@ export default {
       commit('FLAG_WRITE')
     },
   },
-}
+};

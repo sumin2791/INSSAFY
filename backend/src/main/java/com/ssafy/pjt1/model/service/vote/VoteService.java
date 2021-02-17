@@ -30,6 +30,8 @@ public interface VoteService {
 	public void voteDeleteAll(int vote_id);
 
 	public List<Integer> getBoardVote(int board_id);
+
+	public int isVoted(Map<String, Object> map);
     
 }
 

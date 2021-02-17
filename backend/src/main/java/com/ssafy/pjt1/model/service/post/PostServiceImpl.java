@@ -299,4 +299,49 @@ public class PostServiceImpl implements PostService {
 		return sqlSession.getMapper(PostMapper.class).searchPostPopularD(map);
 	}
 
+	@Override
+	public int getSearchPostCntH(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).getSearchPostCntH(map);
+	}
+
+	@Override
+	public int getSearchPostCntT(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).getSearchPostCntT(map);
+	}
+
+	@Override
+	public int getSearchPostCntD(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).getSearchPostCntD(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> boardPostNewH(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).boardPostNewH(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> boardPostNewT(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).boardPostNewT(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> boardPostNewD(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).boardPostNewD(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> boardPostPopularH(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).boardPostPopularH(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> boardPostPopularT(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).boardPostPopularT(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> boardPostPopularD(Map<String, Object> map) {
+		return sqlSession.getMapper(PostMapper.class).boardPostPopularD(map);
+	}
+
 }

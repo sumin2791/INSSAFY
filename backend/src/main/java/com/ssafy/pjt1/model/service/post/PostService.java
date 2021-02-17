@@ -102,4 +102,22 @@ public interface PostService {
 
 	public List<Map<String, Object>> searchPostPopularD(Map<String, Object> map);
 
+	public int getSearchPostCntH(Map<String, Object> map);
+
+	public int getSearchPostCntT(Map<String, Object> map);
+
+	public int getSearchPostCntD(Map<String, Object> map);
+
+	public List<Map<String, Object>> boardPostNewH(Map<String, Object> map);
+
+	public List<Map<String, Object>> boardPostNewT(Map<String, Object> map);
+
+	public List<Map<String, Object>> boardPostNewD(Map<String, Object> map);
+
+	public List<Map<String, Object>> boardPostPopularH(Map<String, Object> map);
+
+	public List<Map<String, Object>> boardPostPopularT(Map<String, Object> map);
+
+	public List<Map<String, Object>> boardPostPopularD(Map<String, Object> map);
+
 }
