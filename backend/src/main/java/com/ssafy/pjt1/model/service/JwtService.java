@@ -44,6 +44,7 @@ public class JwtService {
 	// 전달 받은 토큰이 제대로 생성된것이니 확인 하고 문제가 있다면 RuntimeException을 발생.
 	public void checkValid(String jwt) {
 		// 예외가 발생하지 않으면 OK
+		logger.info("msg>>>>>>>{}", jwt);
 		Jwts.parser().setSigningKey(signature.getBytes()).parseClaimsJws(jwt);
 	}
 
