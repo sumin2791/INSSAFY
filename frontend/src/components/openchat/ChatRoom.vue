@@ -202,8 +202,12 @@ export default {
       console.log(message, '파라미터 변경')
       console.log('연결중 보내기')
       this.stompClient.send('/app/receive', JSON.stringify(message), {});
+      
+      this.$store.dispatch('chat/sendMessages')
+
       // 초기화(input)
       this.sendContents = ''
+      
       // 뿌려줄 res.data 태그
       // 1 - 전체 감쌀 부분
       const div = document.createElement("div");

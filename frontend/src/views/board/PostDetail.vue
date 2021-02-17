@@ -12,7 +12,7 @@
             id="back-btn"
           > -->
             <button id="back-btn" @click="goBack">
-              보드로 돌아가기
+              뒤로 가기
             </button>
           <!-- </router-link> -->
             

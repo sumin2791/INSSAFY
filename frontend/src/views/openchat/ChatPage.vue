@@ -71,12 +71,12 @@ export default {
     window.addEventListener('resize', this.onResize, { passive: true })
   },
   watch: {
-  
+    isSend: 'getChatList'
   },
   computed: {
     // 채팅방 들어갔는지 확인
-    isInRoom() {
-      return this.$store.state.chat.isInChatRoom
+    isSend() {
+      return this.$store.state.chat.isSend
     },
   },
   data() {

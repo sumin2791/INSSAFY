@@ -40,6 +40,9 @@ export default {
   methods: {
     // 현재 채팅방 메세지들 가져오기 - 초기 채팅방 가져올 때 한번만
     selectThisChat(chatList) {
+      // 정보 갱신전 제거를 해줘야 업데이트 반영됨
+      // 활성화 채팅방 없애고 메세지도 지우기
+      this.$store.dispatch('chat/isNotSelected')
       // 현재 선택된 채팅방 정보 갱신
       this.$store.dispatch('chat/isSelected', chatList)
       const currentRoom = this.$store.state.chat.selectedChatRoom

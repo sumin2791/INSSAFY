@@ -11,6 +11,8 @@ export default {
     selectedMessages: [],
     // 채팅방 출입 탐지 flag
     isInChatRoom: false,
+    // 채팅방에서 메세지 보내면 갱신해줘야 함(채팅 리스트의 최근 메세지)
+    isSend: true,
 
   },
   getters: {
@@ -36,6 +38,10 @@ export default {
     GET_MESSAGES(state, msgList) {
       state.selectedMessages = msgList
     },
+    // 메세지 입력하면 입력했다고 이벤트 발생
+    SEND_MESSAGE(state) {
+      state.isSend = !state.isSend
+    }
   },
   actions: {
     isSelected({commit}, chatList) {
@@ -48,5 +54,8 @@ export default {
     getMessages({commit}, msgList) {
       commit('GET_MESSAGES', msgList)
     },
+    sendMessages({commit}) {
+      commit('SEND_MESSAGE')
+    }
   },
 }
