@@ -38,7 +38,8 @@ export default {
   methods: {
     // 소켓 연결하기
     connect() {
-      //const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+      console.log(this.BASEURL)
+      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
       const serverURL = 'http://localhost:8000/ws';
       let socket = new SockJS(serverURL);
       if (this.stompClient != null) {

@@ -5,7 +5,7 @@
     >
       <!-- 상대 프로필 이미지(임시 - 연결해줘야 함) -->
       <v-avatar>
-        <v-img :src="profileImg"></v-img>
+        <Profile :getUserImage="chatList.opp_img"></Profile>
       </v-avatar>
 
       <v-list-item-content 
@@ -28,6 +28,9 @@ import * as chatApi from "@/api/chat"
 
 export default {
   name:'ChatRoom',
+  components:{
+    Profile: () => import('@/components/etc/OtherProfile'),
+  },
   props: {
     chatList: Object
   },
@@ -53,7 +56,7 @@ export default {
       if (currentRoom) {
         // API 요청으로 메세지 가져오기
         const params = {
-          endNUm: 15,
+          endNUm: 5,
           startNUm: 0,
           room_id: currentRoom,
           // 추가 파라미터

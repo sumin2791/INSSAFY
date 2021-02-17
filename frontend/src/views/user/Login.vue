@@ -167,7 +167,8 @@ export default {
                       duration: 4000,
                       // queue: true,
                       // 상대방 닉네임, 내 아이디
-                      // onClick: this.moveToChatRoom(notice[i].opp_name, params),
+                      onClick: () => {
+                        this.moveToChatRoom(notice[i].opp_name, params)},
                       position: 'top-right',
                     })
                 }
@@ -182,39 +183,39 @@ export default {
         });
     },
 
-    // // 채팅방 이동 및 활성화 - async, await로 구현 가능하면 구현
-    // async moveToChatRoom(opp_name, user_id) {
-    //   // 현재 가지고 있는 채팅방을 가져오자
-    //   await chatApi
-    //     .getChatList({ user_id: user_id })
-    //     .then((res) => {
-    //       const chatLists = res.data.roomInfo;
-    //       // 방 정보, 상대방 아이디 저장
-    //       let chatRoomId;
-    //       let oppId;
-    //       for (let i = 0; i < chatLists.length; i++) {
-    //         if (chatLists[i].opp_nickName === opp_name) {
-    //           chatRoomId = chatLists[i].roomId;
-    //           oppId = chatLists[i].opp_id;
-    //           break;
-    //         }
-    //       }
-    //       // break => 채팅방 존재(vuex 변화)
-    //       const existChatRoom = {
-    //         roomId: chatRoomId,
-    //         opp_nickName: opp_name,
-    //         opp_id: oppId,
-    //       };
-    //       // vuex state 변화
-    //       this.$store.dispatch('chat/isSelected', existChatRoom);
+    // 채팅방 이동 및 활성화 - async, await로 구현 가능하면 구현
+    moveToChatRoom(opp_name, user_id) {
+      // 현재 가지고 있는 채팅방을 가져오자
+      chatApi
+        .getChatList({ user_id: user_id })
+        .then((res) => {
+          const chatLists = res.data.roomInfo;
+          // 방 정보, 상대방 아이디 저장
+          let chatRoomId;
+          let oppId;
+          for (let i = 0; i < chatLists.length; i++) {
+            if (chatLists[i].opp_nickName === opp_name) {
+              chatRoomId = chatLists[i].roomId;
+              oppId = chatLists[i].opp_id;
+              break;
+            }
+          }
+          // break => 채팅방 존재(vuex 변화)
+          const existChatRoom = {
+            roomId: chatRoomId,
+            opp_nickName: opp_name,
+            opp_id: oppId,
+          };
+          // vuex state 변화
+          this.$store.dispatch('chat/isSelected', existChatRoom);
           
-    //       this.$router.push({ name: 'ChatPage' });
-    //     })
-    //     .catch((err) => {
-    //       console.error(err);
-    //     });
-    //     // 그리고 라우터 변환
-    // }
+          this.$router.push({ name: 'ChatPage' });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+        // 그리고 라우터 변환
+    }
   },
 };
 </script>

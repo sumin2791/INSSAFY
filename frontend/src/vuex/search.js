@@ -61,6 +61,7 @@ export default {
 
     //검색 결과
     result: [],
+    isLastPage: false,
 
     //검색 버튼 클릭 이벤트 발생 지점
     epicenter: '',
@@ -83,7 +84,6 @@ export default {
 
     //payload 적용
     SET_PAYLOAD(state, payload) {
-      console.log(payload);
       state.payload.keyword = payload.keyword;
       state.payload.page = payload.page;
       state.payload.type = payload.type;
@@ -92,7 +92,7 @@ export default {
     SET_NEXT_PAGE(state) {
       state.payload.page = state.payload.page + 1;
     },
-    //size
+    //size 기본값 = 12
     SET_SIZE(state, size) {
       state.payload.size = size;
     },
@@ -100,6 +100,9 @@ export default {
     //result 적용
     SET_RESULT(state, payload) {
       state.result = payload;
+    },
+    SET_ISLASTPAGE(state, boolean) {
+      state.isLastPage = boolean;
     },
   },
   //--------------------------------
@@ -109,11 +112,12 @@ export default {
     //모든 보드 검색
     async actSearchAllBoard({ commit, state }) {
       try {
-        console.log(state.payload);
         const response = await searchApi.getSearchAllBoard(state.payload);
         if (response.data.message === 'success') {
           console.log(response);
           commit('SET_RESULT', response.data.boardList);
+          commit('SET_ISLASTPAGE', response.data.isLastPage);
+          console.log(state.isLastPage);
           return true;
         }
       } catch (error) {
