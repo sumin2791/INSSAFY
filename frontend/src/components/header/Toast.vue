@@ -39,7 +39,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['getSearchStateFilters', 'getToastType']),
+    ...mapGetters(['getToastType']),
   },
   methods: {
     //search function
