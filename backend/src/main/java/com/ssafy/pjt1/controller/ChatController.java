@@ -13,7 +13,6 @@ import com.ssafy.pjt1.model.service.UserService;
 import com.ssafy.pjt1.model.service.chat.ChatService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -71,15 +70,12 @@ public class ChatController {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         SetOperations<String, String> setOps = redisTemplate.opsForSet();
-        ListOperations<String, String> listOps = redisTemplate.opsForList();
         log.info("my:{}, opp_id:{}", my_id, opp_id);
         try {
-            // 중복체크
-            String id1 = my_id + "/" + opp_id;
-            String id2 = opp_id + "/" + my_id;
-            if (setOps.isMember("check", id1) == false && setOps.isMember("check", id2) == false) {
-                setOps.add("check", id1);
-                setOps.add("check", id2);
+            // 중복체크하기
+            if (setOps.isMember("checkDuplKey:" + my_id, opp_id) == false) {
+                setOps.add("checkDuplKey:" + my_id, opp_id);
+                setOps.add("checkDuplKey:" + opp_id, my_id);
                 // 방 만들기
                 String uid = chatService.makeRoom(my_id, opp_id);
                 resultMap.put("roomId", uid);
@@ -112,7 +108,7 @@ public class ChatController {
         HttpStatus status = HttpStatus.ACCEPTED;
         objMapper = new ObjectMapper();
         try {
-            List<Map<String, Object>> roomList = chatService.getRoomList(user_id);
+            List<Object> roomList = chatService.getRoomList(user_id);
             resultMap.put("roomInfo", roomList);
             resultMap.put("message", SUCCESS);
             status = HttpStatus.ACCEPTED;
@@ -174,11 +170,15 @@ public class ChatController {
         String roomId = message.getRoom_id();
         String opp_id = message.getOpp_id();
         String user_id = message.getUser_id();
+        String opp_nickName = message.getOpp_nickName();
         valOps = redisTemplate.opsForValue();
         String key = "notice:" + opp_id + ":" + user_id;
         try {
             valOps.increment(key, 1);
-            simpleMessageTemplate.convertAndSend("/notice/" + opp_id, message);
+            // {count: 1, nickname:""}
+            Map<String, String> notices = new HashMap<>();
+            notices.put("opp_nickName", opp_nickName);
+            simpleMessageTemplate.convertAndSend("/notice/" + opp_id, notices);
             chatService.insertMessage(message);
             status = HttpStatus.ACCEPTED;
             resultMap.put("message", SUCCESS);
@@ -215,9 +215,12 @@ public class ChatController {
                 Map<String, Object> res = new HashMap<>();
                 String[] opp_ids = pattern.split(":");
                 UserDto oppUserDto = userService.userDtoById(opp_ids[2]);
-                res.put("count", valOps.get(pattern));
-                res.put("opp_name", oppUserDto.getUser_nickname());
-                list.add(res);
+                // 일림이 0인것은 걸러준다
+                if (Integer.valueOf(valOps.get(pattern)) != 0) {
+                    res.put("count", valOps.get(pattern));
+                    res.put("opp_name", oppUserDto.getUser_nickname());
+                    list.add(res);
+                }
             }
             resultMap.put("message", SUCCESS);
             status = HttpStatus.ACCEPTED;
@@ -226,6 +229,62 @@ public class ChatController {
             resultMap.put("message", FAIL);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             log.error("getNotice error: {}", e);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: notice 0 만들기
+     * 
+     * developer: 문진환
+     * 
+     * param: my_id, opp_id
+     * 
+     * return void
+     */
+    @ApiOperation(value = "알림 0으로 초기화")
+    @PostMapping(value = "/updateNotice")
+    public ResponseEntity<Map<String, Object>> updateNotice(@RequestParam("my_id") String my_id,
+            @RequestParam("opp_id") String opp_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            String key = "notice:" + my_id + ":" + opp_id;
+            valOps = redisTemplate.opsForValue();
+            valOps.set(key, "0");
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            log.error("error: {}", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, status);
+    }
+
+    /*
+     * 기능: 내 채팅방 한개 삭제하기
+     * 
+     * developer: 문진환
+     * 
+     * param:
+     * 
+     * return
+     */
+    @ApiOperation(value = "내 방 삭제")
+    @PostMapping(value = "/deleteMyRoom")
+    public ResponseEntity<Map<String, Object>> deleteMyRoom(@RequestParam("my_id") String my_id,
+            @RequestParam("opp_id") String opp_id) {
+        Map<String, Object> resultMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+
+            resultMap.put("message", SUCCESS);
+            status = HttpStatus.ACCEPTED;
+        } catch (Exception e) {
+            log.error("error: {}", e);
+            resultMap.put("message", FAIL);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
