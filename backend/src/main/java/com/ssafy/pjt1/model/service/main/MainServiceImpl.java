@@ -114,47 +114,54 @@ public class MainServiceImpl implements MainService {
         }
     }
 
-    @Scheduled(fixedDelay = 60000) // 1분 마다 캐시 갱신
     @Override
     public void updatePostLikeSort() {
-        logger.info("postLikeRank, postCommentRank 캐시 업데이트");
-        String key = "postLikeSort";
-        String key2 = "postCommentSort";
-        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
-        // 좋아요 top3
-        Set<String> set = zset.reverseRange(key, 0, 2);// board_id 얻어옴
-        // 댓글수 top3
-        Set<String> commentSet = zset.reverseRange(key2, 0, 2);
-        List<PostDto> postLikeList = new LinkedList<>();
-        List<Map<String, String>> postCommList = new LinkedList<>();
-        for (String post_id : set) {
-            // db조회 객체 top3 얻음
-            postLikeList.add(postService.getPostById(Integer.valueOf(post_id)));
-        }
-        for (String post_id : commentSet) {
-            // db조회 객체 top3 얻음
-            Map<String, String> postmap = new HashMap<>();
-            PostDto postDto = postService.getPostById(Integer.valueOf(post_id));
-            postmap.put("post_id", String.valueOf(postDto.getPost_id()));
-            postmap.put("post_title", postDto.getPost_title());
-            postmap.put("board_id", String.valueOf(postDto.getBoard_id()));
-            postmap.put("post_img", postDto.getPost_image());
-            postmap.put("comment_count", String.valueOf(Math.round(zset.score("postCommentSort", post_id))));
-            postCommList.add(postmap);
-        }
-        // boardPostRank캐시에 넣기
-        ObjectMapper mapper = new ObjectMapper();
-        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
-        try {
-            String msg = mapper.writeValueAsString(postLikeList);
-            String msg2 = mapper.writeValueAsString(postCommList);
-            // logger.info("캐시:{}", msg);
-            // postLikeRank 키 값으로 매핑
-            valueOps.set("postLikeRank", msg);
-            valueOps.set("postCommentRank", msg2);
-        } catch (JsonProcessingException e) {
-            logger.error("updatePostLikeSor", e);
-        }
+        // TODO Auto-generated method stub
+
     }
+
+    // @Scheduled(fixedDelay = 60000) // 1분 마다 캐시 갱신
+    // @Override
+    // public void updatePostLikeSort() {
+    // logger.info("postLikeRank, postCommentRank 캐시 업데이트");
+    // String key = "postLikeSort";
+    // String key2 = "postCommentSort";
+    // ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+    // // 좋아요 top3
+    // Set<String> set = zset.reverseRange(key, 0, 2);// board_id 얻어옴
+    // // 댓글수 top3
+    // Set<String> commentSet = zset.reverseRange(key2, 0, 2);
+    // List<PostDto> postLikeList = new LinkedList<>();
+    // List<Map<String, String>> postCommList = new LinkedList<>();
+    // for (String post_id : set) {
+    // // db조회 객체 top3 얻음
+    // postLikeList.add(postService.getPostById(Integer.valueOf(post_id)));
+    // }
+    // for (String post_id : commentSet) {
+    // // db조회 객체 top3 얻음
+    // Map<String, String> postmap = new HashMap<>();
+    // PostDto postDto = postService.getPostById(Integer.valueOf(post_id));
+    // postmap.put("post_id", String.valueOf(postDto.getPost_id()));
+    // postmap.put("post_title", postDto.getPost_title());
+    // postmap.put("board_id", String.valueOf(postDto.getBoard_id()));
+    // postmap.put("post_img", postDto.getPost_image());
+    // postmap.put("comment_count",
+    // String.valueOf(Math.round(zset.score("postCommentSort", post_id))));
+    // postCommList.add(postmap);
+    // }
+    // // boardPostRank캐시에 넣기
+    // ObjectMapper mapper = new ObjectMapper();
+    // ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+    // try {
+    // String msg = mapper.writeValueAsString(postLikeList);
+    // String msg2 = mapper.writeValueAsString(postCommList);
+    // // logger.info("캐시:{}", msg);
+    // // postLikeRank 키 값으로 매핑
+    // valueOps.set("postLikeRank", msg);
+    // valueOps.set("postCommentRank", msg2);
+    // } catch (JsonProcessingException e) {
+    // logger.error("updatePostLikeSor", e);
+    // }
+    // }
 
 }

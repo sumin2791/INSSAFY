@@ -126,6 +126,7 @@ public class MainController {
         HttpStatus status = HttpStatus.ACCEPTED;
         ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
+        logger.info(">>>>>>>>>>>>>>>>>getCommentRank");
         try {
             List<Map<String, String>> postDto = mapper.readValue(valueOps.get("postCommentRank"), List.class);
             resultMap.put("postComment", postDto);
