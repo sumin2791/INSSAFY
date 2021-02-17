@@ -48,11 +48,28 @@
               <v-list-item><a id="scrap-item" v-b-toggle href="#rank-collapse" @click.prevent>RANK <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
               <b-collapse visible id="rank-collapse">
                 <v-col>
-                  <LearningRank />
+                  <LearningRank 
+                    @prize-nickname="editMessage"
+                  />
                 </v-col>
-                <v-list-item>RANK 1위의 한마디</v-list-item>
+                <v-list-item>
+                  RANK 1위의 한마디
+                  <v-spacer></v-spacer>
+                  <v-icon v-if="isPrize" @click="isEdit = !isEdit">mdi-circle-edit-outline</v-icon>
+                </v-list-item>
                 <v-col class="font-weight-black text-center">
-                  "{{ first.speech }}"
+                  <div 
+                    v-if="!isEdit"
+                    v-html="first.speech"
+                  >
+                  </div>
+                <!-- 1등한테 보여줄 input -->
+                  <v-text-field
+                    v-if="isEdit"
+                    v-model="message"
+                    solo
+                    @keypress.enter="showMessage"
+                  ></v-text-field>
                 </v-col>
                 <v-col class="text-end text-caption">
                   -{{ first.nickName }}-
@@ -140,6 +157,9 @@ export default {
 
     window.addEventListener('resize', this.onResize, { passive: true })
   },
+  computed() {
+
+  },
   data() {
     return {
       defaultWords:[],
@@ -151,12 +171,18 @@ export default {
       },
       // 검색 키워드
       searchKeyword: '',
+      // 한마디 v-model
+      message: '',
       // rank1위 한마디
       first: {
-        nickName: '김싸피',
         // rank 1위
-        speech: '저는 밥숟가락만 얹었을 뿐인데 아름다운 밤이네요!😎'
+        nickName: '',
+        speech: `"아직 한마디가 없군요!"`
       },
+      // edit flag
+      isEdit: false,
+      isPrize: false,
+
       wordcloudImg: '@/assets/images/wordcloud.jpg',
 
       //변수 사용할 것들
@@ -171,6 +197,23 @@ export default {
     },
     wordClickHandler(name, value, vm) {
       console.log('wordClickHandler', name, value, vm);
+    },
+    // 랭킹 1위 편집 가능케
+    editMessage(nickName) {
+      const first = nickName
+      if (first) {
+        this.first.nickName = `${first}`
+        this.first.speech = `축하합니다 "${first}님"<br>한마디 부탁드려요!`
+        if (first === String(localStorage.nickname)) {
+            this.isPrize = true;
+        }
+      } 
+    },
+    // 내용 입력
+    showMessage() {
+      this.isEdit = !this.isEdit
+      this.first.speech = this.message.trim()
+      this.message = this.first.speech
     }
   }
 }

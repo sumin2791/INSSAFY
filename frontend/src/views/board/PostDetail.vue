@@ -6,15 +6,15 @@
       >
         <v-row dense>
           <!-- 뒤로 가기 -->
-          <router-link 
+          <!-- <router-link 
             :to="{ name:'Board', 
               params: {board_id:$route.params.board_id}}"
             id="back-btn"
-          >
-            <button id="back-btn-child">
-              보드로 돌아가기
+          > -->
+            <button id="back-btn" @click="goBack">
+              뒤로 가기
             </button>
-          </router-link>
+          <!-- </router-link> -->
             
         </v-row>        
         <v-row dense>
@@ -169,7 +169,11 @@ export default {
       }
         
       // this.$store.dispatch('createComment',params)
-    }
+    },
+    // 뒤로가기 구현
+    goBack() {
+      this.$router.go(-1);
+    },
   }
   
 }
@@ -192,10 +196,10 @@ export default {
   background-color: #ebebe9 !important;
 }
 /* 뒤로가기 버튼 */
-#back-btn {
+/* #back-btn {
   all: unset !important;
-}
-#back-btn * {
+} */
+#back-btn {
   text-align: center;
   margin: 0 0 10px 0;
   height: 50px;

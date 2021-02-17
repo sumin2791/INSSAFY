@@ -78,7 +78,8 @@ export default {
     // 변화 체크
     // this.modifyContents()
   },
-  watch: {
+  computed() {
+    // 수정 중에는 체크리스트 편집을 마칠 수 없다
 
   },
   data() {
@@ -93,11 +94,14 @@ export default {
     // input - text 변환
     modifyContents() {
       if (this.isEdit) {
-      this.isModify = !this.isModify
-      
-      // this.$emit('modify-ing', flag)
+        this.isModify = !this.isModify
+        // 수정 중에는 완료할 수 없게 데이터를 부모에게
+        if (this.isModify) {
+          this.$store.dispatch('addfunc/isEditCheckList', true)
+        } else {
+          this.$store.dispatch('addfunc/isEditCheckList', false)
+        }
       }
-      // 수정 중에는 완료할 수 없게 데이터를 부모에게
     },
     // 삭제하기
     deleteCheckItem() {
@@ -136,7 +140,7 @@ export default {
         // 부모로 이벤트 보내기
         this.$emit('change-item-contents', itemInfo)
         // 완료 후 edit상태 변경
-        this.isModify = !this.isModify
+        this.modifyContents()
         }
       }
     },
