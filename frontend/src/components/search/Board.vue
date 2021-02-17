@@ -23,9 +23,15 @@
       </v-card-text>
     </div>
 
-    <!-- <v-img id="v-img" class="align-end blur" height="250px" src="@/assets/images/slide.jpg" style="border-radius: 15px">
-    </v-img> -->
-    <GradientGenerator class="myinfo-list" style="height: 250px" :radius="'15px'" />
+    <v-img
+      id="v-img"
+      class="align-end blur"
+      height="250px"
+      v-if="image"
+      :style="{ backgroundImage: `url(${image})` }"
+      style="border-radius: 15px"
+    />
+    <GradientGenerator class="myinfo-list" style="height: 250px" :radius="'15px'" v-if="!image" />
   </v-card>
 </template>
 
@@ -41,17 +47,14 @@ export default {
   },
   data() {
     return {
-      // board: {
-      //   id: 1,
-      //   type: 'curation',
-      //   title: '보드명',
-      //   description: '보드 설명 보드 설명 보드 설명 보드 설명 보드 설명 보드 설명',
-      //   hashtag: '#싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다 #싸피 #여행 #바다',
-      //   count: 100,
-      // },
+      image: false,
     };
   },
-  created() {},
+  created() {
+    if (this.board.board_image != '' && this.board.board_image != 'null' && this.board.board_image != null) {
+      this.image = this.board.board_image;
+    }
+  },
   computed: {
     hashtags() {
       if (this.board.board_hash != null) {
@@ -71,6 +74,10 @@ export default {
 </script>
 
 <style scoped>
+#v-img {
+  background-size: cover !important;
+  background-position: center !important;
+}
 .myinfo-list {
   width: 100%;
   border-radius: 15px !important;
