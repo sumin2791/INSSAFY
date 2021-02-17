@@ -39,8 +39,6 @@ public class RedisService {
     @Autowired
     private CommentService commentService;
 
-    private ZSetOperations zset;
-
     @Autowired
     private UserService userService;
 
@@ -62,7 +60,7 @@ public class RedisService {
         // board_id를 key값으로 follow수 얻어오기
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         String sortkey = "boardFollowSort";
-        zset.incrementScore(sortkey, String.valueOf(board_id), -1);
+        zset.incrementScore(sortkey, board_id, -1);
     }
 
     /*
@@ -103,7 +101,7 @@ public class RedisService {
         // board_id를 key값으로 follow수 얻어오기
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         String sortkey = "boardFollowSort";
-        zset.incrementScore(sortkey, String.valueOf(board_id), 1);
+        zset.incrementScore(sortkey, board_id, 1);
     }
 
     /*
@@ -115,7 +113,7 @@ public class RedisService {
         String sortkey = "boardPostSort";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         // post개수 받고 1증가해서 저장
-        zset.incrementScore(sortkey, String.valueOf(board_id), 1);
+        zset.incrementScore(sortkey, board_id, 1);
     }
 
     /*
@@ -166,7 +164,7 @@ public class RedisService {
     }
 
     public void increaseUserRank(int post_id, int board_id) {
-        zset = redisTemplate.opsForZSet();
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         String boardId = String.valueOf(board_id);
         String key = "func:" + "userRank:" + boardId;
         PostDto post = postService.getPostById(post_id);
@@ -175,7 +173,7 @@ public class RedisService {
 
     // 싫어요 눌러서 유저랭킹 감소
     public void decreaseUserRank(int post_id, int board_id) {
-        zset = redisTemplate.opsForZSet();
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         String boardId = String.valueOf(board_id);
         String key = "func:" + "userRank:" + boardId;
         PostDto post = postService.getPostById(post_id);
@@ -186,16 +184,14 @@ public class RedisService {
     @Scheduled(fixedDelay = 60000)
     public void updateAddFuncRank() throws JsonProcessingException {
         log.info("추가 기능 Redis update(1분)");
-        zset = redisTemplate.opsForZSet();
-        ValueOperations valOps = redisTemplate.opsForValue();
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        ValueOperations<String, String> valOps = redisTemplate.opsForValue();
         Set<String> keys = redisTemplate.keys("func:userRank:*");
         valOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
         // 게시판 마다 돌리기
         for (String key : keys) {
             // top3 user갖고 오기
-
-            Long size = zset.size(key);
 
             List<Map<String, String>> list = new ArrayList<>();
             Set<String> top3Id = zset.reverseRange(key, 0, 2);
