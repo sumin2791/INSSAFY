@@ -380,6 +380,10 @@ export default {
       this.locationState = null
       this.location.selected = null
 
+      this.learnshare.value=[],
+      this.learnshare.search=''
+
+
       this.images=[]
       this.previewImgUrl=null
     },
@@ -418,6 +422,9 @@ export default {
       if(this.learnshare.value.length!=0){
         this.header = this.learnshare.value.join('|')
       }
+      if(this.learnshare.value.length===0 && curationName==='LearnShare'){
+        this.header='null'
+      }
 
 
 
@@ -440,7 +447,8 @@ export default {
           console.log(responseUpload)
           postItem.post_image = String(responseUpload.data.imgPath)
         }
-  
+        console.log('데이터 넘길때 어떻게 나오나?')
+        console.log(postItem)
         await postApi.create(postItem)
           .then(res=>{
             this.$store.dispatch('board/isWriteFlag')
