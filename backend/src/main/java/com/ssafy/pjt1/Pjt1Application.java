@@ -38,7 +38,7 @@ public class Pjt1Application implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("*").allowedMethods("*").allowedHeaders("*")
+		registry.addMapping("/**").allowedOrigins("*").allowedMethods("*").allowedHeaders("*").maxAge(3600)
 				.exposedHeaders("auth_token");
 	}
 }
