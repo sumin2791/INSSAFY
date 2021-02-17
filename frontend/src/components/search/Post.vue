@@ -18,15 +18,15 @@
       <!-- 보드 이미지 위로 나오는 부분 -->
       <div class="text">
         <div class="board-title">
-          {{ post.board_name }}
+          {{ post.post_name }}
         </div>
       </div>
-      <GradientGenerator class="myinfo-list" style="height: 100px" v-if="post.board_image == null" :radius="radius" />
+      <GradientGenerator class="myinfo-list" style="height: 100px" v-if="post.post_image == null" :radius="radius" />
       <v-img
         height="100px"
         class="myinfo-list blur"
-        v-if="post.board_image != null"
-        :style="{ backgroundImage: `url(${post.board_image})` }"
+        v-if="post.post_image != null"
+        :style="{ backgroundImage: `url(${post.post_image})` }"
       >
       </v-img>
     </div>
@@ -102,22 +102,6 @@ export default {
     console.log(this.post);
   },
   methods: {
-    // 작성글 삭제
-    removeBoard: function() {
-      // 보드 구독목록에서 삭제
-      this.$toast.open({
-        position: 'top-right',
-        duration: 1800,
-        message: `클릭하여 ${this.board_name} 글 삭제`,
-        type: 'error',
-        //보드 구독 취소 후 리스트에서 애니메이션으로 제거
-        onClick: () => {
-          this.$emit('delPost', this.post.post_id);
-        },
-        queue: true,
-      });
-    },
-    // 해당 post로 이동(상세 주소 넘겨주기)
     moveToPost() {
       this.$router.push(`/board/${this.post.board_id}/post/${this.post.post_id}`);
     },

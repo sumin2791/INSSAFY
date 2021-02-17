@@ -43,8 +43,12 @@ export default {
     return {
       search: {
         infiniteState: null,
+        image: false,
       },
     };
+  },
+  created: {
+    image: false, //이미지 전환 필요, 보드 id 받아서 연결 필요
   },
   computed: {
     ...mapState('search', ['searchList', 'size', 'payload']),

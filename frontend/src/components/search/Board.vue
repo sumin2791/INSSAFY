@@ -4,12 +4,13 @@
       img-wrap"
     max-width="400"
     style="border-radius: 15px"
+    @click="goToBoard"
   >
     <div class="text">
       <!-- <v-btn small fab class="subscription">
         <v-icon color="#fff">mdi-heart</v-icon>
       </v-btn> -->
-      <v-card-title @click="goToBoard" style="cursor:pointer">{{ board.board_name }}</v-card-title>
+      <v-card-title style="cursor:pointer">{{ board.board_name }}</v-card-title>
       <v-card-subtitle
         class="pb-0
           text-white 
