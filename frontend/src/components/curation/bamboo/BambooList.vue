@@ -45,6 +45,7 @@ export default {
     return {
       posts:[],
       page : 0,
+      handlerdata:''
     }
   },
   computed:{
@@ -58,11 +59,14 @@ export default {
     writeFlag:function(){
       // console.log('혹시 글쓰면 플래그 바뀌면서 이 함수 호출되나요?')
       this.page=0
-      location.reload();
+      this.posts=[]
+      this.infiniteHandler(this.handlerdata)
+      // location.reload();
     }
   },
   methods:{
     infiniteHandler($state){
+      this.handlerdata = $state
       const EACH_LEN = 15
       bambooApi.getAllList({page:this.page,size:EACH_LEN})
       .then((res)=>{
