@@ -1,6 +1,6 @@
 <template>
   <v-app class="main-bg-color">
-    <v-main class="grey lighten-3">
+    <v-main class="basic-bg">
       <v-container class="pt-8">
         <!-- PC에서 보여줄 curation이름과 검색 -->
         <v-row
@@ -178,6 +178,9 @@ export default {
 </script>
 
 <style scoped>
+.basic-bg {
+  background-color: var(--basic-color-bg);
+}
 .main-bg-color {
   background-color: #ebebe9;
 }
