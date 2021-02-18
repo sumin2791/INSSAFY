@@ -1,7 +1,11 @@
 <template>
   <div id="wrap" @click="clickProfile">
     <div id="default-image" class="image" v-if="!getUserImage" :style="{ borderColor: `${getGenerationColor}` }" />
-    <div class="image" v-if="getUserImage" :style="{ backgroundImage: `url(${getUserImage})`, borderColor: `${getGenerationColor}` }" />
+    <div
+      class="image"
+      v-if="getUserImage"
+      :style="{ backgroundImage: `url(${getUserImage})`, borderColor: `${getGenerationColor}` }"
+    />
   </div>
 </template>
 

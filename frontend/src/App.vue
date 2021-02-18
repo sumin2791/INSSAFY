@@ -16,7 +16,7 @@ import Spinner from './components/etc/Spinner.vue';
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';
 // chat api
-import * as chatApi from "@/api/chat"
+import * as chatApi from '@/api/chat';
 
 export default {
   name: 'app',
@@ -25,7 +25,7 @@ export default {
     Spinner,
   },
   created() {
-    this.connect()
+    this.connect();
   },
   data() {
     return {
@@ -33,12 +33,12 @@ export default {
       stompClient: null,
       // 알림 메세지
       received: '',
-    }
+    };
   },
   methods: {
     // 소켓 연결하기
     connect() {
-      console.log(this.BASEURL)
+      console.log(this.BASEURL);
       // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
       const serverURL = 'http://localhost:8000/ws';
       let socket = new SockJS(serverURL);
@@ -67,7 +67,7 @@ export default {
               type: 'info',
               duration: 3000,
               position: 'top-right',
-            })
+            });
           });
         },
         (error) => {
