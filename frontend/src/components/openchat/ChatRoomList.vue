@@ -195,8 +195,7 @@ export default {
   color: var(--basic-color-key);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
   background: #ebebe9 !important;
-  box-shadow: 10px 10px 20px #bcbcba, 
-            -10px -10px 20px #ffffff;
+  box-shadow: var(--basic-shadow-s);
   border-radius: 15px !important;
   padding: 0px;
 }

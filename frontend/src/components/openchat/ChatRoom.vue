@@ -16,16 +16,18 @@
       </v-btn>
     </v-toolbar>
     <div id="chat-message">
-      <div v-if="this.messages">
-        <Message 
-          v-for="(message, idx) in messages.slice().reverse()"
-          :key="idx"
-          :message="message"
-        />
+      <div id="contents">
+        <div v-if="this.messages" class="db">
+          <Message 
+            v-for="(message, idx) in messages.slice().reverse()"
+            :key="idx"
+            :message="message"
+          />
+        </div>
+        <!-- 채팅방 내에 있을 때 보여줄 부분 -->
+        <v-container id="socket">
+        </v-container>
       </div>
-      <!-- 채팅방 내에 있을 때 보여줄 부분 -->
-      <v-container id="socket">
-      </v-container>
       <!-- 채팅 입력 부분 -->
       <div id="input">
           <v-text-field
@@ -244,28 +246,30 @@ export default {
   padding: 0px 0px 0px 0px !important;
   height: 100%;
 }
-.chat-area {
-/*   border: 1px solid #ccc; */
-  background-color: #FFF;
-  min-height: 90vh;
-  max-height: 92vh;
-  padding: 1em;
-  /* overflow: auto; */
-  box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.3)
-}
+
 /* 채팅방 부분 */
 #chat-message {
-  min-height: calc(90vh - 64px);
-  max-height: 90vh;
+  height: calc(90vh - 64px);
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   overflow-y: scroll !important;
+}
+/* 채팅메세지 부분 */
+#contents {
+  margin-bottom: 25px;
+}
+/* DB에서 가져오는 부분 */
+.db {
+  order: 1;
 }
 /* 댓글 입력 부분 */
 #input {
   display: flex;
   flex-direction: row;
-  margin-top: auto;
+  order: -1;
+  width: 100%;
+  position: absolute;
+  background: #F9F9F9;
 }
 /* 활성화 버튼 */
 .enableSend {

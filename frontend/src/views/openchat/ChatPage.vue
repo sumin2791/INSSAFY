@@ -11,19 +11,17 @@
             v-show="!ResponsiveSize.isMobile || !isInRoom"
             id="container" 
           >
-            <v-list color="##fcfcfc">
-              <!-- 채팅방 리스트 타이틀 -->
-              <div id="title">채팅방 목록</div>
-              <!-- 채팅중인 대화상대 목록 -->
-              <v-col class="my-list">
-                <ChatRoomList
-                  v-for="(chatList, idx) in chatLists"
-                  :key="idx"
-                  :chatList="chatList"
-                  class="ani-hover"
-                />
-              </v-col>
-            </v-list>
+            <!-- 채팅방 리스트 타이틀 -->
+            <div id="title">채팅방 목록</div>
+            <!-- 채팅중인 대화상대 목록 -->
+            <v-col class="my-list">
+              <ChatRoomList
+                v-for="(chatList, idx) in chatLists"
+                :key="idx"
+                :chatList="chatList"
+                class="ani-hover"
+              />
+            </v-col>
           </v-col>
           <!-- 채팅방 부분 -->
           <v-col
@@ -50,6 +48,25 @@ import '@/assets/css/static/style.css';
 import * as chatApi from "@/api/chat"
 
 export default {
+  
+  // // 알람이 안오게끔 만들기
+  // beforeRouteLeave (to, from, next) {
+  //   // 소켓을 제거해준다
+  //   const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+  //   // const serverURL = 'http://localhost:8000/ws';
+  //   this.stompClient.unsubscribe(`/notice/` + String(localStorage.userId), (res) => {
+  //     console.log('구독취소', res.body)
+  //   })
+  // },
+  // // 알람이 안오게끔 만들기
+  // beforeRouteUpdate (to, from, next) {
+  //   // 소켓을 제거해준다
+  //   const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+  //   // const serverURL = 'http://localhost:8000/ws';
+  //   this.stompClient.unsubscribe(`/notice/` + String(localStorage.userId), (res) => {
+  //     console.log('구독취소', res.body)
+  //   })
+  // },
   name:'ChatPage',
   components: {
     ChatRoomList,
@@ -87,6 +104,10 @@ export default {
     isSend() {
       return this.$store.state.chat.isSend
     },
+    // 소켓 연결 끊기 사용 - notice
+    stompClient() {
+      return this.$store.state.chat.stompClient
+    },
   },
   data() {
     return {
@@ -117,8 +138,18 @@ export default {
           console.error(err)
         })
     },
-    
-  }
+    // // Notice 지우기
+    // deleteNotice() {
+    //   console.log(this.$router.currentRoute.name === "ChatPage", 'here')
+    //   // 현재페이지 오면 꺼주자
+    //   if (this.$router.currentRoute.name === "ChatPage") 
+    //   {
+    //     this.stompClient.unsubscribe(`/notice/` + String(localStorage.userId), (res) => {
+    //     console.log('구독취소', res.body)
+    //   }) 
+    //   }
+    // },
+  },
 }
 </script>
 
@@ -169,5 +200,10 @@ export default {
 }
 .ani-hover:hover {
   transform: scale(1.04);
+}
+/* toast 알림 */
+.v-toast__item {
+  display: none !important;
+  z-index: -10 !important;
 }
 </style>
