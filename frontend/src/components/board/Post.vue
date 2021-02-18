@@ -103,7 +103,10 @@
         </div>
         <!-- 게시글 내용 -->
         <div id="description">
-          {{ post.post_description }}
+          <p id="sentence" v-for="(d,idx) in descriptions" :key="idx">
+            {{d}}
+          </p>
+          <!-- {{ post.post_description }} -->
         </div>
       </div>
 
@@ -208,6 +211,10 @@ export default {
     },
     image(){
       return this.post.user_image
+    },
+    // 띄어쓰기 만들기
+    descriptions(){
+      return this.post.post_description.split('\n')
     }
   },
   mounted() {
@@ -460,7 +467,14 @@ export default {
 #content-go-detail {
   width: 100%;
   cursor: pointer;
-  min-height: 150px;
+  height: 150px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  -webkit-line-clamp: 3; /* 라인수 */
+  -webkit-box-orient: vertical;
+  /* word-wrap:break-word;  */
+  word-break: break-all;
+  margin-bottom: 8px;
 }
 .detail-header {
   transform: translate(10px, 10px);
