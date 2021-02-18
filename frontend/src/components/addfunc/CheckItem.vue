@@ -37,7 +37,7 @@
           dense
           hide-details
           block
-          v-model="check.check_list_item_description"
+          v-model="tempInput"
           @keypress.enter="modifyCheckItem()"
         >
         </v-text-field>
@@ -57,6 +57,7 @@
       >mdi-close</v-icon>
     </div>   
   </div>
+
 </template>
 
 <script>

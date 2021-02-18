@@ -83,7 +83,7 @@ export default {
 
       // 채팅했던 메세지 내용 불러오기
       const params = {
-        endNUm: 100,
+        endNUm: 1000,
         startNUm: 0,
         room_id: this.selectChatRoom,
         user_id: String(localStorage.userId),
