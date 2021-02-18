@@ -4,11 +4,11 @@
     <div id="left-info">
       <!-- Curation -->
       <div id="type" class="b-title">
-        <h4>Curation</h4>
+        <p class="m-b">Curation</p>
       </div>
       <!-- 해당 큐레이션 description -->
       <div id="description" class="rounded-bg container">
-        <h4 class="b-desc" @click="click">채용일정</h4>
+        <p class="b-desc m-b" @click="click">채용일정</p>
         <p class="l-desc">
           채용일정 너만아니<br />
           채용일정 나도알자
@@ -16,8 +16,13 @@
       </div>
       <!-- 임박한 채용보기 -->
       <div id="due-date" class="rounded-bg container">
-        <p class="b-desc">임박한 채용일정</p>
-        <DueDateItem v-for="(event, index) in deadlines" :key="event.id + '/' + index" :event="event" class="date-item" />
+        <p class="b-desc m-b">임박한 채용일정</p>
+        <DueDateItem
+          v-for="(event, index) in deadlines"
+          :key="event.id + '/' + index"
+          :event="event"
+          class="date-item"
+        />
       </div>
     </div>
     <div id="center-post">
@@ -83,6 +88,12 @@ export default {
 <style scoped>
 ::-webkit-scrollbar-track {
   margin-top: 112px;
+}
+
+.m-b {
+  margin-bottom: 0.6rem;
+  font-weight: 700;
+  font-size: 1.4rem;
 }
 
 .container {
