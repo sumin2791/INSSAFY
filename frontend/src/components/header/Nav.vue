@@ -94,7 +94,11 @@ export default {
     },
     clickNBtn1: function() {
       const epicenter = this.$router.currentRoute.path;
-      this.$store.commit('search/SET_SEARCH_ACTIVE', { active: this.active, epicenter: epicenter });
+      let active = 'allBoard';
+      if (this.active === 'allBoard' || this.active === 'allPost') {
+        active = this.active;
+      }
+      this.$store.commit('search/SET_SEARCH_ACTIVE', { active: active, epicenter: epicenter });
       this.$store.commit('setToastTogle');
       this.$store.commit('setToastType', 'search');
     },

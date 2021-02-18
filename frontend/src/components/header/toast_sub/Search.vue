@@ -63,7 +63,6 @@ export default {
         type: '',
       },
       keyword: '',
-      page: 0,
       size: 10,
     };
   },
@@ -77,8 +76,6 @@ export default {
   },
   watch: {
     toastActive() {
-      console.log(this.toastActive);
-      console.log(this.toastType);
       if (this.toastActive && this.toastType.search) {
         this.$refs.sInput.focus();
       }
@@ -89,8 +86,14 @@ export default {
     // },
   },
   methods: {
-    ...mapActions('search', ['actSearchAllBoard', 'actSearchAllPost']),
-    ...mapMutations('search', ['SET_SEARCH_ACTIVE', 'SET_PAYLOAD_SORT', 'SET_PAYLOAD', 'CLEAR_SEARCH_LIST']),
+    // ...mapActions('search', ['actSearchAllBoard', 'actSearchAllPost']),
+    ...mapMutations('search', [
+      'SET_SEARCH_ACTIVE',
+      'SET_PAYLOAD_SORT',
+      'SET_PAYLOAD',
+      'CLEAR_SEARCH_LIST',
+      'SET_PAYLOAD_ID',
+    ]),
     //검색 관련
     clickCloser() {
       this.$store.commit('setToastTogle');
@@ -103,20 +106,22 @@ export default {
       this.$refs.searchBar.style.marginTop = `${value}px`;
     },
     onSearching: function() {
-      this.SET_PAYLOAD({
-        keyword: this.keyword,
-        page: this.page,
-        type: this.select.type,
-      });
-      this.CLEAR_SEARCH_LIST();
       //네비게이션 바의 검색 아이콘을 눌러서 진입했을 때
       //분기 안해도 되는 것 (해당 페이지 내에서 검색버튼 눌렀을 때(active == epicenter))
       //메인의 경우 -> 전체 검색 페이지로 이동
-      console.log(this.epicenter);
-      console.log(this.active);
       //페이지 이동
-      if (
-        !(this.epicenter === '/board/search' && this.active === 'allBoard') ||
+      this.SET_PAYLOAD({
+        keyword: this.keyword,
+        page: 0,
+        type: this.select.type,
+      });
+      this.CLEAR_SEARCH_LIST();
+      //숫자일 경우 보드 내 리스트 검색!
+      if (!isNaN(this.epicenter)) {
+        // this.SET_PAYLOAD_ID({ board_id: this.epicenter, user_id: this.$store.state.auth.user.userId });
+        //모든 보드, 게시글 검색
+      } else if (
+        !(this.epicenter === '/board/search' && this.active === 'allBoard') &&
         !(this.epicenter === '/post/search' && this.active === 'allPost')
       ) {
         if (this.active === 'allBoard') {
@@ -129,18 +134,12 @@ export default {
         this.$router.push({ name: 'SearchPost' });
         //포스트 전체 검색에서 보드 검색할 때
       } else if (this.epicenter === '/post/search' && this.active === 'allBoard') {
-        this.$router.push({ name: 'SearchPost' });
-      }
-      //active에 따른 검색결과 요청
-      if (this.active === 'allBoard') {
-        this.actSearchAllBoard();
-      } else if (this.active === 'allPost') {
-        this.actSearchAllPost();
+        this.$router.push({ name: 'SearchBoard' });
       }
 
       this.$store.commit('setToastTogle');
-      // this.$refs.searchBtn.blur();
     },
+
     clickDeleteBtn: function() {
       this.keyword = '';
       this.$refs.sInput.focus();

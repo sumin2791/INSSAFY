@@ -52,11 +52,6 @@ export default {
     clickCloser: function() {
       this.$store.commit('setToastClose');
     },
-    onSearching: function() {
-      this.$store.commit('setToastTogle');
-      this.$store.commit('setSearchKeyword', this.keyword);
-      // this.$refs.searchBtn.blur();
-    },
     clickDeleteBtn: function() {
       this.keyword = '';
     },
