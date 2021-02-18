@@ -120,8 +120,8 @@ export default {
   methods: {
     // 소켓 연결하기
     connect() {
-      const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      // const serverURL = 'http://localhost:8000/ws';
+      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+      const serverURL = 'http://localhost:8000/ws';
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
       console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
@@ -207,8 +207,8 @@ export default {
       while (parent.hasChildNodes()) {
         parent.removeChild(parent.firstChild);
       }       
-      // const serverURL = 'http://localhost:8000/ws';
-      const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+      const serverURL = 'http://localhost:8000/ws';
+      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
       let socket = new SockJS(serverURL);
       if (this.stompClient != null) {
         this.stompClient.disconnect();
