@@ -11,6 +11,9 @@ export default {
   setToastTogle(state) {
     state.toastActive = !state.toastActive;
   },
+  setToastClose(state) {
+    state.toastActive = false;
+  },
   setToastType(state, typeName) {
     if (typeName == 'search') {
       state.toastType = INIT_TOAST_TYPE();

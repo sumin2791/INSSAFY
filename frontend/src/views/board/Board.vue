@@ -13,15 +13,15 @@
         >
           <!-- 페이지 이름 -->
           <div class="text-overline  text-weight-black" style="font-size: 20px !important;">Board</div>
-          <!-- 검색관련 부분 -->
-          <div
-            class="d-flex 
-              flex-row 
-              justify-flex-end"
-          >
-            <!-- 검색바 -->
-            <v-text-field placeholder="검색" solo v-model="searchKeyword"></v-text-field>
-          </div>
+
+          <!-- 검색버튼 -->
+          <button id="search-btn" class="icon-btn" @click="clickSearchIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <path
+                d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"
+              />
+            </svg>
+          </button>
         </v-row>
 
         <v-row>
@@ -128,8 +128,6 @@ export default {
         isMobile: false,
         viewSize: 0,
       },
-      // 검색 키워드
-      searchKeyword: '',
 
       inBoard: '',
       isManager: false,
@@ -254,6 +252,17 @@ export default {
           console.error(err);
         });
     },
+
+    //검색 아이콘 클릭
+    clickSearchIcon() {
+      const epicenter = this.$router.currentRoute.path;
+      let board_id = epicenter.substring(1);
+      board_id = board_id.slice(board_id.indexOf('/') + 1);
+      // console.log(board_id);
+      this.$store.commit('search/SET_SEARCH_ACTIVE', { active: 'post', epicenter: board_id });
+      this.$store.commit('setToastTogle');
+      this.$store.commit('setToastType', 'search');
+    },
   },
 };
 </script>
@@ -353,5 +362,26 @@ export default {
 }
 #custom-container {
   background-color: var(--basic-color-bg2) !important;
+}
+
+/* 검색 추가 */
+#search-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 25px;
+  margin-top: 8px;
+  background-color: var(--basic-color-bg) !important;
+  transition: transform 0.5s ease;
+}
+#search-btn:hover {
+  transform: scale(1.1);
+}
+.icon-btn {
+  margin: 5px 10px;
+  transition: transform 0.3s ease;
+}
+.icon-btn:hover,
+.icon-btn:active {
+  transform: scale(1.2);
 }
 </style>

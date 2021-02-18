@@ -233,9 +233,23 @@ export default {
         type: 'name',
       });
       this.$store.commit('search/CLEAR_SEARCH_LIST');
+      this.$store.commit('search/SET_SEARCH_ACTIVE', {
+        active: 'allBoard',
+        epicenter: '/',
+      });
       this.$router.push({ name: 'SearchBoard' });
     },
     clickPBtn2: function() {
+      this.$store.commit('search/SET_PAYLOAD', {
+        keyword: '',
+        page: 0,
+        type: 'name',
+      });
+      this.$store.commit('search/CLEAR_SEARCH_LIST');
+      this.$store.commit('search/SET_SEARCH_ACTIVE', {
+        active: 'allPost',
+        epicenter: '/',
+      });
       this.$router.push({ name: 'SearchPost' });
     },
   },

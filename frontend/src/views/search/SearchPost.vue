@@ -14,12 +14,10 @@
       </v-row>
 
       <!-- 보드 보여주는 부분 -->
-      <v-row>
-        <v-col class="col-12 col-sm-4 " v-for="(item, index) in searchList" :key="index">
-          <Post :post="item" />
-        </v-col>
-      </v-row>
-      <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+      <masonry :cols="{ default: 3, 576: 1 }" :gutter="10" style="padding:12px 15px;">
+        <Post class="post-item" v-for="(item, index) in searchList" :key="index" :post="item" />
+      </masonry>
+      <infinite-loading @infinite="infiniteHandler" spinner="waveDots" ref="infiniteLoading">
         <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">
           목록의 끝입니다 :)
         </div>
@@ -40,35 +38,33 @@ export default {
     InfiniteLoading,
   },
   data() {
-    return {
-      search: {
-        infiniteState: null,
-        image: false,
-      },
-    };
-  },
-  created: {
-    image: false, //이미지 전환 필요, 보드 id 받아서 연결 필요
+    return {};
   },
   computed: {
     ...mapState('search', ['searchList', 'size', 'payload']),
   },
+  mounted() {
+    this.payload.page = 0;
+  },
   watch: {
-    searchList() {
-      this.infiniteState.loaded();
+    payload: {
+      deep: true,
+      handler(v) {
+        if (v.page == 0) this.$refs.infiniteLoading.stateChanger.reset();
+      },
     },
   },
   methods: {
     ...mapActions('search', ['actSearchAllPost']),
     ...mapMutations('search', ['SET_NEXT_PAGE']),
+
     infiniteHandler($state) {
-      this.infiniteState = $state;
       this.actSearchAllPost().then((v) => {
         if (v) {
           setTimeout(() => {
-            this.SET_NEXT_PAGE();
+            this.$store.commit('search/SET_NEXT_PAGE');
             $state.loaded();
-          }, 1000);
+          }, 1600);
         } else {
           $state.complete();
         }
@@ -99,5 +95,16 @@ export default {
 .search-result-board {
   flex-basis: 19.5%;
   border: 3px dotted #000000;
+}
+
+.post-item {
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 0px 4px rgba(0, 0, 0, 0.04),
+    0px 0px 8px rgba(0, 0, 0, 0.06) !important;
+  transition: transform 0.5s, box-shadow 0.5s ease;
+}
+.post-item:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.05), 0 0 2px rgba(0, 0, 0, 0.05), 0 0 4px rgba(0, 0, 0, 0.05),
+    0 0 8px rgba(0, 0, 0, 0.1), 0 0 16px rgba(0, 0, 0, 0.1) !important;
 }
 </style>
