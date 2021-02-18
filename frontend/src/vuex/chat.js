@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   state: {
     // 현재 선택된 채팅방
-    selectedChatRoom: '',
+    selectedChatRoom: '13b5abb4-f5e9-48ff-866e-9b41ea06f282',
     // 현재 선택된 채팅방 아이디
     selectedId: '',
     // 현재 선택된 채팅방 상대 닉네임
@@ -13,6 +13,8 @@ export default {
     isInChatRoom: false,
     // 채팅방에서 메세지 보내면 갱신해줘야 함(채팅 리스트의 최근 메세지)
     isSend: true,
+    // socket연결 확인 flag
+    stompClient: null,
 
   },
   getters: {
@@ -41,7 +43,11 @@ export default {
     // 메세지 입력하면 입력했다고 이벤트 발생
     SEND_MESSAGE(state) {
       state.isSend = !state.isSend
-    }
+    },
+    // socket 연결 시 확인 후 입력
+    CHECK_SOCKET(state, stomp) {
+      state.stompClient = stomp
+    },
   },
   actions: {
     isSelected({commit}, chatList) {
@@ -56,6 +62,10 @@ export default {
     },
     sendMessages({commit}) {
       commit('SEND_MESSAGE')
-    }
+    },
+    // 소켓 상태변환
+    checkSocket({commit}, stomp) {
+      commit('CHECK_SOCKET', stomp)
+    },
   },
 }

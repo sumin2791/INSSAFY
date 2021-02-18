@@ -39,8 +39,8 @@ export default {
     // 소켓 연결하기
     connect() {
       console.log(this.BASEURL)
-      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      const serverURL = 'http://localhost:8000/ws';
+      const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+      // const serverURL = 'http://localhost:8000/ws';
       let socket = new SockJS(serverURL);
       if (this.stompClient != null) {
         this.stompClient.disconnect();
@@ -60,8 +60,7 @@ export default {
           this.stompClient.subscribe('/notice/' + String(localStorage.userId), (res) => {
             console.log('구독으로 받은 메시지 입니다.', res.body);
             this.received = JSON.parse(res.body);
-            // 알림 잘 들어오는지 확인
-            console.log(this.received, '굿!')
+
             // 알림이 들어오면 토스트 띄워주기
             this.$toast.open({
               message: `${this.received.opp_nickName}님의 메세지`,
