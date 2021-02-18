@@ -26,6 +26,7 @@
         <div id="search-bar" ref="searchBar">
           <input
             id="s-input"
+            ref="sInput"
             @keyup.enter="onSearching"
             v-model="keyword"
             type="text"
@@ -69,15 +70,23 @@ export default {
   computed: {
     ...mapGetters('search', ['getHeader', 'getType', 'getSort']),
     ...mapState('search', ['active', 'header', 'type', 'sort', 'epicenter']),
+    ...mapState(['toastActive', 'toastType']),
   },
   mounted() {
     this.select.type = this.getType.value[0];
   },
   watch: {
-    getIndex() {
-      console.log(this.getIndex);
-      console.log(this.getSort);
+    toastActive() {
+      console.log(this.toastActive);
+      console.log(this.toastType);
+      if (this.toastActive && this.toastType.search) {
+        this.$refs.sInput.focus();
+      }
     },
+    // getIndex() {
+    //   console.log(this.getIndex);
+    //   console.log(this.getSort);
+    // },
   },
   methods: {
     ...mapActions('search', ['actSearchAllBoard', 'actSearchAllPost']),
@@ -134,6 +143,7 @@ export default {
     },
     clickDeleteBtn: function() {
       this.keyword = '';
+      this.$refs.sInput.focus();
     },
 
     //전체 검색 전환

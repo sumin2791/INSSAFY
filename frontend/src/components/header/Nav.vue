@@ -1,6 +1,6 @@
 alert(response.data.user.user_email);
 <template>
-  <div id="wrap">
+  <div id="wrap" @keydown.esc="toastEscListener">
     <div id="nav-container-pc" class="navigation">
       <div id="nav-logo" @click="clickLogo" class="b-title">iN.SSAFY</div>
       <div id="nav-btn-container">
@@ -116,7 +116,11 @@ export default {
       this.$router.push({ name: 'Login' });
     },
     clickOutsideTheToast: function() {
-      this.$store.commit('setToastTogle');
+      this.$store.commit('setToastClose');
+    },
+
+    toastEscListener() {
+      this.$store.commit('setToastClose');
     },
   },
 };

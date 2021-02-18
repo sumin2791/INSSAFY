@@ -66,7 +66,7 @@ export default {
     ...mapState('search', ['searchList', 'size', 'payload']),
   },
   watch: {
-    searchList() {
+    size() {
       this.infiniteState.loaded();
     },
   },
