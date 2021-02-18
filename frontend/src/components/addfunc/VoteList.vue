@@ -12,7 +12,7 @@
       mdi-plus-box
     </v-icon> -->
     </div>
-    <VoteItem v-for="(voteId,idx) in votelist" :key="idx" :voteId="voteId" :isManager="isManager"/>
+    <VoteItem v-for="(voteId,idx) in votelist" :key="idx" :voteId="voteId" :isManager="isManager" :in-board="inBoard"/>
   </v-card>
 </template>
 

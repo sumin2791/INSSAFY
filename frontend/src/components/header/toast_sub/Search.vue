@@ -172,6 +172,12 @@ export default {
   margin: 0 10px;
   cursor: pointer;
 }
+@media (max-width: 426px) {
+  .h-p {
+    padding: 0;
+    margin: 0 6px;
+  }
+}
 .bold {
   font-weight: 500 !important;
 }

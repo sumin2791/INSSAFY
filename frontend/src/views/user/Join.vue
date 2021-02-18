@@ -28,7 +28,10 @@
               id="password"
               :type="passwordType"
               placeholder="비밀번호를 입력하세요."
-              :class="{ error: error.password && password.length !== 0, complete: !error.password && password.length !== 0 }"
+              :class="{
+                error: error.password && password.length !== 0,
+                complete: !error.password && password.length !== 0,
+              }"
             />
             <Delete-btn class="delete-btn" :state="password" @clickDel="deletePassword" />
             <label for="password">비밀번호*</label>
@@ -40,11 +43,16 @@
               :type="passwordConfirmType"
               id="password-confirm"
               placeholder="비밀번호를 재입력하세요."
-              :class="{ error: error.passwordConfirm && passwordConfirm.length !== 0, complete: !error.password && passwordConfirm.length !== 0 }"
+              :class="{
+                error: error.passwordConfirm && passwordConfirm.length !== 0,
+                complete: !error.password && passwordConfirm.length !== 0,
+              }"
             />
             <Delete-btn class="delete-btn" :state="passwordConfirm" @clickDel="deletePasswordConfirm" />
             <label for="password-confirm">비밀번호 확인*</label>
-            <div class="error-text" v-if="error.passwordConfirm && passwordConfirm.length !== 0">{{ error.passwordConfirm }}</div>
+            <div class="error-text" v-if="error.passwordConfirm && passwordConfirm.length !== 0">
+              {{ error.passwordConfirm }}
+            </div>
           </div>
           <div id="problem-container" class="input-with-label">
             <p class="problem b-desc">다음은 학사규정 중 일부이다.</p>
@@ -62,7 +70,10 @@
             <label for="solution">인증문제 답*</label>
             <input
               id="solution"
-              :class="{ error: error.solution && solution.length !== 0, complete: !error.solution && solution.length !== 0 }"
+              :class="{
+                error: error.solution && solution.length !== 0,
+                complete: !error.solution && solution.length !== 0,
+              }"
               placeholder="빈 칸에 들어갈 알맞은 단어는?"
               type="text"
               v-model="solution"
@@ -99,7 +110,9 @@
           </div>
         </div>
         <!-- <button class="btn-join">로그인</button> -->
-        <button class="btn-join b-title" @click="onJoin" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">Join</button>
+        <button class="btn-join b-title" @click="onJoin" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">
+          Join
+        </button>
       </div>
     </div>
   </div>
@@ -121,7 +134,7 @@ export default {
     return {
       options: {
         location: ['서울', '대전', '구미', '광주'],
-        generation: [4, 3, 2, 1],
+        generation: [5, 4, 3, 2, 1],
       },
       email: '',
       password: '',
@@ -200,10 +213,12 @@ export default {
       if (this.email.length >= 0 && !EmailValidator.validate(this.email)) this.error.email = '이메일 형식이 아닙니다.';
       else this.error.email = false;
 
-      if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
+      if (this.password.length >= 0 && !this.passwordSchema.validate(this.password))
+        this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
       else this.error.password = false;
 
-      if (this.passwordConfirm.length >= 0 && this.password != this.passwordConfirm) this.error.passwordConfirm = '비밀번호가 서로 같지 않습니다.';
+      if (this.passwordConfirm.length >= 0 && this.password != this.passwordConfirm)
+        this.error.passwordConfirm = '비밀번호가 서로 같지 않습니다.';
       else this.error.passwordConfirm = false;
 
       if (this.nickname.length == 0) this.error.nickname = true;

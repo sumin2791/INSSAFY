@@ -20,7 +20,7 @@
         <!-- <b-dropdown-item ><PostModify :post="post"/></b-dropdown-item> -->
         <!-- <b-dropdown-item v-if="flagWriter" ><bambooModify :post="post"/></b-dropdown-item> -->
         <b-dropdown-item v-if="flagWriter" @click="bamboo_delete">삭제</b-dropdown-item>
-        <b-dropdown-item id="declare">신고</b-dropdown-item>
+        <b-dropdown-item id="declare" v-if="!flagWriter"  @click="report">신고</b-dropdown-item>
       </b-dropdown>
     </div>
     <div class="post-body">
@@ -72,6 +72,15 @@ export default {
   },
   
   methods:{
+    openToast: function(msg, type) {
+      this.$toast.open({
+        message: msg,
+        type: type,
+      });
+    },
+    report(){
+      this.openToast(`비방/비하 등 유해하다고 판단되어 신고접수하였습니다.`, 'warning');
+    },
     bamboo_delete(){
       const params = {
         bamboo_id:this.post.bamboo_id,

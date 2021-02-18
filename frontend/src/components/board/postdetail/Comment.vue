@@ -167,8 +167,7 @@ export default {
     },
     btnCommentModify() {
       this.tempComment = this.commentDescription
-      this.Edit = !this.Edit
-      alert(`Edit태그 불러오기!`);
+      this.Edit = !this.Edit;
     },
     cancel(){
       this.tempComment = this.commentDescription
@@ -195,7 +194,6 @@ export default {
         .catch(err=>{
           console.log(err)
         })
-      alert(`수정!`);
     },
     // 채팅으로 이동
     onChat() {
