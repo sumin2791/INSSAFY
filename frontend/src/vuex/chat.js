@@ -15,6 +15,10 @@ export default {
     isSend: true,
     // socket연결 확인 flag
     stompClient: null,
+    // socket 통신으로 받은 메세지
+    socketMsg: '',
+    // 채팅방 1 => 2로 이동할 때 flag
+    isSwitch: false,
 
   },
   getters: {
@@ -26,7 +30,7 @@ export default {
       state.selectedChatRoom = data.roomId
       state.selectedNickname = data.opp_nickName
       state.selectedId = data.opp_id
-      state.isInChatRoom = true
+      state.isInChatRoom = !state.isInChatRoom
     },
     // 채팅방 선택 안되면 초기화
     IS_NOT_SELECTED(state) {
@@ -48,6 +52,14 @@ export default {
     CHECK_SOCKET(state, stomp) {
       state.stompClient = stomp
     },
+    // socket 연결로 받은 메세지
+    PUSH_MSG(state, subscribe) {
+      state.socketMsg = subscribe
+    },
+    // 채팅방 간 이동탐지
+    SWITCH_ROOM(state) {
+      state.isSwitch = !state.isSwitch
+    }
   },
   actions: {
     isSelected({commit}, chatList) {
@@ -66,6 +78,14 @@ export default {
     // 소켓 상태변환
     checkSocket({commit}, stomp) {
       commit('CHECK_SOCKET', stomp)
+    },
+    // 소켓으로 받은 메세지
+    pushMsg({commit}, subscribe) {
+      commit('PUSH_MSG', subscribe)
+    },
+    // 채팅방 간 이동
+    switchRoom({commit}) {
+      commit('SWITCH_ROOM')
     },
   },
 }

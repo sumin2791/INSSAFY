@@ -1,6 +1,6 @@
 <template>
-  <v-app class="main-bg-color">
-    <v-main class="grey lighten-3">
+  <v-app id="main-bg-color">
+    <v-main style="background: #ebebe9;">
       <v-container class="pt-8">
         <!-- PC에서 보여줄 curation이름과 검색 -->
         <v-row
@@ -486,8 +486,8 @@ export default {
   cursor: pointer;
 }
 
-.main-bg-color {
-  background-color: #ebebe9;
+#main-bg-color {
+  background-color: var(--basic-color-fill) !important;
 }
 #container {
   font-family: 'Noto Sans KR', sans-serif !important;

@@ -71,15 +71,21 @@ export default {
     window.addEventListener('resize', this.onResize, { passive: true })
   },
   watch: {
-    isSend: 'getChatList'
+    // 받고, 주면 갱신
+    // 소켓 통신으로 받은 메세지들
+    socketMsg: 'getChatList',
+    isSend: 'getChatList',
   },
   computed: {
     // 채팅방 들어갔는지 확인
-    isSend() {
-      return this.$store.state.chat.isSend
+    socketMsg() {
+      return this.$store.state.chat.socketMsg
     },
     isInRoom() {
       return this.$store.state.chat.isInChatRoom
+    },
+    isSend() {
+      return this.$store.state.chat.isSend
     },
   },
   data() {

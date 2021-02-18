@@ -37,10 +37,12 @@ export default {
     Profile: () => import('@/components/etc/OtherProfile'),
   },
   props: {
-    chatList: Object
+    chatList: Object,
   },
   data() {
     return {
+      // 소켓으로 받은 메세지
+      receives: [],
     }
   },
   computed: {
@@ -64,13 +66,14 @@ export default {
         console.log('들옴?')
         // vuex 정보를 갱신해서
         this.$store.dispatch('chat/isSelected', chatList)
-        console.log(this.selectChatRoom)
         // 바로 연결을 해준다
         this.connect()
       }
 
       // 1. vuex !== 클릭한 채팅방: 연결 끊고 재 연결 시켜준다
       if (chatList.roomId !== this.selectChatRoom && this.selectChatRoom ) {
+        // 채팅방 간 이동 구현
+        this.$store.dispatch('chat/switchRoom')
         // 소켓 끊었다가 다시 연결
         this.reConnect()
         // vuex에 새로운 정보 갱신 - 지우고 => 다시 넣기
@@ -86,7 +89,6 @@ export default {
         user_id: String(localStorage.userId),
         opp_id: this.selectOppId,
       }
-
       chatApi.getMessages(params)
         .then(res => {
           this.$store.dispatch('chat/getMessages', res.data.msgList)
@@ -95,11 +97,25 @@ export default {
           console.error(err)
         })
 
+      // 채팅방 알림 초기화
+      const payload = {
+        my_id: String(localStorage.userId),
+        opp_id: this.selectOppId,
+      }
+      
+      chatApi.updateNotice(payload)
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          console.error(err)
+        })
     },
     // 처음 채팅방 들어갈 때 확인
     connect() {
       const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
       // const serverURL = 'http://localhost:8000/ws';
+
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
       this.$store.dispatch('chat/checkSocket', Stomp.over(socket))
@@ -113,27 +129,17 @@ export default {
         // 서버의 메시지 전송 endpoint를 구독합니다.
         // 이런형태를 pub sub 구조라고 합니다.
         this.stompClient.subscribe('/message/' + this.selectChatRoom + '/' + String(localStorage.userId), (res) => {
-          console.log('구독으로 받은 메시지 입니다.', res.body);
+          console.log('구독으로 받은 메시지 입니다.(연결)', res.body);
           const receive = JSON.parse(res.body);
-          
-          // // 채팅방 입장시 알림 메세지 개수 초기화
-          // const params = {
-          //   my_id: this.userId,
-          //   opp_id: this.oppUserId,
-          // }
-          // chatApi.updateNotice(params)
-          //   .then(res => {
-          //     console.log(res, '잘 넘어옴?')
-          //   })
-          //   .catch(err => {
-          //     console.error(err)
-          //   })
-      });
+          // vuex에 저장
+          this.$store.dispatch('chat/pushMsg', receive)
+          });
       },
       (error) => {
         // 소켓 연결 실패
         console.log('소켓 연결 실패', error);
         this.connected = false;
+        alert('다시한번 클릭해주세요!')
         }
       );
     },
@@ -161,27 +167,16 @@ export default {
             // 서버의 메시지 전송 endpoint를 구독합니다.
             // 이런형태를 pub sub 구조라고 합니다.
             this.stompClient.subscribe('/message/' + this.oppRoomId + '/' + this.userId, (res) => {
-              console.log('구독으로 받은 메시지 입니다.', res.body);
+              console.log('구독으로 받은 메시지 입니다.(재연결)', res.body);
               const received = JSON.parse(res.body);
-              
-              // 채팅방 입장시 알림 메세지 개수 초기화
-              const params = {
-                my_id: this.userId,
-                opp_id: this.oppUserId,
-              }
-              // chatApi.updateNotice(params)
-              //   .then(res => {
-              //     console.log(res, '잘 넘어옴?')
-              //   })
-              //   .catch(err => {
-              //     console.error(err)
-              //   })
+              this.receives.push(received)
           });
         },
         (error) => {
           // 소켓 연결 실패
           console.log('소켓 연결 실패', error);
           this.connected = false;
+          alert('다시한번 클릭해주세요!')
           }
         );
       }

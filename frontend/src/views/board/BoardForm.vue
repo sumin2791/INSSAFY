@@ -1,4 +1,5 @@
 <template>
+  <v-app class="back-gd">
   <div id="app" class="main-bg-color">
     <!-- 전체 포함하는 컨테이너 -->
     <div class="join-form">
@@ -64,32 +65,32 @@
             </v-col> -->
             <!-- 추가 기능 -->
               <!-- 추가기능 추가 정보(편집) -->
-            <div id="add-func-group">
-              <div>추가기능</div>
-              <div
-                id="add-func-item"
-                v-for="(func, idx) in addFuncAll"
-                :key="idx"
-              >
-                <v-checkbox
-                  hide-details
-                  color="#0B2945"
-                  :label="func.option"
-                  v-model="func.state"
-                ></v-checkbox>
-                <v-tooltip right>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon
-                      id="add-func-info"
-                      v-bind="attrs"
-                      v-on="on"
-                      color="#AA2610"
-                    >mdi-information-outline</v-icon>
-                  </template>
-                  <span v-html="func.explain"></span>
-                </v-tooltip>
+              <div class="add-func-group">
+                <div>추가기능</div>
+                <div
+                  id="add-func-item"
+                  v-for="(func, idx) in addFuncAll"
+                  :key="idx"
+                >
+                  <v-checkbox
+                    hide-details
+                    color="#0B2945"
+                    :label="func.option"
+                    v-model="func.state"
+                  ></v-checkbox>
+                  <v-tooltip right>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        id="add-func-info"
+                        v-bind="attrs"
+                        v-on="on"
+                        color="#AA2610"
+                      >mdi-information-outline</v-icon>
+                    </template>
+                    <span v-html="func.explain"></span>
+                  </v-tooltip>
+                </div>
               </div>
-            </div>
         </div>
           
       </div>
@@ -108,6 +109,7 @@
       </v-row>
     </div>
   </div>
+  </v-app>
 </template>
 
 <script>
@@ -235,6 +237,10 @@ export default {
 </script>
 
 <style scoped>
+/* 겉 바탕 */
+.back-gd {
+  background-color: var(--basic-color-bg);
+}
 /* 전체 메인 배경색 */
 .main-bg-color {
   display: flex;
@@ -311,7 +317,7 @@ input:focus {
 }
 
 /* 추가기능 항목 아이템들 */
-#add-func-group{
+.add-func-group{
   margin-top:20px;
 }
 #add-func-item {

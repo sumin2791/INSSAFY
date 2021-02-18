@@ -1,6 +1,6 @@
 <template>
-  <v-app class="main-bg-color">
-    <v-main class="grey lighten-3">
+  <v-app>
+    <v-main class="main-bg-color">
       <v-container
         id="container"
         class="pt-8"
