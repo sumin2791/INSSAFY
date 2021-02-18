@@ -5,16 +5,16 @@
         class="pt-8"
       >
         <v-row dense>
+          <!-- <button id="back-btn" @click="goBack">
+            뒤로 가기
+          </button> -->
           <!-- 뒤로 가기 -->
-          <!-- <router-link 
+          <router-link 
             :to="{ name:'Board', 
               params: {board_id:$route.params.board_id}}"
             id="back-btn"
-          > -->
-            <button id="back-btn" @click="goBack">
-              뒤로 가기
-            </button>
-          <!-- </router-link> -->
+          > 보드로 돌아가기
+          </router-link>
             
         </v-row>        
         <v-row dense>
@@ -198,10 +198,9 @@ export default {
   background-color: #ebebe9 !important;
 }
 /* 뒤로가기 버튼 */
-/* #back-btn {
-  all: unset !important;
-} */
 #back-btn {
+  /* all: unset !important; */
+  text-decoration: none !important;
   text-align: center;
   margin: 0 0 10px 0;
   height: 50px;
@@ -219,10 +218,13 @@ export default {
   align-items: center;
 }
 
-#back-btn *:hover,
-#back-btn *:active {
-  background-color: var(--basic-color-fill3) !important;
-  color: var(--basic-color-bg);
+#back-btn:hover,
+#back-btn:active {
+  background: #ebebe9 !important;
+  background: linear-gradient(145deg, #d4d4d2, #fbfbf9) !important;
+  box-shadow: 10px 10px 20px #b3b3b1, -10px -10px 20px #ffffff !important;
+  color: #c0c0c0;
+  font-weight: 800;
 }
 /* 댓글 입력 부분 */
 #input {
