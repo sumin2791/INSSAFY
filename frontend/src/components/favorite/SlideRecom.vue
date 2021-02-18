@@ -1,8 +1,8 @@
 <template>
   <div class="frame">
     <p id="f-type" class="r-title">Suggest</p>
-    <div class="bg-image" v-if="board_image" :style="{ backgroundImage: `url(${favorite.board_image})` }" />
-    <GradientGenerator id="bg-graid" radius="0px" v-if="!board_image" />
+    <div class="bg-image" v-if="favorite.board_image" :style="{ backgroundImage: `url(${favorite.board_image})` }" />
+    <GradientGenerator id="bg-graid" radius="0px" v-if="!favorite.board_image" />
     <div class="inner">
       <div id="f-title" class="f-text b-desc">
         <p>{{ favorite.board_name }}</p>
@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import * as boardApi from '@/api/board';
 export default {
   name: 'Slide',
   props: {
@@ -38,25 +37,7 @@ export default {
     };
   },
   created() {
-    // getBoardDetail() {
-    //   boardApi
-    //     .board_detail(this.favorite.board_id)
-    //     .then((res) => {
-    //       this.board_name = res.data.boardDto.board_name;
-    //       this.board_description = res.data.boardDto.board_description;
-    //       this.board_hash = res.data.boardDto.board_hash.replaceAll('|', ' ');
-    //       const img = res.data.boardDto.board_image;
-    //       if (img != null && img != 'null' && img != '') {
-    //         this.board.image = img;
-    //       }
-    //       if (res.data.boardDto.board_image != 'null' && res.data.boardDto.board_image != null && res.data.boardDto.board_image != '') {
-    //         this.board_image = res.data.boardDto.board_image;
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
+    console.log(this.favorite);
   },
   methods: {},
 };
