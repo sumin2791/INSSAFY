@@ -26,7 +26,7 @@
               justify-flex-end"
           >
             <!-- 검색바 -->
-            <v-text-field placeholder="검색" solo v-model="searchKeyword"></v-text-field>
+            <!-- <v-text-field placeholder="검색" solo v-model="searchKeyword"></v-text-field> -->
           </div>
         </v-row>
         <v-row dense>

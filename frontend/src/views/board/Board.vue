@@ -137,6 +137,7 @@ export default {
     };
   },
   created() {
+    this.$store.commit('search/CLEAR_SEARCH_LIST');
     this.boardId = this.$route.params.board_id;
     // this.$store.dispatch('board/IsInBoard',Number(this.$route.params.board_id))
     // 구독했는 지 파악하기 : inBoard

@@ -16,13 +16,18 @@
       flex-column"
     >
       <!-- 보드 이미지 위로 나오는 부분 -->
-      <div class="text">
+      <div id="header-container" class="text">
         <div class="board-title">
           {{ group.board_name }}
         </div>
       </div>
       <GradientGenerator class="myinfo-list" style="height: 100px" v-if="group.board_image == null" :radius="radius" />
-      <div class="myinfo-list blur" style="height: 100px" v-if="group.board_image != null" :style="{ backgroundImage: `url(${group.board_image})` }" />
+      <div
+        class="myinfo-list blur"
+        style="height: 100px"
+        v-if="group.board_image != null"
+        :style="{ backgroundImage: `url(${group.board_image})` }"
+      />
     </div>
 
     <!-- 포스트 글 내용 -->
@@ -62,32 +67,34 @@
 import GradientGenerator from '@/components/etc/GradientGenerator';
 
 export default {
-  name: "StudyGroup",
+  name: 'StudyGroup',
   data() {
     return {
       radius: '15px',
-    }
+    };
   },
-  props:{
-    group:Object,
+  props: {
+    group: Object,
   },
   components: {
     GradientGenerator,
   },
-  computed:{
-    image(){
-      return this.group.board_image
-    }
+  computed: {
+    image() {
+      return this.group.board_image;
+    },
   },
   methods: {
     goThisStudy() {
-      this.$router.push({ name: 'Study',params:{
-          board_id:this.group.board_id,
-          
-        } });
-    }
+      this.$router.push({
+        name: 'Study',
+        params: {
+          board_id: this.group.board_id,
+        },
+      });
+    },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -109,9 +116,8 @@ export default {
   height: 100px;
   color: #ffffff;
   display: flex;
-  flex-direction: column;
   text-align: center;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   z-index: 2;
 }

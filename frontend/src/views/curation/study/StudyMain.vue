@@ -1,39 +1,33 @@
 <template>
   <v-app class="main-bg-color">
     <v-main class="grey lighten-3">
-      <v-container
-        class="pt-8"
-      >
+      <v-container class="pt-8">
         <!-- PC에서 보여줄 curation이름과 검색 -->
-        <v-row 
+        <v-row
           v-if="!ResponsiveSize.isMobile"
-          no-gutters 
+          no-gutters
           dense
           class="d-flex 
             flex-row 
             justify-space-between"
         >
           <!-- 페이지 이름 -->
-          <div 
-            class="text-overline  text-weight-black"
-            style="font-size: 20px !important;"
-          >Curation</div>
+          <div class="text-overline  text-weight-black" style="font-size: 20px !important;">Curation</div>
           <!-- 검색관련 부분 -->
-          <div 
+          <div
             class="d-flex 
               flex-row 
               justify-flex-end"
           >
             <!-- 검색바 -->
-            <v-text-field
+            <!-- <v-text-field
               placeholder="검색"
               solo
               v-model="searchKeyword"
-            ></v-text-field>
+            ></v-text-field> -->
           </div>
         </v-row>
         <v-row dense>
-          
           <!-- 왼쪽 스터디 설명 부분 -->
           <v-col class="col-12 col-sm-4">
             <div id="description" class="rounded-bg container-description">
@@ -44,10 +38,13 @@
               </p>
               <v-divider class="my-2"></v-divider>
               <v-list color="transparent">
-                <v-list-item><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent>내 스터디 목록 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a></v-list-item>
+                <v-list-item
+                  ><a id="scrap-item" v-b-toggle href="#item-collapse" @click.prevent
+                    >내 스터디 목록 <b-icon icon="chevron-down" aria-hidden="true"></b-icon></a
+                ></v-list-item>
                 <b-collapse visible id="item-collapse">
-                  <v-col v-for="(group,idx) in myStudyGroup" :key="idx">
-                    <MyStudyGroup :group="group"/>
+                  <v-col v-for="(group, idx) in myStudyGroup" :key="idx">
+                    <MyStudyGroup :group="group" />
                   </v-col>
                 </b-collapse>
               </v-list>
@@ -64,9 +61,9 @@
                   color="#0B2945"
                   :label="`${state}`"
                   @click="filterMyStudyGroup()"
-                    ></v-switch>
+                ></v-switch>
               </div>
-              <div class="btnWrite" v-if="!flagPromoList"><PostWrite :in-board="inBoard"/></div>
+              <div class="btnWrite" v-if="!flagPromoList"><PostWrite :in-board="inBoard" /></div>
               <div class="btnWrite" v-if="flagPromoList">
                 <b-button class="btn-write" @click="goToCreateBoard">스터디 만들기</b-button>
               </div>
@@ -74,8 +71,8 @@
             <!-- 스터디 게시글쓰기 -->
             <!-- <StudyPostWrite class="mx-4 mb-2"/> -->
             <!-- 스터디 게시물 부분 -->
-            <StudyPromotionPostList v-if="!flagPromoList"/>
-            <AllGroupList v-if="flagPromoList"/>
+            <StudyPromotionPostList v-if="!flagPromoList" />
+            <AllGroupList v-if="flagPromoList" />
 
             <!-- <StudyPost class="mx-4 mb-2"/>
             <StudyPost class="mx-4 mb-2"/>
@@ -94,18 +91,16 @@
 // import StudyPostWrite from "@/components/curation/study/StudyPostWrite.vue"
 // 스터디 내 그룹
 // import StudyGroup from "@/components/curation/study/StudyGroup.vue"
-import MyStudyGroup from "@/components/curation/study/MyStudyGroup.vue"
+import MyStudyGroup from '@/components/curation/study/MyStudyGroup.vue';
 
+import PostWrite from '@/components/board/PostWrite';
+import StudyPromotionPostList from '@/components/board/PostList';
+import AllGroupList from '@/components/curation/study/AllGroupList';
 
-
-import PostWrite from '@/components/board/PostWrite'
-import StudyPromotionPostList from "@/components/board/PostList"
-import AllGroupList from "@/components/curation/study/AllGroupList"
-
-import * as studyApi from "@/api/study"
+import * as studyApi from '@/api/study';
 
 export default {
-  name:'StudyMain',
+  name: 'StudyMain',
   components: {
     // StudyPost,
     // StudyPostWrite,
@@ -116,37 +111,38 @@ export default {
     PostWrite,
   },
   // 뷰 인스턴스 제거될 때 resize 호출
-  beforeDestroy () {
-      if (typeof window === 'undefined') return
+  beforeDestroy() {
+    if (typeof window === 'undefined') return;
 
-      window.removeEventListener('resize', this.onResize, { passive: true })
+    window.removeEventListener('resize', this.onResize, { passive: true });
   },
-  created(){
-    studyApi.getMyGroupList(localStorage.userId)
-    .then(res=>{
-      const group = res.data.studyList.filter((group) => {
-        if(group!=null){
-          return group
-        }
+  created() {
+    studyApi
+      .getMyGroupList(localStorage.userId)
+      .then((res) => {
+        const group = res.data.studyList.filter((group) => {
+          if (group != null) {
+            return group;
+          }
+        });
+        this.myStudyGroup = group;
       })
-      this.myStudyGroup = group
-    })
-    .catch(err=>{
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log(err);
+      });
   },
-  mounted () {
+  mounted() {
     // resize 실시해서 현재 화면 크기 확인
-    this.onResize()
+    this.onResize();
 
-    window.addEventListener('resize', this.onResize, { passive: true })
+    window.addEventListener('resize', this.onResize, { passive: true });
     // this.filterMyStudyGroup()
   },
   data() {
     return {
       // 모바일 화면 체크 mobile화면인지, 사이즈 이용할 값
       ResponsiveSize: {
-        isMobile: false, 
+        isMobile: false,
         viewSize: 0,
       },
       // 검색 키워드
@@ -155,10 +151,10 @@ export default {
       isMyStudy: false,
       myStudyGroup: {},
       state: '홍보 목록',
-      flagPromoList:false,
-      flagPromoGroup: ['스터디 목록','홍보 목록'],
-      inBoard:true,
-    }
+      flagPromoList: false,
+      flagPromoGroup: ['스터디 목록', '홍보 목록'],
+      inBoard: true,
+    };
   },
   methods: {
     // 현재 활성화된 기기에 따라 flag 변경
@@ -169,14 +165,16 @@ export default {
     // 내 스터디 그룹 / 전체 스터디 그룹 전환
     filterMyStudyGroup() {
       if (this.flagPromoList) {
-        this.state = this.flagPromoGroup[0]
-      } else {this.state = this.flagPromoGroup[1]}
+        this.state = this.flagPromoGroup[0];
+      } else {
+        this.state = this.flagPromoGroup[1];
+      }
     },
     goToCreateBoard() {
       return this.$router.push({ name: 'StudyGroupForm' });
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -195,27 +193,27 @@ export default {
   box-shadow: var(--basic-shadow-w);
 }
 
-#scrap-item{
+#scrap-item {
   text-decoration: none;
-  color:#000;
+  color: #000;
 }
 
 /* 오른쪽 section*/
-.main-header{
+.main-header {
   display: flex;
   justify-content: space-between;
-  align-items:center;
-  margin:0 8px;
+  align-items: center;
+  margin: 0 8px;
 }
-.flagPromoList{
+.flagPromoList {
   display: flex;
   align-items: center;
   /* margin-left:20px */
 }
-.v-messages{
-  min-height:0;
+.v-messages {
+  min-height: 0;
 }
-.btnWrite{
+.btnWrite {
   /* width: 30%; */
 }
 .btn-write {
@@ -223,20 +221,19 @@ export default {
   text-align: center;
   margin: auto;
   height: 50px;
-  width:100%;
+  width: 100%;
   border: none;
   color: var(--basic-color-fill);
   text-shadow: 0 0px 1px var(--basic-color-fill3);
   background: #ebebe9 !important;
-  box-shadow: 10px 10px 20px #bcbcba, 
-              -10px -10px 20px #ffffff;
+  box-shadow: 10px 10px 20px #bcbcba, -10px -10px 20px #ffffff;
   border-radius: 15px !important;
   transition: 0.3s all ease;
 }
 .btn-write:hover,
 .btn-write:active,
 .btn-write:focus {
-  color: #ebebe9 !important;    
+  color: #ebebe9 !important;
   background-color: var(--basic-color-key) !important;
 }
 </style>
