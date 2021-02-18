@@ -1,5 +1,5 @@
 <template>
-  <div class="main-bg-color">
+  <div id="app" class="main-bg-color">
     <!-- 전체 포함하는 컨테이너 -->
     <div class="join-form">
       <!-- <div 

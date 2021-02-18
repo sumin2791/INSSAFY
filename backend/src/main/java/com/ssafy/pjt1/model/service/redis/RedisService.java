@@ -199,6 +199,8 @@ public class RedisService {
             if (top3Id != null) {
                 for (String id : top3Id) {
                     UserDto dto = userService.userDtoById(id);
+                    if(dto==null)
+                        continue;
                     Map<String, String> userMap = new HashMap<>();
                     userMap.put("nickName", dto.getUser_nickname());
                     userMap.put("score", Math.round(zset.score(key, id)) + "");
