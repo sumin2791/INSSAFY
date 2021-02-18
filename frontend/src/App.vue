@@ -38,15 +38,9 @@ export default {
   methods: {
     // 소켓 연결하기
     connect() {
-<<<<<<< HEAD
       console.log(this.BASEURL)
       const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
       // const serverURL = 'http://localhost:8000/ws';
-=======
-      console.log(this.BASEURL);
-      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      const serverURL = 'http://localhost:8000/ws';
->>>>>>> 61bcbc432e79dbb188f497d10d5500dfdfa9d3d8
       let socket = new SockJS(serverURL);
       if (this.stompClient != null) {
         this.stompClient.disconnect();
