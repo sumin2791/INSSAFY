@@ -296,7 +296,7 @@ export default {
     },
     //기수별 대표 색상 반환
     getGenerationColor(state) {
-      switch (state.user.generation) {
+      switch (String(state.user.generation)) {
         case '1':
           return '#1d80dd';
         case '2':
@@ -305,6 +305,8 @@ export default {
           return '#f1a248';
         case '4':
           return '#61d1be';
+        case '5':
+          return '#9e0089';
         default:
           return '#fff';
       }

@@ -34,7 +34,13 @@
                       {{ myInfo.nickname }}
                     </div>
                     <div v-if="myInfo.myInfoEdit">
-                      <v-text-field dense label="nickname" v-model="myInfo.nickname" class="text-h5" color="grey-darken-4"></v-text-field>
+                      <v-text-field
+                        dense
+                        label="nickname"
+                        v-model="myInfo.nickname"
+                        class="text-h5"
+                        color="grey-darken-4"
+                      ></v-text-field>
                     </div>
                     <!-- 이메일 -->
                     <div>
@@ -49,14 +55,25 @@
                           <v-select v-model="myInfo.location" :items="myInfo.options.location" label="지역"></v-select>
                         </v-col>
                         <v-col>
-                          <v-select v-model="myInfo.generation" :items="myInfo.options.generation" label="기수"></v-select>
+                          <v-select
+                            v-model="myInfo.generation"
+                            :items="myInfo.options.generation"
+                            label="기수"
+                          ></v-select>
                         </v-col>
                       </v-row>
                     </div>
                   </div>
                   <!-- edit 버튼('나'일 때만 보여주기) -->
                   <div class="align-self-start">
-                    <v-btn icon outlined x-small fab :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'" @click="editMyInfo()">
+                    <v-btn
+                      icon
+                      outlined
+                      x-small
+                      fab
+                      :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'"
+                      @click="editMyInfo()"
+                    >
                       <v-icon dark>
                         mdi-pencil
                       </v-icon>
@@ -130,7 +147,14 @@
                     <div class="text-h5">내 정보</div>
                     <!-- 내 정보 수정버튼 -->
                     <div>
-                      <v-btn icon outlined x-small fab :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'" @click="editMyInfo()">
+                      <v-btn
+                        icon
+                        outlined
+                        x-small
+                        fab
+                        :color="myInfo.myInfoEdit ? '#AA2610' : '#0B2945'"
+                        @click="editMyInfo()"
+                      >
                         <v-icon>
                           mdi-pencil
                         </v-icon>
@@ -154,7 +178,13 @@
                     {{ myInfo.nickname }}
                   </div>
                   <div v-if="myInfo.myInfoEdit">
-                    <v-text-field dense label="nickname" v-model="myInfo.nickname" class="text-h5" color="grey-darken-4"></v-text-field>
+                    <v-text-field
+                      dense
+                      label="nickname"
+                      v-model="myInfo.nickname"
+                      class="text-h5"
+                      color="grey-darken-4"
+                    ></v-text-field>
                   </div>
                   <!-- 이메일 부분 -->
                   <div>
@@ -169,7 +199,11 @@
                         <v-select v-model="myInfo.location" :items="myInfo.options.location" label="지역"></v-select>
                       </v-col>
                       <v-col>
-                        <v-select v-model="myInfo.generation" :items="myInfo.options.generation" label="기수"></v-select>
+                        <v-select
+                          v-model="myInfo.generation"
+                          :items="myInfo.options.generation"
+                          label="기수"
+                        ></v-select>
                       </v-col>
                     </v-row>
                   </div>
@@ -182,7 +216,13 @@
 
                 <!-- 이동 탭 부분 -->
                 <v-list-item-group v-model="ResponsiveSize.whichTapPoint" mandatory class="px-2 py-0">
-                  <v-list-item v-for="[icon, text, index] in links" :key="text" link @click="clickMobileTap(index)" style="border-radius: 15px">
+                  <v-list-item
+                    v-for="[icon, text, index] in links"
+                    :key="text"
+                    link
+                    @click="clickMobileTap(index)"
+                    style="border-radius: 15px"
+                  >
                     <!-- 모바일 탭 전환 -->
                     <v-list-item-icon>
                       <v-icon>{{ icon }}</v-icon>
@@ -205,7 +245,13 @@
                   >구독중인 보드</v-card-title
                 >
                 <v-divider></v-divider>
-                <Subscription v-for="board in subBoardList" :key="board.board_id" :board="board" class="pa-2 ani-hover" @delSub="deleteSub" />
+                <Subscription
+                  v-for="board in subBoardList"
+                  :key="board.board_id"
+                  :board="board"
+                  class="pa-2 ani-hover"
+                  @delSub="deleteSub"
+                />
                 <!-- <Subscription />
                 <Subscription /> -->
               </div>
@@ -219,7 +265,13 @@
                   >내 작성글</v-card-title
                 >
                 <v-divider></v-divider>
-                <MyPost v-for="post in getsPosts" :key="post.post_id" :post="post" class="pa-2 ani-hover" @delPost="deletePost" />
+                <MyPost
+                  v-for="post in getsPosts"
+                  :key="post.post_id"
+                  :post="post"
+                  class="pa-2 ani-hover"
+                  @delPost="deletePost"
+                />
               </div>
               <!-- 내 댓글 -->
               <div v-if="mobileTap[2]">
@@ -248,7 +300,13 @@
                   >스크랩한 글</v-card-title
                 >
                 <v-divider></v-divider>
-                <ScrapPost v-for="scrap in getScraps" :key="scrap.post_id" :scrap="scrap" class="pa-2 ani-hover" @delScrap="delScrap" />
+                <ScrapPost
+                  v-for="scrap in getScraps"
+                  :key="scrap.post_id"
+                  :scrap="scrap"
+                  class="pa-2 ani-hover"
+                  @delScrap="delScrap"
+                />
               </div>
             </v-sheet>
           </v-col>
@@ -298,7 +356,7 @@ export default {
         myInfoEdit: false,
         options: {
           location: ['서울', '대전', '구미', '광주'],
-          generation: ['4', '3', '2', '1'],
+          generation: ['5', '4', '3', '2', '1'],
         },
       },
       //구독 보드 리스트
@@ -332,7 +390,15 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['getMyInfo', 'putMyinfo', 'getSubBoard', 'actDelComment']),
-    ...mapActions('user', ['putDeleteSub', 'getPosts', 'actDeletePost', 'actGetComments', 'actDelComment', 'actScraps', 'actTogleScrap']),
+    ...mapActions('user', [
+      'putDeleteSub',
+      'getPosts',
+      'actDeletePost',
+      'actGetComments',
+      'actDelComment',
+      'actScraps',
+      'actTogleScrap',
+    ]),
     //프로필 이미지 변경
     clickProfile() {
       alert('dd');
@@ -372,7 +438,6 @@ export default {
           user_location: this.myInfo.location,
           user_nickname: this.myInfo.nickname,
         };
-        console.log(member);
         this.$store.dispatch('auth/putMyinfo', member).then((result) => {
           if (result) {
             alert('내 정보가 정상적으로 변경되었습니다.');

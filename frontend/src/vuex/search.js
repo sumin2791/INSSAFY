@@ -15,9 +15,9 @@ const INIT_PAYLOAD = () => {
 //target(검색 주체) 초기화
 const INIT_HEADER = () => {
   return {
-    allBoard: '모든 보드에서 검색',
-    allPost: '모든 게시글에서 검색',
-    board: '보드 내 서브 보드 검색',
+    allBoard: '보드 검색',
+    allPost: '게시글 검색',
+    board: '서브보드 검색',
     post: '보드 내 게시글 검색',
   };
 };

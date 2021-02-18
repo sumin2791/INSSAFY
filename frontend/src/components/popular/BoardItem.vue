@@ -29,7 +29,13 @@
         </div>
         <div id="follow-togle">
           <b-icon id="f-icon" icon="heart-fill" aria-hidden="true" />
-          <b-icon id="f-icon-active" :class="{ clear: !btnState }" icon="heart-fill" @click="clickFollow" aria-hidden="true" />
+          <b-icon
+            id="f-icon-active"
+            :class="{ clear: !btnState }"
+            icon="heart-fill"
+            @click="clickFollow"
+            aria-hidden="true"
+          />
         </div>
       </div>
     </div>
@@ -277,7 +283,11 @@ export default {
   z-index: 2;
   background: var(--basic-color-bg2); /* fallback for old browsers */
   background: -webkit-linear-gradient(to bottom, #f9f9f9 20%, #f9f9f900); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, #f9f9f9 20%, #f9f9f900); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(
+    to bottom,
+    #f9f9f9 20%,
+    #f9f9f900
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 #p-bottom {
   width: 100%;
@@ -287,13 +297,22 @@ export default {
   z-index: 1;
   background: var(--basic-color-bg2); /* fallback for old browsers */
   background: -webkit-linear-gradient(to top, #f9f9f9 20%, #f9f9f900); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to top, #f9f9f9 20%, #f9f9f900); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(
+    to top,
+    #f9f9f9 20%,
+    #f9f9f900
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 #follow-togle {
   position: absolute;
+  cursor: pointer;
   z-index: 5;
   top: 10px;
   right: 10px;
+  transition: transform 0.4s ease;
+}
+#follow-togle:hover {
+  transform: scale(1.2);
 }
 
 #f-icon {
