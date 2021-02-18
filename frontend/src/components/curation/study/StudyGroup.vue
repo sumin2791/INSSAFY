@@ -22,24 +22,14 @@
         </div>
       </div>
       <GradientGenerator class="myinfo-list" style="height: 100px" v-if="group.board_image == null" :radius="radius" />
-      <v-img src="@/assets/images/slide.jpg" height="100px" class="myinfo-list blur" v-if="group.board_image != null"> </v-img>
+      <div class="myinfo-list blur" style="height: 100px" v-if="group.board_image != null" :style="{ backgroundImage: `url(${group.board_image})` }" />
     </div>
-    <!-- 포스트 제목 -->
-    <v-card-title
-      class="
-        d-flex
-        flex-row
-        space-between
-        pa-0"
-    >
-      <v-col cols="9" id="post-title" class="font-weight-black">{{ group.board_title }}</v-col>
-    </v-card-title>
 
     <!-- 포스트 글 내용 -->
     <v-card-text
       id="post-contents"
       class="font-weight-bold
-        py-0 pl-auto"
+        py-0 pt-4 pl-auto"
     >
       {{ group.board_description }}
     </v-card-text>
@@ -83,6 +73,11 @@ export default {
   },
   components: {
     GradientGenerator,
+  },
+  computed:{
+    image(){
+      return this.group.board_image
+    }
   },
   methods: {
     goThisStudy() {
