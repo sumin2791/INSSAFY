@@ -1,3 +1,24 @@
-![header img](./img.jpg)
+# example
 
-# PJT1 - Sub3 (SSAFY인을 위한 SNS)
+## Project setup
+```
+yarn install
+```
+
+### Compiles and hot-reloads for development
+```
+yarn serve
+```
+
+### Compiles and minifies for production
+```
+yarn build
+```
+
+### Lints and fixes files
+```
+yarn lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
