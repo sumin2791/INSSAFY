@@ -18,9 +18,6 @@ export default {
       imageUrl: '',
     };
   },
-  created() {
-    console.log(this.getGenerationColor);
-  },
   computed: {
     ...mapGetters('auth', ['getUserImage', 'getGenerationColor']),
   },

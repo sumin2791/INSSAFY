@@ -196,10 +196,8 @@ export default {
     },
     //메인 빈 공간 메우기위해 최신 보드 추가( 최소 8개 의 슬라이드 유지)
     addSeggest() {
-      console.log(this.favorites.length);
       this.actNewBoards().then((result) => {
         const boards = result;
-        console.log(boards);
         for (let i = 0; i < boards.length; i++) {
           if (!this.$store.getters['auth/getSubscribed'](boards[i].board_id)) {
             //suggest에 사용할 보드 추가

@@ -43,7 +43,7 @@
                       ></v-text-field>
                     </div>
                     <!-- 이메일 -->
-                    <div>
+                    <div id="email-div">
                       {{ myInfo.email }}
                     </div>
 
@@ -65,7 +65,7 @@
                     </div>
                   </div>
                   <!-- edit 버튼('나'일 때만 보여주기) -->
-                  <div class="align-self-start">
+                  <div id="edit-btn" class="align-self-start">
                     <v-btn
                       icon
                       outlined
@@ -554,5 +554,19 @@ export default {
 }
 .ani-hover:hover {
   transform: scale(1.01);
+}
+
+/* 모바일 작은 화면 대응을 위해 css 추가 */
+#edit-btn {
+  position: absolute;
+  margin-top: -10px;
+  right: 14px;
+}
+#email-div {
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 </style>

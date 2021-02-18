@@ -36,10 +36,6 @@ export default {
       board_image: false,
     };
   },
-  created() {
-    console.log(this.favorite);
-  },
-  methods: {},
 };
 </script>
 
