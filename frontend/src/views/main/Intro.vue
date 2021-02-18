@@ -9,9 +9,9 @@
     <div class="cont">
       <p class="b-desc">소프트웨어로<br />더 나은 세상을 만드는 <br />싸피인입니다</p>
     </div>
-    <div class="btn">
+    <!-- <div class="btn">
       <p>시작하기</p>
-    </div>
+    </div> -->
     <!-- <img :src="require(`@/assets/images/intro.jpg`)" alt="" srcset=""> -->
   </div>
 </template>

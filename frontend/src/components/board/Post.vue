@@ -471,6 +471,9 @@ export default {
   margin: 0 0 1% 1%;
   font-size: 16px;
 }
+#sentence{
+  margin:0px;
+}
 /* 댓글, 좋아요, 북마크 부분 */
 #actions {
   width: 100%;
