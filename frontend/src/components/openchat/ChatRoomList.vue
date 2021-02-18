@@ -61,6 +61,10 @@ export default {
     selectThisChat(chatList) {
       // 선택된 채팅방 없을 때는 채팅방 연결해주기
       if (!this.selectChatRoom) {
+        console.log('들옴?')
+        // vuex 정보를 갱신해서
+        this.$store.dispatch('chat/isSelected', chatList)
+        console.log(this.selectChatRoom)
         // 바로 연결을 해준다
         this.connect()
       }
@@ -76,8 +80,8 @@ export default {
 
       // 채팅했던 메세지 내용 불러오기
       const params = {
-        endNum: 100,
-        startNum: 0,
+        endNUm: 100,
+        startNUm: 0,
         room_id: this.selectChatRoom,
         user_id: String(localStorage.userId),
         opp_id: this.selectOppId,
@@ -94,8 +98,8 @@ export default {
     },
     // 처음 채팅방 들어갈 때 확인
     connect() {
-      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      const serverURL = 'http://localhost:8000/ws';
+      const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+      // const serverURL = 'http://localhost:8000/ws';
       let socket = new SockJS(serverURL);
       this.stompClient = Stomp.over(socket);
       this.$store.dispatch('chat/checkSocket', Stomp.over(socket))
@@ -112,18 +116,18 @@ export default {
           console.log('구독으로 받은 메시지 입니다.', res.body);
           const receive = JSON.parse(res.body);
           
-          // 채팅방 입장시 알림 메세지 개수 초기화
-          const params = {
-            my_id: this.userId,
-            opp_id: this.oppUserId,
-          }
-          chatApi.updateNotice(params)
-            .then(res => {
-              console.log(res, '잘 넘어옴?')
-            })
-            .catch(err => {
-              console.error(err)
-            })
+          // // 채팅방 입장시 알림 메세지 개수 초기화
+          // const params = {
+          //   my_id: this.userId,
+          //   opp_id: this.oppUserId,
+          // }
+          // chatApi.updateNotice(params)
+          //   .then(res => {
+          //     console.log(res, '잘 넘어옴?')
+          //   })
+          //   .catch(err => {
+          //     console.error(err)
+          //   })
       });
       },
       (error) => {
@@ -135,12 +139,12 @@ export default {
     },
     // 소켓 재연결하기(끊었다가 다시 연결)
     reConnect() {
-      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      const serverURL = 'http://localhost:8000/ws';
+      const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+      // const serverURL = 'http://localhost:8000/ws';
   
       let socket = new SockJS(serverURL);
       console.log(this.stompClient, '여기야여기')
-      if (this.stompClient != null) {
+      if (this.stompClient !== null) {
         // 끊었다가 재연결
         this.stompClient.disconnect();
         this.$store.dispatch('chat/checkSocket', null)
@@ -165,13 +169,13 @@ export default {
                 my_id: this.userId,
                 opp_id: this.oppUserId,
               }
-              chatApi.updateNotice(params)
-                .then(res => {
-                  console.log(res, '잘 넘어옴?')
-                })
-                .catch(err => {
-                  console.error(err)
-                })
+              // chatApi.updateNotice(params)
+              //   .then(res => {
+              //     console.log(res, '잘 넘어옴?')
+              //   })
+              //   .catch(err => {
+              //     console.error(err)
+              //   })
           });
         },
         (error) => {

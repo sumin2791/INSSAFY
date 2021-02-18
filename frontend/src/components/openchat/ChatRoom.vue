@@ -5,7 +5,6 @@
       color="#5C5C64"
       dark
       id="room-title"
-      @click="connect"
     >
       <!-- 채팅 상대방 닉네임 보여줄 부분 -->
       <v-toolbar-title text-color="white">{{ oppNickName }}</v-toolbar-title>
@@ -103,10 +102,10 @@ export default {
     messages() {
       return this.$store.state.chat.selectedMessages
     },
-    // // 소켓 연결에서 이용
-    // stompClient() {
-    //   return this.$store.state.chat.stompClient
-    // }
+    // 소켓 연결에서 이용
+    stompClient() {
+      return this.$store.state.chat.stompClient
+    }
   },
   data() {
     return {
@@ -114,7 +113,6 @@ export default {
       sendContents: '',
       // 현재 접속한 유저
       userId: String(localStorage.userId),
-      stompClient: this.$store.state.chat.stompClient,
     }
   },
   methods: {
@@ -147,6 +145,55 @@ export default {
     //     }
     //   );
     // },
+    // 메세지 받기
+    receiveMessage() {
+      console.log(this.stompClient)
+      // 연결 중이라 받는게 가능할 때
+      if (this.stompClient && this.stompClient.connected) {
+        this.stompClient.subscribe('/message/' + this.oppRoomId + '/' + this.userId, (res) => {
+          console.log('구독으로 받은 메시지 입니다.', res.body);
+          const received = JSON.parse(res.body);
+          
+          // 채팅방 입장시 알림 메세지 개수 초기화
+          const params = {
+            my_id: this.userId,
+            opp_id: this.oppUserId,
+          }
+          
+          chatApi.updateNotice(params)
+            .then(res => {
+              console.log(res, '잘 넘어옴?')
+            })
+            .catch(err => {
+              console.error(err)
+            })
+
+          // 뿌려줄 res.data 태그
+          // 1 - 전체 감쌀 부분
+          const divReceive = document.createElement("div");
+          // 속성 주기
+          divReceive.setAttribute("style", 
+          "display: flex; flex-direction: row-reverse; justify-content: flex-end; align-items: flex-end; width: 100%; padding: 12px 0;"
+          );
+          // 2- 날짜 부분
+          const divReceiveDate = document.createElement("div");
+          divReceiveDate.setAttribute("style", "font-size: 0.75rem; font-weight: 400; margin: 0 4px;");
+          // 텍스트 요소 꼭 필요
+          divReceiveDate.textContent = timeForToday(received.date)
+          divReceive.appendChild(divReceiveDate)
+          // 3- 내용 부분
+          const divReceiveMsg = document.createElement("div");
+          divReceiveMsg.textContent = received.msg
+          divReceiveMsg.setAttribute("style", "display: inline; float: right; padding: 0.4em 0.8em; border-radius: 0.7em 0.7em 0.7em 0; background-color: var(--basic-color-bg); color: var(--basic-color-fill); max-width: 70%; margin-left: 4px;")
+          divReceive.appendChild(divReceiveMsg)
+          // 이를 id로 검색해서 해당 지점에 달아준다
+          const target = document.getElementById("socket")
+          target.appendChild(divReceive)
+
+        })
+
+      }
+    },
     // 메세지 보내기
     sendMessage() {
       if (this.stompClient && this.stompClient.connected && this.isPossibleChat) {
@@ -193,6 +240,9 @@ export default {
       // 이를 id로 검색해서 해당 지점에 달아준다
       const target = document.getElementById("socket")
       target.appendChild(div)
+
+      // 받는 작업도 활성화시켜주자
+      // this.receiveMessage()
       } 
       // 연결이 안되었음을 알려준다
       else {
@@ -215,18 +265,10 @@ export default {
       while (parent.hasChildNodes()) {
         parent.removeChild(parent.firstChild);
       }       
-      const serverURL = 'http://localhost:8000/ws';
-      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      let socket = new SockJS(serverURL);
-      if (this.stompClient != null) {
-        this.stompClient.disconnect();
-        this.stompClient = null;
-        // vuex 변환
-        this.$store.dispatch('chat/checkSocket', null)
-      } else {
-        this.stompClient = Stomp.over(socket);
-        // vuex 변환
-        this.$store.dispatch('chat/checkSocket', Stomp.over(socket))
+      // 소켓 연결 해제하기
+      if (this.stompClient !== null) {
+        // 끊어주기
+        this.stompClient.disconnect()
       }
     },
   },
