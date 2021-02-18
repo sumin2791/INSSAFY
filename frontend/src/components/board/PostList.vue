@@ -35,15 +35,15 @@ export default {
     InfiniteLoading
   },
   watch:{
-    writeFlag:function(){
-      this.page=0
-      location.reload();
-    },
-    re:function(){
-      this.page=0
-      location.reload();
-      // this.infiniteHandler()
-    },
+    // writeFlag:function(){
+    //   this.page=0
+    //   location.reload();
+    // },
+    // re:function(){
+    //   this.page=0
+    //   location.reload();
+    //   this.infiniteHandler()
+    // },
   },
   computed:{
     writeFlag(){

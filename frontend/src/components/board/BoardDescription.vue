@@ -257,7 +257,7 @@ export default {
     },
     btnModify() {
       this.Edit = !this.Edit
-      alert(`Edit태그 불러오기!`);
+      // alert(`Edit태그 불러오기!`);
     },
     addHashtag(){
       if(this.tempHashtags.length===5){
@@ -320,7 +320,7 @@ export default {
       this.$store.dispatch('addfunc/isUsed', addFuncState);
 
       this.cancel()
-      alert(`수정!`);
+      // alert(`수정!`);
     },
 
     //보드삭제

@@ -113,7 +113,10 @@
         </div>
         <!-- 게시글 내용 -->
         <div id="description">
-          {{ post.post_description }}
+          <p id="sentence" v-for="(d,idx) in descriptions" :key="idx">
+            {{d}}
+          </p>
+          <!-- {{ post.post_description }} -->
         </div>
         <div>
           <img id="description-image" v-if="post.post_image" :src="post.post_image" alt="이미지 미리보기..." />
@@ -243,6 +246,10 @@ export default {
       }
       return flag;
     },
+    // 띄어쓰기 만들기
+    descriptions(){
+      return this.post.post_description.split('\n')
+    }
   },
   watch: {
     // '$route':'fetchData'
@@ -605,6 +612,9 @@ export default {
   margin: 0 auto 1% auto;
   font-size: 16px;
   max-width: 80%;
+}
+#sentence{
+  margin:0px;
 }
 /* 댓글, 좋아요, 북마크 부분 */
 #actions {

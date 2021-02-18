@@ -447,16 +447,49 @@ export default {
           console.log(responseUpload)
           postItem.post_image = String(responseUpload.data.imgPath)
         }
-        console.log('데이터 넘길때 어떻게 나오나?')
-        console.log(postItem)
+
         await postApi.create(postItem)
           .then(res=>{
-            this.$store.dispatch('board/isWriteFlag')
-            const nowName = this.$route.name
-            const nowBoardId = this.$route.params.board_id
+            
+            // this.$store.dispatch('board/isWriteFlag')
+            const curationName = this.$route.name
+            let BOARD_ID
+            if(curationName==="Board" || curationName==="Study"){
+              
+              BOARD_ID = Number(this.$route.params.board_id)
+            }else{
+              BOARD_ID = this.$store.state.curationId[curationName]
+
+            }
+            const EACH_LEN = 1
+            postApi.getPostList({board_id:BOARD_ID, user_id:localStorage.userId,page:0,size:EACH_LEN})
+            .then(res=>{
+              const newPostId = res.data.postList[0].post_id
+
+              let returnName
+              if(curationName==='Market'){
+                returnName = 'MarketPost'
+                this.$router.push({ name: returnName, params: { post_id: newPostId } });
+              }else if(curationName ==='LearnShare'){
+                returnName = 'LearnSharePost'
+                this.$router.push({ name: returnName, params: { post_id: newPostId } });
+              }else if(curationName ==='StudyMain'){
+                returnName = 'StudyMainPost'
+                this.$router.push({ name: returnName, params: { post_id: newPostId } });
+              }else if(curationName ==='Recruitment'){
+                returnName = 'RecruitmentPost'
+                this.$router.push({ name: returnName, params: { post_id: newPostId } });
+              }else{
+                if(curationName==='Study'){
+                  returnName = 'StudyGroupPost'
+                }else{
+                  returnName = 'Post'
+                }
+                this.$router.push({ name: returnName, params: { board_id:BOARD_ID,post_id: newPostId } });
+              }
+            })
             
             
-            this.$router.push({ name: nowName, params: { board_id: nowBoardId } });
           })
           .catch(err=>{
             console.log(`post 생성 실패 ${err}`)

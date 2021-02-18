@@ -6,7 +6,7 @@ public class UserDto {
     private String user_password;
     private String user_nickname;
     private String user_location;
-    private String user_generation;
+    private int user_generation;
     private String user_image;
     private int user_auth;
     private String user_authKey;
@@ -60,11 +60,11 @@ public class UserDto {
         this.user_location = user_location;
     }
 
-    public String getUser_generation() {
+    public int getUser_generation() {
         return this.user_generation;
     }
 
-    public void setUser_generation(String user_generation) {
+    public void setUser_generation(int user_generation) {
         this.user_generation = user_generation;
     }
 
