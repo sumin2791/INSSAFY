@@ -88,7 +88,7 @@
                     </template>
                   </b-modal>
                   <!-- 신고 -->
-                  <v-list-item>
+                  <v-list-item v-if="!flagWriter" @click="report">
                     <v-list-item-title>
                       신고
                     </v-list-item-title>
@@ -292,6 +292,16 @@ export default {
     }
   },
   methods: {
+    // 신고하기
+    openToast: function(msg, type) {
+      this.$toast.open({
+        message: msg,
+        type: type,
+      });
+    },
+    report(){
+      this.openToast(`비방/비하 등 유해하다고 판단되어 신고접수하였습니다.`, 'warning');
+    },
     // 권한주기
     updateManager(){
       

@@ -95,6 +95,9 @@
             </v-chip>
           </div>
           <div>{{ post.post_title }}</div>
+          <div class="ml-1" id="is-image" v-if="post.post_image!=''">
+            <i class="far fa-image"></i>
+          </div>
         </div>
         <!-- 게시글 내용 -->
         <div id="description">
@@ -114,6 +117,7 @@
             class="mr-1"
             v-if="post.post_image"
           >mdi-image-filter</v-icon> -->
+          
           <div id="bottom-comment">
             <v-icon middle class="mr-1">mdi-comment-outline</v-icon>
             <span v-if="isComment">{{ post.comment_count }}</span>
@@ -465,6 +469,10 @@ export default {
   align-items: center;
   font-size: 18px;
   font-weight: 600;
+}
+/* 사진유무 */
+.is-image{
+  transform: translate(0,30px);
 }
 /* 게시글 내용 */
 #description {

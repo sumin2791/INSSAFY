@@ -22,7 +22,8 @@ export default {
   name:'VoteItem',
   props:{
     voteId:Number,
-    isManager:Boolean
+    isManager:Boolean,
+    inBoard:Boolean,
   },
   components:{
     VuePoll
@@ -81,7 +82,8 @@ export default {
     addVote(obj){
       vote_select(localStorage.userId,this.options.answers[obj.value]['id'])
       .then(res=>{
-        console.log(res)
+        // console.log(res)
+        this.isVoted = 1 
         this.$store.dispatch('addfunc/flagWrite')
       })
       .catch(err=>{
@@ -91,7 +93,11 @@ export default {
     },
     //투표 보여주기
     show(){
-      this.isShow = !this.isShow
+      if(!this.inBoard){
+        alert('구독후 이용할 수 있어요 :)')
+      }else{
+        this.isShow = !this.isShow
+      }
     },
     // 투표삭제
     voteDelete(){

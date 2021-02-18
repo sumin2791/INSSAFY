@@ -148,7 +148,6 @@ export default {
         this.comment=''
         commentApi.comment_create(params)
           .then(res=>{
-            console.log(res.data.message)
             if(res.data.message==='No Permission'){
               alert('구독 후에 이용가능합니다.')
             }else{
