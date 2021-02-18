@@ -248,7 +248,14 @@ export default {
     },
     // 띄어쓰기 만들기
     descriptions(){
-      return this.post.post_description.split('\n')
+      const re1 = /\n/
+      if(re1.test(this.post.post_description)){
+        return this.post.post_description.split('\n')
+      }else{
+        return [this.post.post_description]
+      }
+      
+      // return this.post.post_description.split('\n')
     }
   },
   watch: {
