@@ -59,16 +59,79 @@ export default {
   methods: {
     // 현재 채팅방 메세지들 가져오기 - 초기 채팅방 가져올 때 한번만
     selectThisChat(chatList) {
+      // 선택된 채팅방 없을 때는 채팅방 연결해주기
+      if (!this.selectChatRoom) {
+        // 바로 연결을 해준다
+        this.connect()
+      }
+
       // 1. vuex !== 클릭한 채팅방: 연결 끊고 재 연결 시켜준다
-      if (chatList.roomId !== this.selectChatRoom ) {
+      if (chatList.roomId !== this.selectChatRoom && this.selectChatRoom ) {
         // 소켓 끊었다가 다시 연결
         this.reConnect()
         // vuex에 새로운 정보 갱신 - 지우고 => 다시 넣기
         this.$store.dispatch('chat/isNotSelected')
         this.$store.dispatch('chat/isSelected', chatList)
       }
-      // 메세지 정보를 가져오자
-      else { return }
+
+      // 채팅했던 메세지 내용 불러오기
+      const params = {
+        endNum: 100,
+        startNum: 0,
+        room_id: this.selectChatRoom,
+        user_id: String(localStorage.userId),
+        opp_id: this.selectOppId,
+      }
+
+      chatApi.getMessages(params)
+        .then(res => {
+          this.$store.dispatch('chat/getMessages', res.data.msgList)
+        })
+        .catch(err => {
+          console.error(err)
+        })
+
+    },
+    // 처음 채팅방 들어갈 때 확인
+    connect() {
+      // const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+      const serverURL = 'http://localhost:8000/ws';
+      let socket = new SockJS(serverURL);
+      this.stompClient = Stomp.over(socket);
+      this.$store.dispatch('chat/checkSocket', Stomp.over(socket))
+      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+      this.stompClient.connect(
+      {},
+      (frame) => {
+        // 소켓 연결 성공
+        this.connected = true;
+        console.log('소켓 연결 성공', frame);
+        // 서버의 메시지 전송 endpoint를 구독합니다.
+        // 이런형태를 pub sub 구조라고 합니다.
+        this.stompClient.subscribe('/message/' + this.selectChatRoom + '/' + String(localStorage.userId), (res) => {
+          console.log('구독으로 받은 메시지 입니다.', res.body);
+          const receive = JSON.parse(res.body);
+          
+          // 채팅방 입장시 알림 메세지 개수 초기화
+          const params = {
+            my_id: this.userId,
+            opp_id: this.oppUserId,
+          }
+          chatApi.updateNotice(params)
+            .then(res => {
+              console.log(res, '잘 넘어옴?')
+            })
+            .catch(err => {
+              console.error(err)
+            })
+      });
+      },
+      (error) => {
+        // 소켓 연결 실패
+        console.log('소켓 연결 실패', error);
+        this.connected = false;
+        }
+      );
     },
     // 소켓 재연결하기(끊었다가 다시 연결)
     reConnect() {
@@ -84,7 +147,7 @@ export default {
         // vuex 업데이트 후 재연결
         this.stompClient = Stomp.over(socket);
         this.$store.dispatch('chat/checkSocket', Stomp.over(socket))
-        console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+        console.log(`소켓 연결을 재시도합니다. 서버 주소: ${serverURL}`);
         this.stompClient.connect(
           {},
           (frame) => {
