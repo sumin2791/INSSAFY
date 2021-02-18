@@ -10,7 +10,7 @@
               <div id="header-user-info">
                 <!-- 프로필 사진 연결하기 -->
                 <div>
-                  <Profile id="profile-image" :getUserImage="image"/>
+                  <Profile id="profile-image" :getUserImage="image" />
                 </div>
                 <!-- 작성자이름, 작성일자 -->
                 <div id="header-info">
@@ -95,11 +95,14 @@
             </v-chip>
           </div>
           <div>{{ post.post_title }}</div>
+          <div class="ml-1" id="is-image" v-if="post.post_image != ''">
+            <i class="far fa-image"></i>
+          </div>
         </div>
         <!-- 게시글 내용 -->
         <div id="description">
-          <p id="sentence" v-for="(d,idx) in descriptions" :key="idx">
-            {{d}}
+          <p id="sentence" v-for="(d, idx) in descriptions" :key="idx">
+            {{ d }}
           </p>
           <!-- {{ post.post_description }} -->
         </div>
@@ -114,6 +117,7 @@
             class="mr-1"
             v-if="post.post_image"
           >mdi-image-filter</v-icon> -->
+
           <div id="bottom-comment">
             <v-icon middle class="mr-1">mdi-comment-outline</v-icon>
             <span v-if="isComment">{{ post.comment_count }}</span>
@@ -199,18 +203,23 @@ export default {
       return timeForToday(this.post.post_date);
     },
     skill() {
-      if (this.post.post_header != '전체' && this.post.post_header != 'null' && this.post.post_header !=''&& this.post.post_header!=null) {
+      if (
+        this.post.post_header != '전체' &&
+        this.post.post_header != 'null' &&
+        this.post.post_header != '' &&
+        this.post.post_header != null
+      ) {
         return this.post.post_header.split('|');
       }
       return [];
     },
-    image(){
-      return this.post.user_image
+    image() {
+      return this.post.user_image;
     },
     // 띄어쓰기 만들기
-    descriptions(){
-      return this.post.post_description.split('\n')
-    }
+    descriptions() {
+      return this.post.post_description.split('\n');
+    },
   },
   mounted() {
     this.fetchData();
@@ -248,7 +257,7 @@ export default {
         },
       };
       const curationName = this.$route.name;
-      console.log(curationName);
+      // console.log(curationName);
       if (curationName === 'Board' || curationName === 'Study') {
         data.params.board_id = Number(this.$route.params.board_id);
       } else {
@@ -279,7 +288,7 @@ export default {
       postApi
         .likePost({ user_id: localStorage.getItem('userId'), post_id: this.post.post_id })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           if (res.data.message === 'No Subscription') {
             alert('구독 후에 이용 가능합니다');
           } else {
@@ -319,30 +328,31 @@ export default {
         my_id: localStorage.getItem('userId'),
         opp_id: this.post.user_id,
       };
-      chatApi.createChatRoom(params)
-        .then(res => {
-          console.log(res)
-            if (res.data.message==="fail") {
-              // 대화한 적 있다라는 메세지 보여주기
-              this.$toast.open({
-                message: `기존의 대화방 이동`,
-                type: 'success',
-                duration: 1000,
-                position: 'top-right',
-              }); 
-            } else {
-              this.$toast.open({
-                message: `새 대화방 생성`,
-                  duration: 1000,
-                  position: 'top-right',
-                })
-              }
-            // 그리고 라우터 변환
-            this.$router.push({ name: 'ChatPage' });
+      chatApi
+        .createChatRoom(params)
+        .then((res) => {
+          // console.log(res);
+          if (res.data.message === 'fail') {
+            // 대화한 적 있다라는 메세지 보여주기
+            this.$toast.open({
+              message: `기존의 대화방 이동`,
+              type: 'success',
+              duration: 1000,
+              position: 'top-right',
+            });
+          } else {
+            this.$toast.open({
+              message: `새 대화방 생성`,
+              duration: 1000,
+              position: 'top-right',
+            });
+          }
+          // 그리고 라우터 변환
+          this.$router.push({ name: 'ChatPage' });
         })
-        .catch(err => {
-          console.error(err)
-        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
 };
@@ -440,7 +450,7 @@ export default {
   cursor: pointer;
   height: 150px;
   overflow: hidden;
-  text-overflow:ellipsis;
+  text-overflow: ellipsis;
   -webkit-line-clamp: 3; /* 라인수 */
   -webkit-box-orient: vertical;
   /* word-wrap:break-word;  */
@@ -466,10 +476,17 @@ export default {
   font-size: 18px;
   font-weight: 600;
 }
+/* 사진유무 */
+.is-image {
+  transform: translate(0, 30px);
+}
 /* 게시글 내용 */
 #description {
   margin: 0 0 1% 1%;
   font-size: 16px;
+}
+#sentence {
+  margin: 0px;
 }
 /* 댓글, 좋아요, 북마크 부분 */
 #actions {

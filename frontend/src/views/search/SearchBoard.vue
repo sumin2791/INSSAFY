@@ -34,7 +34,7 @@
           <Board :board="board" class="real-shadow-text" />
         </v-col>
       </v-row>
-      <infinite-loading @infinite="infiniteHandler" spinner="waveDots">
+      <infinite-loading @infinite="infiniteHandler" spinner="waveDots" ref="infiniteLoading">
         <div slot="no-more" style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;">
           목록의 끝입니다 :)
         </div>
@@ -56,18 +56,20 @@ export default {
     InfiniteLoading,
   },
   data() {
-    return {
-      search: {
-        infiniteState: null,
-      },
-    };
+    return {};
+  },
+  created() {
+    this.payload.page = 0;
   },
   computed: {
     ...mapState('search', ['searchList', 'size', 'payload']),
   },
   watch: {
-    searchList() {
-      this.infiniteState.loaded();
+    payload: {
+      deep: true,
+      handler(v) {
+        if (v.page == 0) this.$refs.infiniteLoading.stateChanger.reset();
+      },
     },
   },
   methods: {
@@ -76,14 +78,14 @@ export default {
     goToCreateBoard() {
       return this.$router.push({ name: 'BoardForm' });
     },
+
     infiniteHandler($state) {
-      this.infiniteState = $state;
       this.actSearchAllBoard().then((v) => {
         if (v) {
           setTimeout(() => {
-            this.SET_NEXT_PAGE();
+            this.$store.commit('search/SET_NEXT_PAGE');
             $state.loaded();
-          }, 1000);
+          }, 600);
         } else {
           $state.complete();
         }

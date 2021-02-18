@@ -10,97 +10,58 @@
     color="F9F9F9"
     @click="moveToPost"
   >
+    <div class="user-info  container-shadow">
+      <div class="u-profile">
+        <Profile :getUserImage="post.user_image" />
+      </div>
+      <div class="d-info">
+        <p class="text-ellipsis m-desc">{{ post.user_nickname }}</p>
+        <p class="text-ellipsis l-desc">{{ post.post_date | moment('YY.MM.DD. hh:mm A') }}</p>
+      </div>
+    </div>
+    <!-- 포스트 제목 -->
+    <div class="post-content">
+      <p class="p-title b-desc text-ellipsis">{{ post.post_title }}</p>
+      <p class="p-desc m-desc">{{ post.post_description }}</p>
+      <div class="p-like">
+        <v-icon small> mdi-thumb-up </v-icon>
+        {{ post.post_like }}
+      </div>
+    </div>
+
     <div
       class="img-wrap
       d-flex
       flex-column"
     >
-      <!-- 보드 이미지 위로 나오는 부분 -->
-      <div class="text">
-        <div class="board-title">
-          {{ post.post_name }}
-        </div>
-      </div>
-      <GradientGenerator class="myinfo-list" style="height: 100px" v-if="post.post_image == null" :radius="radius" />
-      <v-img
-        height="100px"
-        class="myinfo-list blur"
-        v-if="post.post_image != null"
-        :style="{ backgroundImage: `url(${post.post_image})` }"
-      >
-      </v-img>
+      <img class="p-image" v-if="image" :src="image" />
     </div>
-    <!-- 포스트 제목 -->
-    <v-card-title
-      class="
-        d-flex
-        flex-row
-        space-between
-        pa-0"
-    >
-      <v-col cols="9" id="post-title" class="font-weight-black">{{ post.post_title }}</v-col>
-      <v-col
-        cols="3"
-        id="post-date"
-        class="text-overline 
-          pl-0
-          text-end"
-        >{{ post.post_date | moment('YY.MM.DD.') }}</v-col
-      >
-    </v-card-title>
-
-    <!-- 포스트 글 내용 -->
-    <v-card-text
-      id="post-contents"
-      class="font-weight-bold
-        py-0 pl-auto"
-    >
-      {{ post.post_description }}
-    </v-card-text>
-    <v-card-actions>
-      <v-list-item class="grow">
-        <!-- <v-list-item-content>
-          <v-list-item-title>
-            <v-icon>
-              mdi-account-group
-            </v-icon>
-            {{ `?` }}
-          </v-list-item-title>
-        </v-list-item-content> -->
-
-        <!-- 포스트 좋아요/댓글 수 -->
-        <v-row align="center" justify="end">
-          <span style="float:right;">
-            <v-icon small> mdi-thumb-up </v-icon>
-            {{ post.post_like }}
-            <!-- <v-icon small> mdi-comment-processing </v-icon>
-            {{ `?` }} -->
-          </span>
-        </v-row>
-      </v-list-item>
-    </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import GradientGenerator from '@/components/etc/GradientGenerator';
+import Profile from '@/components/etc/OtherProfile';
+
 export default {
   name: 'MyPost',
   props: {
     post: Object,
   },
   components: {
-    GradientGenerator,
+    Profile,
   },
   data() {
     return {
       board_image: null,
       radius: '15px',
+      image: false,
     };
   },
-  mounted() {
-    console.log(this.post);
+  created() {
+    if (this.post.post_image != '' && this.post.post_image != 'null' && this.post.post_image != null)
+      this.image = this.post.post_image;
   },
+
   methods: {
     moveToPost() {
       this.$router.push(`/board/${this.post.board_id}/post/${this.post.post_id}`);
@@ -114,29 +75,11 @@ export default {
 #post-box {
   cursor: pointer;
   border-radius: 15px;
+  background-color: var(--basic-color-bg2);
   box-shadow: var(--basic-shadow-c);
-}
-/* 이미지 흐리게 하기 */
-.blur {
-  filter: brightness(50%);
-  z-index: 1;
-}
-.text {
-  position: absolute;
-  width: 100%;
-  margin: 10px 0 !important;
-  height: 100px;
-  color: #ffffff;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  z-index: 2;
-}
-/* 보드로 이동 */
-.board-title {
   cursor: pointer;
 }
+
 /* 게시글 제목 넘치는 부분 처리 */
 #post-title {
   width: 100%;
@@ -169,13 +112,59 @@ export default {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
-.myinfo-list {
+.p-image {
   margin: 10px;
-  width: calc(100% - 20px) !important;
   border-radius: 15px;
   background-size: cover;
   background-position: center;
   background-color: #000;
   box-shadow: var(--basic-shadow-m);
+}
+
+/* 보드 검색 핀터레스트 형태로 개편하며 작성 */
+.user-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  justify-items: center;
+  margin: 10px;
+  padding: 6px;
+  background-color: #fff;
+  border-radius: 13px !important;
+}
+.u-profile {
+  width: 42px;
+  height: 42px;
+}
+.d-info {
+  margin: 0 10px;
+}
+.d-info p {
+  margin: 0;
+}
+.d-info p:nth-child(1) {
+  font-size: 1rem;
+}
+.d-info p:nth-child(2) {
+  font-size: 0.8rem;
+}
+
+/* 타이틀과 내용 */
+.post-content {
+  margin: 5px 10px;
+}
+.p-title {
+  font-size: 1.2rem;
+  margin: 0 0 5px;
+  color: rgba(0, 0, 0, 0.747);
+}
+.p-desc {
+  margin: 0;
+  padding: 5px;
+  font-size: 0.8rem;
+}
+.p-like {
+  float: right;
+  margin: 0 5px 5px 0;
 }
 </style>

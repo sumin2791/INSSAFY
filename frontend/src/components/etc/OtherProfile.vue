@@ -1,24 +1,25 @@
 <template>
   <div id="wrap" @click="clickProfile">
-    <div id="default-image" class="image" v-if="!getUserImage" />
-    <div class="image" v-if="getUserImage" :style="{ backgroundImage: `url(${getUserImage})`}" />
+    <div id="default-image" class="image" v-if="!imageUrl" />
+    <div class="image" v-if="imageUrl" :style="{ backgroundImage: `url(${imageUrl})` }" />
   </div>
 </template>
-
 
 <script>
 export default {
   name: 'Profile',
-  props:{
-    getUserImage:String,
+  props: {
+    getUserImage: String,
   },
   data() {
     return {
-      imageUrl: '',
+      imageUrl: false,
     };
   },
-  computed: {
-
+  created() {
+    if (this.getUserImage != '' && this.getUserImage != null && this.getUserImage != 'null') {
+      this.imageUrl = this.getUserImage;
+    }
   },
   methods: {
     clickProfile: function() {
@@ -27,7 +28,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 #wrap {

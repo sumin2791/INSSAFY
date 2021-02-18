@@ -154,8 +154,8 @@ export default {
           context.commit('setFavorites', res.data.favorite);
         }
       } catch (e) {
-        console.log(e);
-        alert('즐겨찾기 목록을 가져오는 중 문제가 발생했습니다.');
+        // console.log(e);
+        // alert('즐겨찾기 목록을 가져오는 중 문제가 발생했습니다.');
       }
     },
 
@@ -175,8 +175,8 @@ export default {
         });
         context.commit('SET_SUB_HEART_BTNS', payload);
       } catch (e) {
-        console.log(e);
-        alert('인기보드(구독자 순) 목록 요청 중 문제가 발생했습니다.');
+        // console.log(e);
+        // alert('인기보드(구독자 순) 목록 요청 중 문제가 발생했습니다.');
       }
     },
     //게시글 순 목록 요청
@@ -193,8 +193,8 @@ export default {
         });
         context.commit('SET_POST_HEART_BTNS', payload);
       } catch (error) {
-        console.log(error);
-        alert('인기보드(게시글 순) 목록 요청 중 문제가 발생했습니다.');
+        // console.log(error);
+        // alert('인기보드(게시글 순) 목록 요청 중 문제가 발생했습니다.');
       }
     },
 
@@ -205,8 +205,8 @@ export default {
         // console.log(response);
         commit('SET_LIKE_RANK', response.data.like);
       } catch (error) {
-        console.log(error);
-        alert('인기글(좋아요 순) 목록 요청 중 문제가 발생했습니다.');
+        // console.log(error);
+        // alert('인기글(좋아요 순) 목록 요청 중 문제가 발생했습니다.');
       }
     },
     //댓글 순 목록 요청
@@ -216,8 +216,8 @@ export default {
         // console.log(response);
         commit('SET_COMMENT_RANK', response.data.postComment);
       } catch (error) {
-        console.log(error);
-        alert('인기글(댓글 순) 목록 요청 중 문제가 발생했습니다.');
+        // console.log(error);
+        // alert('인기글(댓글 순) 목록 요청 중 문제가 발생했습니다.');
       }
     },
 

@@ -55,10 +55,9 @@
         v-if="!isModify && isEdit"
         @click="deleteCheckItem()"
       >mdi-close</v-icon>
-    </div>
-    
+    </div>   
   </div>
-  
+
 </template>
 
 <script>

@@ -27,6 +27,14 @@
   border-radius: 15px !important;
   background-color: var(--basic-color-bg2) !important;
 }
+/* 한줄 문자열 ... 표시 */
+.text-ellipsis {
+  overflow: hidden;
+  display: -webkit-box;
+  word-break: break-all;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
 
 /* 정사각형 */
 .square {

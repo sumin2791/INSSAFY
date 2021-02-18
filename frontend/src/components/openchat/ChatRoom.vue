@@ -5,7 +5,6 @@
       color="#5C5C64"
       dark
       id="room-title"
-      @click="connect"
     >
       <!-- 채팅 상대방 닉네임 보여줄 부분 -->
       <v-toolbar-title text-color="white">{{ oppNickName }}</v-toolbar-title>
@@ -17,17 +16,18 @@
       </v-btn>
     </v-toolbar>
     <div id="chat-message">
-      <!-- 채팅메세지 부분 -->
-      <div v-if="this.messages">
-        <Message 
-          v-for="(message, idx) in messages.slice().reverse()"
-          :key="idx"
-          :message="message"
-        />
+      <div id="contents">
+        <div v-if="this.messages" class="db">
+          <Message 
+            v-for="(message, idx) in messages.slice().reverse()"
+            :key="idx"
+            :message="message"
+          />
+        </div>
+        <!-- 채팅방 내에 있을 때 보여줄 부분 -->
+        <v-container id="socket">
+        </v-container>
       </div>
-      <!-- 채팅방 내에 있을 때 보여줄 부분 -->
-      <v-container id="socket">
-      </v-container>
       <!-- 채팅 입력 부분 -->
       <div id="input">
           <v-text-field
@@ -73,10 +73,10 @@ export default {
     // this.connect()
   },
   watch: {
-    // 값이 바뀌면 소켓 연결
-    // isInRoom: 'connect',
-    // 채팅방 정보가 바뀌면 소켓 연결
-    // oppRoomId: 'connect'
+    // 실시간 메세지 전달
+    receiveMsg: 'receiveMessage',
+    // 방 이동 flag
+    changeRoom: 'exitRoom',
   },
   computed: {
     // 현재 활성화 채팅방 정보
@@ -103,10 +103,18 @@ export default {
     messages() {
       return this.$store.state.chat.selectedMessages
     },
-    // // 소켓 연결에서 이용
-    // stompClient() {
-    //   return this.$store.state.chat.stompClient
-    // }
+    // 소켓 연결에서 이용
+    stompClient() {
+      return this.$store.state.chat.stompClient
+    },
+    // 소켓연결을 통해 받은 메세지
+    receiveMsg() {
+      return this.$store.state.chat.socketMsg
+    },
+    // 채팅방 1=> 채팅방 2 이동
+    changeRoom() {
+      return this.$store.state.chat.isSwitch
+    }
   },
   data() {
     return {
@@ -114,38 +122,33 @@ export default {
       sendContents: '',
       // 현재 접속한 유저
       userId: String(localStorage.userId),
-      stompClient: this.$store.state.chat.stompClient,
     }
   },
   methods: {
-    // 소켓 연결하기
-    connect() {
-      const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      // const serverURL = 'http://localhost:8000/ws';
-      let socket = new SockJS(serverURL);
-      this.stompClient = Stomp.over(socket);
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
-      this.stompClient.connect(
-        {},
-        (frame) => {
-          // 소켓 연결 성공
-          this.connected = true;
-          console.log('소켓 연결 성공', frame);
-          // 서버의 메시지 전송 endpoint를 구독합니다.
-          // 이런형태를 pub sub 구조라고 합니다.
-          this.stompClient.subscribe('/topic/' + this.room_id + '/' + this.user_id, (res) => {
-            console.log('구독으로 받은 메시지 입니다.', res.body);
+    receiveMessage() {
+      // this.receiveMsg
 
-            // 받은 데이터를 json으로 파싱하고 리스트에 넣어줍니다.
-            //this.recvList.push(JSON.parse(res.body));
-          });
-        },
-        (error) => {
-          // 소켓 연결 실패
-          console.log('소켓 연결 실패', error);
-          this.connected = false;
-        }
+      // 뿌려줄 res.data 태그
+      // 1 - 전체 감쌀 부분
+      const divReceive = document.createElement("div");
+      // 속성 주기
+      divReceive.setAttribute("style", 
+      "display: flex; flex-direction: row-reverse; justify-content: flex-end; align-items: flex-end; width: 100%; padding: 12px 0;"
       );
+      // 2- 날짜 부분
+      const divReceiveDate = document.createElement("div");
+      divReceiveDate.setAttribute("style", "font-size: 0.75rem; font-weight: 400; margin: 0 4px;");
+      // 텍스트 요소 꼭 필요
+      divReceiveDate.textContent = timeForToday(this.receiveMsg.date)
+      divReceive.appendChild(divReceiveDate)
+      // 3- 내용 부분
+      const divReceiveMsg = document.createElement("div");
+      divReceiveMsg.textContent = this.receiveMsg.msg
+      divReceiveMsg.setAttribute("style", "display: inline; float: right; padding: 0.4em 0.8em; border-radius: 0.7em 0.7em 0.7em 0; background-color: var(--basic-color-bg); color: var(--basic-color-fill); max-width: 70%; margin-left: 4px;")
+      divReceive.appendChild(divReceiveMsg)
+      // 이를 id로 검색해서 해당 지점에 달아준다
+      const target = document.getElementById("socket")
+      target.appendChild(divReceive)
     },
     // 메세지 보내기
     sendMessage() {
@@ -193,6 +196,23 @@ export default {
       // 이를 id로 검색해서 해당 지점에 달아준다
       const target = document.getElementById("socket")
       target.appendChild(div)
+
+      // 받는 작업도 활성화시켜주자
+      // this.receiveMessage()
+      }  else if (this.isPossibleChat) {
+          let you;
+          if (this.oppUserNickname) {
+            you = this.oppUserNickname + '님을'
+          } else { you = "대화상대를" }
+          this.$toast.open({
+            message: `Oops! ${you} 다시 클릭해주세요`,
+            type: 'error',
+            duration: 3000,
+          })
+        }
+      // 연결이 안되었음을 알려준다
+      else {
+        return
       }
     },
     exitRoom() {
@@ -207,18 +227,10 @@ export default {
       while (parent.hasChildNodes()) {
         parent.removeChild(parent.firstChild);
       }       
-      // const serverURL = 'http://localhost:8000/ws';
-      const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
-      let socket = new SockJS(serverURL);
-      if (this.stompClient != null) {
-        this.stompClient.disconnect();
-        this.stompClient = null;
-        // vuex 변환
-        this.$store.dispatch('chat/checkSocket', null)
-      } else {
-        this.stompClient = Stomp.over(socket);
-        // vuex 변환
-        this.$store.dispatch('chat/checkSocket', Stomp.over(socket))
+      // 소켓 연결 해제하기
+      if (this.stompClient !== null) {
+        // 끊어주기
+        this.stompClient.disconnect()
       }
     },
   },
@@ -234,28 +246,30 @@ export default {
   padding: 0px 0px 0px 0px !important;
   height: 100%;
 }
-.chat-area {
-/*   border: 1px solid #ccc; */
-  background-color: #FFF;
-  min-height: 90vh;
-  max-height: 92vh;
-  padding: 1em;
-  /* overflow: auto; */
-  box-shadow: 2px 2px 5px 2px rgba(0, 0, 0, 0.3)
-}
+
 /* 채팅방 부분 */
 #chat-message {
-  min-height: calc(90vh - 64px);
-  max-height: 90vh;
+  height: calc(90vh - 64px);
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   overflow-y: scroll !important;
+}
+/* 채팅메세지 부분 */
+#contents {
+  margin-bottom: 25px;
+}
+/* DB에서 가져오는 부분 */
+.db {
+  order: 1;
 }
 /* 댓글 입력 부분 */
 #input {
   display: flex;
   flex-direction: row;
-  margin-top: auto;
+  order: -1;
+  width: 100%;
+  position: absolute;
+  background: #F9F9F9;
 }
 /* 활성화 버튼 */
 .enableSend {

@@ -16,30 +16,25 @@
       flex-column"
     >
       <!-- 보드 이미지 위로 나오는 부분 -->
-      <div class="text">
+      <div id="header-container" class="text">
         <div class="board-title">
           {{ group.board_name }}
         </div>
       </div>
       <GradientGenerator class="myinfo-list" style="height: 100px" v-if="group.board_image == null" :radius="radius" />
-      <v-img src="@/assets/images/slide.jpg" height="100px" class="myinfo-list blur" v-if="group.board_image != null"> </v-img>
+      <div
+        class="myinfo-list blur"
+        style="height: 100px"
+        v-if="group.board_image != null"
+        :style="{ backgroundImage: `url(${group.board_image})` }"
+      />
     </div>
-    <!-- 포스트 제목 -->
-    <v-card-title
-      class="
-        d-flex
-        flex-row
-        space-between
-        pa-0"
-    >
-      <v-col cols="9" id="post-title" class="font-weight-black">{{ group.board_title }}</v-col>
-    </v-card-title>
 
     <!-- 포스트 글 내용 -->
     <v-card-text
       id="post-contents"
       class="font-weight-bold
-        py-0 pl-auto"
+        py-0 pt-4 pl-auto"
     >
       {{ group.board_description }}
     </v-card-text>
@@ -72,27 +67,34 @@
 import GradientGenerator from '@/components/etc/GradientGenerator';
 
 export default {
-  name: "StudyGroup",
+  name: 'StudyGroup',
   data() {
     return {
       radius: '15px',
-    }
+    };
   },
-  props:{
-    group:Object,
+  props: {
+    group: Object,
   },
   components: {
     GradientGenerator,
   },
+  computed: {
+    image() {
+      return this.group.board_image;
+    },
+  },
   methods: {
     goThisStudy() {
-      this.$router.push({ name: 'Study',params:{
-          board_id:this.group.board_id,
-          
-        } });
-    }
+      this.$router.push({
+        name: 'Study',
+        params: {
+          board_id: this.group.board_id,
+        },
+      });
+    },
   },
-}
+};
 </script>
 
 <style scoped>
@@ -114,9 +116,8 @@ export default {
   height: 100px;
   color: #ffffff;
   display: flex;
-  flex-direction: column;
   text-align: center;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   z-index: 2;
 }

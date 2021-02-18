@@ -5,17 +5,9 @@
         class="pt-8"
       >
         <v-row dense>
-          <!-- 뒤로 가기 -->
-          <!-- <router-link 
-            :to="{ name:'Board', 
-              params: {board_id:$route.params.board_id}}"
-            id="back-btn"
-          > -->
-            <button id="back-btn" @click="goBack">
-              뒤로 가기
-            </button>
-          <!-- </router-link> -->
-            
+          <button class="c-btn newmorphism" @click="goBack">
+            뒤로 가기
+          </button>
         </v-row>        
         <v-row dense>
           <v-col class="pb-0">
@@ -156,7 +148,6 @@ export default {
         this.comment=''
         commentApi.comment_create(params)
           .then(res=>{
-            console.log(res.data.message)
             if(res.data.message==='No Permission'){
               alert('구독 후에 이용가능합니다.')
             }else{
@@ -174,7 +165,24 @@ export default {
     },
     // 뒤로가기 구현
     goBack() {
-      this.$router.go(-1);
+      const nowName = this.$route.name
+      let returnName
+      if(nowName==='StudyMainPost'){
+        this.$router.push({ name: 'StudyMain'});
+      }
+      else if(nowName==='MarketPost'){
+        returnName = 'Market'
+      }else if(nowName==='LearnSharePost'){
+        returnName = 'LearnShare'
+      }else if(nowName==='StudyGroupPost'){
+        returnName = 'Study'
+      }else if(nowName==='RecruitmentPost'){
+        returnName = 'Recruitment'
+      }else{
+        returnName = 'Board'
+      }
+      
+      this.$router.push({ name: returnName, params: { board_id: this.post.board_id } });
     },
   }
   
@@ -198,31 +206,20 @@ export default {
   background-color: #ebebe9 !important;
 }
 /* 뒤로가기 버튼 */
-/* #back-btn {
-  all: unset !important;
-} */
-#back-btn {
-  text-align: center;
-  margin: 0 0 10px 0;
+.c-btn {
+  width: 100px;
   height: 50px;
-  width: 180px;
+  font-weight: 700;
+  margin-bottom: 5px;
   border: none;
-  border-radius: 15px;
-  color: var(--basic-color-fill);
-  text-shadow: 0 0px 1px var(--basic-color-fill3);
-  background: var(--basic-color-bg) !important;
-  box-shadow: 10px 10px 20px #bcbcba, 
-              -10px -10px 20px #ffffff;
-  transition: 0.3s all ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-radius: 20px;
+  transition: all 0.6s ease !important;
 }
-
-#back-btn *:hover,
-#back-btn *:active {
-  background-color: var(--basic-color-fill3) !important;
-  color: var(--basic-color-bg);
+.c-btn:hover,
+.c-btn:active {
+  background: #ebebe9;
+  background: linear-gradient(145deg, #d4d4d2, #fbfbf9);
+  box-shadow: 10px 10px 20px #b3b3b1, -10px -10px 20px #ffffff;
 }
 /* 댓글 입력 부분 */
 #input {

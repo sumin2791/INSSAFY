@@ -50,12 +50,7 @@ export default {
       this.$refs.searchBar.style.marginTop = `${value}px`;
     },
     clickCloser: function() {
-      this.$store.commit('setToastTogle');
-    },
-    onSearching: function() {
-      this.$store.commit('setToastTogle');
-      this.$store.commit('setSearchKeyword', this.keyword);
-      // this.$refs.searchBtn.blur();
+      this.$store.commit('setToastClose');
     },
     clickDeleteBtn: function() {
       this.keyword = '';
