@@ -312,54 +312,30 @@ export default {
         my_id: localStorage.getItem('userId'),
         opp_id: this.post.user_id,
       };
-      chatApi
-        .createChatRoom(params)
-        .then((res) => {
-          let existChatRoom;
-          // 1. 실패한다면 이미 채팅방 존재
-          if (res.data.message === 'fail') {
-            // 현재 가지고 있는 채팅방을 가져오자
-            chatApi
-              .getChatList({ user_id: String(localStorage.userId) })
-              .then((res) => {
-                const chatLists = res.data.roomInfo;
-
-                for (let i = 0; i < chatLists.length; i++) {
-                  if (chatLists[i].opp_id === this.post.user_id) {
-                    this.chatRoomId = chatLists[i].roomId;
-                    break;
-                  }
-                }
-                // break => 채팅방 존재(vuex 변화)
-                existChatRoom = {
-                  roomId: this.chatRoomId,
-                  opp_nickName: this.nickname,
-                  opp_id: this.post.user_id,
-                };
-                // vuex state 변화
-                this.$store.dispatch('chat/isSelected', existChatRoom);
-                // 그리고 라우터 변환
-                this.$router.push({ name: 'ChatPage' });
-              })
-              .catch((err) => {
-                console.error(err);
-              });
-          } else {
-            // 2. 처음이라면 대화방 만들어주고 보내주기
-            const newChatRoom = {
-              roomId: res.data.roomId,
-              opp_nickName: this.nickname,
-              opp_id: this.post.user_id,
-            };
-            // state 변환
-            this.$store.dispatch('chat/isSelected', newChatRoom);
+      chatApi.createChatRoom(params)
+        .then(res => {
+          console.log(res)
+            if (res.data.message==="fail") {
+              // 대화한 적 있다라는 메세지 보여주기
+              this.$toast.open({
+                message: `기존의 대화방 이동`,
+                type: 'success',
+                duration: 1000,
+                position: 'top-right',
+              }); 
+            } else {
+              this.$toast.open({
+                message: `새 대화방 생성`,
+                  duration: 1000,
+                  position: 'top-right',
+                })
+              }
             // 그리고 라우터 변환
             this.$router.push({ name: 'ChatPage' });
-          }
         })
-        .catch((err) => {
-          console.error(err);
-        });
+        .catch(err => {
+          console.error(err)
+        })
     },
   },
 };

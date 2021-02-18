@@ -26,6 +26,11 @@
 // chat api
 import * as chatApi from "@/api/chat" 
 
+//소켓 설정
+import SockJS from 'sockjs-client';
+import Stomp from 'webstomp-client';
+
+
 export default {
   name:'ChatRoom',
   components:{
@@ -36,47 +41,75 @@ export default {
   },
   data() {
     return {
-      // 렌더링해서 html 끼워진 텍스트 갱신하게끔
-      render: [
-        {first: 1, bool: true},
-        {second: 2, boool: false},
-      ],
     }
+  },
+  computed: {
+    stompClient() {
+      return this.$store.state.chat.stompClient
+    },
+    // 선택된 채팅방 정보
+    selectChatRoom() {
+      return this.$store.state.chat.selectedChatRoom
+    },
   },
   methods: {
     // 현재 채팅방 메세지들 가져오기 - 초기 채팅방 가져올 때 한번만
     selectThisChat(chatList) {
-      // 정보 갱신전 제거를 해줘야 업데이트 반영됨
-      // 활성화 채팅방 없애고 메세지도 지우기
-      this.$store.dispatch('chat/isNotSelected')
-      // 현재 선택된 채팅방 정보 갱신
-      this.$store.dispatch('chat/isSelected', chatList)
-      const currentRoom = this.$store.state.chat.selectedChatRoom
-      // 채팅방 주인 정보
-      const oppId = this.$store.state.chat.selectedId
-      // console.log(this.$store.state.chat, '채팅')
-      // 선택 X이면 안 보여주고 선택됐을 때만 보여주기
-      if (currentRoom) {
-        // API 요청으로 메세지 가져오기
-        const params = {
-          endNUm: 40,
-          startNUm: 0,
-          room_id: currentRoom,
-          // 추가 파라미터
-          user_id: String(localStorage.userId),
-          opp_id: oppId, 
-        }
-        chatApi.getMessages(params)
-          .then(res => {
-            this.$store.dispatch('chat/getMessages', res.data.msgList)
-          })
-          .catch(err => {
-            console.error(err)
-          })
-      } else {
-        // vuex 초기화
+      // 1. vuex !== 클릭한 채팅방: 연결 끊고 재 연결 시켜준다
+      if (chatList.roomId !== this.selectChatRoom ) {
+        // 소켓 끊었다가 다시 연결
+        this.reConnect()
+        // vuex에 새로운 정보 갱신 - 지우고 => 다시 넣기
         this.$store.dispatch('chat/isNotSelected')
-        } 
+        this.$store.dispatch('chat/isSelected', chatList)
+      }
+    },
+    // 소켓 재연결하기(끊었다가 다시 연결)
+    reConnect() {
+      const serverURL = 'http://i4c109.p.ssafy.io/api/ws';
+      // const serverURL = 'http://localhost:8000/ws';
+  
+      let socket = new SockJS(serverURL);
+      console.log(this.stompClient, '여기야여기')
+      if (this.stompClient != null) {
+        // 끊었다가 재연결
+        this.stompClient.disconnect();
+        this.$store.dispatch('chat/checkSocket', null)
+        // vuex 업데이트 후 재연결
+        this.stompClient = Stomp.over(socket);
+        this.$store.dispatch('chat/checkSocket', Stomp.over(socket))
+      } else {
+        this.$store.dispatch('chat/checkSocket', Stomp.over(socket))
+        // == null 상태는 연결 X 연결시켜줘
+        this.stompClient = Stomp.over(socket);
+      }
+      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+      this.stompClient.connect(
+        {},
+        (frame) => {
+          // 소켓 연결 성공
+          this.connected = true;
+          console.log('소켓 연결 성공', frame);
+          // 서버의 메시지 전송 endpoint를 구독합니다.
+          // 이런형태를 pub sub 구조라고 합니다.
+          this.stompClient.subscribe('/message/' + this.oppRoomId + '/' + this.userId, (res) => {
+            console.log('구독으로 받은 메시지 입니다.', res.body);
+            const received = JSON.parse(res.body);
+            
+            // 채팅방 입장시 알림 메세지 개수 초기화
+            const params = {
+              my_id: this.userId,
+              opp_id: this.oppUserId,
+            }
+            chatApi.updateNotice(params)
+              .then(res => {
+                console.log(res, '잘 넘어옴?')
+              })
+              .catch(err => {
+                console.error(err)
+              }) 
+          });
+      });
     },
   },
 }
