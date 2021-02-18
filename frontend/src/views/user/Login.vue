@@ -1,10 +1,10 @@
 <template>
   <div>
     <b-container>
-      <b-row>
+      <b-row id="container">
         <b-col cols="6" class="banner">
           <div>
-            <img src="@/assets/images/login-img.jpg" alt="" width="100%" />
+            <img src="@/assets/images/logo.png" alt="" width="100%" />
           </div>
           <!-- <h2 class="b-title">for SSAFY</h2> -->
         </b-col>
@@ -237,6 +237,14 @@ export default {
 </script>
 
 <style scoped>
+#container {
+  width: 100%;
+  padding: 10px;
+  box-shadow: var(--basic-shadow-w);
+  box-shadow: var(--basic-shadow-s) !important;
+  border-radius: 15px !important;
+  background-color: var(--basic-color-bg2) !important;
+}
 .row {
   margin-top: 50px;
 }
@@ -264,9 +272,9 @@ h2 {
   margin-bottom: 30px;
 }
 .login p {
-  color: #949590;
   font-weight: 300;
   margin-bottom: 3rem;
+  color: #949590;
 }
 .login-form {
   display: flex;
@@ -342,11 +350,11 @@ input {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* align-items: center; */
     max-width: 580px;
     width: 100%;
-    padding: 60px 70px;
-    border-width: 0.5px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: #fff;
   }
   .row {
     border: 1px #949590 solid;
@@ -359,6 +367,16 @@ input {
   }
   .banner {
     display: none;
+  }
+  #container {
+    padding: 0px;
+    margin: 100px auto;
+  }
+  .login {
+    box-shadow: var(--basic-shadow-w);
+    box-shadow: var(--basic-shadow-s);
+    border-radius: 15px;
+    background-color: var(--basic-color-bg2);
   }
 }
 

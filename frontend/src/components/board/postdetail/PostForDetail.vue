@@ -25,11 +25,6 @@
           <v-list>
             <!-- 프로필 보기 -->
             <v-list-item-group>
-              <v-list-item>
-                <v-list-item-title>
-                  Profile 보기
-                </v-list-item-title>
-              </v-list-item>
               <!-- 메세지 보내기(나와 채팅 금지) -->
               <v-list-item @click="onChat" v-if="!flagWriter">
                 <v-list-item-title>
