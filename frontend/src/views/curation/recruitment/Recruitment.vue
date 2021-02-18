@@ -4,11 +4,11 @@
     <div id="left-info">
       <!-- Curation -->
       <div id="type" class="b-title">
-        <h4>Curation</h4>
+        <p>Curation</p>
       </div>
       <!-- 해당 큐레이션 description -->
       <div id="description" class="rounded-bg container">
-        <h4 class="b-desc" @click="click">채용일정</h4>
+        <p class="b-desc">채용일정</p>
         <p class="l-desc">
           채용일정 너만아니<br />
           채용일정 나도알자
@@ -17,7 +17,12 @@
       <!-- 임박한 채용보기 -->
       <div id="due-date" class="rounded-bg container">
         <p class="b-desc">임박한 채용일정</p>
-        <DueDateItem v-for="(event, index) in deadlines" :key="event.id + '/' + index" :event="event" class="date-item" />
+        <DueDateItem
+          v-for="(event, index) in deadlines"
+          :key="event.id + '/' + index"
+          :event="event"
+          class="date-item"
+        />
       </div>
     </div>
     <div id="center-post">
@@ -72,11 +77,7 @@ export default {
       return this.$store.state.calendar.deadlines;
     },
   },
-  methods: {
-    click: function() {
-      console.log('까꿍~');
-    },
-  },
+  methods: {},
 };
 </script>
 
@@ -118,6 +119,8 @@ export default {
 /* 왼쪽 메뉴바 부분 */
 #type {
   margin-top: 80px;
+  padding: 8px;
+  font-size: 20px;
 }
 /* 스터디 보드 설명 */
 #description {
