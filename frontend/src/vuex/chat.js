@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   state: {
     // 현재 선택된 채팅방
-    selectedChatRoom: '13b5abb4-f5e9-48ff-866e-9b41ea06f282',
+    selectedChatRoom: '',
     // 현재 선택된 채팅방 아이디
     selectedId: '',
     // 현재 선택된 채팅방 상대 닉네임

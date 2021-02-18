@@ -2,7 +2,7 @@
   <v-card id="container">
     <div id="title">
     <!-- 체크리스트 제목 -->
-    <div>투표(추가기능)</div>
+    <div>투표</div>
     <!-- 수정버튼 -->
     <VoteDialog v-if="isManager"/>
     <!-- <v-icon id="edit-icon"
