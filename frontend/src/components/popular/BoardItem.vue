@@ -147,7 +147,23 @@ export default {
     },
     clickTitle: function(index) {
       index = index % 5;
-      this.$router.push(`/board/${this.item.board_id}/post/${this.item.board_posts[index].post_id}`);
+      switch (Number(this.item.board_id)) {
+        case 122:
+          this.$router.push(`/market/${this.item.board_posts[index].post_id}`);
+          break;
+        case 121:
+          this.$router.push(`/learningshare/${this.item.board_posts[index].post_id}`);
+          break;
+        case 120:
+          this.$router.push(`/study/main/${this.item.board_posts[index].post_id}`);
+          break;
+        case 123:
+          this.$router.push(`/recruitment/${this.item.board_posts[index].post_id}`);
+          break;
+        default:
+          this.$router.push(`/board/${this.item.board_id}/post/${this.item.board_posts[index].post_id}`);
+          break;
+      }
     },
     //하트버튼 vues state 토글 메소드
     heartTogle: function() {
