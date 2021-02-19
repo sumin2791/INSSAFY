@@ -45,7 +45,7 @@
 <script>
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 import 'swiper/css/swiper.css';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 import GradientGenerator from '@/components/etc/GradientGenerator';
 
 export default {
@@ -118,8 +118,32 @@ export default {
   methods: {
     ...mapActions('user', ['putDeleteSub']),
     ...mapActions('board', ['actPostSubscribe']),
+    ...mapMutations('search', ['SET_PAYLOAD_RESET', 'SET_PAYLOAD_ID', 'CLEAR_SEARCH_LIST']),
     clickHeader: function() {
-      this.$router.push(`/board/${this.item.board_id}`);
+      const BOARD_ID = Number(this.item.board_id);
+
+      let returnName;
+      if (BOARD_ID === 122) {
+        this.CLEAR_SEARCH_LIST();
+        returnName = 'Market';
+        this.$router.push({ name: returnName });
+      } else if (BOARD_ID === 121) {
+        this.CLEAR_SEARCH_LIST();
+        returnName = 'LearnShare';
+        this.$router.push({ name: returnName });
+      } else if (BOARD_ID === 120) {
+        this.CLEAR_SEARCH_LIST();
+        returnName = 'StudyMain';
+        this.$router.push({ name: returnName });
+      } else if (BOARD_ID === 123) {
+        this.CLEAR_SEARCH_LIST();
+        returnName = 'Recruitment';
+        this.$router.push({ name: returnName });
+      } else {
+        this.CLEAR_SEARCH_LIST();
+        returnName = 'Board';
+        this.$router.push({ name: returnName, params: { board_id: BOARD_ID } });
+      }
     },
     clickTitle: function(index) {
       index = index % 5;

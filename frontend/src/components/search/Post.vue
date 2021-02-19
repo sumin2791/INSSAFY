@@ -60,6 +60,7 @@ export default {
   created() {
     if (this.post.post_image != '' && this.post.post_image != 'null' && this.post.post_image != null)
       this.image = this.post.post_image;
+    console.log(this.post);
   },
 
   methods: {
