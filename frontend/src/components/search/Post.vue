@@ -62,6 +62,9 @@ export default {
       this.image = this.post.post_image;
     console.log(this.post);
   },
+  mounted() {
+    console.log(this.post);
+  },
 
   methods: {
     moveToPost() {
