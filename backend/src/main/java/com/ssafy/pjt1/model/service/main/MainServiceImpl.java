@@ -24,9 +24,6 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 public class MainServiceImpl implements MainService {
 
@@ -116,12 +113,6 @@ public class MainServiceImpl implements MainService {
             logger.error("updatePostSort", e);
         }
     }
-
-    // @Override
-    // public void updatePostLikeSort() {
-    // // TODO Auto-generated method stub
-
-    // }
 
     @Scheduled(fixedDelay = 60000) // 1분 마다 캐시 갱신
     @Override

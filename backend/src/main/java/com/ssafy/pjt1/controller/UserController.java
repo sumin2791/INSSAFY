@@ -110,17 +110,30 @@ public class UserController {
      */
     @ApiOperation(value = "회원가입", notes = "form 입력해서 회원가입")
     @PostMapping("/confirm/join")
-    public ResponseEntity<Map<String, Object>> join(@RequestBody UserDto userDto) {
+    public ResponseEntity<Map<String, Object>> join(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         logger.info("/confirm/join 호출 성공");
         try {
+            UserDto userDto = new UserDto();
             String id = userService.getId();
             logger.info("id: {}", userDto.toString());
             userDto.setUser_id(id);
 
+            String user_password = (String) param.get("user_password");
+            String user_email = (String) param.get("user_email");
+            String user_nickname = (String) param.get("user_nickname");
+            String user_location = (String) param.get("user_location");
+            int user_generation = (int) param.get("user_generation");
+
+            userDto.setIs_used(1);
+            userDto.setUser_email(user_email);
+            userDto.setUser_generation(user_generation);
+            userDto.setUser_location(user_location);
+            userDto.setUser_nickname(user_nickname);
+
             // 패스워드 암호화해서 저장
-            String encoded_password = passwordEncoder.encode(userDto.getUser_password());
+            String encoded_password = passwordEncoder.encode(user_password);
             userDto.setUser_password(encoded_password);
             userService.join(userDto);// 조인 서비스 호출
             // 임의의 authKey 생성 & 이메일 발송
@@ -137,7 +150,7 @@ public class UserController {
 
             // 큐레이션 보드 구독 처리
             String user_id = userDto.getUser_id();
-            int[] curation = { 73, 75, 76, 77 };
+            int[] curation = { 120, 121, 122, 123 };
             for (int board_id : curation) {
                 Map<String, Object> cMap = new HashMap<>();
                 cMap.put("board_id", board_id);

@@ -39,8 +39,6 @@ public class RedisService {
     @Autowired
     private CommentService commentService;
 
-    private ZSetOperations zset;
-
     @Autowired
     private UserService userService;
 
@@ -62,7 +60,7 @@ public class RedisService {
         // board_id를 key값으로 follow수 얻어오기
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         String sortkey = "boardFollowSort";
-        zset.incrementScore(sortkey, String.valueOf(board_id), -1);
+        zset.incrementScore(sortkey, board_id, -1);
     }
 
     /*
@@ -103,7 +101,7 @@ public class RedisService {
         // board_id를 key값으로 follow수 얻어오기
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         String sortkey = "boardFollowSort";
-        zset.incrementScore(sortkey, String.valueOf(board_id), 1);
+        zset.incrementScore(sortkey, board_id, 1);
     }
 
     /*
@@ -115,7 +113,7 @@ public class RedisService {
         String sortkey = "boardPostSort";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         // post개수 받고 1증가해서 저장
-        zset.incrementScore(sortkey, String.valueOf(board_id), 1);
+        zset.incrementScore(sortkey, board_id, 1);
     }
 
     /*
@@ -166,7 +164,7 @@ public class RedisService {
     }
 
     public void increaseUserRank(int post_id, int board_id) {
-        zset = redisTemplate.opsForZSet();
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         String boardId = String.valueOf(board_id);
         String key = "func:" + "userRank:" + boardId;
         PostDto post = postService.getPostById(post_id);
@@ -175,7 +173,7 @@ public class RedisService {
 
     // 싫어요 눌러서 유저랭킹 감소
     public void decreaseUserRank(int post_id, int board_id) {
-        zset = redisTemplate.opsForZSet();
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         String boardId = String.valueOf(board_id);
         String key = "func:" + "userRank:" + boardId;
         PostDto post = postService.getPostById(post_id);
@@ -186,8 +184,8 @@ public class RedisService {
     @Scheduled(fixedDelay = 60000)
     public void updateAddFuncRank() throws JsonProcessingException {
         log.info("추가 기능 Redis update(1분)");
-        zset = redisTemplate.opsForZSet();
-        ValueOperations valOps = redisTemplate.opsForValue();
+        ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
+        ValueOperations<String, String> valOps = redisTemplate.opsForValue();
         Set<String> keys = redisTemplate.keys("func:userRank:*");
         valOps = redisTemplate.opsForValue();
         ObjectMapper mapper = new ObjectMapper();
@@ -195,14 +193,14 @@ public class RedisService {
         for (String key : keys) {
             // top3 user갖고 오기
 
-            Long size = zset.size(key);
-
             List<Map<String, String>> list = new ArrayList<>();
             Set<String> top3Id = zset.reverseRange(key, 0, 2);
             // 아이디로 객체 갖고오기
             if (top3Id != null) {
                 for (String id : top3Id) {
                     UserDto dto = userService.userDtoById(id);
+                    if(dto==null)
+                        continue;
                     Map<String, String> userMap = new HashMap<>();
                     userMap.put("nickName", dto.getUser_nickname());
                     userMap.put("score", Math.round(zset.score(key, id)) + "");
@@ -214,19 +212,19 @@ public class RedisService {
         }
     }
 
-     /*
+    /*
      * 기능: post 작성 시 redis techStack + 1
      * 
      * developer: 윤수민
      */
     public void postTechStackPlus(String post_header) {
-        post_header = post_header.replace("#","");
-        post_header = post_header.replace("|","#");
+        post_header = post_header.replace("#", "");
+        post_header = post_header.replace("|", "#");
         String[] list = post_header.split("#");
         String sortkey = "techStack";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         for (String techStack_name : list) {
-            if(!techStack_name.equals("null")){
+            if (!techStack_name.equals("null")) {
                 zset.incrementScore(sortkey, String.valueOf(techStack_name), 1);
             }
         }
@@ -238,13 +236,13 @@ public class RedisService {
      * developer: 윤수민
      */
     public void postTechStackMinus(String post_header) {
-        post_header = post_header.replace("#","");
-        post_header = post_header.replace("|","#");
+        post_header = post_header.replace("#", "");
+        post_header = post_header.replace("|", "#");
         String[] list = post_header.split("#");
         String sortkey = "techStack";
         ZSetOperations<String, String> zset = redisTemplate.opsForZSet();
         for (String techStack_name : list) {
-            if(!techStack_name.equals("null")){
+            if (!techStack_name.equals("null")) {
                 zset.incrementScore(sortkey, String.valueOf(techStack_name), -1);
             }
         }
@@ -255,7 +253,7 @@ public class RedisService {
      * 
      * developer: 윤수민
      */
-	public List<Map<String, Object>> getWordData() {
+    public List<Map<String, Object>> getWordData() {
         String key = "techStack";
         ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
         Set<String> range = zSetOps.range(key, 0, 33);
@@ -266,11 +264,11 @@ public class RedisService {
             Map<String, Object> map = new HashMap<>();
             Double d = zSetOps.score(key, value);
             int score = Integer.parseInt(String.valueOf(Math.round(d)));
-            map.put("name",value);
-            map.put("score",score);
+            map.put("name", value);
+            map.put("score", score);
             list.add(map);
         }
         return list;
-	}
+    }
 
 }

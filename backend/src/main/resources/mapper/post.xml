@@ -346,7 +346,7 @@
 
 	<select id="searchPostNew" parameterType="map" resultType="map">
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image
+		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image,p.board_id
 		from post as p
 			left outer join
 			(select post_id, count(post_id) as comment_count
@@ -365,7 +365,7 @@
 
 	<select id="searchPostNewH" parameterType="map" resultType="map">
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image
+		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image,p.board_id
 		from post as p
 			left outer join
 			(select post_id, count(post_id) as comment_count
@@ -383,7 +383,7 @@
 
 	<select id="searchPostNewT" parameterType="map" resultType="map">
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image
+		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image,p.board_id
 		from post as p
 			left outer join
 			(select post_id, count(post_id) as comment_count
@@ -401,7 +401,7 @@
 
 	<select id="searchPostNewD" parameterType="map" resultType="map">
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image
+		p.post_header, p.post_state, c.comment_count, u.user_nickname, u.user_image,p.board_id
 		from post as p
 			left outer join
 			(select post_id, count(post_id) as comment_count
@@ -419,7 +419,7 @@
 
 	<select id="searchPostPopular" parameterType="map" resultType="map">
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image
+		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image,p.board_id
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 			on p.post_id = c.post_id
 			left outer join
@@ -439,7 +439,7 @@
 
 	<select id="searchPostPopularH" parameterType="map" resultType="map">
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image
+		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image,p.board_id
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 			on p.post_id = c.post_id
 			left outer join
@@ -458,7 +458,7 @@
 
 	<select id="searchPostPopularT" parameterType="map" resultType="map">
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image
+		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image,p.board_id
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 			on p.post_id = c.post_id
 			left outer join
@@ -477,7 +477,7 @@
 
 	<select id="searchPostPopularD" parameterType="map" resultType="map">
 		select p.post_like, p.post_id, p.user_id, p.post_date, p.post_title, p.post_description, p.post_image, p.post_iframe, 
-		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image
+		p.post_header, p.post_state, co.comment_count, u.user_nickname, u.user_image,p.board_id
 		from post as p left outer join (select count(post_id) as like_count, post_id from postLike group by post_id) as c 
 			on p.post_id = c.post_id
 			left outer join
